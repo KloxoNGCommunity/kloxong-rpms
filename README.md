@@ -1,6 +1,6 @@
-![Kloxo-MR logo](https://github.com/mustafaramadhan/kloxo/blob/dev/kloxo-mr_big.png)
+![KloxoNG logo](https://github.com/dkstiler/KloxoNG-rpms/blob/dev/kloxong-cp.jpg)
 
-### Kloxo fork by Mustafa Ramadhan
+### KloxoNG fork by  KloxoNGCommunity
 
 
-Go to https://github.com/mustafaramadhan/kloxo/blob/dev/README.md
+Go to https://github.com/KloxoNGCommunity/kloxoNG-CP/blob/master/README.md
