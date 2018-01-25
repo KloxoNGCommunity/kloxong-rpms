@@ -3,4 +3,4 @@
 ### KloxoNG fork by  KloxoNGCommunity
 
 
-Go to https://github.com/KloxoNGCommunity/kloxoNG-CP/blob/dev/README.md
+Go to https://github.com/KloxoNGCommunity/kloxoNG-CP/blob/master/README.md
