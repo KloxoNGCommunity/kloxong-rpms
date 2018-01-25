@@ -1,4 +1,4 @@
-![KloxoNG logo](https://github.com/KloxoNGCommunity/kloxoNG-CP/blob/dev/kloxong-cp.jpg)
+![KloxoNG logo](https://github.com/dkstiler/KloxoNG-rpms/blob/dev/kloxong-cp.jpg)
 
 ### KloxoNG fork by  KloxoNGCommunity
 
