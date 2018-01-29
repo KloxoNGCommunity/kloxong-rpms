@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/lang
-%define productname kloxomr-lang
+%define productname kloxong-lang
 %define packagename it-it
 %define sourcename it-it
 %define timestamp 2013031825
@@ -15,6 +15,8 @@ Source0: %{name}-%{version}-%{timestamp}.tar.bz2
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+
+Obsoletes: kloxomr-lang-it-it
 
 %description
 Kloxo-MR PL-PL language
@@ -37,6 +39,10 @@ Kloxo-MR PL-PL language
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Wed Jun 26 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 6.5.0.f.2013031825-1.mr
 - compile Kloxo-MR language (only en-us including Kloxo-MR package)
 - constribute by ynuyasha <antonio.falzarano@gmail.com>

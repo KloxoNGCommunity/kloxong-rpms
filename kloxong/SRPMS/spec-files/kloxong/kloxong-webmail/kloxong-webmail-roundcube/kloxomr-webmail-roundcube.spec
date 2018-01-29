@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename roundcube
 %define sourcename roundcubemail
 
@@ -25,7 +25,7 @@ BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
 Provides: webmail
-Obsoletes: kloxo-roundcube
+Obsoletes: kloxo-roundcube, kloxomr-webmail-roundcube
 
 %description
 Roundcube webmail is a browser-based multilingual IMAP client with an 
@@ -60,6 +60,10 @@ install -D -m 755 $RPM_SOURCE_DIR/roundcube_defaults.inc.php $RPM_BUILD_ROOT/hom
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 1.2.5-1.mr
 - update to 1.2.5
 

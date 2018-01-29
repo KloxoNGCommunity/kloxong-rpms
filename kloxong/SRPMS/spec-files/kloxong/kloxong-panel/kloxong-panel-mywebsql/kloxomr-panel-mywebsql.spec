@@ -1,5 +1,5 @@
 %define kloxocp /home/kloxo/httpd/cp
-%define productname kloxomr-panel
+%define productname kloxong-panel
 %define packagename mywebsql
 %define sourcename %{packagename}
 
@@ -15,6 +15,8 @@ Source0: %{sourcename}-%{version}.tar.gz
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+
+Obsoletes: kloxomr-panel-mywebsql
 
 %description
 MyWebSql is an open source, web based, WYSIWYG mysql client written in PHP. 
@@ -41,6 +43,10 @@ Simplified Database Web Administration. For MySQL, SQLite and PostgreSQL databas
 %{kloxocp}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 3.7-1.mr
 - update to 3.7
 

@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/htmllib
-%define productname kloxomr-addon
+%define productname kloxong-addon
 %define packagename extjs
 %define sourcename ext
 
@@ -19,7 +19,7 @@ Source0: %{sourcename}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: webserver, lxphp >= 4.0.4
-Obsoletes: kloxo-extjs
+Obsoletes: kloxo-extjs, kloxomr-addon-extjs
 
 %description
 JavaScript Framework for HTML
@@ -43,6 +43,10 @@ JavaScript Framework for HTML
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun Feb 17 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.1-3.mr
 - rename rpm
 

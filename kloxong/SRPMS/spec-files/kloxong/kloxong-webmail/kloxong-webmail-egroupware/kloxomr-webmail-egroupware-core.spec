@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename egroupware
 
 Name: %{productname}-%{packagename}
@@ -15,14 +15,14 @@ Source0: ftp://ftp.horde.org/pub/horde-webmail/%{packagename}-core-%{version}.ta
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Provides: webmail
-Requires: kloxomr-webmail-egroupware-addressbook, kloxomr-webmail-egroupware-admin
-Requires: kloxomr-webmail-egroupware-calendar, kloxomr-webmail-egroupware-egw-pear
-Requires: kloxomr-webmail-egroupware-filemanager, kloxomr-webmail-egroupware-gallery
-Requires: kloxomr-webmail-egroupware-infolog, kloxomr-webmail-egroupware-phpfreechat
-Requires: kloxomr-webmail-egroupware-polls, kloxomr-webmail-egroupware-projectmanager
-Requires: kloxomr-webmail-egroupware-sitemgr, kloxomr-webmail-egroupware-timesheet
-Requires: kloxomr-webmail-egroupware-tracker, kloxomr-webmail-egroupware-wiki
-Obsoletes: kloxo-egroupware
+Requires: kloxong-webmail-egroupware-addressbook, kloxong-webmail-egroupware-admin
+Requires: kloxong-webmail-egroupware-calendar, kloxong-webmail-egroupware-egw-pear
+Requires: kloxong-webmail-egroupware-filemanager, kloxong-webmail-egroupware-gallery
+Requires: kloxong-webmail-egroupware-infolog, kloxong-webmail-egroupware-phpfreechat
+Requires: kloxong-webmail-egroupware-polls, kloxong-webmail-egroupware-projectmanager
+Requires: kloxong-webmail-egroupware-sitemgr, kloxong-webmail-egroupware-timesheet
+Requires: kloxong-webmail-egroupware-tracker, kloxong-webmail-egroupware-wiki
+Obsoletes: kloxo-egroupware, kloxomr-webmail-egroupware-core
 
 %description
 EGroupware is a multi-user, web-based groupware suite.
@@ -52,6 +52,10 @@ project management, tracker, timesheet, knowledge base, CalDAV/CardDAV
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun Feb 17 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.8.004-2.mr
 - rename rpm
 

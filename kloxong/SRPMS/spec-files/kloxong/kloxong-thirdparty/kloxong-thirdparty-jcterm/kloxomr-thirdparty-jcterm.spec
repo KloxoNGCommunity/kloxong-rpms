@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/thirdparty
-%define productname kloxomr-thirdparty
+%define productname kloxong-thirdparty
 %define packagename jcterm
 
 Name: %{productname}-%{packagename}
@@ -15,7 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: lxphp
 Provides: jcterm
-Obsoletes: kloxomr7-thirdparty-jcterm
+Obsoletes: kloxomr7-thirdparty-jcterm, kloxomr-thirdparty-jcterm
 
 %description
 SSHTerm provides web based SSH access console (java applet)
@@ -38,5 +38,9 @@ SSHTerm provides web based SSH access console (java applet)
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Wed Dec 11 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 0.0.10-1.mr
 - First compile jcterm (alternative for sshterm-applet) for Kloxo-MR

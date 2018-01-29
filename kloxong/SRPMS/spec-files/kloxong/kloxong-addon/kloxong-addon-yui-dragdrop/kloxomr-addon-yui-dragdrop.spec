@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/htmllib
-%define productname kloxomr-addon
+%define productname kloxong-addon
 %define packagename yui-dragdrop
 %define sourcename %{packagename}
 
@@ -16,7 +16,7 @@ Source0: %{sourcename}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: webserver, lxphp >= 4.0.4
-Obsoletes: kloxo-yui-dragdrop
+Obsoletes: kloxo-yui-dragdrop, kloxomr-addon-yui-dragdrop
 
 %description
 The Drag and Drop Utility allows you to create a draggable interface efficiently, 
@@ -44,6 +44,10 @@ then, using its extensive API, add your own specific implementation logic.
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun Feb 17 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 2.9.0-3.mr
 - rename rpm
 

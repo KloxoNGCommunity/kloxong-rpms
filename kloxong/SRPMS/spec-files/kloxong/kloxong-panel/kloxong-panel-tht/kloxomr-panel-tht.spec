@@ -1,5 +1,5 @@
 %define kloxocp /home/kloxo/httpd/cp
-%define productname kloxomr-panel
+%define productname kloxong-panel
 %define packagename tht
 %define sourcename %{packagename}
 
@@ -23,6 +23,8 @@ Patch0: tht-1.2.6_mod.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+
+Obsoletes: kloxomr-panel-tht
 
 %description
 TheHostingTool is aiming to provide the next generation in free, hosting applications. 
@@ -59,6 +61,10 @@ tar xvfj %{SOURCE1}
 %{kloxocp}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Tue Apr 28 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 1.2.6-3.mr
 - use modified kloxo.php instead kloxo_reworked.php
 

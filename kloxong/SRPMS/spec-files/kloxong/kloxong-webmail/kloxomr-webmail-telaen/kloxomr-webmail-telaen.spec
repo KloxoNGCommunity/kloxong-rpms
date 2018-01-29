@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename telaen
 
 Name: %{productname}-%{packagename}
@@ -20,7 +20,7 @@ BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
 Provides: webmail
-Obsoletes: kloxo-telaen
+Obsoletes: kloxo-telaen, kloxomr-webmail-telaen
 
 %description
 T-dah is an Open Sourced Universal Webmail origially developed by Aldoir Ventura 
@@ -57,6 +57,10 @@ fi
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Mon Mar 16 2015  Mustafa Ramadhan <mustafa@bigraf.com> - 1.3.2-3.mr
 - update iCalcreator.class.php from 2.14 to 2.20.2 (fix no warning if not found .ics file)
 - still warning for class.mymonth.php

@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/editor
-%define productname kloxomr-editor
+%define productname kloxong-editor
 %define packagename ckeditor
 %define sourcename %{packagename}
 
@@ -17,7 +17,7 @@ Source1: kloxo.js
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: webserver, lxphp >= 4.0.4
-Obsoletes: kloxo-ckeditor, kloxomr-addon-ckeditor, kloxomr7-editor-ckeditor
+Obsoletes: kloxo-ckeditor, kloxomr-addon-ckeditor, kloxomr7-editor-ckeditor, kloxomr-editor-ckeditor
 
 %description
 CKEditor is a text editor to be used inside web pages. It's a WYSIWYG editor, which 
@@ -47,6 +47,10 @@ install -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{kloxo}/%{packagename}/kloxo.js
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Thu Jun 07 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 4.5.11-1.mr
 - update
 

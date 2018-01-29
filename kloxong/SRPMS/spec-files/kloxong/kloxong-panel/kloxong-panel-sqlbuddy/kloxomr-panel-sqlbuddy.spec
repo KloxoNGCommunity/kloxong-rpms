@@ -1,5 +1,5 @@
 %define kloxocp /home/kloxo/httpd/cp
-%define productname kloxomr-panel
+%define productname kloxong-panel
 %define packagename sqlbuddy
 %define sourcename %{packagename}
 
@@ -15,6 +15,8 @@ Source0: %{sourcename}-%{version}.tar.bz2
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+
+Obsoletes: kloxomr-panel-sqlbuddy
 
 %description
 SQL Buddy ? Web based MySQL administration.
@@ -37,5 +39,9 @@ SQL Buddy ? Web based MySQL administration.
 %{kloxocp}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun Aug 17 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.3.3-1.mr
 - make rpm for Kloxo-MR

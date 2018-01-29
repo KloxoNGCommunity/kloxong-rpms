@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename rainloop
 %define sourcename rainloop
 
@@ -18,6 +18,8 @@ BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
 Provides: webmail
+
+Obsoletes: kloxomr-webmail-rainloop
 
 %description
 Rainloop webmail is simple, modern & fast web-based email client
@@ -42,6 +44,10 @@ Rainloop webmail is simple, modern & fast web-based email client
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> 1.11.0.203-1
 - update
 * Tue Apr 05 2016 Mustafa Ramadhan <mustafa@bigraf.com> 1.9.4.402-1

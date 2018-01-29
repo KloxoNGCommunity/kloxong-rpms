@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename horde
 
 Name: %{productname}-%{packagename}
@@ -18,13 +18,13 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
-Requires: kloxomr-webmail-horde-dimp, kloxomr-webmail-horde-imp
-Requires: kloxomr-webmail-horde-ingo, kloxomr-webmail-horde-kronolith
-Requires: kloxomr-webmail-horde-mimp, kloxomr-webmail-horde-mnemo
-Requires: kloxomr-webmail-horde-nag, kloxomr-webmail-horde-pear
-Requires: kloxomr-webmail-horde-turba
+Requires: kloxong-webmail-horde-dimp, kloxong-webmail-horde-imp
+Requires: kloxong-webmail-horde-ingo, kloxong-webmail-horde-kronolith
+Requires: kloxong-webmail-horde-mimp, kloxong-webmail-horde-mnemo
+Requires: kloxong-webmail-horde-nag, kloxong-webmail-horde-pear
+Requires: kloxong-webmail-horde-turba
 Provides: webmail
-Obsoletes: kloxo-horde
+Obsoletes: kloxo-horde, kloxomr-webmail-horde-core
 
 %description
 Horde Groupware Webmail Edition is a free, enterprise ready, browser
@@ -69,6 +69,10 @@ install -D -m 755 $RPM_SOURCE_DIR/horde_groupware.mysql.sql $RPM_BUILD_ROOT/home
 %{kloxo}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun Feb 17 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.2.11-9.mr
 - rename rpm
 

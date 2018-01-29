@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename squirrelmail
 
 Name: %{productname}-%{packagename}
@@ -21,7 +21,7 @@ BuildRequires: gettext
 #Requires: webserver, php >= 4.0.4, php-mbstring, perl, tmpwatch >= 2.8, aspell
 #Requires: /usr/sbin/sendmail
 Provides: squirrelmail-i18n
-Obsoletes: kloxo-squirrelmail
+Obsoletes: kloxo-squirrelmail, kloxomr-webmail-squirrelmail
 
 %description
 SquirrelMail is a standards-based webmail package written in PHP4. It
@@ -149,6 +149,10 @@ rm -rf $RPM_BUILD_ROOT
 #%{_sysconfdir}/cron.daily/squirrelmail.cron
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun May 26 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.4.22-6.mr
 - change root:apache to root:root
 

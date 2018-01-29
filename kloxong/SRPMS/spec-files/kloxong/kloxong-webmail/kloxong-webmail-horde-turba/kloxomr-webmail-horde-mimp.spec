@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxomr-webmail
+%define productname kloxong-webmail
 %define packagename horde
 %define portionname mimp
 
@@ -18,8 +18,8 @@ BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
 Provides: webmail
-Requires: kloxomr-webmail-horde
-Obsoletes: kloxo-horde-mimp
+Requires: kloxong-webmail-horde
+Obsoletes: kloxo-horde-mimp, kloxomr-webmail-horde-mimp
 
 %description
 Horde Groupware Webmail Edition is a free, enterprise ready, browser
@@ -53,6 +53,10 @@ with Webmail) please visit <http://www.horde.org/>.
 %{kloxo}/%{packagename}/%{portionname}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun Feb 17 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.2.11-9.mr
 - rename rpm
 

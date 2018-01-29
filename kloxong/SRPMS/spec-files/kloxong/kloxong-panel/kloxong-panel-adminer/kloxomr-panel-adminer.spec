@@ -1,5 +1,5 @@
 %define kloxocp /home/kloxo/httpd/cp
-%define productname kloxomr-panel
+%define productname kloxong-panel
 %define packagename adminer
 %define sourcename %{packagename}
 
@@ -16,6 +16,8 @@ Source1: index_adminer.php
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
+
+Obsoletes: kloxomr-panel-adminer
 
 %description
 Adminer (formerly phpMinAdmin) is a full-featured database management tool written in PHP.
@@ -41,6 +43,14 @@ Adminer is available for MySQL, PostgreSQL, SQLite, MS SQL and Oracle.
 %{kloxocp}/%{packagename}
 
 %changelog
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
+- change product name to kloxong
+- add obsolete for kloxomr 
+
 * Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.1-1.mr
 - update 4.3.1
 
