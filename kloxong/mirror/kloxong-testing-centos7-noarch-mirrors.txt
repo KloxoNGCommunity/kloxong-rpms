@@ -1,0 +1,2 @@
+http://rpms.kloxong.org/repo/kloxong/testing/centos7/noarch/
+esting/centos7/noarch/

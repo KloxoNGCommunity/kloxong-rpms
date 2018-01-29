@@ -1,0 +1,2 @@
+http://rpms.kloxong.org/repo/kloxong/testing/neutral/i386/
+esting/neutral/i386/
