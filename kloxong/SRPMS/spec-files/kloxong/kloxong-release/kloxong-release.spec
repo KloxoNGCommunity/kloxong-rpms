@@ -1,4 +1,4 @@
-%define repohost rpms.kloxong.org
+%define repohost repos.kloxong.org
 %define mirrorhost raw.githubusercontent.com/KloxoNGCommunity/KloxoNG-rpms/master/kloxong/mirror
 Summary: KloxoNG release file and package configuration
 Name: kloxong-release
