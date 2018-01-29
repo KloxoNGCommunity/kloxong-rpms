@@ -1,2 +1,2 @@
-http://rpms.kloxong.org/repo/kloxong/testing/centos7/i386/
+http://repos.kloxong.org/repo/kloxong/testing/centos7/i386/
 esting/centos7/i386/

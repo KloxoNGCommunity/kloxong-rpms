@@ -1,1 +1,1 @@
-http://rpms.kloxong.org/repo/kloxong/release/centos7/x86_64/
+http://repos.kloxong.org/repo/kloxong/release/centos7/x86_64/

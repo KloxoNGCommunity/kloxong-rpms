@@ -1,1 +1,1 @@
-http://rpms.kloxong.org/repo/kloxong/release/centos6/noarch/
+http://repos.kloxong.org/repo/kloxong/release/centos6/noarch/
