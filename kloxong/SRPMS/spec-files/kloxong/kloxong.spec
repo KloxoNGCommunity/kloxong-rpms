@@ -31,8 +31,8 @@
 %define timestamp 20180129
 Name: %{productname}
 Summary: Kloxo Next Generation web panel
-Version: 0.1
-Release: 0
+Version: 0.1.0
+Release: 1
 License: GPL
 Group: Applications/Internet
 

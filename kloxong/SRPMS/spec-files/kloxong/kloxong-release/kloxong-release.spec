@@ -1,9 +1,9 @@
 %define repohost repos.kloxong.org
-%define mirrorhost raw.githubusercontent.com/KloxoNGCommunity/KloxoNG-rpms/master/kloxong/mirror
+%define mirrorhost raw.githubusercontent.com/KloxoNGCommunity/KloxoNG-rpms/dev/kloxong/mirror
 Summary: KloxoNG release file and package configuration
 Name: kloxong-release
 Version: 0.1.0
-Release: 8
+Release: 1
 License: AGPLV3
 Group: System Environment/Base
 URL: http://kloxong.org/
