@@ -1,1 +1,1 @@
-http://rpms.kloxong.org/repo/kloxong/release/centos5/i386/
+http://repos.kloxong.org/repo/kloxong/release/centos5/i386/

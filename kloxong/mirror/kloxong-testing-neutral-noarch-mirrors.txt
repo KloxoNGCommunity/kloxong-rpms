@@ -1,2 +1,2 @@
-http://rpms.kloxong.org/repo/kloxong/testing/neutral/noarch/
+http://repos.kloxong.org/repo/kloxong/testing/neutral/noarch/
 esting/neutral/noarch/

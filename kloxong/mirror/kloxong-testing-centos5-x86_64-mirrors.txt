@@ -1,2 +1,2 @@
-http://rpms.kloxong.org/repo/kloxong/testing/centos5/x86_64/
+http://repos.kloxong.org/repo/kloxong/testing/centos5/x86_64/
 esting/centos5/x86_64/
