@@ -1,0 +1,582 @@
+diff -up nginx_upload_module-2.2.0/ngx_http_upload_module.c.ngx_upload nginx_upload_module-2.2.0/ngx_http_upload_module.c
+--- nginx_upload_module-2.2.0/ngx_http_upload_module.c.ngx_upload	2012-02-22 03:08:21.000000000 -0500
++++ nginx_upload_module-2.2.0/ngx_http_upload_module.c	2012-02-22 03:07:04.000000000 -0500
+@@ -95,6 +95,14 @@ typedef struct {
+ } ngx_http_upload_field_template_t;
+ 
+ /*
++ * Template for a header
++ */
++typedef struct {
++    ngx_http_complex_value_t      *name;
++    ngx_http_complex_value_t      *value;
++} ngx_http_upload_header_template_t;
++
++/*
+  * Filter for fields in output form
+  */
+ typedef struct {
+@@ -137,13 +145,17 @@ typedef struct {
+     ngx_array_t                   *aggregate_field_templates;
+     ngx_array_t                   *field_filters;
+     ngx_array_t                   *cleanup_statuses;
++    ngx_array_t                   *header_templates;
+     ngx_flag_t                    forward_args;
+     ngx_flag_t                    tame_arrays;
+     ngx_flag_t                    resumable_uploads;
++    ngx_flag_t                    empty_field_names;
+     size_t                        limit_rate;
+ 
+     unsigned int                  md5:1;
+     unsigned int                  sha1:1;
++    unsigned int                  sha256:1;
++    unsigned int                  sha512:1;
+     unsigned int                  crc32:1;
+ } ngx_http_upload_loc_conf_t;
+ 
+@@ -157,6 +169,16 @@ typedef struct ngx_http_upload_sha1_ctx_
+     u_char      sha1_digest[SHA_DIGEST_LENGTH * 2];
+ } ngx_http_upload_sha1_ctx_t;
+ 
++typedef struct ngx_http_upload_sha256_ctx_s {
++    SHA256_CTX  sha256;
++    u_char      sha256_digest[SHA256_DIGEST_LENGTH * 2];
++} ngx_http_upload_sha256_ctx_t;
++
++typedef struct ngx_http_upload_sha512_ctx_s {
++    SHA512_CTX  sha512;
++    u_char      sha512_digest[SHA512_DIGEST_LENGTH * 2];
++} ngx_http_upload_sha512_ctx_t;
++
+ struct ngx_http_upload_ctx_s;
+ 
+ /*
+@@ -219,6 +241,8 @@ typedef struct ngx_http_upload_ctx_s {
+ 
+     ngx_http_upload_md5_ctx_t   *md5_ctx;    
+     ngx_http_upload_sha1_ctx_t  *sha1_ctx;    
++    ngx_http_upload_sha256_ctx_t *sha256_ctx;
++    ngx_http_upload_sha512_ctx_t *sha512_ctx;
+     uint32_t                    crc32;    
+ 
+     unsigned int        first_part:1;
+@@ -234,6 +258,7 @@ typedef struct ngx_http_upload_ctx_s {
+ } ngx_http_upload_ctx_t;
+ 
+ static ngx_int_t ngx_http_upload_handler(ngx_http_request_t *r);
++static ngx_int_t ngx_http_upload_options_handler(ngx_http_request_t *r);
+ static ngx_int_t ngx_http_upload_body_handler(ngx_http_request_t *r);
+ 
+ static void *ngx_http_upload_create_loc_conf(ngx_conf_t *cf);
+@@ -248,6 +273,10 @@ static ngx_int_t ngx_http_upload_md5_var
+     ngx_http_variable_value_t *v, uintptr_t data);
+ static ngx_int_t ngx_http_upload_sha1_variable(ngx_http_request_t *r,
+     ngx_http_variable_value_t *v, uintptr_t data);
++static ngx_int_t ngx_http_upload_sha256_variable(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data);
++static ngx_int_t ngx_http_upload_sha512_variable(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v, uintptr_t data);
+ static ngx_int_t ngx_http_upload_file_size_variable(ngx_http_request_t *r,
+     ngx_http_variable_value_t *v, uintptr_t data);
+ static void ngx_http_upload_content_range_variable_set(ngx_http_request_t *r,
+@@ -279,6 +308,8 @@ static ngx_int_t ngx_http_read_upload_cl
+ 
+ static char *ngx_http_upload_set_form_field(ngx_conf_t *cf, ngx_command_t *cmd,
+     void *conf);
++static char *ngx_http_upload_add_header(ngx_conf_t *cf, ngx_command_t *cmd,
++    void *conf);
+ static char *ngx_http_upload_pass_form_field(ngx_conf_t *cf, ngx_command_t *cmd,
+     void *conf);
+ static char *ngx_http_upload_cleanup(ngx_conf_t *cf, ngx_command_t *cmd,
+@@ -575,6 +606,28 @@ static ngx_command_t  ngx_http_upload_co
+        offsetof(ngx_http_upload_loc_conf_t, resumable_uploads),
+        NULL },
+ 
++     /*
++      * Specifies whether empty field names are allowed
++      */
++     { ngx_string("upload_empty_fiels_names"),
++       NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_HTTP_LIF_CONF
++                         |NGX_CONF_FLAG,
++       ngx_conf_set_flag_slot,
++       NGX_HTTP_LOC_CONF_OFFSET,
++       offsetof(ngx_http_upload_loc_conf_t, empty_field_names),
++       NULL },
++
++    /*
++     * Specifies the name and content of the header that will be added to the response
++     */
++    { ngx_string("upload_add_header"),
++      NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_HTTP_LMT_CONF|NGX_HTTP_LIF_CONF
++                        |NGX_CONF_TAKE2,
++      ngx_http_upload_add_header,
++      NGX_HTTP_LOC_CONF_OFFSET,
++      offsetof(ngx_http_upload_loc_conf_t, header_templates),
++      NULL},
++
+       ngx_null_command
+ }; /* }}} */
+ 
+@@ -658,6 +711,22 @@ static ngx_http_variable_t  ngx_http_upl
+       (uintptr_t) "0123456789ABCDEF",
+       NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE|NGX_HTTP_VAR_NOHASH, 0 },
+ 
++    { ngx_string("upload_file_sha256"), NULL, ngx_http_upload_sha256_variable,
++      (uintptr_t) "0123456789abcdef",
++      NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE|NGX_HTTP_VAR_NOHASH, 0 },
++
++    { ngx_string("upload_file_sha256_uc"), NULL, ngx_http_upload_sha256_variable,
++      (uintptr_t) "0123456789ABCDEF",
++      NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE|NGX_HTTP_VAR_NOHASH, 0 },
++
++    { ngx_string("upload_file_sha512"), NULL, ngx_http_upload_sha512_variable,
++      (uintptr_t) "0123456789abcdef",
++      NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE|NGX_HTTP_VAR_NOHASH, 0 },
++
++    { ngx_string("upload_file_sha512_uc"), NULL, ngx_http_upload_sha512_variable,
++      (uintptr_t) "0123456789ABCDEF",
++      NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE|NGX_HTTP_VAR_NOHASH, 0 },
++
+     { ngx_string("upload_file_crc32"), NULL, ngx_http_upload_crc32_variable,
+       (uintptr_t) offsetof(ngx_http_upload_ctx_t, crc32),
+       NGX_HTTP_VAR_CHANGEABLE|NGX_HTTP_VAR_NOCACHEABLE|NGX_HTTP_VAR_NOHASH, 0 },
+@@ -688,6 +757,9 @@ ngx_http_upload_handler(ngx_http_request
+     ngx_http_upload_ctx_t     *u;
+     ngx_int_t                 rc;
+ 
++    if(r->method & NGX_HTTP_OPTIONS)
++        return ngx_http_upload_options_handler(r);
++
+     if (!(r->method & NGX_HTTP_POST))
+         return NGX_HTTP_NOT_ALLOWED;
+ 
+@@ -724,6 +796,26 @@ ngx_http_upload_handler(ngx_http_request
+     }else
+         u->sha1_ctx = NULL;
+ 
++    if(ulcf->sha256) {
++        if(u->sha256_ctx == NULL) {
++            u->sha256_ctx = ngx_palloc(r->pool, sizeof(ngx_http_upload_sha256_ctx_t));
++            if (u->sha256_ctx == NULL) {
++                return NGX_HTTP_INTERNAL_SERVER_ERROR;
++            }
++        }
++    }else
++        u->sha256_ctx = NULL;
++
++    if(ulcf->sha512) {
++        if(u->sha512_ctx == NULL) {
++            u->sha512_ctx = ngx_palloc(r->pool, sizeof(ngx_http_upload_sha512_ctx_t));
++            if (u->sha512_ctx == NULL) {
++                return NGX_HTTP_INTERNAL_SERVER_ERROR;
++            }
++        }
++    }else
++        u->sha512_ctx = NULL;
++
+     u->calculate_crc32 = ulcf->crc32;
+ 
+     u->request = r;
+@@ -758,6 +850,62 @@ ngx_http_upload_handler(ngx_http_request
+     return NGX_DONE;
+ } /* }}} */
+ 
++static ngx_int_t ngx_http_upload_add_headers(ngx_http_request_t *r, ngx_http_upload_loc_conf_t *ulcf) { /* {{{ */
++    ngx_str_t                            name;
++    ngx_str_t                            value;
++    ngx_http_upload_header_template_t    *t;
++    ngx_table_elt_t                      *h;
++    ngx_uint_t                           i;
++
++    if(ulcf->header_templates != NULL) {
++        t = ulcf->header_templates->elts;
++        for(i = 0; i < ulcf->header_templates->nelts; i++) {
++            if(ngx_http_complex_value(r, t->name, &name) != NGX_OK) {
++                return NGX_ERROR;
++            }
++
++            if(ngx_http_complex_value(r, t->value, &value) != NGX_OK) {
++                return NGX_ERROR;
++            }
++
++            if(name.len != 0 && value.len != 0) {
++                h = ngx_list_push(&r->headers_out.headers);
++                if(h == NULL) {
++                    return NGX_ERROR;
++                }
++
++                h->hash = 1;
++                h->key.len = name.len;
++                h->key.data = name.data;
++                h->value.len = value.len;
++                h->value.data = value.data;
++            }
++
++            t++;
++        }
++    }
++
++    return NGX_OK;
++} /* }}} */
++
++static ngx_int_t ngx_http_upload_options_handler(ngx_http_request_t *r) { /* {{{ */
++    ngx_http_upload_loc_conf_t *ulcf;
++
++    ulcf = ngx_http_get_module_loc_conf(r, ngx_http_upload_module);
++
++    r->headers_out.status = NGX_HTTP_OK;
++
++    if(ngx_http_upload_add_headers(r, ulcf) != NGX_OK) {
++        return NGX_HTTP_INTERNAL_SERVER_ERROR;
++    }
++
++    r->header_only = 1;
++    r->headers_out.content_length_n = 0;
++    r->allow_ranges = 0;
++
++    return ngx_http_send_header(r);
++} /* }}} */
++
+ static ngx_int_t ngx_http_upload_body_handler(ngx_http_request_t *r) { /* {{{ */
+     ngx_http_upload_loc_conf_t  *ulcf = ngx_http_get_module_loc_conf(r, ngx_http_upload_module);
+     ngx_http_upload_ctx_t       *ctx = ngx_http_get_module_ctx(r, ngx_http_upload_module);
+@@ -771,6 +919,10 @@ static ngx_int_t ngx_http_upload_body_ha
+     ngx_str_t                   dummy = ngx_string("<ngx_upload_module_dummy>");
+     ngx_table_elt_t             *h;
+ 
++    if(ngx_http_upload_add_headers(r, ulcf) != NGX_OK) {
++        return NGX_HTTP_INTERNAL_SERVER_ERROR;
++    }
++
+     if(ctx->prevent_output) {
+         r->headers_out.status = NGX_HTTP_CREATED;
+ 
+@@ -1117,6 +1269,12 @@ static ngx_int_t ngx_http_upload_start_h
+         if(u->sha1_ctx != NULL)
+             SHA1_Init(&u->sha1_ctx->sha1);
+ 
++        if(u->sha256_ctx != NULL)
++            SHA256_Init(&u->sha256_ctx->sha256);
++
++        if(u->sha512_ctx != NULL)
++            SHA512_Init(&u->sha512_ctx->sha512);
++
+         if(u->calculate_crc32)
+             ngx_crc32_init(u->crc32);
+ 
+@@ -1150,7 +1308,10 @@ static ngx_int_t ngx_http_upload_start_h
+ #if (NGX_PCRE)
+                 rc = ngx_regex_exec(f[i].regex, &u->field_name, NULL, 0);
+ 
+-                if (rc != NGX_REGEX_NO_MATCHED && rc < 0) {
++                /* Modified by Naren to work around iMovie and Quicktime which send empty values Added:  &&  u->field_name.len > 0 */
++                if ((ulcf->empty_field_names && rc != NGX_REGEX_NO_MATCHED && rc < 0 && u->field_name.len != 0)
++                    || (!ulcf->empty_field_names && rc != NGX_REGEX_NO_MATCHED && rc < 0))
++                {
+                     return NGX_UPLOAD_SCRIPTERROR;
+                 }
+ 
+@@ -1166,7 +1327,7 @@ static ngx_int_t ngx_http_upload_start_h
+             }
+         }
+ 
+-        if(pass_field && u->field_name.len > 0) { 
++        if(pass_field && u->field_name.len != 0) { 
+             /*
+              * Here we do a small hack: the content of a non-file field
+              * is not known until ngx_http_upload_flush_output_buffer
+@@ -1207,6 +1368,12 @@ static void ngx_http_upload_finish_handl
+         if(u->sha1_ctx)
+             SHA1_Final(u->sha1_ctx->sha1_digest, &u->sha1_ctx->sha1);
+ 
++        if(u->sha256_ctx)
++            SHA256_Final(u->sha256_ctx->sha256_digest, &u->sha256_ctx->sha256);
++
++        if(u->sha512_ctx)
++            SHA512_Final(u->sha512_ctx->sha512_digest, &u->sha512_ctx->sha512);
++
+         if(u->calculate_crc32)
+             ngx_crc32_final(u->crc32);
+ 
+@@ -1369,6 +1536,12 @@ static ngx_int_t ngx_http_upload_flush_o
+         if(u->sha1_ctx)
+             SHA1_Update(&u->sha1_ctx->sha1, buf, len);
+ 
++        if(u->sha256_ctx)
++            SHA256_Update(&u->sha256_ctx->sha256, buf, len);
++
++        if(u->sha512_ctx)
++            SHA512_Update(&u->sha512_ctx->sha512, buf, len);
++
+         if(u->calculate_crc32)
+             ngx_crc32_update(&u->crc32, buf, len);
+ 
+@@ -1678,7 +1851,7 @@ ngx_http_upload_merge_ranges(ngx_http_up
+     ngx_http_upload_merger_state_t ms;
+     off_t        remaining;
+     ssize_t      rc;
+-    int          result;
++    __attribute__((__unused__)) int result;
+     ngx_buf_t    in_buf;
+     ngx_buf_t    out_buf;
+     ngx_http_upload_loc_conf_t  *ulcf = ngx_http_get_module_loc_conf(u->request, ngx_http_upload_module);
+@@ -1799,6 +1972,7 @@ ngx_http_upload_create_loc_conf(ngx_conf
+     conf->forward_args = NGX_CONF_UNSET;
+     conf->tame_arrays = NGX_CONF_UNSET;
+     conf->resumable_uploads = NGX_CONF_UNSET;
++    conf->empty_field_names = NGX_CONF_UNSET;
+ 
+     conf->buffer_size = NGX_CONF_UNSET_SIZE;
+     conf->merge_buffer_size = NGX_CONF_UNSET_SIZE;
+@@ -1809,6 +1983,7 @@ ngx_http_upload_create_loc_conf(ngx_conf
+     conf->limit_rate = NGX_CONF_UNSET_SIZE;
+ 
+     /*
++     * conf->header_templates,
+      * conf->field_templates,
+      * conf->aggregate_field_templates,
+      * and conf->field_filters are
+@@ -1897,6 +2072,11 @@ ngx_http_upload_merge_loc_conf(ngx_conf_
+             prev->resumable_uploads : 0;
+     }
+ 
++    if(conf->empty_field_names == NGX_CONF_UNSET) {
++        conf->empty_field_names = (prev->empty_field_names != NGX_CONF_UNSET) ?
++            prev->empty_field_names : 0;
++    }
++
+     if(conf->field_templates == NULL) {
+         conf->field_templates = prev->field_templates;
+     }
+@@ -1912,6 +2092,14 @@ ngx_http_upload_merge_loc_conf(ngx_conf_
+             conf->sha1 = prev->sha1;
+         }
+ 
++        if(prev->sha256) {
++            conf->sha256 = prev->sha256;
++        }
++
++        if(prev->sha512) {
++            conf->sha512 = prev->sha512;
++        }
++
+         if(prev->crc32) {
+             conf->crc32 = prev->crc32;
+         }
+@@ -1925,6 +2113,10 @@ ngx_http_upload_merge_loc_conf(ngx_conf_
+         conf->cleanup_statuses = prev->cleanup_statuses;
+     }
+ 
++    if(conf->header_templates == NULL) {
++        conf->header_templates = prev->header_templates;
++    }
++
+     return NGX_CONF_OK;
+ } /* }}} */
+ 
+@@ -2066,6 +2258,80 @@ ngx_http_upload_sha1_variable(ngx_http_r
+     return NGX_OK;
+ } /* }}} */
+ 
++static ngx_int_t /* {{{ ngx_http_upload_sha256_variable */
++ngx_http_upload_sha256_variable(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v,  uintptr_t data)
++{
++    ngx_uint_t             i;
++    ngx_http_upload_ctx_t  *u;
++    u_char                 *c;
++    u_char                 *hex_table;
++
++    u = ngx_http_get_module_ctx(r, ngx_http_upload_module);
++
++    if(u->sha256_ctx == NULL || u->partial_content) {
++        v->not_found = 1;
++        return NGX_OK;
++    }
++
++    v->valid = 1;
++    v->no_cacheable = 0;
++    v->not_found = 0;
++
++    hex_table = (u_char*)data;
++    c = u->sha256_ctx->sha256_digest + SHA256_DIGEST_LENGTH * 2;
++
++    i = SHA256_DIGEST_LENGTH;
++
++    do{
++        i--;
++        *--c = hex_table[u->sha256_ctx->sha256_digest[i] & 0xf];
++        *--c = hex_table[u->sha256_ctx->sha256_digest[i] >> 4];
++    }while(i != 0);
++
++    v->data = u->sha256_ctx->sha256_digest;
++    v->len = SHA256_DIGEST_LENGTH * 2;
++
++    return NGX_OK;
++} /* }}} */
++
++static ngx_int_t /* {{{ ngx_http_upload_sha512_variable */
++ngx_http_upload_sha512_variable(ngx_http_request_t *r,
++    ngx_http_variable_value_t *v,  uintptr_t data)
++{
++    ngx_uint_t             i;
++    ngx_http_upload_ctx_t  *u;
++    u_char                 *c;
++    u_char                 *hex_table;
++
++    u = ngx_http_get_module_ctx(r, ngx_http_upload_module);
++
++    if(u->sha512_ctx == NULL || u->partial_content) {
++        v->not_found = 1;
++        return NGX_OK;
++    }
++
++    v->valid = 1;
++    v->no_cacheable = 0;
++    v->not_found = 0;
++
++    hex_table = (u_char*)data;
++    c = u->sha512_ctx->sha512_digest + SHA512_DIGEST_LENGTH * 2;
++
++    i = SHA512_DIGEST_LENGTH;
++
++    do{
++        i--;
++        *--c = hex_table[u->sha512_ctx->sha512_digest[i] & 0xf];
++        *--c = hex_table[u->sha512_ctx->sha512_digest[i] >> 4];
++    }while(i != 0);
++
++    v->data = u->sha512_ctx->sha512_digest;
++    v->len = SHA512_DIGEST_LENGTH * 2;
++
++    return NGX_OK;
++} /* }}} */
++
+ static ngx_int_t /* {{{ ngx_http_upload_crc32_variable */
+ ngx_http_upload_crc32_variable(ngx_http_request_t *r,
+     ngx_http_variable_value_t *v,  uintptr_t data)
+@@ -2299,6 +2565,10 @@ ngx_http_upload_set_form_field(ngx_conf_
+                                        ", upload_file_md5_uc"
+                                        ", upload_file_sha1"
+                                        ", upload_file_sha1_uc"
++                                       ", upload_file_sha256"
++                                       ", upload_file_sha256_uc"
++                                       ", upload_file_sha512"
++                                       ", upload_file_sha512_uc"
+                                        ", upload_file_crc32"
+                                        ", upload_content_range"
+                                        " and upload_file_size"
+@@ -2312,6 +2582,12 @@ ngx_http_upload_set_form_field(ngx_conf_
+                 if(v->get_handler == ngx_http_upload_sha1_variable)
+                     ulcf->sha1 = 1;
+ 
++                if(v->get_handler == ngx_http_upload_sha256_variable)
++                    ulcf->sha256 = 1;
++
++                if(v->get_handler == ngx_http_upload_sha512_variable)
++                    ulcf->sha512 = 1;
++
+                 if(v->get_handler == ngx_http_upload_crc32_variable)
+                     ulcf->crc32 = 1;
+             }
+@@ -2396,6 +2672,73 @@ ngx_http_upload_pass_form_field(ngx_conf
+     return NGX_CONF_OK;
+ } /* }}} */
+ 
++static char * /* {{{ ngx_http_upload_add_header */
++ngx_http_upload_add_header(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
++{
++    ngx_str_t                  *value;
++    ngx_http_upload_header_template_t *h;
++    ngx_array_t                 **field;
++    ngx_http_compile_complex_value_t   ccv;
++
++    field = (ngx_array_t**) (((u_char*)conf) + cmd->offset);
++
++    value = cf->args->elts;
++
++    /*
++     * Add new entry to header template list
++     */
++    if (*field == NULL) {
++        *field = ngx_array_create(cf->pool, 1,
++                                  sizeof(ngx_http_upload_header_template_t));
++        if (*field == NULL) {
++            return NGX_CONF_ERROR;
++        }
++    }
++
++    h = ngx_array_push(*field);
++    if (h == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    /*
++     * Compile header name
++     */
++    h->name = ngx_palloc(cf->pool, sizeof(ngx_http_complex_value_t));
++    if(h->name == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
++
++    ccv.cf = cf;
++    ccv.value = &value[1];
++    ccv.complex_value = h->name;
++
++    if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
++        return NGX_CONF_ERROR;
++    }
++
++    /*
++     * Compile header value
++     */
++    h->value = ngx_palloc(cf->pool, sizeof(ngx_http_complex_value_t));
++    if(h->value == NULL) {
++        return NGX_CONF_ERROR;
++    }
++
++    ngx_memzero(&ccv, sizeof(ngx_http_compile_complex_value_t));
++
++    ccv.cf = cf;
++    ccv.value = &value[2];
++    ccv.complex_value = h->value;
++
++    if (ngx_http_compile_complex_value(&ccv) != NGX_OK) {
++        return NGX_CONF_ERROR;
++    }
++
++    return NGX_CONF_OK;
++} /* }}} */
++
+ static char * /* {{{ ngx_http_upload_cleanup */
+ ngx_http_upload_cleanup(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
+ {
+@@ -2453,9 +2796,9 @@ ngx_http_upload_cleanup(ngx_conf_t *cf, 
+             hi = lo = status;
+         }
+ 
+-        if (lo < 400 || hi > 599) {
++        if (lo < 200 || hi > 599) {
+             ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+-                               "value(s) \"%V\" must be between 400 and 599",
++                               "value(s) \"%V\" must be between 200 and 599",
+                                &value[i]);
+             return NGX_CONF_ERROR;
+         }
+@@ -3299,6 +3642,14 @@ static ngx_int_t upload_parse_request_he
+                     return NGX_HTTP_REQUEST_ENTITY_TOO_LARGE;
+                 }
+ 
++                if( (upload_ctx->content_range_n.end - upload_ctx->content_range_n.start + 1)
++                    != headers_in->content_length_n) 
++                {
++                    ngx_log_error(NGX_LOG_ERR, upload_ctx->log, 0,
++                                  "range length is not equal to content length");
++                    return NGX_HTTP_RANGE_NOT_SATISFIABLE;
++                }
++
+                 upload_ctx->partial_content = 1;
+             }
+         }

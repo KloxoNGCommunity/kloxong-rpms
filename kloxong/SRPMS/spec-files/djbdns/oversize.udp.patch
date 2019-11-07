@@ -1,0 +1,11 @@
+--- dns_transmit.c	2010/05/08 18:44:38	1.1
++++ dns_transmit.c	2010/05/08 18:45:28
+@@ -242,7 +242,7 @@
+ 
+ int dns_transmit_get(struct dns_transmit *d,const iopause_fd *x,const struct taia *when)
+ {
+-  char udpbuf[513];
++  char udpbuf[4097];
+   unsigned char ch;
+   int r;
+   int fd;

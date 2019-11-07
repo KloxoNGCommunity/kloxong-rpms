@@ -1,0 +1,60 @@
+diff -Naur polarssl-1.3.8_pure/include/polarssl/config.h polarssl-1.3.8_mod/include/polarssl/config.h
+--- polarssl-1.3.8_pure/include/polarssl/config.h	2014-07-11 11:28:56.000000000 +0200
++++ polarssl-1.3.8_mod/include/polarssl/config.h	2014-08-31 08:56:12.000000000 +0200
+@@ -973,7 +973,7 @@
+  *
+  * Uncomment this to enable pthread mutexes.
+  */
+-//#define POLARSSL_THREADING_PTHREAD
++#define POLARSSL_THREADING_PTHREAD
+ 
+ /**
+  * \def POLARSSL_VERSION_FEATURES
+@@ -1959,7 +1959,7 @@
+  *
+  * Enable this layer to allow use of mutexes within PolarSSL
+  */
+-//#define POLARSSL_THREADING_C
++#define POLARSSL_THREADING_C
+ 
+ /**
+  * \def POLARSSL_TIMING_C
+diff -Naur polarssl-1.3.8_pure/programs/ssl/ssl_pthread_server.c polarssl-1.3.8_mod/programs/ssl/ssl_pthread_server.c
+--- polarssl-1.3.8_pure/programs/ssl/ssl_pthread_server.c	2014-07-11 11:28:56.000000000 +0200
++++ polarssl-1.3.8_mod/programs/ssl/ssl_pthread_server.c	2014-08-31 09:41:33.000000000 +0200
+@@ -129,6 +129,10 @@
+     ssl_context ssl;
+     ctr_drbg_context ctr_drbg;
+ 
++    /* Make sure memory references are valid */
++    memset( &ssl, 0, sizeof( ssl_context ) );
++    memset( &ctr_drbg, 0, sizeof( ctr_drbg_context ) );
++
+     snprintf( pers, sizeof(pers), "SSL Pthread Thread %d", thread_id );
+     printf( "  [ #%d ]  Client FD %d\n", thread_id, client_fd );
+     printf( "  [ #%d ]  Seeding the random number generator...\n", thread_id );
+@@ -176,7 +180,7 @@
+     if( ( ret = ssl_set_own_cert( &ssl, thread_info->server_cert, thread_info->server_key ) ) != 0 )
+     {
+         printf( " failed\n  ! ssl_set_own_cert returned %d\n\n", ret );
+-        goto exit;
++        goto thread_exit;
+     }
+ 
+     printf( "  [ #%d ]  ok\n", thread_id );
+@@ -308,6 +312,7 @@
+ #endif
+ 
+     net_close( client_fd );
++    ctr_drbg_free( &ctr_drbg );
+     ssl_free( &ssl );
+ 
+     thread_info->thread_complete = 1;
+@@ -492,7 +497,6 @@
+ #if defined(POLARSSL_SSL_CACHE_C)
+     ssl_cache_free( &cache );
+ #endif
+-    ctr_drbg_free( &ctr_drbg );
+     entropy_free( &entropy );
+ 
+     polarssl_mutex_free( &debug_mutex );

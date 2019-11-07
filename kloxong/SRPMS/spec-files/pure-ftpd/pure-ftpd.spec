@@ -1,12 +1,12 @@
 Name:       pure-ftpd
-Version:    1.0.37
+Version:    1.0.49
 Release:    1%{?dist}
 Summary:    Lightweight, fast and secure FTP server
 
 Group:      System Environment/Daemons
 License:    BSD
 URL:        http://www.pureftpd.org
-Source0:    http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-%{version}.tar.bz2
+Source0:    http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-%{version}.tar.gz
 Source1:    pure-ftpd.init 
 Source2:    pure-ftpd.logrotate
 Source3:    pure-ftpd.xinetd
@@ -16,6 +16,7 @@ Source6:    pure-ftpd.README.SELinux
 Source7:    pure-ftpd.pureftpd.te
 Patch0:     pure-ftpd-1.0.27-config.patch
 Patch2:     pure-ftpd-paminclude.patch
+Patch3:     pure-ftpd-paminclude-1.0.49.patch
 Provides:   ftpserver
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  pam-devel, perl, python, libcap-devel
@@ -70,8 +71,9 @@ Pure-FTPd to be protected in the same way other FTP servers are in Fedora
 
 %prep
 %setup -q
-%patch0 -p0 -b .config
-%patch2 -p0 -b .paminclude
+#%patch0 -p0 -b .config
+#%patch2 -p0 -b .paminclude
+#%patch2 -p0 -b .paminclude
 install -pm 644 %{SOURCE6} README.SELinux
 mkdir selinux
 cp -p %{SOURCE7} selinux/pureftpd.te
@@ -123,9 +125,9 @@ install -d -m 755 $RPM_BUILD_ROOT%{_localstatedir}/ftp
 %{!?_without_tls:install -d -m 700 $RPM_BUILD_ROOT%{_sysconfdir}/pki/%{name}}
 
 # Conf
-install -p -m 755 configuration-file/pure-config.pl $RPM_BUILD_ROOT%{_sbindir}
-install -p -m 644 configuration-file/pure-ftpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
-install -p -m 755 configuration-file/pure-config.py $RPM_BUILD_ROOT%{_sbindir}
+#install -p -m 755 configuration-file/pure-config.pl $RPM_BUILD_ROOT%{_sbindir}
+#install -p -m 644 configuration-file/pure-ftpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
+#install -p -m 755 configuration-file/pure-config.py $RPM_BUILD_ROOT%{_sbindir}
 install -p -m 644 pureftpd-ldap.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install -p -m 644 pureftpd-mysql.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install -p -m 644 pureftpd-pgsql.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
@@ -236,10 +238,11 @@ fi
 
 %files
 %defattr(-, root, root, -)
-%doc FAQ THANKS README.Authentication-Modules README.Virtual-Users README
-%doc README.Contrib README.Configuration-File AUTHORS CONTACT HISTORY NEWS
-%doc README.LDAP README.PGSQL README.MySQL README.Donations README.TLS
-%doc contrib/pure-vpopauth.pl pureftpd.schema contrib/pure-stat.pl
+#%doc FAQ THANKS README.Authentication-Modules README.Virtual-Users README
+#%doc README.Contrib README.Configuration-File AUTHORS CONTACT HISTORY NEWS
+#%doc README.LDAP README.PGSQL README.MySQL README.Donations README.TLS
+#%doc contrib/pure-vpopauth.pl pureftpd.schema contrib/pure-stat.pl
+%{_docdir}/pure-ftpd/*
 %{_bindir}/pure-*
 %{_sbindir}/pure-*
 %config %{_initrddir}/%{name}
@@ -262,6 +265,9 @@ fi
 
 
 %changelog
+* Sun Jun 15 2019 Mustafa Ramadhan <mustafa@bigraf.com> - 1.0.49-1.mr
+- update to 1.0.49
+
 * Thu Mar 12 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 1.0.37-1.mr
 - update to 1.0.37
 - without mysql and pgsql

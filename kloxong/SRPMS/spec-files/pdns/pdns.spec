@@ -1,35 +1,49 @@
 #
 # PowerDNS server el5/el6 spec file
 #
-%global _hardened_build 1
+# - to disable devtoolset-2 use --without devtoolset
+# - to disable lua use --without lua
+#
+%{?!rhel:%define rhel 0}
+%if 0%{?rhel} == 5
+%define hardening no
+%else
+%define hardening yes
+%endif
+
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
-Version:		3.4.9
+Version:		4.1.8
 Release:		1%{dist}
 Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons
 URL:			http://www.powerdns.com/
-Source0:		http://downloads.powerdns.com/releases/%{name}-%{version}.tar.bz2
-Source1:		http://downloads.powerdns.com/documentation/html.tar.bz2
-Patch0:			pdns-3.4.1-init.patch
-Patch1:			pdns-3.4.2-disable-secpoll.patch
+Source0:		http://downloads.powerdns.com/releases/pdns-4.1.8.tar.bz2
+Patch0:			pdns-git-init.patch
+Patch1:			pdns-4.1.1-disable-secpoll.patch
+BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:		boost-devel >= 1.35.0
-BuildRequires:		lua-devel
-BuildRequires:		sqlite-devel
+
+%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
+BuildRequires:		devtoolset-2-gcc devtoolset-2-gcc-c++
+BuildRequires:		devtoolset-2-binutils
+%endif
+
 BuildRequires:		openssl-devel
+BuildRequires:		boost-devel
+BuildRequires:		sqlite-devel
 
-Requires:		boost-serialization >= 1.35.0
-Requires:		boost-program-options >= 1.35.0
+%if %{!?_without_lua:1}%{?_without_lua:0}
+BuildRequires:		lua-devel
+%endif
 
 Provides:		powerdns = %{version}-%{release}
 Obsoletes:		pdns-server
 Obsoletes:		pdns-server-dnssec-tools
 Obsoletes:		pdns-server-backend-bind
 
-BuildRoot:		%{_tmppath}/%{name}-%{version}-root
 
 %description
 PowerDNS is a versatile nameserver which supports a large number
@@ -76,17 +90,6 @@ Obsoletes:		pdns-backend-sqlite3 < 3.4.0-2
 
 %description		backend-sqlite
 This package contains the sqlite3 backend for the PowerDNS nameserver.
-
-%package		backend-geo
-Summary:		Geo backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes:		pdns-server-backend-geo
-
-%description		backend-geo
-This package contains the geo backend for the PowerDNS nameserver. This
-backend can be used to distribute queries globally using an IP-address/country
-mapping table.
 
 %package		backend-ldap
 Summary:		LDAP backend for %{name}
@@ -148,27 +151,30 @@ Obsoletes:		pdns-server-tools
 This package contains the the PowerDNS DNS tools.
 
 %prep
-%setup -q -n %{name}-%{version} -a1
+%setup -q -n pdns-4.1.8
 %patch0 -p1 -b .init
 %patch1 -p1 -b .disable-secpoll
 
 %build
+%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
+export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$PATH
+%endif
+
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
-    --with-lua \
+    --with-lua=%{!?_without_lua:yes}%{?_without_lua:no} \
+    --enable-hardening=%{hardening} \
     --with-modules="" \
-    --with-dynmodules="bind gmysql gpgsql gsqlite3 geo ldap lua mydns pipe remote" \
+    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
     --disable-static \
     --enable-tools
 
-sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
-sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
 %{__make} %{?_smp_mflags}
 
 %install
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
+[ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 
 %{__make} DESTDIR=%{buildroot} install
 %{__rm} -f %{buildroot}%{_libdir}/%{name}/*.la
@@ -187,10 +193,8 @@ chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
 
 # install sysv scripts
 install -d %{buildroot}%{_initrddir}
-install -m755 pdns/pdns %{buildroot}%{_initrddir}/pdns
+install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
 
-%clean
-[ "%{buildroot}" != "/" ] && rm -rf %{buildroot}
 
 %pre
 getent group pdns >/dev/null || groupadd -r pdns
@@ -214,17 +218,17 @@ if [ $1 -ge 1 ]; then
 fi
 
 %files
-%doc COPYING INSTALL NOTICE README html
+%doc COPYING INSTALL NOTICE README
 %dir %{_sysconfdir}/%{name}/
 %dir %{_libdir}/%{name}/
 %config(noreplace) %attr(0600,root,root) %{_sysconfdir}/%{name}/pdns.conf
 %config(noreplace) %attr(0755,root,root) %{_initrddir}/pdns
 %{_bindir}/pdns_control
-%{_bindir}/pdnssec
+%{_bindir}/pdnsutil
 %{_sbindir}/pdns_server
 %{_mandir}/man1/pdns_control.1.gz
 %{_mandir}/man1/pdns_server.1.gz
-%{_mandir}/man1/pdnssec.1.gz
+%{_mandir}/man1/pdnsutil.1.gz
 
 %files backend-bind
 %{_libdir}/%{name}/libbindbackend.so
@@ -235,12 +239,14 @@ fi
 %doc %{_defaultdocdir}/%{name}/schema.mysql.sql
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.mysql.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.mysql.sql
+%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.mysql.sql
 
 %files backend-postgresql
 %{_libdir}/%{name}/libgpgsqlbackend.so
 %doc %{_defaultdocdir}/%{name}/schema.pgsql.sql
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.pgsql.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.pgsql.sql
+%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.pgsql.sql
 
 %files backend-sqlite
 %{_libdir}/%{name}/libgsqlite3backend.so
@@ -248,12 +254,10 @@ fi
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
 
-%files backend-geo
-%{_libdir}/%{name}/libgeobackend.so
-%doc modules/geobackend/README
-
 %files backend-ldap
 %{_libdir}/%{name}/libldapbackend.so
+%doc %{_defaultdocdir}/%{name}/dnsdomain2.schema
+%doc %{_defaultdocdir}/%{name}/pdns-domaininfo.schema
 
 %files backend-lua
 %{_libdir}/%{name}/libluabackend.so
@@ -273,35 +277,87 @@ fi
 %{_bindir}/zone2json
 %{_bindir}/zone2ldap
 %{_bindir}/zone2sql
- %{_bindir}/dnsbulktest
+ %{_bindir}/calidns
+ %{_bindir}/dnsgram
  %{_bindir}/dnsreplay
  %{_bindir}/dnsscan
  %{_bindir}/dnsscope
- %{_bindir}/dnstcpbench
  %{_bindir}/dnswasher
+ %{_bindir}/dumresp
+ %{_bindir}/ixplore
  %{_bindir}/nproxy
  %{_bindir}/nsec3dig
+ %{_bindir}/pdns_notify
  %{_bindir}/saxfr
+ %{_bindir}/sdig
+ %{_bindir}/stubquery
+%{_mandir}/man1/zone2json.1.gz
 %{_mandir}/man1/zone2ldap.1.gz
 %{_mandir}/man1/zone2sql.1.gz
+ %{_mandir}/man1/calidns.1.gz
+ %{_mandir}/man1/dnsgram.1.gz
  %{_mandir}/man1/dnsreplay.1.gz
+ %{_mandir}/man1/dnsscan.1.gz
  %{_mandir}/man1/dnsscope.1.gz
- %{_mandir}/man1/dnstcpbench.1.gz
  %{_mandir}/man1/dnswasher.1.gz
+ %{_mandir}/man1/dumresp.1.gz
+ %{_mandir}/man1/ixplore.1.gz
+ %{_mandir}/man1/nproxy.1.gz
+ %{_mandir}/man1/nsec3dig.1.gz
+ %{_mandir}/man1/pdns_notify.1.gz
+ %{_mandir}/man1/saxfr.1.gz
+ %{_mandir}/man1/sdig.1.gz
 
 
 %changelog
-* Fri Aug 12 2016 Mustafa Ramadhan <mustafa@bigraf.com> 3.4.9-1
-- recompile version 3.4.9 for Kloxo-MR
+* Fri Mar 22 2019 Kees Monshouwer <mind04@monshouwer.org> 4.1.8-1
+- update to version 4.1.8
 
-* Tue May 17 2016 Kees Monshouwer <mind04@monshouwer.org> 3.4.9-1
-- update to version 3.4.9
+* Mon Mar 18 2019 Kees Monshouwer <mind04@monshouwer.org> 4.1.7-1
+- update to version 4.1.7
 
-* Wed Feb 03 2016 Kees Monshouwer <mind04@monshouwer.org> 3.4.8-1
-- update to version 3.4.8
+* Wed Jan 30 2019 Kees Monshouwer <mind04@monshouwer.org> 4.1.6-1
+- update to version 4.1.6
 
-* Tue Nov 03 2015 Kees Monshouwer <mind04@monshouwer.org> 3.4.7-1
-- update to version 3.4.7
+* Tue Nov 06 2018 Kees Monshouwer <mind04@monshouwer.org> 4.1.5-1
+- update to version 4.1.5
+
+* Wed Aug 29 2018 Kees Monshouwer <mind04@monshouwer.org> 4.1.4-1
+- update to version 4.1.4
+
+* Thu May 24 2018 Kees Monshouwer <mind04@monshouwer.org> 4.1.3-1
+- update to version 4.1.3
+
+* Mon May 07 2018 Kees Monshouwer <mind04@monshouwer.org> 4.1.2-1
+- update to version 4.1.2
+
+* Fri Feb 16 2018 Kees Monshouwer <mind04@monshouwer.org> 4.1.1-1
+- update to version 4.1.1
+
+* Thu Nov 30 2017 Kees Monshouwer <mind04@monshouwer.org> 4.1.0-1
+- update to version 4.1.0
+
+* Mon Nov 27 2017 Kees Monshouwer <mind04@monshouwer.org> 4.0.5-1
+- update to version 4.0.5
+
+* Thu Jun 22 2017 Kees Monshouwer <mind04@monshouwer.org> 4.0.4-1
+- update to version 4.0.4
+- remove el5 specific parts from spec file
+
+* Tue Jan 17 2017 Kees Monshouwer <mind04@monshouwer.org> 4.0.3-1
+- update to version 4.0.3
+
+* Fri Jan 13 2017 Kees Monshouwer <mind04@monshouwer.org> 4.0.2-1
+- update to version 4.0.2
+
+* Fri Jul 29 2016 Kees Monshouwer <mind04@monshouwer.org> 4.0.1-1
+- update to version 4.0.1
+
+* Mon Jul 11 2016 Kees Monshouwer <mind04@monshouwer.org> 4.0.0-1
+- update to version 4.0.0
+- add ixplore, sdig and dnspcap2protobuf to tools
+- rename pdnssec to pdnsutil
+- remove geo backend
 
 * Thu Aug 27 2015 Kees Monshouwer <mind04@monshouwer.org> 3.4.6-1
 - update to version 3.4.6
@@ -339,7 +395,7 @@ fi
 - Bind backend is now a dynmodule
 - Add mydns backend
 
-* Mon Jan 14 2014 Kees Monshouwer <mind04@monshouwer.org> 3.3.1-2
+* Mon Jan 20 2014 Kees Monshouwer <mind04@monshouwer.org> 3.3.1-2
 - Fix pdns-tools dependency problem
 
 * Tue Dec 17 2013 Kees Monshouwer <mind04@monshouwer.org> 3.3.1-1

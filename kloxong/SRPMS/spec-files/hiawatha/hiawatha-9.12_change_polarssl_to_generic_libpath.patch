@@ -1,0 +1,28 @@
+diff -Naur hiawatha-9.12_ori/CMakeLists.txt hiawatha-9.12_mod/CMakeLists.txt
+--- hiawatha-9.12_ori/CMakeLists.txt	2015-02-12 09:37:44.000000000 +0100
++++ hiawatha-9.12_mod/CMakeLists.txt	2015-02-15 04:07:02.000000000 +0100
+@@ -98,10 +98,10 @@
+ 
+ # mbed TLS 
+ if(ENABLE_SSL)
+-	set(CMAKE_INSTALL_NAME_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/hiawatha)
+-	set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR}/hiawatha)
++	set(CMAKE_INSTALL_NAME_DIR ${CMAKE_INSTALL_FULL_LIBDIR})
++	set(LIB_INSTALL_DIR ${CMAKE_INSTALL_LIBDIR})
+ 	if (APPLE)
+-		set(CMAKE_MACOSX_RPATH ${CMAKE_MACOSX_RPATH};${CMAKE_INSTALL_FULL_LIBDIR}/hiawatha)
++		set(CMAKE_MACOSX_RPATH ${CMAKE_MACOSX_RPATH};${CMAKE_INSTALL_FULL_LIBDIR})
+ 	endif()
+ 	if(USE_SYSTEM_MBEDTLS)
+ 		message(WARNING "Make sure the mbed TLS shared library has been built with the POLARSSL_THREADING_PTHREAD and POLARSSL_THREADING_C flags set. Otherwise, it may crash the Hiawatha webserver.")
+@@ -148,8 +148,8 @@
+ 	target_link_libraries(hiawatha ${MBEDTLS_LIBRARY})
+ 	target_link_libraries(wigwam ${MBEDTLS_LIBRARY})
+ 	if(NOT USE_SYSTEM_MBEDTLS)
+-		set_target_properties(hiawatha PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR}/hiawatha)
+-		set_target_properties(wigwam PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR}/hiawatha)
++		set_target_properties(hiawatha PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
++		set_target_properties(wigwam PROPERTIES INSTALL_RPATH ${CMAKE_INSTALL_FULL_LIBDIR})
+ 	endif()
+ endif()
+ if(ENABLE_XSLT)

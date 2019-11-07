@@ -1,0 +1,24 @@
+diff -Naur suphp-0.7.2_ori/configure suphp-0.7.2_mod/configure
+--- suphp-0.7.2_ori/configure	2009-03-14 19:07:57.000000000 +0100
++++ suphp-0.7.2_mod/configure	2015-06-11 15:18:51.000000000 +0200
+@@ -20369,7 +20369,7 @@
+                     | cut -f2 -d"/" \
+                     | cut -f1 -d" "`
+     major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
+-    if test "$major_version" = "2.0" -o "$major_version" = "2.2"; then
++    if test "$major_version" = "2.0" -o "$major_version" = "2.2" -o "$major_version" = "2.4"; then
+       APACHE_VERSION_2=true
+       APACHE_VERSION_1_3=false
+     else
+diff -Naur suphp-0.7.2_ori/configure.ac suphp-0.7.2_mod/configure.ac
+--- suphp-0.7.2_ori/configure.ac	2009-03-14 18:58:11.000000000 +0100
++++ suphp-0.7.2_mod/configure.ac	2015-06-11 15:19:37.000000000 +0200
+@@ -66,7 +66,7 @@
+                     | cut -f2 -d"/" \
+                     | cut -f1 -d" "`
+     major_version=`echo $APACHE_VERSION|cut -f1,2 -d.`
+-    if test "$major_version" = "2.0" -o "$major_version" = "2.2"; then
++    if test "$major_version" = "2.0" -o "$major_version" = "2.2" -o "$major_version" = "2.4"; then
+       APACHE_VERSION_2=true
+       APACHE_VERSION_1_3=false
+     else

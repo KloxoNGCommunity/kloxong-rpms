@@ -1,0 +1,30 @@
+MASTER_ZONEFILES = $(wildcard master/*.zone)
+MASTER_DOTFILES = $(patsubst master/%,master/.%,$(MASTER_ZONEFILES))
+SECONDARY_ZONEFILES = $(wildcard secondary/*.zone)
+
+.PHONY : clean cache-reload sshkey
+
+# Update the main database and tell cache to start over.
+data.cdb: data
+	//bin/tinydns-data
+	@make --no-print-directory cache-reload
+
+data : $(MASTER_DOTFILES) $(SECONDARY_ZONEFILES)
+	@cat $(MASTER_DOTFILES) $(SECONDARY_ZONEFILES) > data
+
+master/.% : master/% dns_master_key.priv
+	@rm -rf $@
+	make-data $< > $@
+	@push-changes `basename $< .zone` $@
+
+clean :
+	rm -rf $(MASTER_DOTFILES)
+
+sshkey dns_master_key.priv :
+	ssh-keygen -t dsa -b 1024 -f dns_master_key -C 'dns update key'
+	mv dns_master_key dns_master_key.priv
+	sed -e 's;^ssh;command="/bin/update-dns" ssh;' < dns_master_key.pub > dns_master_key.pub.new && mv dns_master_key.pub.new dns_master_key.pub
+
+cache-reload :
+	/sbin/cache-reload
+	echo "Cache reloaded"

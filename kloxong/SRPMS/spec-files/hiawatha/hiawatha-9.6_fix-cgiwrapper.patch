@@ -1,0 +1,16 @@
+diff -Naur hiawatha-9.6_pure/src/cgi-wrapper.c hiawatha-9.6_mod/src/cgi-wrapper.c
+--- hiawatha-9.6_pure/src/cgi-wrapper.c	2014-06-01 10:03:18.000000000 +0200
++++ hiawatha-9.6_mod/src/cgi-wrapper.c	2014-07-20 12:56:30.000000000 +0200
+@@ -162,7 +162,11 @@
+ 								break;
+ 							}
+ 							memcpy(wrap_data->chroot, item, len);
+-							*pipe = '/';
++							if (*(pipe + 1) == '\0') {
++								*pipe = '\0';
++							} else {
++							    *pipe = '/';
++							}
+ 						}
+ 
+ 						if ((len = strlen(item)) == 0) {

@@ -1,0 +1,127 @@
+diff -up ./configuration-file/pure-ftpd.conf.in.config ./configuration-file/pure-ftpd.conf.in
+--- ./configuration-file/pure-ftpd.conf.in.config	2009-11-20 14:15:01.000000000 +0100
++++ ./configuration-file/pure-ftpd.conf.in	2009-12-04 22:09:21.461504212 +0100
+@@ -9,7 +9,7 @@
+ # instead of command-line options, please run the
+ # following command :
+ #
+-# @prefix@/sbin/pure-config.pl @prefix@/etc/pure-ftpd.conf
++# @sbindir@/pure-config.pl @sysconfdir@/pure-ftpd.conf
+ #
+ # Please don't forget to have a look at documentation at
+ # http://www.pureftpd.org/documentation.shtml for a complete list of
+@@ -107,34 +107,34 @@ MaxIdleTime                 15
+ 
+ # LDAP configuration file (see README.LDAP)
+ 
+-# LDAPConfigFile                /etc/pureftpd-ldap.conf
++# LDAPConfigFile                @sysconfdir@/pureftpd-ldap.conf
+ 
+ 
+ 
+ # MySQL configuration file (see README.MySQL)
+ 
+-# MySQLConfigFile               /etc/pureftpd-mysql.conf
++# MySQLConfigFile               @sysconfdir@/pureftpd-mysql.conf
+ 
+ 
+ # Postgres configuration file (see README.PGSQL)
+ 
+-# PGSQLConfigFile               /etc/pureftpd-pgsql.conf
++# PGSQLConfigFile               @sysconfdir@/pureftpd-pgsql.conf
+ 
+ 
+ # PureDB user database (see README.Virtual-Users)
+ 
+-# PureDB                        /etc/pureftpd.pdb
++# PureDB                        @sysconfdir@/pureftpd.pdb
+ 
+ 
+ # Path to pure-authd socket (see README.Authentication-Modules)
+ 
+-# ExtAuth                       /var/run/ftpd.sock
++# ExtAuth                       @localstatedir@/run/ftpd.sock
+ 
+ 
+ 
+ # If you want to enable PAM authentication, uncomment the following line
+ 
+-# PAMAuthentication             yes
++PAMAuthentication             yes
+ 
+ 
+ 
+@@ -237,7 +237,14 @@ Umask                       133:022
+ 
+ # Minimum UID for an authenticated user to log in.
+ 
+-MinUID                      100
++MinUID                      500
++
++
++
++# Do not use the /etc/ftpusers file to disable accounts. We're already
++# using MinUID to block users with uid < 500
++
++UseFtpUsers no
+ 
+ 
+ 
+@@ -276,7 +283,7 @@ AutoRename                  no
+ 
+ # Disallow anonymous users to upload new files (no = upload is allowed)
+ 
+-AnonymousCantUpload         no
++AnonymousCantUpload         yes
+ 
+ 
+ 
+@@ -301,21 +308,21 @@ AnonymousCantUpload         no
+ # fw.c9x.org - jedi [13/Dec/1975:19:36:39] "GET /ftp/linux.tar.bz2" 200 21809338
+ # This log file can then be processed by www traffic analyzers.
+ 
+-# AltLog                     clf:/var/log/pureftpd.log
++AltLog                     clf:@localstatedir@/log/pureftpd.log
+ 
+ 
+ 
+ # Create an additional log file with transfers logged in a format optimized
+ # for statistic reports.
+ 
+-# AltLog                     stats:/var/log/pureftpd.log
++# AltLog                     stats:@localstatedir@/log/pureftpd.log
+ 
+ 
+ 
+ # Create an additional log file with transfers logged in the standard W3C
+ # format (compatible with most commercial log analyzers)
+ 
+-# AltLog                     w3c:/var/log/pureftpd.log
++# AltLog                     w3c:@localstatedir@/log/pureftpd.log
+ 
+ 
+ 
+@@ -346,9 +353,9 @@ AnonymousCantUpload         no
+ 
+ 
+ # If your pure-ftpd has been compiled with standalone support, you can change
+-# the location of the pid file. The default is /var/run/pure-ftpd.pid
++# the location of the pid file. The default is @localstatedir@/run/pure-ftpd.pid
+ 
+-#PIDFile                     /var/run/pure-ftpd.pid
++#PIDFile                     @localstatedir@/run/pure-ftpd.pid
+ 
+ 
+ 
+diff -up ./pureftpd-mysql.conf.config ./pureftpd-mysql.conf
+--- ./pureftpd-mysql.conf.config	2009-10-20 12:17:56.000000000 +0200
++++ ./pureftpd-mysql.conf	2009-12-04 22:05:35.350755132 +0100
+@@ -19,7 +19,7 @@
+ 
+ # Optional : define the location of mysql.sock if the server runs on this host.
+ 
+-MYSQLSocket     /tmp/mysql.sock
++MYSQLSocket     @localstatedir@/lib/mysql/mysql.sock
+ 
+ 
+ # Mandatory : user to bind the server as.

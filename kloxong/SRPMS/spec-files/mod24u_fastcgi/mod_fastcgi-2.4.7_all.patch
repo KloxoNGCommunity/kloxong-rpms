@@ -1,0 +1,821 @@
+diff -Naur mod_fastcgi-2.4.7_ori/docs/mod_fastcgi.html mod_fastcgi-2.4.7_mod/docs/mod_fastcgi.html
+--- mod_fastcgi-2.4.7_ori/docs/mod_fastcgi.html	2008-09-21 20:29:00.000000000 -0400
++++ mod_fastcgi-2.4.7_mod/docs/mod_fastcgi.html	2016-02-13 01:29:59.304181343 -0500
+@@ -67,7 +67,7 @@
+         </P>
+         <P>
+             FastCGI applications under <CODE>mod_fastcgi</CODE> are defined as one of three types: static, dynamic, or
+-            external. They&#39;re configured using the <A HREF="#fastcgiserver">FastCgiServer</A>, <A HREF=
++            external. They&#39;re configured using the <A HREF="#FastCgiServer">FastCgiServer</A>, <A HREF=
+             "#FastCgiConfig">FastCgiConfig</A>, and <A HREF="#FastCgiExternalServer">FastCgiExternalServer</A> <A HREF=
+             "#directives">directives</A> respectively. Any URI that Apache identifies as a FastCGI application and
+             which hasn&#39;t been explicitly configured using a <A HREF="#fastcgiserver">FastCgiServer</A> or <A HREF=
+diff -Naur mod_fastcgi-2.4.7_ori/fcgi.h mod_fastcgi-2.4.7_mod/fcgi.h
+--- mod_fastcgi-2.4.7_ori/fcgi.h	2008-09-22 06:36:10.000000000 -0400
++++ mod_fastcgi-2.4.7_mod/fcgi.h	2016-02-13 01:27:30.207181381 -0500
+@@ -34,6 +34,10 @@
+ #define APACHE2
+ #endif
+ 
++#ifdef AP_DECLARE_MODULE
++#define APACHE24
++#endif
++
+ #ifdef APACHE2
+ 
+ #include <sys/stat.h>
+@@ -57,10 +61,16 @@
+ #define XtOffsetOf APR_OFFSETOF
+ #define ap_select select
+ 
++#ifdef APACHE24
++#define unixd_config ap_unixd_config
++#endif
++
++#ifdef APACHE2
+ #define ap_user_id        unixd_config.user_id
+ #define ap_group_id       unixd_config.group_id
+ #define ap_user_name      unixd_config.user_name
+ #define ap_suexec_enabled unixd_config.suexec_enabled
++#endif
+ 
+ #ifndef S_ISDIR
+ #define S_ISDIR(m)      (((m)&(S_IFMT)) == (S_IFDIR))
+@@ -300,6 +310,17 @@
+     Buffer *erBufPtr;
+     int exitStatus;
+     int exitStatusSet;
++
++    /* Byte - AAH */
++    FCGI_ByteAccBody byteAccBody;
++    Buffer *byteAccBufPtr;
++    int readingByteAccBody;
++    uint64_t utime;
++    uint64_t stime;
++    uint64_t cutime;
++    uint64_t cstime;
++    /* End Byte - AAH */
++
+     unsigned int requestId;
+     int eofSent;
+     int role;                       /* FastCGI Role: Authorizer or Responder */
+@@ -354,43 +375,42 @@
+ #ifdef APACHE2
+ 
+ #ifdef WIN32
+-#define FCGI_LOG_EMERG          __FILE__,__LINE__,APLOG_EMERG,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_ALERT          __FILE__,__LINE__,APLOG_ALERT,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_CRIT           __FILE__,__LINE__,APLOG_CRIT,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_ERR            __FILE__,__LINE__,APLOG_ERR,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_WARN           __FILE__,__LINE__,APLOG_WARNING,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_NOTICE         __FILE__,__LINE__,APLOG_NOTICE,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_INFO           __FILE__,__LINE__,APLOG_INFO,APR_FROM_OS_ERROR(GetLastError())
+-#define FCGI_LOG_DEBUG          __FILE__,__LINE__,APLOG_DEBUG,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_EMERG          APLOG_MARK,APLOG_EMERG,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_ALERT          APLOG_MARK,APLOG_ALERT,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_CRIT           APLOG_MARK,APLOG_CRIT,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_ERR            APLOG_MARK,APLOG_ERR,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_WARN           APLOG_MARK,APLOG_WARNING,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_NOTICE         APLOG_MARK,APLOG_NOTICE,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_INFO           APLOG_MARK,APLOG_INFO,APR_FROM_OS_ERROR(GetLastError())
++#define FCGI_LOG_DEBUG          APLOG_MARK,APLOG_DEBUG,APR_FROM_OS_ERROR(GetLastError())
+ #else /* !WIN32 */
+-#define FCGI_LOG_EMERG          __FILE__,__LINE__,APLOG_EMERG,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_ALERT          __FILE__,__LINE__,APLOG_ALERT,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_CRIT           __FILE__,__LINE__,APLOG_CRIT,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_ERR            __FILE__,__LINE__,APLOG_ERR,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_WARN           __FILE__,__LINE__,APLOG_WARNING,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_NOTICE         __FILE__,__LINE__,APLOG_NOTICE,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_INFO           __FILE__,__LINE__,APLOG_INFO,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_DEBUG          __FILE__,__LINE__,APLOG_DEBUG,APR_FROM_OS_ERROR(errno)
+-#endif
+-
+-#define FCGI_LOG_EMERG_ERRNO    __FILE__,__LINE__,APLOG_EMERG,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_ALERT_ERRNO    __FILE__,__LINE__,APLOG_ALERT,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_CRIT_ERRNO     __FILE__,__LINE__,APLOG_CRIT,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_ERR_ERRNO      __FILE__,__LINE__,APLOG_ERR,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_WARN_ERRNO     __FILE__,__LINE__,APLOG_WARNING,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_NOTICE_ERRNO   __FILE__,__LINE__,APLOG_NOTICE,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_INFO_ERRNO     __FILE__,__LINE__,APLOG_INFO,APR_FROM_OS_ERROR(errno)
+-#define FCGI_LOG_DEBUG_ERRNO    __FILE__,__LINE__,APLOG_DEBUG,APR_FROM_OS_ERROR(errno)
+-
+-#define FCGI_LOG_EMERG_NOERRNO    __FILE__,__LINE__,APLOG_EMERG,0
+-#define FCGI_LOG_ALERT_NOERRNO    __FILE__,__LINE__,APLOG_ALERT,0
+-#define FCGI_LOG_CRIT_NOERRNO     __FILE__,__LINE__,APLOG_CRIT,0
+-#define FCGI_LOG_ERR_NOERRNO      __FILE__,__LINE__,APLOG_ERR,0
+-#define FCGI_LOG_WARN_NOERRNO     __FILE__,__LINE__,APLOG_WARNING,0
+-#define FCGI_LOG_NOTICE_NOERRNO   __FILE__,__LINE__,APLOG_NOTICE,0
+-#define FCGI_LOG_INFO_NOERRNO     __FILE__,__LINE__,APLOG_INFO,0
+-#define FCGI_LOG_DEBUG_NOERRNO    __FILE__,__LINE__,APLOG_DEBUG,0
+-
++#define FCGI_LOG_EMERG          APLOG_MARK,APLOG_EMERG,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_ALERT          APLOG_MARK,APLOG_ALERT,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_CRIT           APLOG_MARK,APLOG_CRIT,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_ERR            APLOG_MARK,APLOG_ERR,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_WARN           APLOG_MARK,APLOG_WARNING,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_NOTICE         APLOG_MARK,APLOG_NOTICE,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_INFO           APLOG_MARK,APLOG_INFO,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_DEBUG          APLOG_MARK,APLOG_DEBUG,APR_FROM_OS_ERROR(errno)
++#endif
++
++#define FCGI_LOG_EMERG_ERRNO    APLOG_MARK,APLOG_EMERG,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_ALERT_ERRNO    APLOG_MARK,APLOG_ALERT,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_CRIT_ERRNO     APLOG_MARK,APLOG_CRIT,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_ERR_ERRNO      APLOG_MARK,APLOG_ERR,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_WARN_ERRNO     APLOG_MARK,APLOG_WARNING,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_NOTICE_ERRNO   APLOG_MARK,APLOG_NOTICE,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_INFO_ERRNO     APLOG_MARK,APLOG_INFO,APR_FROM_OS_ERROR(errno)
++#define FCGI_LOG_DEBUG_ERRNO    APLOG_MARK,APLOG_DEBUG,APR_FROM_OS_ERROR(errno)
++
++#define FCGI_LOG_EMERG_NOERRNO    APLOG_MARK,APLOG_EMERG,0
++#define FCGI_LOG_ALERT_NOERRNO    APLOG_MARK,APLOG_ALERT,0
++#define FCGI_LOG_CRIT_NOERRNO     APLOG_MARK,APLOG_CRIT,0
++#define FCGI_LOG_ERR_NOERRNO      APLOG_MARK,APLOG_ERR,0
++#define FCGI_LOG_WARN_NOERRNO     APLOG_MARK,APLOG_WARNING,0
++#define FCGI_LOG_NOTICE_NOERRNO   APLOG_MARK,APLOG_NOTICE,0
++#define FCGI_LOG_INFO_NOERRNO     APLOG_MARK,APLOG_INFO,0
++#define FCGI_LOG_DEBUG_NOERRNO    APLOG_MARK,APLOG_DEBUG,0
+ #else /* !APACHE2 */
+ 
+ #ifdef WIN32
+diff -Naur mod_fastcgi-2.4.7_ori/fcgi_config.c mod_fastcgi-2.4.7_mod/fcgi_config.c
+--- mod_fastcgi-2.4.7_ori/fcgi_config.c	2009-09-28 08:32:20.000000000 -0400
++++ mod_fastcgi-2.4.7_mod/fcgi_config.c	2016-02-13 01:19:46.564181500 -0500
+@@ -1204,7 +1204,7 @@
+     if (compat && strcasecmp(compat, "-compat"))
+         return ap_psprintf(cmd->temp_pool, "%s: unknown option: \"%s\"", cmd->cmd->name, compat);
+ 
+-    switch((int)cmd->info) {
++    switch((intptr_t)cmd->info) {
+         case FCGI_AUTH_TYPE_AUTHENTICATOR:
+             dir_config->authenticator = auth_server;
+             dir_config->authenticator_options |= (compat) ? FCGI_COMPAT : 0;
+diff -Naur mod_fastcgi-2.4.7_ori/fcgi_pm.c mod_fastcgi-2.4.7_mod/fcgi_pm.c
+--- mod_fastcgi-2.4.7_ori/fcgi_pm.c	2009-09-28 20:33:15.000000000 -0400
++++ mod_fastcgi-2.4.7_mod/fcgi_pm.c	2016-02-13 01:32:18.641181308 -0500
+@@ -133,7 +133,7 @@
+         /* Send TERM to all processes */
+         for (i = 0; i < numChildren; i++, proc++) 
+         {
+-            if (proc->state == FCGI_RUNNING_STATE) 
++            if (proc->state == FCGI_RUNNING_STATE || proc->state == FCGI_VICTIM_STATE)
+             {
+                 fcgi_kill(proc, SIGTERM);
+             }
+@@ -201,7 +201,7 @@
+         /* Send KILL to all processes */
+         for (i = 0; i < numChildren; i++, proc++) 
+         {
+-            if (proc->state == FCGI_RUNNING_STATE) 
++            if (proc->state == FCGI_RUNNING_STATE || proc->state == FCGI_VICTIM_STATE)
+             {
+                 fcgi_kill(proc, SIGKILL);
+             }
+diff -Naur mod_fastcgi-2.4.7_ori/fcgi_protocol.c mod_fastcgi-2.4.7_mod/fcgi_protocol.c
+--- mod_fastcgi-2.4.7_ori/fcgi_protocol.c	2008-09-23 10:48:17.000000000 -0400
++++ mod_fastcgi-2.4.7_mod/fcgi_protocol.c	2016-02-13 01:26:18.456181399 -0500
+@@ -475,8 +475,8 @@
+                         ap_log_rerror(FCGI_LOG_ERR_NOERRNO, fr->r,
+                             "FastCGI: comm with server \"%s\" aborted: protocol error: "
+                             "invalid FCGI_END_REQUEST size: "
+-                            "%d != sizeof(FCGI_EndRequestBody)(%d)",
+-                            fr->fs_path, fr->dataLen, sizeof(FCGI_EndRequestBody));
++                            "%d != sizeof(FCGI_EndRequestBody)(%ld)",
++                            fr->fs_path, fr->dataLen, (unsigned long) sizeof(FCGI_EndRequestBody));
+                         return HTTP_INTERNAL_SERVER_ERROR;
+                     }
+                     fr->readingEndRequestBody = TRUE;
+@@ -508,6 +508,92 @@
+                     fr->readingEndRequestBody = FALSE;
+                 }
+                 break;
++	    case FCGI_BYTE_ACC:
++		/* Look in our state variable if we are already reading the request
++		   NB that this is a multiplexed protocol, so the request might span
++		   multiple packets. Therefore we read and if that is all, save times */
++
++                if (!fr->readingByteAccBody) {
++                    if (fr->dataLen != sizeof(FCGI_ByteAccBody)) {
++                        ap_log_rerror(FCGI_LOG_ERR_NOERRNO, fr->r,
++                            "FastCGI: comm with server \"%s\" aborted: protocol error: "
++                            "invalid FCGI_BYTE_ACC size: "
++                            "%d != sizeof(FCGI_EndRequestBody)(%ld)",
++                            fr->fs_path, fr->dataLen, (unsigned long) sizeof(FCGI_ByteAccBody));
++
++                        return HTTP_INTERNAL_SERVER_ERROR;
++                    }
++                    fr->readingByteAccBody = TRUE;
++                }
++
++		/* Check to see if there is still content left to read. If so, read it */
++                if (len>0) {
++                    fcgi_buf_get_to_buf(fr->byteAccBufPtr, fr->serverInputBuffer, len);
++                    fr->dataLen -= len;
++                }
++
++		/* If all data is exhausted, save all usage info */
++                if (fr->dataLen == 0) {
++                    FCGI_ByteAccBody *byteAccBody = &fr->byteAccBody;
++                    fcgi_buf_get_to_block(
++                        fr->byteAccBufPtr, (char *) &fr->byteAccBody,
++                        sizeof(FCGI_ByteAccBody));
++
++			/* Calculate the times. Bitshift the simple 8-bit values into a 64-bit unsigned long)
++			     We cast the 8-bit chars to unsigned long first, otherwise gcc will complain */
++
++			fr->utime = 	  ((uint64_t) (byteAccBody->ownUserTimeB7 & 0xff) << 8 * 7) 
++				 	+ ((uint64_t) (byteAccBody->ownUserTimeB6 & 0xff) << 8 * 6)
++				 	+ ((uint64_t) (byteAccBody->ownUserTimeB5 & 0xff) << 8 * 5)
++				 	+ ((uint64_t) (byteAccBody->ownUserTimeB4 & 0xff) << 8 * 4)
++				 	+ ((uint64_t) (byteAccBody->ownUserTimeB3 & 0xff) << 8 * 3)
++				 	+ ((uint64_t) (byteAccBody->ownUserTimeB2 & 0xff) << 8 * 2)
++			                + ((uint64_t) (byteAccBody->ownUserTimeB1 & 0xff) << 8 * 1)
++					+ ((uint64_t) (byteAccBody->ownUserTimeB0 & 0xff) << 8 * 0);
++
++			fr->stime = 	  ((uint64_t) (byteAccBody->ownSystemTimeB7 & 0xff) << 8 * 7) 
++				 	+ ((uint64_t) (byteAccBody->ownSystemTimeB6 & 0xff) << 8 * 6)
++				 	+ ((uint64_t) (byteAccBody->ownSystemTimeB5 & 0xff) << 8 * 5)
++				 	+ ((uint64_t) (byteAccBody->ownSystemTimeB4 & 0xff) << 8 * 4)
++				 	+ ((uint64_t) (byteAccBody->ownSystemTimeB3 & 0xff) << 8 * 3)
++				 	+ ((uint64_t) (byteAccBody->ownSystemTimeB2 & 0xff) << 8 * 2)
++			                + ((uint64_t) (byteAccBody->ownSystemTimeB1 & 0xff) << 8 * 1)
++					+ ((uint64_t) (byteAccBody->ownSystemTimeB0 & 0xff) << 8 * 0);
++
++			fr->cutime = 	  ((uint64_t) (byteAccBody->childUserTimeB7 & 0xff) << 8 * 7) 
++				 	+ ((uint64_t) (byteAccBody->childUserTimeB6 & 0xff) << 8 * 6)
++				 	+ ((uint64_t) (byteAccBody->childUserTimeB5 & 0xff) << 8 * 5)
++				 	+ ((uint64_t) (byteAccBody->childUserTimeB4 & 0xff) << 8 * 4)
++				 	+ ((uint64_t) (byteAccBody->childUserTimeB3 & 0xff) << 8 * 3)
++				 	+ ((uint64_t) (byteAccBody->childUserTimeB2 & 0xff) << 8 * 2)
++			                + ((uint64_t) (byteAccBody->childUserTimeB1 & 0xff) << 8 * 1)
++					+ ((uint64_t) (byteAccBody->childUserTimeB0 & 0xff) << 8 * 0);
++
++			fr->cstime = 	  ((uint64_t) (byteAccBody->childSystemTimeB7 & 0xff) << 8 * 7) 
++				 	+ ((uint64_t) (byteAccBody->childSystemTimeB6 & 0xff) << 8 * 6)
++				 	+ ((uint64_t) (byteAccBody->childSystemTimeB5 & 0xff) << 8 * 5)
++				 	+ ((uint64_t) (byteAccBody->childSystemTimeB4 & 0xff) << 8 * 4)
++				 	+ ((uint64_t) (byteAccBody->childSystemTimeB3 & 0xff) << 8 * 3)
++				 	+ ((uint64_t) (byteAccBody->childSystemTimeB2 & 0xff) << 8 * 2)
++			                + ((uint64_t) (byteAccBody->childSystemTimeB1 & 0xff) << 8 * 1)
++					+ ((uint64_t) (byteAccBody->childSystemTimeB0 & 0xff) << 8 * 0);
++
++		    ap_log_rerror(FCGI_LOG_DEBUG_NOERRNO, fr->r,
++			"FastCGI: Byte packet processed: utime is %llu, stime is %llu, cutime is %llu, cstime = %llu", (unsigned long long int) fr->utime, (unsigned long long int) fr->stime, (unsigned long long int) fr->cutime, (unsigned long long int) fr->cstime);
++
++		    /* Set the request notes so we can print the rusage with mod_log through environment variables */
++		    request_rec *last = fr->r;
++                    while (last->next)
++			last = last->next; // find the last request, we insert notes there
++
++		    apr_table_setn(last->notes, "ACC_utime", apr_psprintf(last->pool,  "%llu", (unsigned long long int) fr->utime));
++		    apr_table_setn(last->notes, "ACC_stime", apr_psprintf(last->pool,  "%llu", (unsigned long long int) fr->stime));
++		    apr_table_setn(last->notes, "ACC_cutime", apr_psprintf(last->pool, "%llu", (unsigned long long int) fr->cutime));
++		    apr_table_setn(last->notes, "ACC_cstime", apr_psprintf(last->pool, "%llu", (unsigned long long int) fr->cstime));
++
++                    fr->readingByteAccBody = FALSE;
++                }
++		break;
+             case FCGI_GET_VALUES_RESULT:
+                 /* XXX coming soon */
+             case FCGI_UNKNOWN_TYPE:
+diff -Naur mod_fastcgi-2.4.7_ori/fcgi_protocol.h mod_fastcgi-2.4.7_mod/fcgi_protocol.h
+--- mod_fastcgi-2.4.7_ori/fcgi_protocol.h	1999-02-08 22:08:02.000000000 -0500
++++ mod_fastcgi-2.4.7_mod/fcgi_protocol.h	2016-02-13 01:22:38.079181456 -0500
+@@ -52,7 +52,8 @@
+ #define FCGI_DATA                8
+ #define FCGI_GET_VALUES          9
+ #define FCGI_GET_VALUES_RESULT  10
+-#define FCGI_UNKNOWN_TYPE       11
++#define FCGI_BYTE_ACC           15
++#define FCGI_UNKNOWN_TYPE       16
+ #define FCGI_MAXTYPE (FCGI_UNKNOWN_TYPE)
+ 
+ /*
+@@ -108,6 +109,49 @@
+ #define FCGI_OVERLOADED       2
+ #define FCGI_UNKNOWN_ROLE     3
+ 
++/*
++ * Byte - AAH - define Byte data structures for BSD accounting
++ */
++
++typedef struct {
++    unsigned char ownSystemTimeB7;
++    unsigned char ownSystemTimeB6;
++    unsigned char ownSystemTimeB5;
++    unsigned char ownSystemTimeB4;
++    unsigned char ownSystemTimeB3;
++    unsigned char ownSystemTimeB2;
++    unsigned char ownSystemTimeB1;
++    unsigned char ownSystemTimeB0;
++
++    unsigned char ownUserTimeB7;
++    unsigned char ownUserTimeB6;
++    unsigned char ownUserTimeB5;
++    unsigned char ownUserTimeB4;
++    unsigned char ownUserTimeB3;
++    unsigned char ownUserTimeB2;
++    unsigned char ownUserTimeB1;
++    unsigned char ownUserTimeB0;
++
++    unsigned char childSystemTimeB7;
++    unsigned char childSystemTimeB6;
++    unsigned char childSystemTimeB5;
++    unsigned char childSystemTimeB4;
++    unsigned char childSystemTimeB3;
++    unsigned char childSystemTimeB2;
++    unsigned char childSystemTimeB1;
++    unsigned char childSystemTimeB0;
++
++    unsigned char childUserTimeB7;
++    unsigned char childUserTimeB6;
++    unsigned char childUserTimeB5;
++    unsigned char childUserTimeB4;
++    unsigned char childUserTimeB3;
++    unsigned char childUserTimeB2;
++    unsigned char childUserTimeB1;
++    unsigned char childUserTimeB0;
++
++    unsigned char reserved[8];
++} FCGI_ByteAccBody;
+ 
+ /*
+  * Variable names for FCGI_GET_VALUES / FCGI_GET_VALUES_RESULT records
+diff -Naur mod_fastcgi-2.4.7_ori/mod_fastcgi.c mod_fastcgi-2.4.7_mod/mod_fastcgi.c
+--- mod_fastcgi-2.4.7_ori/mod_fastcgi.c	2008-11-09 09:31:07.000000000 -0500
++++ mod_fastcgi-2.4.7_mod/mod_fastcgi.c	2016-02-13 02:12:14.763180699 -0500
+@@ -85,8 +85,10 @@
+ #endif
+ #endif
+ 
++#include <sys/poll.h>
++
+ #ifndef timersub
+-#define	timersub(a, b, result)                              \
++#define timersub(a, b, result)                              \
+ do {                                                  \
+     (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;           \
+     (result)->tv_usec = (a)->tv_usec - (b)->tv_usec;        \
+@@ -97,11 +99,15 @@
+ } while (0)
+ #endif
+ 
++#ifdef APACHE24
++module AP_MODULE_DECLARE_DATA fastcgi_module;
++#endif
++
+ /*
+  * Global variables
+  */
+ 
+-pool *fcgi_config_pool;            	 /* the config pool */
++pool *fcgi_config_pool;                   /* the config pool */
+ server_rec *fcgi_apache_main_server;
+ 
+ const char *fcgi_wrapper = NULL;          /* wrapper path */
+@@ -505,7 +511,7 @@
+             DWORD mode = PIPE_NOWAIT | PIPE_READMODE_BYTE;
+             if (SetNamedPipeHandleState((HANDLE) fr->fd, &mode, NULL, NULL) == 0)
+             {
+-		        ap_log_rerror(FCGI_LOG_ERR, fr->r,
++                    ap_log_rerror(FCGI_LOG_ERR, fr->r,
+                     "FastCGI: SetNamedPipeHandleState() failed");
+                 return -1;
+             }
+@@ -750,7 +756,7 @@
+             
+             if (strcasecmp(name, "Content-Length") == 0) {
+                 ap_table_set(r->headers_out, name, value);
+-            	continue;
++                continue;
+             }
+ 
+             /* If the script wants them merged, it can do it */
+@@ -1056,8 +1062,7 @@
+  */
+ static int open_connection_to_fs(fcgi_request *fr)
+ {
+-    struct timeval  tval;
+-    fd_set          write_fds, read_fds;
++    struct pollfd   pollfds[1];
+     int             status;
+     request_rec * const r = fr->r;
+     pool * const rp = r->pool;
+@@ -1169,10 +1174,10 @@
+ 
+                 if (fr->fs && fr->fs->restartTime)
+ #else
+-            	struct timeval tv;
++                struct timeval tv;
+                 
+                 tv.tv_sec = 0;
+-              	tv.tv_usec =  500000;
++                tv.tv_usec =  500000;
+                 
+                 /* Avoid sleep/alarm interactions */
+                 ap_select(0, NULL, NULL, NULL, &tv);
+@@ -1361,17 +1366,6 @@
+         return FCGI_FAILED; 
+     }
+ 
+-#ifndef WIN32
+-    if (fr->fd >= FD_SETSIZE) {
+-        ap_log_rerror(FCGI_LOG_ERR, r,
+-            "FastCGI: failed to connect to server \"%s\": "
+-            "socket file descriptor (%u) is larger than "
+-            "FD_SETSIZE (%u), you probably need to rebuild Apache with a "
+-            "larger FD_SETSIZE", fr->fs_path, fr->fd, FD_SETSIZE);
+-        return FCGI_FAILED;
+-    }
+-#endif
+-
+     /* If appConnectTimeout is non-zero, setup do a non-blocking connect */
+     if ((fr->dynamic && dynamicAppConnectTimeout) || (!fr->dynamic && fr->fs->appConnectTimeout)) {
+         set_nonblocking(fr, TRUE);
+@@ -1383,9 +1377,9 @@
+ 
+     /* Connect */
+     do {
+-    	if (connect(fr->fd, (struct sockaddr *) socket_addr, socket_addr_len) == 0) {
+-    		goto ConnectionComplete;
+-    	}
++       if (connect(fr->fd, (struct sockaddr *) socket_addr, socket_addr_len) == 0) {
++          goto ConnectionComplete;
++       }
+     } while (errno == EINTR);    
+ 
+ #ifdef WIN32
+@@ -1424,14 +1418,10 @@
+ 
+     if (fr->dynamic) {
+         do {
+-            FD_ZERO(&write_fds);
+-            FD_SET(fr->fd, &write_fds);
+-            read_fds = write_fds;
+-            tval.tv_sec = dynamicPleaseStartDelay;
+-            tval.tv_usec = 0;
+-
++            pollfds[0].fd = fr->fd;
++            pollfds[0].events = POLLIN | POLLOUT;
+             do {
+-            	status = ap_select(fr->fd + 1, &read_fds, &write_fds, NULL, &tval);
++              status = poll(pollfds, 1, dynamicPleaseStartDelay * 1000);
+             } while (status < 0 && errno == EINTR);
+ 
+             if (status < 0)
+@@ -1442,7 +1432,7 @@
+             if (status > 0)
+                 break;
+ 
+-            /* select() timed out */
++            /* poll() timed out */
+             send_to_pm(FCGI_REQUEST_TIMEOUT_JOB, fr->fs_path, fr->user, fr->group, 0, 0);
+         } while ((fr->queueTime.tv_sec - fr->startTime.tv_sec) < (int)dynamicAppConnectTimeout);
+ 
+@@ -1456,14 +1446,10 @@
+         }
+     }  /* dynamic */
+     else {
+-        tval.tv_sec = fr->fs->appConnectTimeout;
+-        tval.tv_usec = 0;
+-        FD_ZERO(&write_fds);
+-        FD_SET(fr->fd, &write_fds);
+-        read_fds = write_fds;
+-
++        pollfds[0].fd = fr->fd;
++        pollfds[0].events = POLLIN | POLLOUT;
+         do {
+-        	status = ap_select(fr->fd + 1, &read_fds, &write_fds, NULL, &tval);
++          status = poll(pollfds, 1, fr->fs->appConnectTimeout * 1000);
+         } while (status < 0 && errno == EINTR);
+ 
+         if (status == 0) {
+@@ -1481,11 +1467,11 @@
+ #endif
+         ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+             "FastCGI: failed to connect to server \"%s\": "
+-            "select() failed", fr->fs_path);
++            "poll() failed", fr->fs_path);
+         return FCGI_FAILED;
+     }
+ 
+-    if (FD_ISSET(fr->fd, &write_fds) || FD_ISSET(fr->fd, &read_fds)) {
++    if ((pollfds[0].revents & POLLIN) || pollfds[0].revents & POLLOUT) {
+         int error = 0;
+         NET_SIZE_T len = sizeof(error);
+ 
+@@ -1496,7 +1482,7 @@
+ #endif
+             ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+                 "FastCGI: failed to connect to server \"%s\": "
+-                "select() failed (Solaris pending error)", fr->fs_path);
++                "poll() failed (Solaris pending error)", fr->fs_path);
+             return FCGI_FAILED;
+         }
+ 
+@@ -1505,7 +1491,7 @@
+             errno = error;
+             ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+                 "FastCGI: failed to connect to server \"%s\": "
+-                "select() failed (pending error)", fr->fs_path);
++                "poll() failed (pending error)", fr->fs_path);
+             return FCGI_FAILED;
+         }
+     } 
+@@ -1515,7 +1501,7 @@
+ #endif
+         ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+             "FastCGI: failed to connect to server \"%s\": "
+-            "select() error - THIS CAN'T HAPPEN!", fr->fs_path);
++            "poll() error - THIS CAN'T HAPPEN!", fr->fs_path);
+         return FCGI_FAILED;
+     }
+ 
+@@ -1544,7 +1530,7 @@
+ 
+     fcgi_buf_reset(fr->clientInputBuffer);
+     fcgi_buf_get_free_block_info(fr->clientInputBuffer, &base, &size);
+-	while (ap_get_client_block(fr->r, base, size) > 0);
++    while (ap_get_client_block(fr->r, base, size) > 0);
+ }
+ 
+ static apcb_t cleanup(void *data)
+@@ -1997,11 +1983,9 @@
+     request_rec * const r = fr->r;
+ 
+     struct timeval timeout;
+-    struct timeval dynamic_last_io_time;
+-    fd_set read_set;
+-    fd_set write_set;
+-    int nfds = 0;
+-    int select_status = 1;
++    struct timeval dynamic_last_io_time = {0, 0};
++    struct pollfd pollfds[2];
++    int poll_status = 1;
+     int idle_timeout;
+     int rv;
+     int dynamic_first_recv = fr->dynamic ? 1 : 0;
+@@ -2039,8 +2023,8 @@
+ 
+     for (;;)
+     {
+-        FD_ZERO(&read_set);
+-        FD_ZERO(&write_set);
++        pollfds[0].events = 0;
++        pollfds[1].events = 0;
+ 
+         switch (state)
+         {
+@@ -2084,12 +2068,12 @@
+ 
+                 set_nonblocking(fr, TRUE);
+                 is_connected = 1;
+-                nfds = fr->fd + 1;
+             }
+ 
+             if (BufferLength(fr->serverOutputBuffer))
+             {
+-                FD_SET(fr->fd, &write_set);
++                pollfds[0].fd = fr->fd;
++                pollfds[0].events = POLLOUT;
+             }
+             else
+             {
+@@ -2101,7 +2085,8 @@
+ 
+         case STATE_SERVER_RECV:
+ 
+-            FD_SET(fr->fd, &read_set);
++            pollfds[1].fd = fr->fd;
++            pollfds[1].events = POLLIN;
+ 
+             /* fall through */
+ 
+@@ -2156,7 +2141,7 @@
+ 
+             fcgi_util_ticks(&fr->queueTime);
+ 
+-            if (select_status) 
++            if (poll_status) 
+             {
+                 /* a send() succeeded last pass */
+                 dynamic_last_io_time = fr->queueTime;
+@@ -2183,7 +2168,7 @@
+ 
+             delay = dynamic_first_recv * dynamicPleaseStartDelay;
+ 
+-	    FCGIDBG5("qwait=%ld.%06ld delay=%d first_recv=%d", qwait.tv_sec, qwait.tv_usec, delay, dynamic_first_recv);
++            FCGIDBG5("qwait=%ld.%06ld delay=%d first_recv=%d", qwait.tv_sec, qwait.tv_usec, delay, dynamic_first_recv);
+ 
+             if (qwait.tv_sec < delay) 
+             {
+@@ -2209,20 +2194,20 @@
+         
+         /* wait on the socket */
+         do {
+-            select_status = ap_select(nfds, &read_set, &write_set, NULL, &timeout);
+-        } while (select_status < 0 && errno == EINTR);
++            poll_status = poll(pollfds, 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
++        } while (poll_status < 0 && errno == EINTR);
+ 
+-        if (select_status < 0)
++        if (poll_status < 0)
+         {
+             ap_log_rerror(FCGI_LOG_ERR_ERRNO, r, "FastCGI: comm with server "
+-                "\"%s\" aborted: select() failed", fr->fs_path);
++                "\"%s\" aborted: poll() failed", fr->fs_path);
+             state = STATE_ERROR;
+             break;
+         }
+ 
+-        if (select_status == 0) 
++        if (poll_status == 0) 
+         {
+-            /* select() timeout */
++            /* poll() timeout */
+ 
+             if (BufferLength(fr->clientOutputBuffer)) 
+             {
+@@ -2252,8 +2237,13 @@
+             }
+         }
+ 
+-        if (FD_ISSET(fr->fd, &write_set))
++        if (! ((pollfds[0].revents & POLLOUT) || (pollfds[1].revents & POLLIN)) ) {
++           ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: neither POLLIN nor POLLOUT...");
++        }
++
++        if (pollfds[0].revents & POLLOUT)
+         {
++            /* ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: POLLOUT"); */
+             /* send to the server */
+ 
+             rv = fcgi_buf_socket_send(fr->serverOutputBuffer, fr->fd);
+@@ -2267,8 +2257,9 @@
+             }
+         } 
+ 
+-        if (FD_ISSET(fr->fd, &read_set)) 
++        if (pollfds[1].revents & POLLIN)
+         {
++            /* ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: POLLIN"); */
+             /* recv from the server */
+ 
+             if (dynamic_first_recv) 
+@@ -2281,27 +2272,27 @@
+ 
+             if (rv < 0) 
+             {
+-            	if (errno == EAGAIN) 
+-            	{
++              if (errno == EAGAIN) 
++              {
+                     /* this reportedly occurs on AIX 5.2 sporadically */
+                     struct timeval tv;
+                     tv.tv_sec = 1;
+                     tv.tv_usec = 0;
+ 
+-            		ap_log_rerror(FCGI_LOG_INFO, r, "FastCGI: comm with server "
+-            				"\"%s\" interrupted: read will be retried in 1 second", 
+-            				fr->fs_path);
++                    ap_log_rerror(FCGI_LOG_INFO, r, "FastCGI: comm with server "
++                       "\"%s\" interrupted: read will be retried in 1 second", 
++                       fr->fs_path);
+             		
+                     /* avoid sleep/alarm interactions */
+                     ap_select(0, NULL, NULL, NULL, &tv);
+-            	}
+-            	else 
+-            	{
+-            		ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: comm with server "
+-            				"\"%s\" aborted: read failed", fr->fs_path);
+-            		state = STATE_ERROR;
+-            		break;
+-            	}
++              }
++              else 
++              {
++                    ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: comm with server "
++                       "\"%s\" aborted: read failed", fr->fs_path);
++                    state = STATE_ERROR;
++                    break;
++              }
+             }
+             else if (rv == 0) 
+             {
+@@ -2517,8 +2508,7 @@
+         }
+     }
+ 
+-    fr->nph = (strncmp(strrchr(fs_path, '/'), "/nph-", 5) == 0)
+-		|| (fs && fs->nph);
++    fr->nph = (strncmp(strrchr(fs_path, '/'), "/nph-", 5) == 0) || (fs && fs->nph);
+ 
+     fr->serverInputBuffer = fcgi_buf_new(p, SERVER_BUFSIZE);
+     fr->serverOutputBuffer = fcgi_buf_new(p, SERVER_BUFSIZE);
+@@ -2552,25 +2542,30 @@
+ 
+     if (fr->nph) {
+ #ifdef APACHE2    
+-		struct ap_filter_t *cur;
++       struct ap_filter_t *cur;
+ 
+-		fr->parseHeader = SCAN_CGI_FINISHED;
++       fr->parseHeader = SCAN_CGI_FINISHED;
+ 
+-		/* remove the filters up through protocol - since the headers
+-		 * haven't been parsed, there is no way they can work */
++       /* remove the filters up through protocol - since the headers
++       * haven't been parsed, there is no way they can work */
+ 
+-		cur = r->proto_output_filters;
+-		while (cur && cur->frec->ftype < AP_FTYPE_CONNECTION) {
+-			cur = cur->next;
+-		}
+-		r->output_filters = r->proto_output_filters = cur;
+-#else
+-	    ap_log_rerror(FCGI_LOG_ERR_NOERRNO, r, 
+-	        "FastCGI: invalid request \"%s\": non parsed header support is "
+-	    		"not available in Apache13 (patch welcome)", fs_path);
+-	    return HTTP_FORBIDDEN;
++       cur = r->proto_output_filters;
++       while (cur && cur->frec->ftype < AP_FTYPE_CONNECTION) {
++          cur = cur->next;
++       }
++       r->output_filters = r->proto_output_filters = cur;
++#else
++       ap_log_rerror(FCGI_LOG_ERR_NOERRNO, r, 
++          "FastCGI: invalid request \"%s\": non parsed header support is "
++          "not available in Apache13 (patch welcome)", fs_path);
++       return HTTP_FORBIDDEN;
+ #endif    
+-	}
++    }
++
++    /* Byte AAH */
++    fr->byteAccBufPtr = fcgi_buf_new(p, sizeof(FCGI_ByteAccBody) + 1);
++    fr->readingByteAccBody = 1;
++    /* End Byte AAH */
+ 
+     set_uid_n_gid(r, &fr->user, &fr->group);
+ 
+@@ -2615,7 +2610,7 @@
+ static int post_process_for_redirects(request_rec * const r,
+     const fcgi_request * const fr)
+ {
+-	switch(fr->parseHeader) {
++    switch(fr->parseHeader) {
+         case SCAN_CGI_INT_REDIRECT:
+ 
+             /* @@@ There are still differences between the handling in
+@@ -2637,14 +2632,14 @@
+ 
+         default:
+ #ifdef APACHE2        	
+-	        {
+-	        	apr_bucket_brigade *brigade = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+-	        	apr_bucket* bucket = apr_bucket_eos_create(r->connection->bucket_alloc);
+-	        	APR_BRIGADE_INSERT_HEAD(brigade, bucket);
+-	        	return ap_pass_brigade(r->output_filters, brigade); 
+-	        }
++              {
++                    apr_bucket_brigade *brigade = apr_brigade_create(r->pool, r->connection->bucket_alloc);
++                    apr_bucket* bucket = apr_bucket_eos_create(r->connection->bucket_alloc);
++                    APR_BRIGADE_INSERT_HEAD(brigade, bucket);
++                    return ap_pass_brigade(r->output_filters, brigade); 
++              }
+ #else 
+-	        return OK;
++              return OK;
+ #endif
+     }
+ }
+@@ -2933,11 +2928,11 @@
+ 
+         get_request_identity(r, &uid, &gid);
+ 
+-	    if (fcgi_util_fs_get_by_id(r->filename, uid, gid))
+-	    {
+-	        r->handler = FASTCGI_HANDLER_NAME;
+-	        return OK;
+-	    }
++        if (fcgi_util_fs_get_by_id(r->filename, uid, gid))
++        {
++            r->handler = FASTCGI_HANDLER_NAME;
++            return OK;
++        }
+     }
+ 
+     return DECLINED;
+@@ -3009,7 +3004,11 @@
+     ap_hook_fixups(fixups, NULL, NULL, APR_HOOK_MIDDLE); 
+ }
+ 
++#ifdef APACHE24
++AP_DECLARE_MODULE(fastcgi) =
++#else
+ module AP_MODULE_DECLARE_DATA fastcgi_module =
++#endif
+ {
+     STANDARD20_MODULE_STUFF,
+     fcgi_config_create_dir_config,  /* per-directory config creator */

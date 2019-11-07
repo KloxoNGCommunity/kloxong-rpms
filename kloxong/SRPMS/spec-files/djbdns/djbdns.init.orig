@@ -1,0 +1,105 @@
+#!/bin/sh
+
+# For Red Hat chkconfig
+# chkconfig: - 11 89
+# description: The djbdns DNS Server
+
+PATH=/var/qmail/bin:/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
+export PATH
+
+if [ -x /usr/xpg4/bin/id ]; then
+   ID=/usr/xpg4/bin/id
+else
+   ID=id
+fi
+
+TINYDNSUID=`$ID -u tinydns`
+TINYDNSGID=`$ID -g tinydns`
+
+DNSCACHEUID=`$ID -u dnscache`
+DNSCACHEGID=`$ID -g dnscache`
+
+DNSLOGUID=`$ID -u dnslog`
+DNSLOGGID=`$ID -g dnslog`
+
+if [ "$1"x = "help"x ]; then
+    cat <<HELP
+   stop -- stops djbdns service
+  start -- starts djbdns service
+ status -- displays status of djbdns service
+restart -- stops and restarts djbdns service
+HELP
+    exit 0
+fi
+
+if [ "$1"x != "start"x -a "$1"x != "stop"x -a "$1"x != "status"x -a "$1"x != "restart"x ]; then
+   echo "Usage: $0 {start|stop|restart|status|help}"
+   exit 1
+fi
+
+if [ ! -f /etc/sysconfig/djbdns ]; then
+   exit 0
+fi
+
+case "$1" in
+   start)
+      cat /etc/sysconfig/djbdns |
+      while read djb_dir
+      do
+        BASENAME=`basename $djb_dir`
+        echo "Starting djbdns $djb_dir"
+        rm -f $djb_dir/down
+        ln -sf $djb_dir /service
+        svc -u /service/$BASENAME 2> /dev/null
+
+        if [ -d /var/lock/subsys ]; then
+           touch /var/lock/subsys/djbdns.$BASENAME
+        fi
+      done
+      ;;
+   stop)
+      cat /etc/sysconfig/djbdns |
+      while read djb_dir
+      do
+        BASENAME=`basename $djb_dir`
+        echo "Stopping djbdns $djb_dir"
+        rm -f /service/$BASENAME
+        touch $djb_dir/down
+
+        svc -x $djb_dir 2> /dev/null
+        svc -d $djb_dir 2> /dev/null
+
+        svc -x $djb_dir/log 2> /dev/null
+        svc -d $djb_dir/log 2> /dev/null
+
+        if [ -f /var/lock/subsys/djbdns.$BASENAME ]; then
+           rm /var/lock/subsys/djbdns.$BASENAME
+        fi
+      done
+      ;;
+   status)
+      cat /etc/sysconfig/djbdns |
+      while read djb_dir
+      do
+        if [ "$djb_dir"x != "x" ]; then
+          svstat $djb_dir
+          svstat $djb_dir/log
+        fi
+      done
+      ;;
+   restart)
+      /etc/init.d/djbdns stop
+
+      # Wait more than 5 seconds for svscan to stop service.
+      sleep 6
+
+      /etc/init.d/djbdns start
+      ;;
+   *)
+      echo "Usage: $0 {start|stop|restart|status|help}"
+      exit 1
+      ;;
+esac
+
+exit 0
+

@@ -1,0 +1,209 @@
+ .gear/rules                                        |  2 +
+ .../tags/dc479293169b07c40137325df55cb29614ad8015  | 13 ++++++
+ .gear/tags/list                                    |  1 +
+ Makefile.in                                        |  4 +-
+ README.rst                                         |  3 ++
+ fcgiwrap.c                                         | 31 ++++++++++++--
+ fcgiwrap.spec                                      | 49 ++++++++++++++++++++++
+ 7 files changed, 98 insertions(+), 5 deletions(-)
+
+diff --git a/.gear/rules b/.gear/rules
+new file mode 100644
+index 0000000..4b0460c
+--- /dev/null
++++ b/.gear/rules
+@@ -0,0 +1,2 @@
++tar: v@version@:.
++diff: v@version@:. .
+diff --git a/.gear/tags/dc479293169b07c40137325df55cb29614ad8015 b/.gear/tags/dc479293169b07c40137325df55cb29614ad8015
+new file mode 100644
+index 0000000..cded031
+--- /dev/null
++++ b/.gear/tags/dc479293169b07c40137325df55cb29614ad8015
+@@ -0,0 +1,13 @@
++object 333ff9951b169f6a093608497b8b97f304365017
++type commit
++tag v1.1.0
++tagger Anton Farygin <rider@altlinux.com> 1379424237 +0400
++
++1.1.0
++-----BEGIN PGP SIGNATURE-----
++Version: GnuPG v1.4.14 (GNU/Linux)
++
++iEYEABECAAYFAlI4V/IACgkQqohfd2vlwKvJtgCgrpvoAuXo1aCifndRfWjmNRzA
++TtwAoLX1NTcieQ6mdIBjSM9Cxv2elKpl
++=gXuO
++-----END PGP SIGNATURE-----
+diff --git a/.gear/tags/list b/.gear/tags/list
+new file mode 100644
+index 0000000..f1262a2
+--- /dev/null
++++ b/.gear/tags/list
+@@ -0,0 +1 @@
++dc479293169b07c40137325df55cb29614ad8015 v1.1.0
+diff --git a/Makefile.in b/Makefile.in
+index 97378e5..e6ad58f 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -1,5 +1,5 @@
+-targetdir = $(DESTDIR)@prefix@@sbindir@
+-man8dir = $(DESTDIR)@prefix@@mandir@/man8
++targetdir = $(DESTDIR)@sbindir@
++man8dir = $(DESTDIR)@mandir@/man8
+ datarootdir =
+ 
+ .PHONY:	clean distclean
+diff --git a/README.rst b/README.rst
+index 377ead8..4686c34 100644
+--- a/README.rst
++++ b/README.rst
+@@ -7,6 +7,9 @@ fcgiwrap
+ :Contributors:	W-Mark Kubacki <wmark@hurrikane.de>
+                 Jordi Mallach <jordi@debian.org>
+ 
++
++This page has been translated into `Spanish <http://www.webhostinghub.com/support/es/misc/fcgiwrap>`_ language by Maria Ramos from `Webhostinghub.com/support/edu <http://www.webhostinghub.com/support/edu>`_.
++
+ Features
+ ========
+  - very lightweight (84KB of private memory per instance)
+diff --git a/fcgiwrap.c b/fcgiwrap.c
+index 81c5062..d4f7901 100644
+--- a/fcgiwrap.c
++++ b/fcgiwrap.c
+@@ -58,6 +58,8 @@
+ 
+ extern char **environ;
+ static char * const * inherited_environ;
++static const char **allowed_programs;
++static size_t allowed_programs_count;
+ 
+ static const char * blacklisted_env_vars[] = {
+ 	"AUTH_TYPE",
+@@ -485,6 +487,19 @@ static void inherit_environment(void)
+ 	}
+ }
+ 
++static bool is_allowed_program(const char *program) {
++	size_t i;
++	if (!allowed_programs_count)
++		return true;
++
++	for (i = 0; i < allowed_programs_count; i++) {
++		if (!strcmp(allowed_programs[i], program))
++			return true;
++	}
++
++	return false;
++}
++
+ static void cgi_error(const char *message, const char *reason, const char *filename)
+ {
+ 	printf("Status: %s\r\nContent-Type: text/plain\r\n\r\n%s\r\n",
+@@ -541,6 +556,9 @@ static void handle_fcgi_request(void)
+ 			if (!filename)
+ 				cgi_error("403 Forbidden", "Cannot get script name, are DOCUMENT_ROOT and SCRIPT_NAME (or SCRIPT_FILENAME) set and is the script executable?", NULL);
+ 
++			if (!is_allowed_program(filename))
++				cgi_error("403 Forbidden", "The given script is not allowed to execute", filename);
++
+ 			last_slash = strrchr(filename, '/');
+ 			if (!last_slash)
+ 				cgi_error("403 Forbidden", "Script name must be a fully qualified path", filename);
+@@ -605,7 +623,7 @@ static void sigchld_handler(int dummy)
+ {
+ 	int status;
+ 
+-	while ((dummy = waitpid(-1, &status, WNOHANG)) != -1) {
++	while ((dummy = waitpid(-1, &status, WNOHANG)) > 0) {
+ 		/* sanity check */
+ 		if (nrunning > 0)
+ 			nrunning--;
+@@ -760,7 +778,7 @@ int main(int argc, char **argv)
+ 	char *socket_url = NULL;
+ 	int c;
+ 
+-	while ((c = getopt(argc, argv, "c:hfs:")) != -1) {
++	while ((c = getopt(argc, argv, "c:hfs:p:")) != -1) {
+ 		switch (c) {
+ 			case 'f':
+ 				stderr_to_fastcgi++;
+@@ -773,6 +791,7 @@ int main(int argc, char **argv)
+ 					"  -c <number>\t\tNumber of processes to prefork\n"
+ 					"  -s <socket_url>\tSocket to bind to (say -s help for help)\n"
+ 					"  -h\t\t\tShow this help message and exit\n"
++					"  -p <path>\t\tRestrict execution to this script. (repeated options will be merged)\n"
+ 					"\nReport bugs to Grzegorz Nosek <"PACKAGE_BUGREPORT">.\n"
+ 					PACKAGE_NAME" home page: <http://nginx.localdomain.pl/wiki/FcgiWrap>\n",
+ 					argv[0]
+@@ -784,8 +803,14 @@ int main(int argc, char **argv)
+ 			case 's':
+ 				socket_url = strdup(optarg);
+ 				break;
++			case 'p':
++				allowed_programs = realloc(allowed_programs, (allowed_programs_count + 1) * sizeof (char *));
++				if (!allowed_programs)
++					abort();
++				allowed_programs[allowed_programs_count++] = strdup(optarg);
++				break;
+ 			case '?':
+-				if (optopt == 'c' || optopt == 's')
++				if (optopt == 'c' || optopt == 's' || optopt == 'p')
+ 					fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+ 				else if (isprint(optopt))
+ 					fprintf(stderr, "Unknown option `-%c'.\n", optopt);
+diff --git a/fcgiwrap.spec b/fcgiwrap.spec
+new file mode 100644
+index 0000000..b376fae
+--- /dev/null
++++ b/fcgiwrap.spec
+@@ -0,0 +1,49 @@
++Summary: Simple FastCGI wrapper for CGI scripts
++Name: fcgiwrap
++Version: 1.1.0
++Release: alt2
++License: BSD-style
++Group: System/Servers
++URL: http://nginx.localdomain.pl/wiki/FcgiWrap
++Source: %name-%version.tar
++# git://github.com/gnosek/fcgiwrap.git
++Patch0: %name-%version-%release.patch
++
++# Automatically added by buildreq on Tue Oct 19 2010
++BuildRequires: libfcgi-devel
++
++%description
++fcgiwrap  is a simple server for running CGI applications over FastCGI.
++It hopes to provide clean CGI support to Nginx (and other  web  servers
++that may need it).
++
++
++%prep
++%setup -q
++%patch0 -p1
++
++
++%build
++autoreconf -fisv
++%configure
++%make
++
++%install
++%makeinstall_std
++
++%files
++%_sbindir/fcgiwrap
++%_man8dir/*
++
++%changelog
++* Fri Apr 18 2014 Anton Farygin <rider@altlinux.ru> 1.1.0-alt2
++- updated from upstream git
++
++* Tue Sep 17 2013 Anton Farygin <rider@altlinux.ru> 1.1.0-alt1
++- new version
++
++* Mon Apr 15 2013 Dmitry V. Levin (QA) <qa_ldv@altlinux.org> 1.0.3-alt1.qa1
++- NMU: rebuilt for debuginfo.
++
++* Tue Oct 19 2010 Anton Farygin <rider@altlinux.ru> 1.0.3-alt1
++- first build for Sisyphus

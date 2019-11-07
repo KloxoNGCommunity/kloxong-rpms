@@ -1,0 +1,157 @@
+#!/usr/bin/perl -w
+#
+# make-data
+# jms1 2003-05-27
+#
+# builds a "data" file from one or more input files
+# automatically injects a consistent serial number in all "Z" lines
+# converts "." lines to "Z" lines with consistent serial numbers, along
+#   with "&" and "+" lines as appropriate.
+#
+# 2008-05-09 jms1 - making "Z" code more intelligent- detects missing fields
+#   at beginning of line, fills in any trailing time-related fields with djb's
+#   default values (to avoid ambiguity in the generated "data" lines.)
+#   thanks to Bruce McAlister for reporting a bug (even if it wasn't the bug
+#   he thought it was...)
+#   also cleaned up logic for "." lines while i was in there.
+#
+###############################################################################
+#
+# Copyright (C) 2003,2005,2008 John Simpson.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 or version 3 of the
+# license, at your option.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+###############################################################################
+
+require 5.003 ;
+use strict ;
+
+# djb's defaults for SOA records
+my $ref =   16384 ; # refresh time (16384)
+my $ret =    2048 ; # retry time (2048)
+my $exp = 1048576 ; # expire time (1048576)
+my $min =    2560 ; # minimum time (2560)
+
+my $rcrypto = <<EOF ;
+Please refer to http://cr.yp.to/djbdns/tinydns-data.html for details.
+EOF
+
+my $t = time ;
+
+sub makeline(@)
+{
+  my $text = join ( ":" , @_ ) ;
+  $text =~ s/\:+$// ;
+  print "$text\n" ;
+}
+
+while ( my $line = <> )
+{
+  next unless ( $line =~ /[^\s]/ ) ;
+  next if ( $line =~ /^#/ ) ;
+
+  if ( $line =~ /^Z/ )
+  {
+    chomp $line ;
+    my @w = split ( /\:/ , $line ) ;
+
+    die "ERROR: \"Z\" line missing \"fqdn\": $line\n$rcrypto"
+      unless ( $w[0] ) ;
+    die "ERROR: \"Z\" line missing \"mname\": $line\n$rcrypto"
+      unless ( $w[1] ) ;
+    die "ERROR: \"Z\" line missing \"rname\": $line\n$rcrypto"
+      unless ( $w[2] ) ;
+
+    $w[3]   = $t   ;
+    $w[4] ||= $ref ;
+    $w[5] ||= $ret ;
+    $w[6] ||= $exp ;
+    $w[7] ||= $min ;
+    $line = join ( ":" , @w ) . "\n" ;
+  }
+
+  if ( $line =~ s/^\.// )
+  {
+    chomp $line ;
+    my @w = split ( /\:/ , $line ) ;
+    push ( @w , "" , "" , "" , "" , "" ) ;
+
+    die "ERROR: \".\" line missing \"fqdn\": $line$rcrypto"
+      unless ( $w[0] ) ;
+
+    my $nsname = $w[2]
+      ? ( ( $w[2] =~ /\./ ) ? $w[2] : "$w[2].ns.$w[0]" )
+      : "ns.$w[0]" ;
+
+    my $rname = "hostmaster.$w[0]" ;
+
+    makeline ( "Z$w[0]" , $nsname , $rname , $t ,
+      $ref , $ret , $exp , $min ,
+      $w[3] , $w[4] , $w[5] ) ;
+
+    makeline ( "&$w[0]" , "", $nsname ,			
+      $w[3] , $w[4] , $w[5] ) ;
+
+    if ( $w[1] )
+    {
+      if ( $w[1] =~ /\./ ) # If it contains '.'
+      {
+        makeline ( "+$nsname" , $w[1] ,
+          $w[3] , $w[4] , $w[5] ) ; # IPv4
+      }
+      else
+      {
+        makeline ( "3$nsname" , $w[1] ,
+          $w[3] , $w[4] , $w[5] ) ; # IPv6
+      }
+    }
+
+    next;
+  }
+
+  if ( $line =~ s/^\&// )
+  {
+    chomp $line ;
+    my @w = split ( /\:/ , $line ) ;
+    push ( @w , "" , "" , "" , "" , "" ) ;
+
+    die "ERROR: \"&\" line missing \"fqdn\": $line$rcrypto"
+      unless ( $w[0] ) ;
+
+    my $nsname = $w[2]
+      ? ( ( $w[2] =~ /\./ ) ? $w[2] : "$w[2].ns.$w[0]" )
+      : "ns.$w[0]" ;
+
+    makeline ( "&$w[0]" , "", $nsname ,			
+      $w[3] , $w[4] , $w[5] ) ;
+
+    if ( $w[1] )
+    {
+      if ( $w[1] =~ /\./ ) # If it contains '.'
+      {
+        makeline ( "+$nsname" , $w[1] ,
+          $w[3] , $w[4] , $w[5] ) ; # IPv4
+      }
+      else
+      {
+        makeline ( "3$nsname" , $w[1] ,
+          $w[3] , $w[4] , $w[5] ) ; # IPv6
+      }
+    }
+
+    next ;
+  }
+
+  print $line ;
+}

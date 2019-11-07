@@ -1,0 +1,42 @@
+--- djbdns-1.05/query.c	2001-02-11 14:11:45.000000000 -0700
++++ djbdns-1.05/query.c	2005-03-16 12:48:23.236594392 -0700
+@@ -187,6 +187,7 @@
+   int flagsoa;
+   uint32 ttl;
+   uint32 soattl;
++  uint32 cachettl;
+   uint32 cnamettl;
+   int i;
+   int j;
+@@ -475,6 +476,7 @@
+   flagreferral = 0;
+   flagsoa = 0;
+   soattl = 0;
++  cachettl = 0;
+   cnamettl = 0;
+   for (j = 0;j < numanswers;++j) {
+     pos = dns_packet_getname(buf,len,pos,&t1); if (!pos) goto DIE;
+@@ -512,6 +514,11 @@
+ 
+     uint16_unpack_big(header + 8,&datalen);
+     pos += datalen;
++
++    if (flagsoa && (pos <= len)) {
++      cachettl = ttlget(buf + pos - 4);
++      if (soattl < cachettl) cachettl = soattl;
++    }
+   }
+   posglue = pos;
+ 
+@@ -689,8 +696,8 @@
+   }
+ 
+   if (rcode == 3) {
+-    log_nxdomain(whichserver,d,soattl);
+-    cachegeneric(DNS_T_ANY,d,"",0,soattl);
++    log_nxdomain(whichserver,d,cachettl);
++    cachegeneric(DNS_T_ANY,d,"",0,cachettl);
+ 
+     NXDOMAIN:
+     if (z->level) goto LOWERLEVEL;
+

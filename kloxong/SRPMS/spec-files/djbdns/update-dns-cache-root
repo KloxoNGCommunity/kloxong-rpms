@@ -1,0 +1,54 @@
+#!/bin/sh
+# Update the DNS root IP file used by the dns cache resolver.
+#
+# Subroutines
+
+update_djb_dnscache()
+{
+if [ ! -f "$ROOTFILE" ]; then
+  exit 0
+fi
+dnsip `dnsqr ns . | awk '/^answer: \./ { print $5 }' | sort` > $UPDATEFILE
+if [ -f "$ROOTFILE" ]; then
+#  echo "====="
+#  echo "Results: "
+#  echo "====="
+#  cat $UPDATEFILE
+#  echo "====="
+  diff=`diff $ROOTFILE $UPDATEFILE`
+  if [ "$diff"x != "x" ]; then
+    echo "Updating $ROOTFILE"
+    mv -f $UPDATEFILE "$ROOTFILE"
+    /sbin/cache-reload
+  fi
+fi
+rm -f $UPDATEFILE
+}
+
+update_unbound()
+{
+  # TODO: Generate root server list and update file.
+  # Don't need this yet but if/when we do this is where it should
+  # do this function.
+  /sbin/cache-reload
+}
+
+# Main
+UPDATEFILE=/tmp/dns.root.update.$$
+CACHEDIR=""
+CACHESERVER=""
+ROOTFILE=""
+if [ -f /etc/sysconfig/dns.cache ]; then
+  read CACHESERVER CACHEDIR < /etc/sysconfig/dns.cache
+  ROOTFILE="$CACHEDIR/root/servers/@"
+fi
+if [ "$CACHESERVER"x = "djbdns"x ]; then
+  update_djb_dnscache
+fi
+
+if [ "$CACHESERVER"x = "unbound"x ]; then
+  update_unbound
+fi
+
+exit 0
+

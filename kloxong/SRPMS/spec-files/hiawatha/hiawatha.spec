@@ -5,8 +5,8 @@
 %define use_systemd (0%{?fedora} && 0%{?fedora} >= 18) || (0%{?rhel} && 0%{?rhel} >= 7) || (0%{?suse_version} && 0%{?suse_version} >=1210)
 
 %define STEP_VERSION f
-%define REAL_VERSION 10.6
-%define APPEAR_VERSION 10.6.0
+%define REAL_VERSION 10.9
+%define APPEAR_VERSION 10.9.0
 
 %define _dist_ver %(sh /usr/lib/rpm/redhat/dist.sh)
 
@@ -15,7 +15,7 @@
 Summary:	An advanced and secure webserver for Unix
 Name:		hiawatha
 Version:	%{FULL_VERSION}
-Release:	%{STEP_VERSION}.1%{?dist}
+Release:	%{STEP_VERSION}.2%{?dist}
 Source0:	http://www.hiawatha-webserver.org/files/%{name}-%{REAL_VERSION}.tar.gz
 Source1:	%{name}-sysvscript
 Source2:	%{name}-systemd
@@ -46,6 +46,8 @@ Patch1060: 	hiawatha-10.2-patch-22.patch
 Patch1070: 	hiawatha-10.4_enable-root-user.patch
 
 Patch1071: 	hiawatha-10.5_nobody-99.patch
+
+Patch1080: 	hiawatha-10.9_mbedtls_bignum.patch
 
 License:	GPLv2+
 Group:		System Environment/Daemons
@@ -100,6 +102,9 @@ sed -i 's|{CMAKE_INSTALL_LIBDIR}/hiawatha|{CMAKE_INSTALL_LIBDIR}|' CMakeLists.tx
 #%patch1070 -p1
 %patch1071 -p1
 
+%if 0%{?__isa_bits} != 64
+%patch1080 -p1
+%endif
 
 %build
 CFLAGS="${CFLAGS:-%optflags}" ; export CFLAGS
@@ -123,6 +128,7 @@ FFLAGS="${FFLAGS:-%optflags}" ; export FFLAGS
       -DENABLE_TLS=ON \
       -DENABLE_TOMAHAWK=ON \
       -DENABLE_TOOLKIT=ON \
+      -DENABLE_TESTING=OFF \
       -DENABLE_XSLT=on
 
 
@@ -159,6 +165,7 @@ sed -i 's|/usr/var/log/hiawatha/|/var/log/hiawatha/|' %{buildroot}%{_sysconfdir}
 %{_bindir}/ssi-cgi
 %{_sbindir}/cgi-wrapper
 %{_sbindir}/wigwam
+%{_sbindir}/lefh
 %{_libdir}/*
 %if %{use_systemd}
 %{_unitdir}/%{name}.service
@@ -169,6 +176,9 @@ sed -i 's|/usr/var/log/hiawatha/|/var/log/hiawatha/|' %{buildroot}%{_sysconfdir}
 
 
 %changelog
+* Fri May 10 2019 Mustafa Ramadhan <mustafa@bigraf.com> - 10.9.0.f-2
+- update to 10.9
+
 * Thu Apr 27 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 10.6.0.f-1
 - update to 10.6
 

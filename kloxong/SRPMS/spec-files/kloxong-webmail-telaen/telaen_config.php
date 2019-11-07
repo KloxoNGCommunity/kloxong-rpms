@@ -1,0 +1,430 @@
+<?php
+/************************************************************************
+Telaen is a GPL'ed software developed by 
+
+ - The Telaen Group
+ - http://www.telaen.org/
+
+*************************************************************************/
+
+defined('I_AM_TELAEN') or die('Direct access not permitted');
+
+########################################################################
+# Load in the version information
+########################################################################
+
+require("./inc/version.php");
+
+########################################################################
+#Defaults:
+#1 - Yes/On/True
+#0 - No/Off/False
+# do not remove or change this
+########################################################################
+
+define("yes",1);
+define("no",0);
+$themes         = Array();
+$languages      = Array();
+
+########################################################################
+# Language & themes settings
+########################################################################
+
+require("./inc/config/config.languages.php");
+
+########################################################################
+# Security related settings
+########################################################################
+
+require("./inc/config/config.security.php");
+
+########################################################################
+# Read in $systemNews (not required)
+########################################################################
+
+@include("./inc/news/news.system.php");
+
+########################################################################
+# Location of the Smarty template installation.
+# We bundle Smarty, but you can point it to your
+# locally installed version if you like. Not matter
+# what, make sure Smarty is not located under your
+# public web-space. DO NOT USE THE BUNDLED VERSION
+# AS IS WITHOUT MOVING IT TO A SAFE LOCATION
+########################################################################
+
+define("SMARTY_DIR","./smarty/");
+
+########################################################################
+# _ Please attention _:
+# The temporary files will be stored on this folder
+# For security reasons, do not use web-shared folders
+
+# ** The Web Server needs write-permission on this folder
+
+# * Unix/Linux users use.
+# /tmp/telaen
+# * Win32 users
+# c:/winnt/temp/telaen
+
+# NEVER use backslashes (\). Always use forward slashes (/),
+# for all operating systems, INCLUDING Windows
+
+# For maximum security, do NOT place this under your web site
+# folder !
+########################################################################
+
+$temporary_directory = "/tmp/telaen";
+
+########################################################################
+# Title prefix for webmail pages
+########################################################################
+
+$webmail_title = "Telaen Webmail";
+
+########################################################################
+# Quota handling:
+# Telaen allows for quotas to be set that limit the maximum size
+# for all stored files and folders. For backwards compatibility
+# there are 2 ways to set this:
+#    $quota_limit: Will be used as the system-wide default
+#    $quota_limits: An array which specifies, via regex, the
+#		    quotas for various accounts. Each element of
+#		    this array is an array which maps the user to
+#		    their quote. The array is scanned sequentially
+#		    so later matches override earlier ones (see
+#		    example below)
+#
+# A value of 0 means no limit (and no quotas)
+########################################################################
+
+$quota_limit = 4096;  //  in KB, eg. 4096 Kb = 4MB
+
+##
+# Example of quota limit array. All users from @example.com
+# will have a quota of 4096, except jim@example.com who will
+# have his quota disabled. Recall that this array is scanned
+# sequentially... If the order was reverse, then jim would
+# also be set to 4096!
+##
+$quota_limits = Array (
+    Array ('/@example.com/i', 4096 ),
+    Array ('/jim@example.com/i', 0)
+);
+
+########################################################################
+# Mail server type:
+# allowed values:
+
+# "DETECT" -------->	Guess the pop3 server. If you are running Telaen
+#			in a domain "www.company.com", the script will 
+#			use "PREFIX.company.com" as your server. you 
+#			can set the "PREFIX" in the var $mail_detect_prefix.
+#			Also, the var $mail_detect_remove can be set
+#			to "www.", then the script get rid the "www" and 
+#			put the prefix, eg. pop3.company.com.br
+
+#"ONE-FOR-EACH" -->	Each domain have your own mail server.
+#			The script will load the list of domains/servers from
+#			var $mail_servers.
+
+#"ONE-FOR-ALL" --->	If you use this option, your users must supply the
+#			full email address as username. You can set the mail
+#			server in the var $default_mail_server
+#					
+
+# LOGIN_TYPE
+
+# Note. You can supply the LOGIN_TYPE according to your MAIL SERVER.
+# Eg. If your mail server requires usernames in user@domain.com, you must
+# specify the LOGIN_TYPE as "%user%@%domain%". You can combine it according to 
+# your server. eg.
+
+# %user%
+# %user%@%domain%
+# %user%.%domain%
+#
+# PROTOCOL and PORT
+# Choose "imap" as protocol to use the Internet Mail Access Protocol, 
+# or "pop3" to use the Post Office Protocol.
+# The default ports are:
+# pop3 -> 110
+# imap -> 143
+# The imap is more fast, but all functions of Telaen works with POP3
+########################################################################
+
+########################################################################
+
+$mail_server_type 	= "ONE-FOR-ALL";
+
+########################################################################
+# TYPE: DETECT
+########################################################################
+
+$mail_detect_remove 		= "www.";
+$mail_detect_prefix 		= "mail.";
+$mail_detect_login_type 	= "%user%@%domain%";
+$mail_detect_protocol 		= "pop3";
+$mail_detect_port 		= "110";
+$mail_detect_folder_prefix 	= "";
+
+########################################################################
+# TYPE: ONE-FOR-EACH
+# Each domain have your own mail server
+#
+# Note: If you set only one domain, the users are forced to use a single
+# mail server. Can be useful if you want to type only your mail name 
+# instead of a complete mail address at login.
+# (example: frank instead of frank@telaen.org)
+########################################################################
+
+
+$mail_servers[] = Array(
+	"domain" 	=> "domain.com", 
+	"server" 	=> "pop3.domain.com", 
+	"login_type" 	=> "%user%",
+	"protocol"	=> "pop3",
+	"port"		=> "110",
+	"folder_prefix"	=> ""
+);
+
+
+/*
+$mail_servers[] = Array(
+	"domain" 		=> "another-domain.com", 
+	"server" 		=> "mail.another-domain.com", 
+	"login_type" 	=> "%user%@%domain%",
+	"protocol"		=> "imap",
+	"port"			=> "143",
+	"folder_prefix"	=> "INBOX."
+);
+
+*/
+
+########################################################################
+# TYPE: ONE-FOR-ALL
+# the default mail server for all domains
+########################################################################
+
+$default_mail_server 	= "localhost";
+$one_for_all_login_type	= "%user%@%domain%";
+$default_protocol	= "pop3";
+$default_port		= "110";
+$default_folder_prefix	= "";
+
+########################################################################
+# In some POP3 servers, if you send a "RETR" command, your
+# message will be automatically deleted :(
+# This option prevents this inconvenience. Assumes
+# that the server supports TOP
+########################################################################
+
+$mail_use_top = no;
+
+########################################################################
+# These enable you to overrule the automatic detection of
+# the following POP3 server capabilities: PIPELINING, ATOP,
+# UIDL and APOP. If you find that Telaen is using one of these
+# when it shouldn't, uncomment out the respective variable
+# setting and set it to 'no'. If the reverse is happening, and
+# Telaen is not using/detecting a capability you *know* your
+# POP3 server has, then uncomment out the variable line and
+# set it to 'yes'.
+#
+# PIPELINING: the POP3 server is capable of accepting multiple
+#             commands at a time; Telaen does not have to wait for
+#             the response to a command before issuing a subsequent
+#             command.
+# ATOP: Faster varient of normal POP3 TOP
+# UIDL: the server can provide an assigned unique ID for each POP3
+#       message
+# APOP: provides an encrypted login system instead of clean password sent.
+########################################################################
+
+##
+## NOTE: if any of the below are set, either to yes or no,
+##       they will overrule Telaen's automatic detection
+##
+#$mail_use_pipelining	= no;
+#$mail_use_atop		= no;
+#$mail_use_uidl		= no;
+#$mail_use_apop		= no;
+
+
+########################################################################
+# Specify mail transport type
+# Allowed values:
+# "smtp"       - To use an external SMTP Server specified in $smtp_server
+# "sendmail"   - To use server's sendmail-compatible MTA. If you need to
+#                change the path, see $phpmailer_sendmail below
+# "mail"       - To use default PHP's mail() function
+########################################################################
+
+$mailer_type		= "mail";
+
+########################################################################
+# Telaen uses PHPMailer for many mailing functions. Sometimes we
+# need or want to override PHPMailer defaults for the path to
+# 'sendmail' (see the 'sendmail' mail transport type, above)
+# or the time used when PHPMailer opens an SMTP connection. The
+# 2 following variables allow that.
+#
+# NOTE: These are only used if they are non-NULL and non-0
+#
+# Examples:
+#    $phpmailer_sendmail = "/usr/lib/sendmail";
+#    $phpmailer_timeout = 60;
+########################################################################
+
+$phpmailer_sendmail = "";
+$phpmailer_timeout = 0;
+
+########################################################################
+# Your local SMTP Server (alias or IP) such as "smtp.yourdomain.com"
+# eg. "server1;server2;server3"   -> specify main and backup server
+########################################################################
+
+$smtp_server = "localhost";  #YOU NEED CHANGE IT !!
+
+########################################################################
+# Use SMTP password (AUTH LOGIN type)
+########################################################################
+
+$use_password_for_smtp = yes;
+
+########################################################################
+# Use static authentication info for smtp.
+# Always the same user and password will be used for smtp authentication
+# instead of user data.
+# Useful when you have multiple incoming domains but a single SMTP
+# Note: You need to enable also the option above.
+########################################################################
+
+$smtp_static_auth = no;
+$smtp_static_user = "yourSmtpUser";
+$smtp_static_password = "yourSmtpPasswd";
+
+########################################################################
+# Add a "footer" to sent mails
+########################################################################
+
+$footer = "
+
+________________________________________________________________
+Message sent using $appname $appversion
+";
+
+
+########################################################################
+# Redirect new users to the preferences page at first login
+########################################################################
+
+$check_first_login      = yes;
+
+########################################################################
+# Turn this option to 'yes' if you want allow users send messages using
+# they 'Reply to' preference's option as your 'From' header, otherwise
+# the From field will be the email wich the users log in
+########################################################################
+
+$allow_modified_from    = yes;
+
+########################################################################
+# Order setting
+########################################################################
+
+$default_sortby = "date";
+$default_sortorder = "DESC";
+
+########################################################################
+# Default preferences...
+########################################################################
+
+$default_preferences = Array(
+	"send_to_trash_default" 	=> yes,		# send deleted messages to trash
+	"st_only_ready_default" 	=> yes,		# only read messages, otherwise, delete it
+	"save_to_sent_default"		=> yes,		# send sent messages to sent
+	"empty_trash_default"		=> yes,		# empty trash on logout
+	"empty_spam_default"		=> yes,		# empty spam on logout
+	"unmark_read_default"		=> no,		# Unmark READ messages as read (appear as unread)
+	"sortby_default"		=> "date",	# alowed: "attach","subject","fromname","date","size"
+	"sortorder_default"		=> "DESC",	# alowed: "ASC","DESC"
+	"rpp_default"			=> 20,		# records per page (messages), alowed: 10,20,30,40,50,100,200
+	"add_signature_default"		=> no,		# add the signature by default
+	"require_receipt_default"	=> no,		# require read receipt by default
+	"signature_default"		=> "",		# a default signature for all users, use text only, with multiple lines if needed
+	"timezone_default"		=> "-0000",	# timezone, format (+|-)HHMM (H=hours, M=minutes)
+	"display_images_default"	=> yes,		# automatically show attached images in the body of message
+	"editor_mode_default"		=> "text",	# use "html" or "text" to set default editor.
+	"refresh_time_default"		=> 10,		# after this time, the message list will be refreshed, in minutes
+	"spamlevel_default"		=> 0		# Sensitivity to X-Spam-Level detection
+	);
+
+########################################################################
+# Sometimes, we cannot figure out the correct timezone for the
+# server, as compared to the user. So setting the user timezone
+# to, for example "-0500" when the server is "-0800" results
+# in the mail time display being 3 hours off. To adjust for
+# this, set $server_timezone_offset to the correct
+# adjustment (that is, "-0300") . For most sites, this isn't required.
+########################################################################
+
+$server_timezone_offset = "-0000";
+
+########################################################################
+# Control whether the SysAdmin overrules the unmark READ messages
+# user preference. To use, set $force_unmark_read_overrule to
+# yes (if you want to overrule whatever the user has set)
+# and set $force_unmark_read_setting to the value you wish
+# to force.
+########################################################################
+
+$force_unmark_read_overrule = no;
+$force_unmark_read_setting = no;
+
+########################################################################
+# Control whether redirects will use META REFRESH and Javascript
+# to send the person to the required page ('yes') or whether to
+# use the HTTP Location header and do a "real" HTTP redirect. Some
+# browsers have issues setting Cookies during HTTP redirects, in
+# those cases, setting the below to 'yes' will help.
+########################################################################
+
+$redirects_use_meta = no;
+
+########################################################################
+# Control whether redirects refer to an absolute or relative URL.
+# HTTP redirects are required to be absolute, but in some environments
+# Telaen has a hard time determining what the absolute URL should be.
+# Setting the below to 'yes' avoids this.
+########################################################################
+
+$redirects_are_relative = no;
+
+########################################################################
+# Enable mailserver debug :)
+# no - disabled
+# 1 or yes -> enabled with full results
+# 2 -> enable with servers communications only
+########################################################################
+
+$enable_debug = no;
+
+########################################################################
+# Show debug infos on smtp communications
+########################################################################
+
+$smtp_debug = no;
+
+########################################################################
+# When show_errors is enabled, PHP errors are printed to the output.
+# For production websites, you're strongly encouraged to turn this
+# feature off. 
+# You can turn this on for troubleshooting problems like blank pages
+# or during debug.
+########################################################################
+
+$show_errors = no;
+
+?>

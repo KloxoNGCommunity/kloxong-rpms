@@ -1,0 +1,12 @@
+/var/log/nginx/*log {
+    daily
+    rotate 10
+    missingok
+    notifempty
+    compress
+#    sharedscripts
+#    postrotate
+#        /bin/systemctl condreload nginx > /dev/null 2>&1 || true
+#    endscript
+}
+

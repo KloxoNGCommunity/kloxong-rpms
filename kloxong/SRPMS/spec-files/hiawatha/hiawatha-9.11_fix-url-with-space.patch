@@ -1,0 +1,16 @@
+diff -Naur hiawatha-9.11_ori/src/workers.c hiawatha-9.11_mod/src/workers.c
+--- hiawatha-9.11_ori/src/workers.c	2015-01-15 14:27:43.000000000 +0100
++++ hiawatha-9.11_mod/src/workers.c	2015-01-31 07:51:45.000000000 +0100
+@@ -694,8 +694,10 @@
+ 		session->vars = qmark + 1;
+ 	}
+ 
+-	url_decode(session->uri);
+-	session->uri_len = strlen(session->uri);
++	if (rproxy == NULL) {
++		url_decode(session->uri);
++		session->uri_len = strlen(session->uri);
++	}
+ 
+ 	if ((session->vars != NULL) && (session->host->secure_url)) {
+ 		if (forbidden_chars_present(session->vars)) {

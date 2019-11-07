@@ -17,7 +17,7 @@
 Summary:  The Berkeley Internet Name Domain (BIND) DNS (Domain Name System) server
 Name:     bind
 License:  ISC
-Version:  9.9.7
+Version:  9.9.9
 Release:  1%{?dist}
 #Release:  2%{?dist}
 Epoch:    40
@@ -25,7 +25,7 @@ Url:      http://www.isc.org/products/BIND/
 Buildroot:%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Group:    System Environment/Daemons
 #
-Source:   ftp://ftp.isc.org/isc/bind9/%{VERSION}/bind-%{VERSION}.tar.gz
+Source:   ftp://ftp.isc.org/isc/bind9/%{VERSION}/bind-%{VERSION}-P6.tar.gz
 Source1:  named.sysconfig
 Source2:  named.init
 Source3:  named.logrotate
@@ -161,7 +161,7 @@ chroot(2) jail for the named(8) program from the BIND package.
 Based on the code from Jan "Yenya" Kasprzak <kas@fi.muni.cz>
 
 %prep
-%setup -q -n %{name}-%{VERSION}
+%setup -q -n %{name}-%{VERSION}-P6
 #%patch1
 
 # disable building bin/tests, missing main?

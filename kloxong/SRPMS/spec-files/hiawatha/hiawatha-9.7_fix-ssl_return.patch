@@ -1,0 +1,25 @@
+diff -Naur hiawatha-9.7_pure/src/ssl.c hiawatha-9.7_mod2/src/ssl.c
+--- hiawatha-9.7_pure/src/ssl.c	2014-08-22 00:07:39.000000000 +0200
++++ hiawatha-9.7_mod2/src/ssl.c	2014-09-06 14:29:18.000000000 +0200
+@@ -473,7 +473,9 @@
+ 		result = ssl_read(ssl, (unsigned char*)buffer, maxlength);
+ 	} while (result == POLARSSL_ERR_NET_WANT_READ);
+ 
+-	if (result < 0) {
++	if (result == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
++		return 0;
++	} else if (result < 0) {
+ 		return -1;
+ 	}
+ 
+@@ -489,7 +491,9 @@
+ 		result = ssl_write(ssl, (unsigned char*)buffer, length);
+ 	} while (result == POLARSSL_ERR_NET_WANT_WRITE);
+ 
+-	if (result < 0) {
++	if (result == POLARSSL_ERR_SSL_PEER_CLOSE_NOTIFY) {
++		return 0;
++	} else if (result < 0) {
+ 		return -1;
+ 	}
+ 

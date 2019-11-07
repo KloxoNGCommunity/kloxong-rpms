@@ -1,0 +1,12 @@
+diff -Naur hiawatha-9.12_ori/src/envir.c hiawatha-9.12_mod/src/envir.c
+--- hiawatha-9.12_ori/src/envir.c	2014-09-29 21:23:31.000000000 +0200
++++ hiawatha-9.12_mod/src/envir.c	2015-02-26 09:44:49.000000000 +0100
+@@ -39,7 +39,7 @@
+ 		key_len = strlen(key);
+ 		value_len = strlen(value);
+ 
+-		if (value_len <= 127) {
++		if (key_len <= 127) {
+ 			*buffer = (unsigned char)key_len;
+ 			len = 1;
+ 		} else {

@@ -1,0 +1,12 @@
+diff -Naur hiawatha-9.12_ori/src/session.c hiawatha-9.12_mod/src/session.c
+--- hiawatha-9.12_ori/src/session.c	2015-01-15 14:13:04.000000000 +0100
++++ hiawatha-9.12_mod/src/session.c	2015-04-16 14:30:41.000000000 +0200
+@@ -260,6 +260,8 @@
+ 		session->request_method = unsupported;
+ 	} else if (strncmp(session->request, "REPORT ", 7) == 0) {
+ 		session->request_method = unsupported;
++	} else if (strncmp(session->request, "PATCH ", 5) == 0) {
++		session->request_method = unsupported;
+ 	}
+ }
+ 

@@ -1,0 +1,21 @@
+diff -Naur hiawatha-10.4_ori/src/userconfig.c hiawatha-10.4_mod/src/userconfig.c
+--- hiawatha-10.4_ori/src/userconfig.c	2016-09-16 12:25:11.000000000 +0200
++++ hiawatha-10.4_mod/src/userconfig.c	2017-01-06 06:05:47.280083457 +0100
+@@ -42,7 +42,7 @@
+ 		*uid = id;
+ 	}
+ 
+-	return (*uid == 0) ? 0 : 1;
++	//return (*uid == 0) ? 0 : 1;
+ }
+ 
+ static gid_t parse_groupid(char *groupid, gid_t *gid) {
+@@ -62,7 +62,7 @@
+ 		*gid = id;
+ 	}
+ 
+-	return (*gid == 0) ? 0 : 1;
++	//return (*gid == 0) ? 0 : 1;
+ }
+ 
+ int parse_groups(char *groupid, gid_t *gid, t_groups *groups) {

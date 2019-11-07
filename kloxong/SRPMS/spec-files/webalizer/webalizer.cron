@@ -1,0 +1,11 @@
+#!/bin/bash
+# update access statistics for the web site
+
+NAME=webalizer
+
+[ -f /etc/sysconfig/$NAME ] || exit 0
+source /etc/sysconfig/$NAME
+
+[ "z$WEBALIZER_CRON" != "zyes" ] && exit 0
+
+exec /usr/bin/webalizer -Q

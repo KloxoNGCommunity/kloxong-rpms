@@ -1,0 +1,5 @@
+# uncomment if you want webalizer to be run each day by
+# /etc/cron.daily/00webalizer
+
+#WEBALIZER_CRON=yes
+

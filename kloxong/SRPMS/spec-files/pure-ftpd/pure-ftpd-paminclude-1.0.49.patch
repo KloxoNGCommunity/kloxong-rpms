@@ -1,0 +1,19 @@
+--- ./pure-ftpd-1.0.49/pam/pure-ftpd	2018-01-04 07:13:36.000000000 -0500
++++ ./pure-ftpd-1.0.49_mod/pam/pure-ftpd	2019-06-15 06:53:21.068002385 -0400
+@@ -4,12 +4,13 @@
+ # Install it in /etc/pam.d/pure-ftpd or add to /etc/pam.conf
+ 
+ auth       required     pam_listfile.so item=user sense=deny file=/etc/ftpusers onerr=succeed
++auth       include      system-auth
+ auth       required     pam_shells.so
+ auth       required     pam_nologin.so
+ 
+-account    required     pam_stack.so service=system-auth
++account    include      system-auth
+ 
+-password   required     pam_stack.so service=system-auth
++password   include      system-auth
+ 
+-session    required     pam_stack.so service=system-auth
+++session    include      system-auth
+ 

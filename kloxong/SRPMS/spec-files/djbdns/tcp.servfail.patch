@@ -1,0 +1,11 @@
+TCP SERVFAIL patch, updated for IPV6.
+--- dns_transmit.c	2010/05/08 18:32:59	1.1
++++ dns_transmit.c	2010/05/08 18:33:16
+@@ -167,6 +167,7 @@
+       taia_uint(&d->deadline,10);
+       taia_add(&d->deadline,&d->deadline,&now);
+       if (socket_connect6(d->s1 - 1,ip,53,d->scope_id) == 0) {
++        d->pos = 0;
+         d->tcpstate = 2;
+         return 0;
+       }

@@ -1,0 +1,23 @@
+#! /bin/sh
+# Reload the selected cache
+if [ ! -f /etc/sysconfig/dns.cache ]; then
+  exit 0;
+fi
+
+read CACHESERVICE CACHEDIR < /etc/sysconfig/dns.cache
+
+if [ "$CACHESERVICE"x = "djbdns"x ]; then
+  if [ -d /etc/dns/cache ]; then
+    svc -h /etc/dns/cache
+  fi
+fi
+
+if [ "$CACHESERVICE"x = "unbound"x ]; then
+  status=`/etc/init.d/unbound status`
+  result=`echo $status | grep stopped`
+  if [ -z "$result" ]; then
+    /etc/init.d/unbound reload
+  fi
+fi
+
+exit 0;

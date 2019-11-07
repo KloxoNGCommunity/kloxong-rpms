@@ -1,0 +1,1 @@
+ALTER TABLE  `tht_invoices` CHANGE  `amount`  `amount` VARCHAR( 20 ) NOT NULL;

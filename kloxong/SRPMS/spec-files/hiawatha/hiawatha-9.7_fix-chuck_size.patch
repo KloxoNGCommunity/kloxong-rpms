@@ -1,0 +1,16 @@
+diff -Naur hiawatha-9.7_pure/src/target.c hiawatha-9.7_mod1/src/target.c
+--- hiawatha-9.7_pure/src/target.c	2014-08-22 00:07:39.000000000 +0200
++++ hiawatha-9.7_mod/src/target.c	2014-09-03 10:16:35.000000000 +0200
+@@ -1486,7 +1486,11 @@
+ 
+ 	extra = 4 + c - buffer;
+ 
+-	if ((*chunk_size = hex_to_int(buffer)) == -1) {
++	*c = '\0';
++	*chunk_size = hex_to_int(buffer);
++	*c = '\r';
++
++	if (*chunk_size == -1) {
+ 		return -1;
+ 	} else if (*chunk_size == 0) { 
+ 		return 0;

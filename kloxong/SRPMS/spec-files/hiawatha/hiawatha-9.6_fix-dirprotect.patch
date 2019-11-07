@@ -1,0 +1,13 @@
+diff -Nuar hiawatha-9.6_pure/src/serverconfig.c hiawatha-9.6_mod/src/serverconfig.c
+--- hiawatha-9.6_pure/src/serverconfig.c	2014-06-01 10:03:18.000000000 +0200
++++ hiawatha-9.6_mod/src/serverconfig.c	2014-06-21 10:38:07.000000000 +0200
+@@ -1160,8 +1160,8 @@
+ 					}
+ 					return false;
+ 				}
+-				host->passwordfile = pwd;
+ 			}
++			host->passwordfile = pwd;
+ 			if (grp != NULL) {
+ 				if (register_tempdata(tempdata, grp, tc_data) == -1) {
+ 					free(grp);

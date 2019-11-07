@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Delete empty files (older than one week)
+/usr/bin/find /var/qmail/spamdyke/greylist/ -type f -mmin +10080 -size 0 -exec rm -f {} \;
+
+if [ -f /usr/bin/bc ] ; then
+        # If installed, it can automatically be determined
+        GRAYLIST_MAX_SECS=`grep 'graylist-max-secs' /etc/spamdyke.conf | cut -d = -f 2`
+        GRAYLIST_MAX_SECS=`echo "scale=0 ; $GRAYLIST_MAX_SECS / 60" | bc -l`
+else
+        # Note: should work with graylist-max-secs / 60 / etc / spamdyke.conf identical
+        # older than 30240 minutes (= 3 weeks)
+        GRAYLIST_MAX_SECS=30240
+fi
+# Delete outdated posts
+/usr/bin/find /var/qmail/spamdyke/greylist/ -type f -mmin +$GRAYLIST_MAX_SECS -exec rm -f {} \;

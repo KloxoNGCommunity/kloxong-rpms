@@ -1,0 +1,56 @@
+
+                 Transfer from Master to Secondaries
+
+OVERVIEW
+========
+
+All zone data are maintained in *.zone files in master and secondary
+sub-directories to the main root DNS directory.
+
+Example:
+
+/etc/dns/public/root/master
+/etc/dns/public/root/secondary
+/etc/dns/private/root/master
+/etc/dns/private/root/secondary
+
+
+On both the master and secondary DNS servers the /etc/djbnotify.conf defines
+the domain name, slave server, and directory and file for the data for each
+domain zone transferred.
+
+Then ssh is called via the push-changes command to transfer the files to the
+secondary and run the dns-update program which also uses the 'trigger-make'
+program which runs as root and starts the "make" command in the appropriate
+directory (as defined by the /etc/djbnotify.conf) on the secondary server.
+
+Example /etc/djbnotify.conf file:
+summersoft dns_summersoft@1.2.3.4 /etc/dns/private/root/secondary/summersoft.zone
+
+SETUP INSTRUCTIONS
+============
+
+1. Do "make sshkey" on master server.
+
+2. Create user dns_<master_server_name> on secondary server.
+
+3. Copy dns_master_key.pub from master server to
+   ~dns_<master_server_name>/.ssh/authorized_keys
+   on secondary server.
+
+4. On secondary server link from /etc/dns/{public,private/root/secondary to
+   ~dns_<Master_server_name>/domain.zone 
+
+   Example:
+
+   cd /etc/dns/public/root/secondary
+   ln -s ~dns_summersoft/summersoft.zone
+
+5. Test from master by modifying the zone file and typing "make".
+
+   You should see the master do its processing and ssh to the secondary which
+   also does its processing.
+
+   At that point you can test the change to the domain by using the "host"
+   command on both the master and slave servers and verify it gives the
+   correct results.

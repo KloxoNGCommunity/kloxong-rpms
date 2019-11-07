@@ -1,0 +1,11 @@
+diff -Naur hiawatha-9.9_pure/src/serverconfig.c hiawatha-9.9_mod/src/serverconfig.c
+--- hiawatha-9.9_pure/src/serverconfig.c	2014-12-06 08:41:47.000000000 +0100
++++ hiawatha-9.9_mod/src/serverconfig.c	2014-12-09 06:04:23.000000000 +0100
+@@ -1293,6 +1293,7 @@
+ 	if (strcmp(key, "accesslogfile") == 0) {
+ 		if (strcasecmp(value, "none") == 0) {
+ 			host->access_logfile = NULL;
++			return true;
+ 		} else {
+ 			split_string(value, &value, &rest, ',');
+ 			if (*value == '/') {

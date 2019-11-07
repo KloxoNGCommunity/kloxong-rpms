@@ -1,0 +1,12 @@
+diff -Naur hiawatha-9.12_ori/extra/logrotate.in hiawatha-9.12_mod/extra/logrotate.in
+--- hiawatha-9.12_ori/extra/logrotate.in	2015-02-11 07:34:20.000000000 +0100
++++ hiawatha-9.12_mod/extra/logrotate.in	2015-04-16 14:25:15.000000000 +0200
+@@ -4,7 +4,5 @@
+ 	delaycompress
+ 	rotate 52
+ 	missingok
+-	create 640 www-data www-data
+-	sharedscripts
+-	/usr/sbin/killall -HUP hiawatha
++	create 640 apache apache
+ }

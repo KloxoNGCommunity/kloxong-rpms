@@ -1,0 +1,11 @@
+--- a/pdns/common_startup.cc
++++ b/pdns/common_startup.cc
+@@ -189,7 +189,7 @@ void declareArguments()
+   ::arg().set("max-nsec3-iterations","Limit the number of NSEC3 hash iterations")="500"; // RFC5155 10.3
+ 
+   ::arg().set("include-dir","Include *.conf files from this directory");
+-  ::arg().set("security-poll-suffix","Domain name from which to query security update notifications")="secpoll.powerdns.com.";
++  ::arg().set("security-poll-suffix","Domain name from which to query security update notifications")="";
+ 
+   ::arg().setSwitch("expand-alias", "Expand ALIAS records")="no";
+   ::arg().setSwitch("outgoing-axfr-expand-alias", "Expand ALIAS records during outgoing AXFR")="no";

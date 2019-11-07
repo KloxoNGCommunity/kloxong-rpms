@@ -1,0 +1,456 @@
+diff -Naur mod_fastcgi-2.4.7_pure/mod_fastcgi.c mod_fastcgi-2.4.7_mod-poll/mod_fastcgi.c
+--- mod_fastcgi-2.4.7_pure/mod_fastcgi.c	2008-11-09 15:31:07.000000000 +0100
++++ mod_fastcgi-2.4.7_mod-poll/mod_fastcgi.c	2014-09-29 15:31:20.000000000 +0200
+@@ -85,8 +85,10 @@
+ #endif
+ #endif
+ 
++#include <sys/poll.h>
++
+ #ifndef timersub
+-#define	timersub(a, b, result)                              \
++#define timersub(a, b, result)                              \
+ do {                                                  \
+     (result)->tv_sec = (a)->tv_sec - (b)->tv_sec;           \
+     (result)->tv_usec = (a)->tv_usec - (b)->tv_usec;        \
+@@ -101,7 +103,7 @@
+  * Global variables
+  */
+ 
+-pool *fcgi_config_pool;            	 /* the config pool */
++pool *fcgi_config_pool;                   /* the config pool */
+ server_rec *fcgi_apache_main_server;
+ 
+ const char *fcgi_wrapper = NULL;          /* wrapper path */
+@@ -505,7 +507,7 @@
+             DWORD mode = PIPE_NOWAIT | PIPE_READMODE_BYTE;
+             if (SetNamedPipeHandleState((HANDLE) fr->fd, &mode, NULL, NULL) == 0)
+             {
+-		        ap_log_rerror(FCGI_LOG_ERR, fr->r,
++                    ap_log_rerror(FCGI_LOG_ERR, fr->r,
+                     "FastCGI: SetNamedPipeHandleState() failed");
+                 return -1;
+             }
+@@ -750,7 +752,7 @@
+             
+             if (strcasecmp(name, "Content-Length") == 0) {
+                 ap_table_set(r->headers_out, name, value);
+-            	continue;
++                continue;
+             }
+ 
+             /* If the script wants them merged, it can do it */
+@@ -1056,8 +1058,7 @@
+  */
+ static int open_connection_to_fs(fcgi_request *fr)
+ {
+-    struct timeval  tval;
+-    fd_set          write_fds, read_fds;
++    struct pollfd   pollfds[1];
+     int             status;
+     request_rec * const r = fr->r;
+     pool * const rp = r->pool;
+@@ -1169,10 +1170,10 @@
+ 
+                 if (fr->fs && fr->fs->restartTime)
+ #else
+-            	struct timeval tv;
++                struct timeval tv;
+                 
+                 tv.tv_sec = 0;
+-              	tv.tv_usec =  500000;
++                tv.tv_usec =  500000;
+                 
+                 /* Avoid sleep/alarm interactions */
+                 ap_select(0, NULL, NULL, NULL, &tv);
+@@ -1361,17 +1362,6 @@
+         return FCGI_FAILED; 
+     }
+ 
+-#ifndef WIN32
+-    if (fr->fd >= FD_SETSIZE) {
+-        ap_log_rerror(FCGI_LOG_ERR, r,
+-            "FastCGI: failed to connect to server \"%s\": "
+-            "socket file descriptor (%u) is larger than "
+-            "FD_SETSIZE (%u), you probably need to rebuild Apache with a "
+-            "larger FD_SETSIZE", fr->fs_path, fr->fd, FD_SETSIZE);
+-        return FCGI_FAILED;
+-    }
+-#endif
+-
+     /* If appConnectTimeout is non-zero, setup do a non-blocking connect */
+     if ((fr->dynamic && dynamicAppConnectTimeout) || (!fr->dynamic && fr->fs->appConnectTimeout)) {
+         set_nonblocking(fr, TRUE);
+@@ -1383,9 +1373,9 @@
+ 
+     /* Connect */
+     do {
+-    	if (connect(fr->fd, (struct sockaddr *) socket_addr, socket_addr_len) == 0) {
+-    		goto ConnectionComplete;
+-    	}
++       if (connect(fr->fd, (struct sockaddr *) socket_addr, socket_addr_len) == 0) {
++          goto ConnectionComplete;
++       }
+     } while (errno == EINTR);    
+ 
+ #ifdef WIN32
+@@ -1424,14 +1414,10 @@
+ 
+     if (fr->dynamic) {
+         do {
+-            FD_ZERO(&write_fds);
+-            FD_SET(fr->fd, &write_fds);
+-            read_fds = write_fds;
+-            tval.tv_sec = dynamicPleaseStartDelay;
+-            tval.tv_usec = 0;
+-
++            pollfds[0].fd = fr->fd;
++            pollfds[0].events = POLLIN | POLLOUT;
+             do {
+-            	status = ap_select(fr->fd + 1, &read_fds, &write_fds, NULL, &tval);
++              status = poll(pollfds, 1, dynamicPleaseStartDelay * 1000);
+             } while (status < 0 && errno == EINTR);
+ 
+             if (status < 0)
+@@ -1442,7 +1428,7 @@
+             if (status > 0)
+                 break;
+ 
+-            /* select() timed out */
++            /* poll() timed out */
+             send_to_pm(FCGI_REQUEST_TIMEOUT_JOB, fr->fs_path, fr->user, fr->group, 0, 0);
+         } while ((fr->queueTime.tv_sec - fr->startTime.tv_sec) < (int)dynamicAppConnectTimeout);
+ 
+@@ -1456,14 +1442,10 @@
+         }
+     }  /* dynamic */
+     else {
+-        tval.tv_sec = fr->fs->appConnectTimeout;
+-        tval.tv_usec = 0;
+-        FD_ZERO(&write_fds);
+-        FD_SET(fr->fd, &write_fds);
+-        read_fds = write_fds;
+-
++        pollfds[0].fd = fr->fd;
++        pollfds[0].events = POLLIN | POLLOUT;
+         do {
+-        	status = ap_select(fr->fd + 1, &read_fds, &write_fds, NULL, &tval);
++          status = poll(pollfds, 1, fr->fs->appConnectTimeout * 1000);
+         } while (status < 0 && errno == EINTR);
+ 
+         if (status == 0) {
+@@ -1481,11 +1463,11 @@
+ #endif
+         ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+             "FastCGI: failed to connect to server \"%s\": "
+-            "select() failed", fr->fs_path);
++            "poll() failed", fr->fs_path);
+         return FCGI_FAILED;
+     }
+ 
+-    if (FD_ISSET(fr->fd, &write_fds) || FD_ISSET(fr->fd, &read_fds)) {
++    if ((pollfds[0].revents & POLLIN) || pollfds[0].revents & POLLOUT) {
+         int error = 0;
+         NET_SIZE_T len = sizeof(error);
+ 
+@@ -1496,7 +1478,7 @@
+ #endif
+             ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+                 "FastCGI: failed to connect to server \"%s\": "
+-                "select() failed (Solaris pending error)", fr->fs_path);
++                "poll() failed (Solaris pending error)", fr->fs_path);
+             return FCGI_FAILED;
+         }
+ 
+@@ -1505,7 +1487,7 @@
+             errno = error;
+             ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+                 "FastCGI: failed to connect to server \"%s\": "
+-                "select() failed (pending error)", fr->fs_path);
++                "poll() failed (pending error)", fr->fs_path);
+             return FCGI_FAILED;
+         }
+     } 
+@@ -1515,7 +1497,7 @@
+ #endif
+         ap_log_rerror(FCGI_LOG_ERR_ERRNO, r,
+             "FastCGI: failed to connect to server \"%s\": "
+-            "select() error - THIS CAN'T HAPPEN!", fr->fs_path);
++            "poll() error - THIS CAN'T HAPPEN!", fr->fs_path);
+         return FCGI_FAILED;
+     }
+ 
+@@ -1544,7 +1526,7 @@
+ 
+     fcgi_buf_reset(fr->clientInputBuffer);
+     fcgi_buf_get_free_block_info(fr->clientInputBuffer, &base, &size);
+-	while (ap_get_client_block(fr->r, base, size) > 0);
++    while (ap_get_client_block(fr->r, base, size) > 0);
+ }
+ 
+ static apcb_t cleanup(void *data)
+@@ -1997,11 +1979,9 @@
+     request_rec * const r = fr->r;
+ 
+     struct timeval timeout;
+-    struct timeval dynamic_last_io_time;
+-    fd_set read_set;
+-    fd_set write_set;
+-    int nfds = 0;
+-    int select_status = 1;
++    struct timeval dynamic_last_io_time = {0, 0};
++    struct pollfd pollfds[2];
++    int poll_status = 1;
+     int idle_timeout;
+     int rv;
+     int dynamic_first_recv = fr->dynamic ? 1 : 0;
+@@ -2039,8 +2019,8 @@
+ 
+     for (;;)
+     {
+-        FD_ZERO(&read_set);
+-        FD_ZERO(&write_set);
++        pollfds[0].events = 0;
++        pollfds[1].events = 0;
+ 
+         switch (state)
+         {
+@@ -2084,12 +2064,12 @@
+ 
+                 set_nonblocking(fr, TRUE);
+                 is_connected = 1;
+-                nfds = fr->fd + 1;
+             }
+ 
+             if (BufferLength(fr->serverOutputBuffer))
+             {
+-                FD_SET(fr->fd, &write_set);
++                pollfds[0].fd = fr->fd;
++                pollfds[0].events = POLLOUT;
+             }
+             else
+             {
+@@ -2101,7 +2081,8 @@
+ 
+         case STATE_SERVER_RECV:
+ 
+-            FD_SET(fr->fd, &read_set);
++            pollfds[1].fd = fr->fd;
++            pollfds[1].events = POLLIN;
+ 
+             /* fall through */
+ 
+@@ -2156,7 +2137,7 @@
+ 
+             fcgi_util_ticks(&fr->queueTime);
+ 
+-            if (select_status) 
++            if (poll_status) 
+             {
+                 /* a send() succeeded last pass */
+                 dynamic_last_io_time = fr->queueTime;
+@@ -2183,7 +2164,7 @@
+ 
+             delay = dynamic_first_recv * dynamicPleaseStartDelay;
+ 
+-	    FCGIDBG5("qwait=%ld.%06ld delay=%d first_recv=%d", qwait.tv_sec, qwait.tv_usec, delay, dynamic_first_recv);
++            FCGIDBG5("qwait=%ld.%06ld delay=%d first_recv=%d", qwait.tv_sec, qwait.tv_usec, delay, dynamic_first_recv);
+ 
+             if (qwait.tv_sec < delay) 
+             {
+@@ -2209,20 +2190,20 @@
+         
+         /* wait on the socket */
+         do {
+-            select_status = ap_select(nfds, &read_set, &write_set, NULL, &timeout);
+-        } while (select_status < 0 && errno == EINTR);
++            poll_status = poll(pollfds, 2, timeout.tv_sec * 1000 + timeout.tv_usec / 1000);
++        } while (poll_status < 0 && errno == EINTR);
+ 
+-        if (select_status < 0)
++        if (poll_status < 0)
+         {
+             ap_log_rerror(FCGI_LOG_ERR_ERRNO, r, "FastCGI: comm with server "
+-                "\"%s\" aborted: select() failed", fr->fs_path);
++                "\"%s\" aborted: poll() failed", fr->fs_path);
+             state = STATE_ERROR;
+             break;
+         }
+ 
+-        if (select_status == 0) 
++        if (poll_status == 0) 
+         {
+-            /* select() timeout */
++            /* poll() timeout */
+ 
+             if (BufferLength(fr->clientOutputBuffer)) 
+             {
+@@ -2252,8 +2233,13 @@
+             }
+         }
+ 
+-        if (FD_ISSET(fr->fd, &write_set))
++        if (! ((pollfds[0].revents & POLLOUT) || (pollfds[1].revents & POLLIN)) ) {
++           ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: neither POLLIN nor POLLOUT...");
++        }
++
++        if (pollfds[0].revents & POLLOUT)
+         {
++            /* ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: POLLOUT"); */
+             /* send to the server */
+ 
+             rv = fcgi_buf_socket_send(fr->serverOutputBuffer, fr->fd);
+@@ -2267,8 +2253,9 @@
+             }
+         } 
+ 
+-        if (FD_ISSET(fr->fd, &read_set)) 
++        if (pollfds[1].revents & POLLIN)
+         {
++            /* ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: POLLIN"); */
+             /* recv from the server */
+ 
+             if (dynamic_first_recv) 
+@@ -2281,27 +2268,27 @@
+ 
+             if (rv < 0) 
+             {
+-            	if (errno == EAGAIN) 
+-            	{
++              if (errno == EAGAIN) 
++              {
+                     /* this reportedly occurs on AIX 5.2 sporadically */
+                     struct timeval tv;
+                     tv.tv_sec = 1;
+                     tv.tv_usec = 0;
+ 
+-            		ap_log_rerror(FCGI_LOG_INFO, r, "FastCGI: comm with server "
+-            				"\"%s\" interrupted: read will be retried in 1 second", 
+-            				fr->fs_path);
+-            		
++                    ap_log_rerror(FCGI_LOG_INFO, r, "FastCGI: comm with server "
++                       "\"%s\" interrupted: read will be retried in 1 second", 
++                       fr->fs_path);
++
+                     /* avoid sleep/alarm interactions */
+                     ap_select(0, NULL, NULL, NULL, &tv);
+-            	}
+-            	else 
+-            	{
+-            		ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: comm with server "
+-            				"\"%s\" aborted: read failed", fr->fs_path);
+-            		state = STATE_ERROR;
+-            		break;
+-            	}
++              }
++              else 
++              {
++                    ap_log_rerror(FCGI_LOG_ERR, r, "FastCGI: comm with server "
++                       "\"%s\" aborted: read failed", fr->fs_path);
++                    state = STATE_ERROR;
++                    break;
++              }
+             }
+             else if (rv == 0) 
+             {
+@@ -2517,8 +2504,7 @@
+         }
+     }
+ 
+-    fr->nph = (strncmp(strrchr(fs_path, '/'), "/nph-", 5) == 0)
+-		|| (fs && fs->nph);
++    fr->nph = (strncmp(strrchr(fs_path, '/'), "/nph-", 5) == 0) || (fs && fs->nph);
+ 
+     fr->serverInputBuffer = fcgi_buf_new(p, SERVER_BUFSIZE);
+     fr->serverOutputBuffer = fcgi_buf_new(p, SERVER_BUFSIZE);
+@@ -2552,25 +2538,25 @@
+ 
+     if (fr->nph) {
+ #ifdef APACHE2    
+-		struct ap_filter_t *cur;
++       struct ap_filter_t *cur;
+ 
+-		fr->parseHeader = SCAN_CGI_FINISHED;
++       fr->parseHeader = SCAN_CGI_FINISHED;
+ 
+-		/* remove the filters up through protocol - since the headers
+-		 * haven't been parsed, there is no way they can work */
++       /* remove the filters up through protocol - since the headers
++        * haven't been parsed, there is no way they can work */
+ 
+-		cur = r->proto_output_filters;
+-		while (cur && cur->frec->ftype < AP_FTYPE_CONNECTION) {
+-			cur = cur->next;
+-		}
+-		r->output_filters = r->proto_output_filters = cur;
+-#else
+-	    ap_log_rerror(FCGI_LOG_ERR_NOERRNO, r, 
+-	        "FastCGI: invalid request \"%s\": non parsed header support is "
+-	    		"not available in Apache13 (patch welcome)", fs_path);
+-	    return HTTP_FORBIDDEN;
++       cur = r->proto_output_filters;
++       while (cur && cur->frec->ftype < AP_FTYPE_CONNECTION) {
++          cur = cur->next;
++       }
++       r->output_filters = r->proto_output_filters = cur;
++#else
++       ap_log_rerror(FCGI_LOG_ERR_NOERRNO, r, 
++          "FastCGI: invalid request \"%s\": non parsed header support is "
++          "not available in Apache13 (patch welcome)", fs_path);
++       return HTTP_FORBIDDEN;
+ #endif    
+-	}
++    }
+ 
+     set_uid_n_gid(r, &fr->user, &fr->group);
+ 
+@@ -2615,7 +2601,7 @@
+ static int post_process_for_redirects(request_rec * const r,
+     const fcgi_request * const fr)
+ {
+-	switch(fr->parseHeader) {
++    switch(fr->parseHeader) {
+         case SCAN_CGI_INT_REDIRECT:
+ 
+             /* @@@ There are still differences between the handling in
+@@ -2636,15 +2622,15 @@
+             return HTTP_MOVED_TEMPORARILY;
+ 
+         default:
+-#ifdef APACHE2        	
+-	        {
+-	        	apr_bucket_brigade *brigade = apr_brigade_create(r->pool, r->connection->bucket_alloc);
+-	        	apr_bucket* bucket = apr_bucket_eos_create(r->connection->bucket_alloc);
+-	        	APR_BRIGADE_INSERT_HEAD(brigade, bucket);
+-	        	return ap_pass_brigade(r->output_filters, brigade); 
+-	        }
++#ifdef APACHE2
++              {
++                    apr_bucket_brigade *brigade = apr_brigade_create(r->pool, r->connection->bucket_alloc);
++                    apr_bucket* bucket = apr_bucket_eos_create(r->connection->bucket_alloc);
++                    APR_BRIGADE_INSERT_HEAD(brigade, bucket);
++                    return ap_pass_brigade(r->output_filters, brigade); 
++              }
+ #else 
+-	        return OK;
++              return OK;
+ #endif
+     }
+ }
+@@ -2933,11 +2919,11 @@
+ 
+         get_request_identity(r, &uid, &gid);
+ 
+-	    if (fcgi_util_fs_get_by_id(r->filename, uid, gid))
+-	    {
+-	        r->handler = FASTCGI_HANDLER_NAME;
+-	        return OK;
+-	    }
++        if (fcgi_util_fs_get_by_id(r->filename, uid, gid))
++        {
++            r->handler = FASTCGI_HANDLER_NAME;
++            return OK;
++        }
+     }
+ 
+     return DECLINED;

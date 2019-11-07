@@ -1,0 +1,61 @@
+diff -Naur tht-1.2.6_ori/admin/pages/home.php tht-1.2.6_mod/admin/pages/home.php
+--- tht-1.2.6_ori/admin/pages/home.php	2013-02-02 07:08:08.000000000 +0100
++++ tht-1.2.6_mod/admin/pages/home.php	2015-04-25 10:47:42.000000000 +0200
+@@ -5,10 +5,10 @@
+ // By Jonny H & Jimmie L
+ // Released under the GNU-GPL
+ //////////////////////////////
+-
++
+ //Check if called by script
+ if(THT != 1){die();}
+-
++
+ class page {
+     
+     public function checkDir($dir){
+@@ -85,6 +85,7 @@
+ 		$content_notepad = $style->replaceVar('tpl/notepad.tpl', $array);
+ 		echo '<br />'; //br it, br it
+ 		echo $main->table('Admin Notepad', $content_notepad, 'auto', 'auto');
++	/*
+ 		require_once(LINK.'rss/rss_fetch.inc');
+ 		$url = "http://thehostingtool.com/forum/syndication.php?fid=2&limit=3";
+ 		$rss = fetch_rss($url);
+@@ -106,6 +107,7 @@
+ 		}
+ 		echo "<br />";
+ 		echo $main->table('THT News & Updates', $news);
++	*/
+ 	}
+ }
+ ?>
+diff -Naur tht-1.2.6_ori/includes/csrf-secret.php tht-1.2.6_mod/includes/csrf-secret.php
+--- tht-1.2.6_ori/includes/csrf-secret.php	1970-01-01 01:00:00.000000000 +0100
++++ tht-1.2.6_mod/includes/csrf-secret.php	2015-04-24 15:11:46.000000000 +0200
+@@ -0,0 +1 @@
++<?php $secret = "A2A0882792AB3930396DD6972FA4D9322ECD0AFC";
+diff -Naur tht-1.2.6_ori/includes/tpl/addserver.tpl tht-1.2.6_mod/includes/tpl/addserver.tpl
+--- tht-1.2.6_ori/includes/tpl/addserver.tpl	2011-04-09 10:37:55.000000000 +0200
++++ tht-1.2.6_mod/includes/tpl/addserver.tpl	2015-04-24 15:32:21.000000000 +0200
+@@ -37,7 +37,7 @@
+   </tr>
+   <tr>
+     <td>Username:</td>
+-    <td><input type="text" name="user" id="user" /><a title="Username to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
++    <td><input type="text" name="user" id="user" /><a title="Username ('Auxiliary Login' for Kloxo/Kloxo-MR) to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
+   </tr>
+   <tr>
+     <td valign="top" width="20%"><span id="passtext"></span></td>
+diff -Naur tht-1.2.6_ori/includes/tpl/viewserver.tpl tht-1.2.6_mod/includes/tpl/viewserver.tpl
+--- tht-1.2.6_ori/includes/tpl/viewserver.tpl	2011-04-09 10:44:25.000000000 +0200
++++ tht-1.2.6_mod/includes/tpl/viewserver.tpl	2015-04-24 15:29:13.000000000 +0200
+@@ -41,7 +41,7 @@
+   <tr>
+     <td>Username:</td>
+     <td><input type="text" name="user" id="user" value="%USER%" />
+-    <a title="The username to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
++    <a title="The username ('Auxiliary Login' for Kloxo/Kloxo-MR to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
+   </tr>
+   <tr>
+     <td valign="top" width="20%"><span id="passtext"></span></td>

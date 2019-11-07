@@ -1,0 +1,43 @@
+diff -up httpd-2.2.23/server/mpm_common.c.pod httpd-2.2.23/server/mpm_common.c
+--- httpd-2.2.23/server/mpm_common.c.pod	2012-09-19 20:37:20.000000000 -0400
++++ httpd-2.2.23/server/mpm_common.c	2012-09-19 20:39:27.000000000 -0400
+@@ -648,6 +648,7 @@ static apr_status_t dummy_connection(ap_
+     apr_socket_t *sock;
+     apr_pool_t *p;
+     apr_size_t len;
++    ap_listen_rec *lr;
+ 
+     /* create a temporary pool for the socket.  pconf stays around too long */
+     rv = apr_pool_create(&p, pod->p);
+@@ -655,8 +656,11 @@ static apr_status_t dummy_connection(ap_
+         return rv;
+     }
+ 
+-    rv = apr_socket_create(&sock, ap_listeners->bind_addr->family,
+-                           SOCK_STREAM, 0, p);
++    /* Find an HTTP listener specified first in the configuration. */
++    for (lr = ap_listeners; lr->next != NULL; lr = lr->next)
++        /* noop */;
++
++    rv = apr_socket_create(&sock, lr->bind_addr->family, SOCK_STREAM, 0, p);
+     if (rv != APR_SUCCESS) {
+         ap_log_error(APLOG_MARK, APLOG_WARNING, rv, ap_server_conf,
+                      "get socket to connect to listener");
+@@ -679,7 +683,7 @@ static apr_status_t dummy_connection(ap_
+         return rv;
+     }
+ 
+-    rv = apr_socket_connect(sock, ap_listeners->bind_addr);
++    rv = apr_socket_connect(sock, lr->bind_addr);
+     if (rv != APR_SUCCESS) {
+         int log_level = APLOG_WARNING;
+ 
+@@ -692,7 +696,7 @@ static apr_status_t dummy_connection(ap_
+         }
+ 
+         ap_log_error(APLOG_MARK, log_level, rv, ap_server_conf,
+-                     "connect to listener on %pI", ap_listeners->bind_addr);
++		    "connect to listener on %pI", lr->bind_addr);
+         apr_pool_destroy(p);
+         return rv;
+     }

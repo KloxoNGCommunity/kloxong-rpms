@@ -1,0 +1,100 @@
+diff -uap webalizer-2.23-05/hashtab.c.groupvisit webalizer-2.23-05/hashtab.c
+--- webalizer-2.23-05/hashtab.c.groupvisit	2011-01-10 01:47:49.000000000 +0000
++++ webalizer-2.23-05/hashtab.c	2011-07-14 09:26:11.645377843 +0100
+@@ -88,6 +88,8 @@ INODEPTR im_htab[MAXHASH];              
+ DNODEPTR host_table[MAXHASH];                 /* DNS hash table           */
+ #endif  /* USE_DNS */
+ 
++u_long   pre_tstamp = 0;                      /* prev. real record tstamp */
++
+ /* Last node pointers */
+ HNODEPTR lm_hnode=NULL;
+ HNODEPTR ld_hnode=NULL;
+@@ -186,6 +188,7 @@ int put_hnode( char      *str,  /* Hostn
+             nptr->visit=(visit-1);
+             nptr->lasturl=find_url(lasturl);
+             nptr->tstamp=tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+@@ -195,6 +198,7 @@ int put_hnode( char      *str,  /* Hostn
+                if (htab==sm_htab) update_entry(log_rec.url);
+                nptr->lasturl=find_url(log_rec.url);
+                nptr->tstamp=tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+                nptr->visit=1;
+             }
+          }
+@@ -225,7 +229,8 @@ int put_hnode( char      *str,  /* Hostn
+ 
+                if (ispage(log_rec.url))
+                {
+-                  if ((tstamp-cptr->tstamp)>=visit_timeout)
++                  if ((type!=OBJ_GRP)&&(cptr->flag!=OBJ_GRP)) pre_tstamp=cptr->tstamp;
++                  if ((tstamp-pre_tstamp)>=visit_timeout)
+                   {
+                      cptr->visit++;
+                      if (htab==sm_htab)
+@@ -262,6 +267,7 @@ int put_hnode( char      *str,  /* Hostn
+             nptr->visit = (visit-1);
+             nptr->lasturl=find_url(lasturl);
+             nptr->tstamp= tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+@@ -271,6 +277,7 @@ int put_hnode( char      *str,  /* Hostn
+                if (htab==sm_htab) update_entry(log_rec.url);
+                nptr->lasturl=find_url(log_rec.url);
+                nptr->tstamp= tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+                nptr->visit=1;
+             }
+          }
+@@ -875,11 +882,16 @@ int put_inode( char      *str,  /* ident
+          {
+             nptr->visit=(visit-1);
+             nptr->tstamp=tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+          {
+-            if (ispage(log_rec.url)) nptr->tstamp=tstamp;
++            if (ispage(log_rec.url)) 
++            {
++               nptr->tstamp=tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
++            }
+          }
+       }
+    }
+@@ -899,7 +911,8 @@ int put_inode( char      *str,  /* ident
+ 
+                if (ispage(log_rec.url))
+                {
+-                  if ((tstamp-cptr->tstamp)>=visit_timeout)
++                  if ((type!=OBJ_GRP)&&(cptr->flag!=OBJ_GRP)) pre_tstamp=cptr->tstamp;
++                  if ((tstamp-pre_tstamp)>=visit_timeout)
+                      cptr->visit++;
+                   cptr->tstamp=tstamp;
+                }
+@@ -923,11 +936,16 @@ int put_inode( char      *str,  /* ident
+          {
+             nptr->visit = (visit-1);
+             nptr->tstamp= tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+          {
+-            if (ispage(log_rec.url)) nptr->tstamp= tstamp;
++            if (ispage(log_rec.url))
++            {
++               nptr->tstamp= tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
++            }
+          }
+       }
+    }

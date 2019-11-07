@@ -1,0 +1,48 @@
+diff -urNp --exclude-from=/home/mdomsch/excludes --minimal libowfat-0.28.orig/io/io_dontwantread.c libowfat-0.28/io/io_dontwantread.c
+--- libowfat-0.28.orig/io/io_dontwantread.c	2009-10-15 22:05:45.000000000 -0500
++++ libowfat-0.28/io/io_dontwantread.c	2009-10-15 22:07:53.000000000 -0500
+@@ -17,6 +17,8 @@
+ #include <sys/devpoll.h>
+ #endif
+ 
++#include "byte.h"
++
+ void io_dontwantread(int64 d) {
+   int newfd;
+   io_entry* e=array_get(&io_fds,sizeof(io_entry),d);
+diff -urNp --exclude-from=/home/mdomsch/excludes --minimal libowfat-0.28.orig/io/io_dontwantwrite.c libowfat-0.28/io/io_dontwantwrite.c
+--- libowfat-0.28.orig/io/io_dontwantwrite.c	2009-10-15 22:05:45.000000000 -0500
++++ libowfat-0.28/io/io_dontwantwrite.c	2009-10-15 22:07:41.000000000 -0500
+@@ -17,6 +17,8 @@
+ #include <sys/devpoll.h>
+ #endif
+ 
++#include "byte.h"
++
+ void io_dontwantwrite(int64 d) {
+   int newfd;
+   io_entry* e=array_get(&io_fds,sizeof(io_entry),d);
+diff -urNp --exclude-from=/home/mdomsch/excludes --minimal libowfat-0.28.orig/io/io_wantread.c libowfat-0.28/io/io_wantread.c
+--- libowfat-0.28.orig/io/io_wantread.c	2009-10-15 22:05:45.000000000 -0500
++++ libowfat-0.28/io/io_wantread.c	2009-10-15 22:07:28.000000000 -0500
+@@ -23,6 +23,8 @@
+ #include <mswsock.h>
+ #endif
+ 
++#include "byte.h"
++
+ void io_wantread(int64 d) {
+   int newfd;
+   io_entry* e=array_get(&io_fds,sizeof(io_entry),d);
+diff -urNp --exclude-from=/home/mdomsch/excludes --minimal libowfat-0.28.orig/io/io_wantwrite.c libowfat-0.28/io/io_wantwrite.c
+--- libowfat-0.28.orig/io/io_wantwrite.c	2009-10-15 22:05:45.000000000 -0500
++++ libowfat-0.28/io/io_wantwrite.c	2009-10-15 22:07:08.000000000 -0500
+@@ -20,6 +20,8 @@
+ #include <sys/devpoll.h>
+ #endif
+ 
++#include "byte.h"
++
+ void io_wantwrite(int64 d) {
+   int newfd;
+   io_entry* e=array_get(&io_fds,sizeof(io_entry),d);

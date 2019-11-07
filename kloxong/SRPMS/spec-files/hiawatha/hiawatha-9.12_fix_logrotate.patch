@@ -1,0 +1,16 @@
+diff -Naur hiawatha-9.12_ori/extra/logrotate.in hiawatha-9.12_mod/extra/logrotate.in
+--- hiawatha-9.12_ori/extra/logrotate.in	2015-02-11 07:34:20.000000000 +0100
++++ hiawatha-9.12_mod/extra/logrotate.in	2015-02-24 04:01:28.000000000 +0100
+@@ -1,10 +1,10 @@
+-@LOG_DIR@/access.log {
++@LOG_DIR@/*.log {
+ 	weekly
+ 	compress
+ 	delaycompress
+ 	rotate 52
+ 	missingok
+-	create 640 www-data www-data
++	create 640 apache apache
+ 	sharedscripts
+ 	/usr/sbin/killall -HUP hiawatha
+ }

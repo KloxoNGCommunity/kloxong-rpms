@@ -1,0 +1,32 @@
+#!/bin/sh
+# Update dns.
+# First line is domain zone file name.
+# Rest is actual data
+###############################################################################
+
+CONFIG=/etc/djbnotify.conf
+
+DATE=`date +%Y-%m-%d.%H%M%S`
+INPUTFILE="data.$DATE"
+
+echo Writing incoming data to $INPUTFILE
+cat > $INPUTFILE
+
+domainname=`head -1 $INPUTFILE`
+
+cat $CONFIG | (while read TDOMAIN TSERVER TFILE
+do
+  if [ $domainname = $TDOMAIN ]; then
+    echo "Updating domain: $domainname file: $TFILE"
+    sed -e '1d' < $INPUTFILE > `basename $TFILE`
+    if [ -e /bin/trigger-make ]; then
+      echo Starting make on slave server.
+      /bin/trigger-make $domainname
+    fi
+  fi
+done
+)
+
+rm -rf $INPUTFILE
+
+exit 0

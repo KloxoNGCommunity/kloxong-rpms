@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# push-changes
+#
+# pushes new pre-processed zone files to slave tinydns servers using SSH.
+# expects slaves to have the right forced command attached to this key.
+#
+###############################################################################
+
+DOMAINNAME="$1"
+DATAFILE="$2"
+CONFIG="/etc/djbnotify.conf"
+SERVERS=""
+
+# keep any SSH agent from messing things up
+unset SSH_AUTH_SOCK
+
+echo "Pushing changes for domain: $DOMAINNAME datafile: $DATAFILE"
+
+if [ ! -e $CONFIG ]; then
+  exit 0
+fi
+
+cat $CONFIG | (while read TDOMAIN TSERVER TFILE
+  do
+    if [ $DOMAINNAME = $TDOMAIN ]; then
+	echo "/---- Start of messages from $TSERVER"
+
+	(echo $DOMAINNAME; cat $DATAFILE) | env - PATH="/usr/bin:/bin" ssh \
+		-i dns_master_key.priv $TSERVER zzz
+
+	echo "\\---- End of messages from $TSERVER"
+    fi
+  done
+)
