@@ -1,8 +1,8 @@
-%define repohost repos.kloxong.org
+%define repohost repo.kloxong.org
 %define mirrorhost raw.githubusercontent.com/KloxoNGCommunity/KloxoNG-rpms/dev/kloxong/mirror
 Summary: KloxoNG release file and package configuration
 Name: kloxong-release
-Version: 0.0.1
+Version: 0.1.0
 Release: 1
 License: AGPLV3
 Group: System Environment/Base
@@ -29,64 +29,64 @@ KloxoNG rpm release. This package contains yum configuration for the KloxoNG RPM
 cat > %{buildroot}/%{_sysconfdir}/yum.repos.d/kloxong.repo << _EOF_
 [kloxong-release-neutral-noarch]
 name=KloxoNG - release-neutral-noarch
-baseurl=https://%{repohost}/repo/kloxong/release/neutral/noarch/
-mirrorlist=https://%{mirrorhost}/kloxong-release-neutral-noarch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/release/neutral/noarch/
+#mirrorlist=https://%{mirrorhost}/kloxong-release-neutral-noarch-mirrors.txt
 enabled=1
 gpgcheck=0
 
 [kloxong-release-neutral-arch]
 name=KloxoNG - release-neutral-arch
-baseurl=https://%{repohost}/repo/kloxong/release/neutral/\$basearch/
-mirrorlist=https://%{mirrorhost}/kloxong-release-neutral-\$basearch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/release/neutral/\$basearch/
+#mirrorlist=https://%{mirrorhost}/kloxong-release-neutral-\$basearch-mirrors.txt
 enabled=0
 gpgcheck=0
 
 [kloxong-release-version-noarch]
 name=KloxoNG - release-version-noarch
-baseurl=https://%{repohost}/repo/kloxong/release/centos\$releasever/noarch/
-mirrorlist=https://%{mirrorhost}/kloxong-release-centos\$releasever-noarch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/release/centos\$releasever/noarch/
+#mirrorlist=https://%{mirrorhost}/kloxong-release-centos\$releasever-noarch-mirrors.txt
 enabled=0
 gpgcheck=0
 
 [kloxong-release-version-arch]
 name=KloxoNG - release-version-arch
-baseurl=https://%{repohost}/repo/kloxong/release/centos\$releasever/\$basearch/
-mirrorlist=https://%{mirrorhost}/kloxong-release-centos\$releasever-\$basearch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/release/centos\$releasever/\$basearch/
+#mirrorlist=https://%{mirrorhost}/kloxong-release-centos\$releasever-\$basearch-mirrors.txt
 enabled=1
 gpgcheck=0
 
 [kloxong-testing-neutral-noarch]
 name=KloxoNG - testing-neutral-noarch
-baseurl=https://%{repohost}/repo/kloxong/testing/neutral/noarch/
-mirrorlist=https://%{mirrorhost}/kloxong-testing-neutral-noarch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/testing/neutral/noarch/
+#mirrorlist=https://%{mirrorhost}/kloxong-testing-neutral-noarch-mirrors.txt
 enabled=0
 gpgcheck=0
 
 [kloxong-testing-neutral-arch]
 name=KloxoNG - testing-neutral-arch
-baseurl=https://%{repohost}/repo/kloxong/testing/neutral/\$basearch/
-mirrorlist=https://%{mirrorhost}/kloxong-testing-neutral-\$basearch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/testing/neutral/\$basearch/
+#mirrorlist=https://%{mirrorhost}/kloxong-testing-neutral-\$basearch-mirrors.txt
 enabled=0
 gpgcheck=0
 
 [kloxong-testing-version-noarch]
 name=KloxoNG - testing-version-noarch
-baseurl=https://%{repohost}/repo/kloxong/testing/centos\$releasever/noarch/
-mirrorlist=https://%{mirrorhost}/kloxong-testing-centos\$releasever-noarch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/testing/centos\$releasever/noarch/
+#mirrorlist=https://%{mirrorhost}/kloxong-testing-centos\$releasever-noarch-mirrors.txt
 enabled=0
 gpgcheck=0
 
 [kloxong-testing-version-arch]
 name=KloxoNG - testing-version-arch
-baseurl=https://%{repohost}/repo/kloxong/testing/centos\$releasever/\$basearch/
-mirrorlist=https://%{mirrorhost}/kloxong-testing-centos\$releasever-\$basearch-mirrors.txt
+baseurl=https://%{repohost}/kloxong/testing/centos\$releasever/\$basearch/
+#mirrorlist=https://%{mirrorhost}/kloxong-testing-centos\$releasever-\$basearch-mirrors.txt
 enabled=0
 gpgcheck=0
 
 [kloxong-srpms]
 name=KloxoNG - srpms
-baseurl=https://%{repohost}/repo/kloxong/SRPMS/
-mirrorlist=https://%{mirrorhost}/kloxong-SRPMS-mirrors.txt
+baseurl=https://%{repohost}/kloxong/SRPMS/
+#mirrorlist=https://%{mirrorhost}/kloxong-SRPMS-mirrors.txt
 enabled=0
 gpgcheck=0
 
