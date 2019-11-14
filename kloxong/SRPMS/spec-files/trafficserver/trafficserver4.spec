@@ -2,11 +2,12 @@
 %define _hardened_build	1
 %define rhelver		%(/usr/lib/rpm/redhat/dist.sh --distnum)
 %define rhelarch		%(uname -i)
+%define _unpackaged_files_terminate_build 0
 
 Summary:	Fast, scalable and extensible HTTP/1.1 compliant caching proxy server
 Name:		trafficserver
 Version:	4.0.1
-Release:	1%{?dist}
+Release:	1.kng%{?dist}
 License:	ASL 2.0
 Group:		System Environment/Daemons
 Source0:	http://www.apache.org/dist/%{name}/%{name}-%{version}.tar.bz2

@@ -15,7 +15,7 @@
 
 Name:		yadifa
 Version:	2.2.5
-Release:	1%{?dist}
+Release:	1.kng%{?dist}
 Summary:	Lightweight authoritative Name Server with DNSSEC capabilities
 
 Group:		System Environment/Daemons

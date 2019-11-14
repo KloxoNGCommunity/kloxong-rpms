@@ -6,7 +6,7 @@
 Summary:       A module for using macros within Apache configs
 Name:          mod_%{modn}
 Version:       %{modv}
-Release:       3%{?dist}
+Release:       3.kng%{?dist}
 License:       Apache
 Group:         System Environment/Daemons
 Source0:       http://people.apache.org/~fabien/%{name}/%{name}-%{modv}.tar.gz

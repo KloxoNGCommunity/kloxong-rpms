@@ -1,7 +1,7 @@
 Summary:    A GNU tool for automatically configuring source code
 Name:       autoconf
 Version:    2.69
-Release:    12.2%{?dist}
+Release:    12.2.kng%{?dist}
 License:    GPLv2+ and GFDL
 Group:      Development/Tools
 Source0:    http://ftpmirror.gnu.org/autoconf/autoconf-%{version}.tar.gz
@@ -16,7 +16,7 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 # m4 >= 1.4.6 is required, >= 1.4.14 is recommended:
 BuildRequires:      m4
 Requires:           m4
-#BuildRequires:      emacs
+BuildRequires:      emacs
 # the filtering macros are currently in /etc/rpm/macros.perl:
 #BuildRequires:      perl-macros
 BuildRequires:      perl(Data::Dumper)

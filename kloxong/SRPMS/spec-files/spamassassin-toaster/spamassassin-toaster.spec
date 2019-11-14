@@ -1,7 +1,7 @@
 %define	name spamassassin
 %define	pversion 3.4.1
 %define 	bversion 1.4
-%define	rpmrelease 7%{?dist}
+%define	rpmrelease 7.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	perl >= 5.8.8, perl(Digest::SHA1), perl(HTML::Parser), openssl-devel 

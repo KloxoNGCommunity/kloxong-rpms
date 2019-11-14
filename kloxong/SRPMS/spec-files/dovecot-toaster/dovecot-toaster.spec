@@ -13,7 +13,7 @@ Name:      %{real_name}-toaster
 Summary:   Secure imap and pop3 server
 Epoch:     1
 Version:   2.2.24
-Release:   1%{?dist}
+Release:   1.kng%{?dist}
 License:   MIT and LGPLv2
 #          dovecot itself is MIT,
 #          pigeonhole is LGPLv2,
@@ -343,6 +343,8 @@ mkdir -p %{buildroot}%{_qtlogdir}/dovecot
 # Supervise
 #-----------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_spath}/dovecot/log
+install     %{SOURCE100}  %{buildroot}%{_spath}/dovecot/run
+install     %{SOURCE101}  %{buildroot}%{_spath}/dovecot/log/run
 
 #-------------------------------------------------------------------------------
 %clean

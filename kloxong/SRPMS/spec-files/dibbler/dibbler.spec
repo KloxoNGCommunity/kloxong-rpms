@@ -1,7 +1,7 @@
 Summary: Dibbler - a portable DHCPv6
 Name: dibbler
 Version: 1.0.0
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 License: GPL
 Group: Applications/Internet
 
@@ -30,7 +30,7 @@ rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT/var/lib/dibbler
 mkdir -p $RPM_BUILD_ROOT/etc/dibbler
-install -m 0755 %{SOURCE1} %{buildroot}/%{_initrddir}/dibbler-client
+install -m 0755 %{SOURCE1} %{buildroot}%{_initrddir}/dibbler-client
 rm -rf $RPM_BUILD_ROOT%{_docdir}/%{name}
 
 %clean

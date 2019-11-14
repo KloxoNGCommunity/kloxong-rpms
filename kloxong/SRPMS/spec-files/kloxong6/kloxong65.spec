@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo
-%define productname kloxomr
+%define productname kloxong
 %define timestamp 2016111301
 
 Name: %{productname}

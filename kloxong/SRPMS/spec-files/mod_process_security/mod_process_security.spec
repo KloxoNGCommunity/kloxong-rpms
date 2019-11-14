@@ -1,7 +1,7 @@
 Summary:	Apache module to process security in the webserver config
 Name:		mod_process_security
 Version:	1.0
-Release:	2%{?dist}
+Release:	2.kng%{?dist}
 Group:		System Environment/Daemons
 License:	ASL 2.0
 URL:		https://github.com/matsumoto-r/mod_process_security

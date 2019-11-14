@@ -1,11 +1,11 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/thirdparty
-%define productname kloxomr-thirdparty
+%define productname kloxong-thirdparty
 %define packagename sshterm-applet
 
 Name: %{productname}-%{packagename}
 Summary: SSHTerm SSH access for webpages
 Version: 0.2.2
-Release: 4%{?dist}
+Release: 4.kng%{?dist}
 License: GPL
 URL: http://lxcenter.org/
 Group: Applications/Internet

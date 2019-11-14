@@ -1,7 +1,7 @@
 Name:           mod_evasive
 Version:        1.10.1
 #Release:        6.jason.2
-Release:        8%{?dist}
+Release:        8.kng%{?dist}
 Summary:        Denial of Service evasion module for Apache
 
 Group:          System Environment/Daemons

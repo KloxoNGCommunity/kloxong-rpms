@@ -11,7 +11,7 @@ Name: webalizer
 Summary: A flexible Web server log file analysis program
 Group: Applications/Internet
 Version: %{ver}_%{patchlevel}
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 URL: http://www.mrunix.net/webalizer/
 License: GPLv2+
 Source0: ftp://ftp.mrunix.net/pub/webalizer/%{name}-%{ver}-%{patchlevel}-src.tar.bz2

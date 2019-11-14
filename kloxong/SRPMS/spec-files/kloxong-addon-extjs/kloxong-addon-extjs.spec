@@ -6,7 +6,7 @@
 Name: %{productname}-%{packagename}
 Summary: Javascript Framework
 Version: 1.1
-Release: 4%{?dist}
+Release: 4.kng%{?dist}
 License: GPL
 URL: http://www.extjs.com/
 Group: Applications/Internet

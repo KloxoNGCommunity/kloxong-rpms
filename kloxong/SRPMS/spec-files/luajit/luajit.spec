@@ -1,6 +1,6 @@
 Name:           luajit
 Version:        2.0.3
-Release:        3%{?dist}
+Release:        3.kng%{?dist}
 Summary:        Just-In-Time Compiler for Lua
 License:        MIT
 URL:            http://luajit.org/

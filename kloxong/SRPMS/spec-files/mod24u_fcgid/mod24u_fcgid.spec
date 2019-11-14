@@ -38,14 +38,14 @@
 
 Name:		mod24u_fcgid
 Version:	2.3.9
-Release:	1%{?dist}
+Release:	1.kng%{?dist}
 Summary:	FastCGI interface module for Apache 2
 Group:		System Environment/Daemons
 License:	ASL 2.0
 URL:		http://httpd.apache.org/mod_fcgid/
 Source0:	http://www.apache.org/dist/httpd/mod_fcgid/%{real_name}-%{version}.tar.bz2
 Source1:	fcgid.conf
-Source2:	mod_fcgid-2.1-README.RPM
+#Source2:	mod_fcgid-2.1-README.RPM
 Source3:	mod_fcgid-2.1-README.SELinux
 Source4:	mod_fcgid-tmpfs.conf
 Source5:	fcgid24.conf
@@ -112,7 +112,7 @@ SELinux policy module supporting FastCGI applications with mod_fcgid.
 %setup -n %{real_name}-%{version}
 
 cp -p %{SOURCE1} fcgid.conf
-cp -p %{SOURCE2} README.RPM
+#cp -p %{SOURCE2} README.RPM
 cp -p %{SOURCE3} README.SELinux
 cp -p %{SOURCE5} fcgid24.conf
 %if 0%{?selinux_policynum} < 20501

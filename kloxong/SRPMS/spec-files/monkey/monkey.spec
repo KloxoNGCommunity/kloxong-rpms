@@ -4,7 +4,7 @@
 Name: monkey
 Summary: Small WebServer
 Version: %{major_ver}.%{minor_ver}
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 Group: System Environment/Daemons
 License: GPLv2
 URL: http://www.monkey-project.com/

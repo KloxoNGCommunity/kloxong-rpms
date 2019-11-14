@@ -1,6 +1,6 @@
 Name: lve
 Version: 0.7.3
-Release: 2%{?dist}
+Release: 2.kng%{?dist}
 Summary: Light virtualisation solution
 License: GPL
 Group: System Environment/Kernel

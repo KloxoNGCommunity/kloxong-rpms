@@ -1,7 +1,7 @@
 %define	name isoqlog
 %define	pversion 2.1
 %define 	bversion 1.3
-%define	rpmrelease 8%{?dist}
+%define	rpmrelease 8.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		ccflags %{optflags} 

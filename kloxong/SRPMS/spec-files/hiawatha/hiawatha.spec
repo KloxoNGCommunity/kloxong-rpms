@@ -15,7 +15,7 @@
 Summary:	An advanced and secure webserver for Unix
 Name:		hiawatha
 Version:	%{FULL_VERSION}
-Release:	%{STEP_VERSION}.2%{?dist}
+Release:	%{STEP_VERSION}.2.kng%{?dist}
 Source0:	http://www.hiawatha-webserver.org/files/%{name}-%{REAL_VERSION}.tar.gz
 Source1:	%{name}-sysvscript
 Source2:	%{name}-systemd

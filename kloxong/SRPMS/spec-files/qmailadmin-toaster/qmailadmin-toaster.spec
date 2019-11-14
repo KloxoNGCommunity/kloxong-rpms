@@ -1,7 +1,7 @@
 %define	name qmailadmin
 %define	pversion 1.2.16
 %define 	bversion 1.4
-%define	rpmrelease 2%{?dist}
+%define	rpmrelease 2.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		apacheuser apache

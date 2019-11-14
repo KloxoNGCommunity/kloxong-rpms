@@ -6,7 +6,7 @@
 Name: %{productname}-%{packagename}
 Summary: Javascript Framework HTML 
 Version: 1.3.3
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 License: GPL
 URL: http://sqlbuddy.com/
 Group: Applications/Internet

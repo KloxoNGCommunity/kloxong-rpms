@@ -7,7 +7,7 @@
 Name: mod24u_ruid2
 Version: 0.9.8
 #Release: 1%{?dist}
-Release: 3%{?dist}
+Release: 3.kng%{?dist}
 Summary: Suexec module for apache
 
 Group: System Environment/Daemons

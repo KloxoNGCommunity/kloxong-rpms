@@ -9,7 +9,7 @@
 Summary:	An advanced and secure webserver for Unix
 Name:		%{productname}-%{packagename}
 Version:	1.5
-Release:	1%{?dist}
+Release:	1.kng%{?dist}
 Source0:	hiawatha-addons-%{version}.tar.bz2
 License:	GPLv2+
 Group:		System Environment/Daemons

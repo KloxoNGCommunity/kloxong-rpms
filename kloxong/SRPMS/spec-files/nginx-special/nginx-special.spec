@@ -12,7 +12,7 @@
 Name:           %{name}
 Version:        1.3.11
 #Release:        1%{?dist}
-Release:        2%{?dist}
+Release:        2.kng%{?dist}
 Summary:        Robust, small and high performance http and reverse proxy server
 Group:          System Environment/Daemons
 

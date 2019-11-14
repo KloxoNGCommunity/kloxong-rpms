@@ -1,7 +1,7 @@
 %define	name libdomainkeys
 %define	pversion 0.68
 %define 	bversion 1.3
-%define	rpmrelease 7%{?dist}
+%define	rpmrelease 7.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	openssl-devel

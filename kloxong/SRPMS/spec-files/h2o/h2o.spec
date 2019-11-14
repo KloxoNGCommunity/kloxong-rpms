@@ -21,7 +21,7 @@
 Summary: H2O - The optimized HTTP/1, HTTP/2 server
 Name: h2o
 Version: 1.4.2
-Release: 2%{?dist}
+Release: 2.kng%{?dist}
 URL: http://h2o.github.io/
 Source0: https://github.com/h2o/h2o/archive/%{name}-%{version}.tar.bz2
 Source1: h2o_index.html

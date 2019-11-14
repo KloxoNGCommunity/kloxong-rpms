@@ -8,7 +8,7 @@ Name:		mod24u_evasive
 Version:	1.10.1
 #Release:	6.jason.2
 #Release:	7.lx.el5
-Release:	7%{?dist}
+Release:	7.kng%{?dist}
 Summary:	Denial of Service evasion module for Apache
 
 Group:		System Environment/Daemons

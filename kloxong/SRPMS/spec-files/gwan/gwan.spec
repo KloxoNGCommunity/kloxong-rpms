@@ -1,10 +1,11 @@
 %define gwanpath /home/gwan
 %define productname gwan
+%define _binaries_in_noarch_packages_terminate_build   0
 
 Name: %{productname}
 Summary: G-WAN Web Server
 Version: 4.3.17
-Release: 2%{?dist}
+Release: 2.kng%{?dist}
 License: GPL
 URL: http://www.gwan.ch/
 Group: Applications/Internet

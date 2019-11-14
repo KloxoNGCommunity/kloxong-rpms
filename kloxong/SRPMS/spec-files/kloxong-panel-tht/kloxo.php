@@ -9,7 +9,7 @@
 class kloxo
 {
 
-	public $name = "Kloxo/Kloxo-MR";
+	public $name = "Kloxo/Kloxo-NG";
 	public $hash = false;
 	public $ns_tmpl = true;
 	public $has_welcome = true;

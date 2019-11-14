@@ -5,7 +5,7 @@
 Name: %{productname}-%{packagename}
 Summary: Telaen webmail
 Version: 1.3.2
-Release: 3%{?dist}
+Release: 3.kng%{?dist}
 License: GPL
 URL: https://github.com/jimjag/telaen
 Group: Applications/Internet

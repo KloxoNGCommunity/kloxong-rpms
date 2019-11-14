@@ -6,7 +6,7 @@
 Name: %{productname}-%{packagename}
 Summary: Javascript WYSIWYG Editor 
 Version: 4.5.11
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 License: GPL
 URL: http://ckeditor.com/
 Group: Applications/Internet

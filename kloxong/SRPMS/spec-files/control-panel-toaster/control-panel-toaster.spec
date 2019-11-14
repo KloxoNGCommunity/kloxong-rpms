@@ -1,7 +1,7 @@
 %define	name control-panel
 %define	pversion 0.5
 %define 	bversion 1.4
-%define	rpmrelease 1%{?dist}
+%define	rpmrelease 1.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	phppaths /usr/share/php:/usr/share/pear:.

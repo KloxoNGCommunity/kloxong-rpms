@@ -1,7 +1,7 @@
 %define	name squirrelmail
 %define	pversion 1.4.20
 %define 	bversion 1.3
-%define	rpmrelease 18%{?dist}
+%define	rpmrelease 18.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		phppaths /usr/share/php:/usr/share/pear:.

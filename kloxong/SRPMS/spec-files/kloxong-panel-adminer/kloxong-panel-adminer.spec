@@ -6,7 +6,7 @@
 Name: %{productname}-%{packagename}
 Summary: Javascript Framework HTML 
 Version: 4.7.1
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 License: GPL
 URL: http://www.adminer.org/
 Group: Applications/Internet

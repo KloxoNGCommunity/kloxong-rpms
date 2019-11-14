@@ -5,7 +5,7 @@
 Name: %{productname}-%{packagename}
 Summary: JCTerm SSH access for webpages
 Version: 0.0.10
-Release: 2%{?dist}
+Release: 2.kng%{?dist}
 License: GPL
 URL: http://lxcenter.org/
 Group: Applications/Internet

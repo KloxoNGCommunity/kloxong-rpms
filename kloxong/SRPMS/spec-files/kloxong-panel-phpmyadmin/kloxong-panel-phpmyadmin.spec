@@ -5,9 +5,9 @@
 %define packagename2 phpmyadmin
 
 Name: %{productname}-%{packagename2}
-Version: 4.6.6
+Version: 4.9.1
 #Release: 1%{?dist}
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 Summary: Web based MySQL browser written in php
 
 Group: Applications/Internet

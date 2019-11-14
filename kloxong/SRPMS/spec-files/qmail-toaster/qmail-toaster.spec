@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 57%{?dist}
+%define 	rpmrelease 57.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}

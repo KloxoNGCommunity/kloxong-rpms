@@ -1,7 +1,7 @@
 %define 	name autorespond
 %define 	pversion 2.0.5
 %define 	bversion 1.4
-%define 	rpmrelease 3%{?dist}
+%define 	rpmrelease 3.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	ccflags %{optflags}

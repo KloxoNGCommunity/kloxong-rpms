@@ -43,7 +43,7 @@ diff -Naur tht-1.2.6_ori/includes/tpl/addserver.tpl tht-1.2.6_mod/includes/tpl/a
    <tr>
      <td>Username:</td>
 -    <td><input type="text" name="user" id="user" /><a title="Username to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
-+    <td><input type="text" name="user" id="user" /><a title="Username ('Auxiliary Login' for Kloxo/Kloxo-MR) to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
++    <td><input type="text" name="user" id="user" /><a title="Username ('Auxiliary Login' for Kloxo/Kloxo-NG) to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
    </tr>
    <tr>
      <td valign="top" width="20%"><span id="passtext"></span></td>
@@ -55,7 +55,7 @@ diff -Naur tht-1.2.6_ori/includes/tpl/viewserver.tpl tht-1.2.6_mod/includes/tpl/
      <td>Username:</td>
      <td><input type="text" name="user" id="user" value="%USER%" />
 -    <a title="The username to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
-+    <a title="The username ('Auxiliary Login' for Kloxo/Kloxo-MR to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
++    <a title="The username ('Auxiliary Login' for Kloxo/Kloxo-NG to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
    </tr>
    <tr>
      <td valign="top" width="20%"><span id="passtext"></span></td>

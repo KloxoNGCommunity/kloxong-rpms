@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 Name:           libowfat
 Version:        0.28
-Release:        4%{?dist}
+Release:        4.kng%{?dist}
 Summary:        Reimplementation of libdjb 
 
 Group:          System Environment/Libraries

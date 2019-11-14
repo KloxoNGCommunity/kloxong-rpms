@@ -6,7 +6,7 @@
 Name: %{productname}-%{packagename}
 Summary: Javascript Framework HTML 
 Version: 2.9.0
-Release: 3%{?dist}
+Release: 3.kng%{?dist}
 License: GPL
 URL: http://yuilibrary.com/yui/docs/dd/
 Group: Applications/Internet

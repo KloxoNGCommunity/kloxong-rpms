@@ -4,7 +4,7 @@
 Name:		libvpopmail
 Summary:	Vpopmail libraries for QMail Toaster
 Version:	5.4.33
-Release:	1%{?dist}
+Release:	1.kng%{?dist}
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.inter7.com/%{name}

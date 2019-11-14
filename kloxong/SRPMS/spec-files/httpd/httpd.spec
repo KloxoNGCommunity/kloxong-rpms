@@ -9,7 +9,7 @@
 Summary: Apache HTTP Server
 Name: httpd
 Version: 2.2.31
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 URL: http://httpd.apache.org/
 Source0: http://www.apache.org/dist/httpd/httpd-%{version}.tar.bz2
 Source1: index.html

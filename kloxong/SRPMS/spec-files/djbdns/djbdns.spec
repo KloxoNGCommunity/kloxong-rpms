@@ -1,6 +1,6 @@
 Name: djbdns
 Version: 1.05
-Release: 17.4%{?dist}
+Release: 17.4.kng%{?dist}
 Group: Utilities/System
 URL: http://cr.yp.to/djbns.html
 License: Check with djb@koobera.math.uic.edu

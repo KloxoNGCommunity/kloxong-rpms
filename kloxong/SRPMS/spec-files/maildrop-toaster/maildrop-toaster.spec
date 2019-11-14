@@ -1,7 +1,7 @@
 %define	name maildrop
 %define	pversion 2.0.3
 %define 	bversion 1.3
-%define	rpmrelease 10%{?dist}
+%define	rpmrelease 10.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	ccflags %{optflags}

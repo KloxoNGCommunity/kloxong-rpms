@@ -1,7 +1,7 @@
 %define	name qmailmrtg
 %define	pversion 4.2
 %define 	bversion 1.3
-%define	rpmrelease 8%{?dist}
+%define	rpmrelease 8.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		apacheuser apache

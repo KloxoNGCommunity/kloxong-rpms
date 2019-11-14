@@ -15,7 +15,7 @@
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
 Version:		4.1.8
-Release:		1%{dist}
+Release:		1.kng%{dist}
 Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons

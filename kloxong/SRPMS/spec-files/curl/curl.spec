@@ -47,7 +47,7 @@
 %global have_multilib_rpm_config %([ "%{__distinit}" == "fc" -a %{__distvers} -gt 21 -o "%{__distinit}" == "rhel" ] && echo 1 || echo 0)
 
 Version:	7.50.1
-Release:	1.0.cf.%{__distinit}%{__distvers}
+Release:	1.0.cf.kng.%{__distinit}%{__distvers}
 %if %{compat}
 Summary:	Curl library for compatibility with old applications
 Name:		libcurl%(echo %{version} | tr -d .)

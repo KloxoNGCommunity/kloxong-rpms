@@ -3,7 +3,7 @@
 Name:           maradns
 Summary:        An authoritative and recursive DNS server made with security in mind
 Version:        2.0.07d
-Release:        1%{?dist}
+Release:        1.kng%{?dist}
 License:        BSD (Two-clause)
 Group:          Productivity/Networking/DNS/Servers
 Url:            http://www.maradns.org/download/2.0/snap

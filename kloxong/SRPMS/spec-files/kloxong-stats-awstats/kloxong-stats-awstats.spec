@@ -4,8 +4,8 @@
 
 Name: %{productname}-%{packagename}
 Summary: AWStats logfile analyzer
-Version: 7.6
-Release: 1%{?dist}
+Version: 7.7
+Release: 1.kng%{?dist}
 License: GPL
 URL: http://awstats.sourceforge.net/
 Group: Applications/Internet

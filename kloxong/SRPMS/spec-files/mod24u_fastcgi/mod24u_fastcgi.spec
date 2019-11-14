@@ -15,7 +15,7 @@ Summary: Apache module that enables FastCGI
 Name: mod24u_fastcgi
 Version: 2.4.7.1
 #Release: 2%{?dist}
-Release: 1%{?dist}
+Release: 1.kng%{?dist}
 License: GPL/Apache License
 Group: System Environment/Daemons
 URL: http://www.fastcgi.com/

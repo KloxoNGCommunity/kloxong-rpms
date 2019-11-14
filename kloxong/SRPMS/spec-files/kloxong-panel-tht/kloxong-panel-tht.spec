@@ -6,7 +6,7 @@
 Name: %{productname}-%{packagename}
 Summary: Web-based Billing System
 Version: 1.2.6
-Release: 3%{?dist}
+Release: 3.kng%{?dist}
 License: GPL
 URL: http://thehostingtool.com/
 Group: Applications/Internet

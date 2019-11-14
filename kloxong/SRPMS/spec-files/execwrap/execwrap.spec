@@ -1,6 +1,6 @@
 Name:           execwrap
 Version:        0.5
-Release:        1%{?dist}
+Release:        1.kng%{?dist}
 #
 License:        BSD
 Group:          Productivity/Networking/Web/Utilities

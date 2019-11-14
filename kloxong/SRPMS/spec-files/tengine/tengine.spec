@@ -28,7 +28,7 @@
 
 Name:              tengine
 Version:           2.1.2
-Release:           1%{?dist}
+Release:           1.kng%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
 Group:             System Environment/Daemons

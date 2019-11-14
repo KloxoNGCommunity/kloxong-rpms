@@ -5,7 +5,7 @@
 Name: %{productname}-%{packagename}
 Summary: SquirrelMail webmail client
 Version: 1.4.22
-Release: 6%{?dist}
+Release: 6.kng%{?dist}
 License: GPL
 URL: http://www.squirrelmail.org/
 Group: Applications/Internet

@@ -1,6 +1,6 @@
 Name:           polarssl
 Version:        1.3.8
-Release:        1%{?dist}
+Release:        1.kng%{?dist}
 Summary:        Light-weight cryptographic and SSL/TLS library
 
 Group:          System Environment/Libraries

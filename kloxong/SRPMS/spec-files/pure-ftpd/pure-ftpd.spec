@@ -1,6 +1,6 @@
 Name:       pure-ftpd
 Version:    1.0.49
-Release:    1%{?dist}
+Release:    1.kng%{?dist}
 Summary:    Lightweight, fast and secure FTP server
 
 Group:      System Environment/Daemons
