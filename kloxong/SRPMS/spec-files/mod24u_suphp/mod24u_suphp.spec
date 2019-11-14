@@ -157,6 +157,9 @@ automake
 %{_sbindir}/suphp
 
 %changelog
+
+* Note: needs cp /usr/include/apr-1/* /usr/include/httpd/ for el6 build
+
 * Sat Jun 13 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 0.7.2-3.mr
 - recompile with rename to mod24u_suphp
 
