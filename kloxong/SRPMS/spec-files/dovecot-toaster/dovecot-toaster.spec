@@ -1594,7 +1594,7 @@ fi
 * Wed Feb 20 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 1:1.0.10-5
 - Autorebuild for GCC 4.3
 
-* Fri Jan 07 2008 Tomas Janousek <tjanouse@redhat.com> - 1:1.0.10-4
+* Mon Jan 07 2008 Tomas Janousek <tjanouse@redhat.com> - 1:1.0.10-4
 - update to latest upstream stable (1.0.10)
 
 * Wed Dec 05 2007 Jesse Keating <jkeating@redhat.com> - 1:1.0.7-3
@@ -1850,7 +1850,7 @@ fi
 - add UW to Dovecot migration documentation and scripts, bug #139954
   fix SSL documentation and scripts, add missing documentation, bug #139276
 
-* Thu Nov 15 2004 Warren Togami <wtogami@redhat.com> 0.99.11-2.FC4.1
+* Mon Nov 15 2004 Warren Togami <wtogami@redhat.com> 0.99.11-2.FC4.1
 - rebuild against MySQL4
 
 * Thu Oct 21 2004 John Dennis <jdennis@redhat.com>
