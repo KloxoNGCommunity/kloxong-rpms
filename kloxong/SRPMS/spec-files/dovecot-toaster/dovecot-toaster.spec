@@ -287,7 +287,7 @@ chmod 600 %{buildroot}%{ssldir}/certs/dovecot.pem
 chmod 600 %{buildroot}%{ssldir}/private/dovecot.pem
 
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-  install     %{SOURCE6}  %{buildroot}%{_tmpfilesdir}/dovecot.conf
+  install -Dp %{SOURCE6}  %{buildroot}%{_tmpfilesdir}/dovecot.conf
 %else
   install -Dp %{SOURCE7}  %{buildroot}%{_initddir}/dovecot
   install -DP %{SOURCE8}  %{buildroot}%{_sysconfdir}/sysconfig/dovecot
