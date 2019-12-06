@@ -1,5 +1,5 @@
 %define debug_package %{nil}
-%defile htmldocs html
+%define htmldocs html
 
 %define aprver 1
 
