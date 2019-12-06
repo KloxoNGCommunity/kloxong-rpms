@@ -15,7 +15,7 @@ URL: http://www.modsecurity.org/
 Group: System Environment/Daemons
 Source: http://www.modsecurity.org/download/modsecurity-apache_%{version}.tar.gz
 Source1: mod_security.conf
-Requires: httpd httpd-mmn = %{_httpd_mmn}
+Requires: httpd
 BuildRequires: httpd-devel libxml2-devel pcre-devel curl-devel lua-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
