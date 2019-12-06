@@ -1,0 +1,11 @@
+diff -Naur autorespond-2.0.5_ori/autorespond.c autorespond-2.0.5_mod/autorespond.c
+--- autorespond-2.0.5_ori/autorespond.c	2003-09-18 16:17:57.000000000 -0400
++++ autorespond-2.0.5_mod/autorespond.c	2017-08-21 20:48:12.361726373 -0400
+@@ -260,6 +260,7 @@
+ 	/*start outputting to qmail-queue
+ 	  date is in 822 format
+ 	  message-id could be computed a little better*/
++	fprintf(fdm,"Content-Transfer-Encoding: 8bit\nContent-Type: text/plain; charset=UTF-8\n");
+ 	fprintf(fdm,"Date: %u %s %u %02u:%02u:%02u -0000\nMessage-ID: <%lu.%u.blah>\n"
+ 		,dt->tm_mday,montab[dt->tm_mon],dt->tm_year+1900,dt->tm_hour,dt->tm_min,dt->tm_sec,msgwhen,getpid() );
+ 
