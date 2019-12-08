@@ -112,17 +112,17 @@ mkdir -p %{buildroot}
 if [ -f /var/qmail/bin/vpopfake ] ; then
 	rm -fR /var/qmail ;
 fi
-
-if [ -f /var/qmail/bin/qmail-newu ] ; then
-	tempdir="1" ;
-else
-	mkdir /var/qmail ;
-	mkdir /var/qmail/bin ;
-	touch /var/qmail/bin/qmail-newu ;
-	touch /var/qmail/bin/qmail-inject ;
-	touch /var/qmail/bin/qmail-newmrh ;
-	touch /var/qmail/bin/vpopfake ;
-fi
+# jp these comments are for build on existing kloxo box
+#if [ -f /var/qmail/bin/qmail-newu ] ; then
+#	tempdir="1" ;
+#else
+#	mkdir /var/qmail ;
+#	mkdir /var/qmail/bin ;
+#	touch /var/qmail/bin/qmail-newu ;
+#	touch /var/qmail/bin/qmail-inject ;
+#	touch /var/qmail/bin/qmail-newmrh ;
+#	touch /var/qmail/bin/vpopfake ;
+#fi
 
 
 # Create group and user for build if they don't exist
