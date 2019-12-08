@@ -78,7 +78,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %doc docs/APRDesign.html docs/canonical_filenames.html
 %doc docs/incomplete_types docs/non_apr_programs
-%doc --parents %{htmldocs}
+#%doc --parents %{htmldocs}
 %{_bindir}/apr*config
 %{_libdir}/libapr-%{aprver}.*a
 %{_libdir}/libapr-%{aprver}.so
