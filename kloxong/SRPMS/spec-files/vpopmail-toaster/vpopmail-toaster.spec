@@ -161,7 +161,10 @@ fi
 	--enable-valias \
 	--enable-many-domains \
 	--enable-non-root-build \
-	--enable-qmaildir=/var/qmail
+	--enable-qmaildir=/var/qmail \
+	--enable-qmail-newu=/var/qmail/bin/qmail-newu \
+	--enable-qmail-inject=/var/qmail/bin/qmail-inject \
+	--enable-qmail-qmail-newmrh=/var/qmail/bin/qmail-newmrh 
 make
 
 # Delete gcc temp file
