@@ -185,8 +185,8 @@ This package provides the development files for dovecot.
 #%patch5 -p1 -b .privatetmp
 #%patch6 -p1 -b .waitonline
 #%patch7 -p1 -b .10c0aae82d0d
-%patch8 -p1 -b .initbysystemd
-%patch9 -p1 -b .systemd_w_protectsystem
+#%patch8 -p1 -b .initbysystemd
+#%patch9 -p1 -b .systemd_w_protectsystem
 sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src/plugins/fts-lucene/Makefile.in
 
 #-------------------------------------------------------------------------------
