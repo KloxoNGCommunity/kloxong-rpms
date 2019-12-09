@@ -28,6 +28,7 @@ Group:		Networking/Other
 URL:		http://www.inter7.com/vpopmail
 Source0:	vpopmail-%{pversion}.tar.gz
 Patch0:		vpopmail-toaster-5.4.33.patch.bz2
+Patch1:    vpopmail-build-no-root-5.4.33.patch
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 Obsoletes:	vpopmail-toaster-doc
 Conflicts:      set-toaster, checkpassword, vpopmail, postfix
@@ -93,6 +94,7 @@ one domain per SQL table     = --disable-many-domains
 %setup -q -n %{name}-%{pversion}
 
 %patch0 -p1
+%patch1 -p1
 
 # Cleanup for gcc
 #-------------------------------------------------------------------------------
@@ -127,19 +129,21 @@ fi
 
 # Create group and user for build if they don't exist
 #-------------------------------------------------------------------------------
-if [ -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
-	/usr/sbin/groupadd -g 89 -r vchkpw 2>&1 || :
-fi
-
-if [ -z "`/usr/bin/id -u vpopmail 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 89 -r -M -d %{vdir}  -s /sbin/nologin -c "Vpopmail User" -g vchkpw vpopmail 2>&1 || :
-fi
+#if [ -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
+#	/usr/sbin/groupadd -g 89 -r vchkpw 2>&1 || :
+#fi
+#
+#if [ -z "`/usr/bin/id -u vpopmail 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 89 -r -M -d %{vdir}  -s /sbin/nologin -c "Vpopmail User" -g vchkpw vpopmail 2>&1 || :
+#fi
 
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
-
-sudo ./configure --prefix=%{vdir} \
+autoreconf
+%{__automake}
+%{__autoconf}
+ ./configure --prefix=%{vdir} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
 	--enable-libdir=%{mylibdir} \
@@ -258,7 +262,7 @@ fi
 %attr(0444,vpopmail,vchkpw) %{vdir}/doc/doc_html/*
 %attr(0444,vpopmail,vchkpw) %{vdir}/doc/man_html/*
 
-%attr(4755,root,root) %dir %{vdir}/bin/vchkpw
+%attr(4755,root,root) %{vdir}/bin/vchkpw
 
 
 #-------------------------------------------------------------------------------
