@@ -4,7 +4,7 @@
 %define	rpmrelease 4.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
-BuildRequires:	automake, autoconf, mysql-devel >= 5.0.22, mysql >= 5.0.22, qmail-fake 
+BuildRequires:	automake, autoconf, mysql-devel >= 5.0.22, mysql >= 5.0.22 
 Requires:	mysql >= 5.0.22 
 #BuildPreReq:	shadow-utils
 BuildRequires:	shadow-utils
