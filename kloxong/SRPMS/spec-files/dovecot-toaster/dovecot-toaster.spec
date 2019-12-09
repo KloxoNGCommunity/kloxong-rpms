@@ -472,7 +472,7 @@ fi
 %{_bindir}/doveconf
 %{_bindir}/dsync
 
-%if %{?fedora}0 > 140 || %{?rhel}0 > 60
+%if %{?fedora}0 > 140 || %{?rhel}0 > 70
 %config(noreplace) %{_tmpfilesdir}/dovecot.conf
 %{_unitdir}/dovecot.service
 %{_unitdir}/dovecot.socket
