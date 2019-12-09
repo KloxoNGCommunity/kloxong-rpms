@@ -159,7 +159,8 @@ fi
 	--enable-log-name=vpopmail \
 	--disable-mysql-limits \
 	--enable-valias \
-	--enable-many-domains
+	--enable-many-domains \
+	--enable-non-root-build
 make
 
 # Delete gcc temp file
