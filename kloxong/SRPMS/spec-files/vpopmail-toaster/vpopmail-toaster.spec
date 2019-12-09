@@ -10,7 +10,7 @@ Requires:	mysql >= 5.0.22
 BuildRequires:	shadow-utils
 %define		ccflags %{optflags}
 %define		ldflags %{optflags}
-%define		mylibdir /usr/lib/mysql
+%define		mylibdir /usr/lib64/mysql
 
 ############### RPM ################################
 
@@ -142,6 +142,7 @@ mkdir -p %{buildroot}
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
+autoreconf
 %{__automake}
 %{__autoconf}
  ./configure --prefix=%{vdir} \
