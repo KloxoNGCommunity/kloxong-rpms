@@ -160,7 +160,8 @@ fi
 	--disable-mysql-limits \
 	--enable-valias \
 	--enable-many-domains \
-	--enable-non-root-build
+	--enable-non-root-build \
+	--enable-qmaildir=/var/qmail
 make
 
 # Delete gcc temp file
