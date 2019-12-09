@@ -4,7 +4,7 @@
 %define	rpmrelease 4.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
-BuildRequires:	mysql-devel >= 5.0.22, mysql >= 5.0.22, qmail-fake
+BuildRequires:	mysql-devel >= 5.0.22, mysql >= 5.0.22, qmail-fake mysql-devel < 5.2, mysql >= 5.2, qmail-fake
 Requires:	mysql >= 5.0.22 
 #BuildPreReq:	shadow-utils
 BuildRequires:	shadow-utils
@@ -37,7 +37,7 @@ Packager:       Eric Shubert <eric@datamatters.us>
 
 %define	name vpopmail
 %define	vdir /home/vpopmail
-%define	tempdir="0"
+#%define	tempdir = "0"
 
 
 #-------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ mkdir -p %{buildroot}
 #fi
 # jp these comments are for build on existing kloxo box
 #if [ -f /var/qmail/bin/qmail-newu ] ; then
-#	tempdir="1" ;
+#	tempdir = "1" ;
 #else
 #	mkdir /var/qmail ;
 #	mkdir /var/qmail/bin ;
@@ -142,7 +142,8 @@ mkdir -p %{buildroot}
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
-
+%{__automake}
+%{__autoconf}
  ./configure --prefix=%{vdir} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
