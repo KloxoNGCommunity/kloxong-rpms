@@ -51,6 +51,10 @@ Patch3: dovecot-1.0.rc7-mkcert-paths.patch
 Patch4: dovecot-2.1.10-reload.patch
 Patch5: dovecot-2.1-privatetmp.patch
 
+# adding systemd patch from https://src.fedoraproject.org/rpms/dovecot/tree/master
+Patch8: dovecot-2.2.20-initbysystemd.patch
+Patch9: dovecot-2.2.22-systemd_w_protectsystem.patch
+
 #wait for network
 Patch6: dovecot-2.1.10-waitonline.patch
 Patch7: dovecot-2.2.7-10c0aae82d0d.patch
@@ -181,6 +185,8 @@ This package provides the development files for dovecot.
 #%patch5 -p1 -b .privatetmp
 #%patch6 -p1 -b .waitonline
 #%patch7 -p1 -b .10c0aae82d0d
+%patch8 -p1 -b .initbysystemd
+%patch9 -p1 -b .systemd_w_protectsystem
 sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src/plugins/fts-lucene/Makefile.in
 
 #-------------------------------------------------------------------------------
@@ -225,7 +231,7 @@ fi
     --with-ssldir=%{ssldir}                    \
     --with-solr                                \
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-    --with-systemdsystemunitdir=/lib/systemd/system/  \
+     --with-systemdsystemunitdir=%{_unitdir}	\
 %endif
     --with-docs
 
@@ -482,9 +488,10 @@ fi
 %{_bindir}/doveconf
 %{_bindir}/dsync
 
-%if %{?fedora}0 > 140 || %{?rhel}0 > 70
+%if %{?fedora}0 > 140 || %{?rhel}0 > 60
 %config(noreplace) %{_tmpfilesdir}/dovecot.conf
 %{_unitdir}/dovecot.service
+%{_unitdir}/dovecot-init.service
 %{_unitdir}/dovecot.socket
 %else
 %{_initddir}/dovecot
