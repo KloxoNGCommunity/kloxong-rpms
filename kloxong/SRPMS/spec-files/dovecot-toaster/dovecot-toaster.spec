@@ -57,13 +57,22 @@ Patch7: dovecot-2.2.7-10c0aae82d0d.patch
 Requires: openssl >= 0.9.7f-4
 Requires: qmail-toaster >= 1.03
 Obsoletes: qmail-pop3d-toaster
-BuildRequires: libtool, autoconf, automake, pkgconfig, sqlite-devel, postgresql-devel
-BuildRequires: mysql-devel, openldap-devel, krb5-devel
+BuildRequires: libtool
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: pkgconfig
+BuildRequires: sqlite-devel
+BuildRequires: postgresql-devel
+BuildRequires: mysql-devel
+BuildRequires: openldap-devel
+BuildRequires: krb5-devel
 BuildRequires: openssl-devel
-#%if %{?fedora}00%{?rhel} > 5
-#BuildRequires: quota-devel
-BuildRequires: quota, libcap-devel, pam-devel
-#%endif
+%if %{?fedora}00%{?rhel} > 5
+BuildRequires: quota-devel
+BuildRequires: quota
+BuildRequires: libcap-devel
+BuildRequires: pam-devel
+%endif
 
 # gettext-devel is needed for running autoconf because of the
 # presence of AM_ICONV
