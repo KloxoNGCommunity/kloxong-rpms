@@ -4,7 +4,7 @@
 %define	rpmrelease 4.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
-BuildRequires:	mysql-devel >= 5.0.22, mysql >= 5.0.22, qmail-fake 
+BuildRequires:	automake, autoconf, mysql-devel >= 5.0.22, mysql >= 5.0.22, qmail-fake 
 Requires:	mysql >= 5.0.22 
 #BuildPreReq:	shadow-utils
 BuildRequires:	shadow-utils
@@ -142,6 +142,7 @@ mkdir -p %{buildroot}
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
+%{__automake}
 %{__autoconf}
  ./configure --prefix=%{vdir} \
 	--enable-vpopuser=vpopmail \
