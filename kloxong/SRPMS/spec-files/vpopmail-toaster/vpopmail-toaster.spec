@@ -4,7 +4,7 @@
 %define	rpmrelease 4.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
-BuildRequires:	mysql-devel >= 5.0.22, mysql >= 5.0.22, qmail-fake
+BuildRequires:	mysql-devel >= 5.0.22, mysql >= 5.0.22
 Requires:	mysql >= 5.0.22 
 #BuildPreReq:	shadow-utils
 BuildRequires:	shadow-utils
@@ -29,6 +29,7 @@ URL:		http://www.inter7.com/vpopmail
 Source0:	vpopmail-%{pversion}.tar.gz
 Patch0:		vpopmail-toaster-5.4.33.patch.bz2
 Patch1:    vpopmail-build-no-root-5.4.33.patch
+Patch2:    vpopmail-build-no-qmail-5.4.33.patch
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 Obsoletes:	vpopmail-toaster-doc
 Conflicts:      set-toaster, checkpassword, vpopmail, postfix
@@ -95,6 +96,7 @@ one domain per SQL table     = --disable-many-domains
 
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 # Cleanup for gcc
 #-------------------------------------------------------------------------------
@@ -164,7 +166,7 @@ mkdir -p %{buildroot}
 	--enable-qmaildir=/var/qmail \
 	--enable-qmail-newu=/var/qmail/bin/qmail-newu \
 	--enable-qmail-inject=/var/qmail/bin/qmail-inject \
-	--enable-qmail-qmail-newmrh=/var/qmail/bin/qmail-newmrh 
+	--enable-qmail-newmrh=/var/qmail/bin/qmail-newmrh 
 make
 
 # Delete gcc temp file
