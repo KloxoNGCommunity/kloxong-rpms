@@ -491,7 +491,8 @@ fi
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
 %config(noreplace) %{_tmpfilesdir}/dovecot.conf
 %{_unitdir}/dovecot.service
-%{_unitdir}/dovecot-init.service
+# commenting this line this we may need for dovecot 2.3
+#%{_unitdir}/dovecot-init.service
 %{_unitdir}/dovecot.socket
 %else
 %{_initddir}/dovecot
