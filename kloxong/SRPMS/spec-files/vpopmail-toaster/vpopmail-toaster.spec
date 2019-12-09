@@ -140,9 +140,7 @@ fi
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
-autoreconf
-%{__automake}
-%{__autoconf}
+
  ./configure --prefix=%{vdir} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
