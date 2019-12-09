@@ -23,9 +23,11 @@ Source0: http://projects.marsching.org/suphp/download/%{real_name}-%{version}.ta
 Patch0: suphp-0.7.2_accept-httpd-2.4.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: httpd-devel >= 2.0, gcc-c++, automake, autoconf, libtool, apr15u-devel
-Requires: httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
-Requires: httpd >= 2.0, /usr/bin/php-cgi
+BuildRequires: httpd24u-devel >= 2.4, gcc-c++, automake, autoconf, libtool, apr15u-devel
+# Hardcode httpd-mm value for copr build
+Requires:	httpd-mmn = 20120211x8664
+#Requires: httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
+Requires: httpd24u >= 2.4, /usr/bin/php-cgi
 
 %description
 The suPHP Apache module together with suPHP itself provides an easy way to
@@ -157,8 +159,6 @@ automake
 %{_sbindir}/suphp
 
 %changelog
-
-* Note: needs cp /usr/include/apr-1/* /usr/include/httpd/ for el6 build
 
 * Sat Jun 13 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 0.7.2-3.mr
 - recompile with rename to mod24u_suphp
