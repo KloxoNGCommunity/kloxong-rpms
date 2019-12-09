@@ -139,7 +139,7 @@ fi
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
 
-./configure --prefix=%{vdir} \
+sudo ./configure --prefix=%{vdir} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
 	--enable-libdir=%{mylibdir} \
