@@ -111,9 +111,9 @@ mkdir -p %{buildroot}
 
 # Trick vpopmail so we don't install qmail twice to have chkuser
 #-------------------------------------------------------------------------------
-if [ -f /var/qmail/bin/vpopfake ] ; then
-	rm -fR /var/qmail ;
-fi
+#if [ -f /var/qmail/bin/vpopfake ] ; then
+#	rm -fR /var/qmail ;
+#fi
 # jp these comments are for build on existing kloxo box
 #if [ -f /var/qmail/bin/qmail-newu ] ; then
 #	tempdir="1" ;
