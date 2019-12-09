@@ -59,6 +59,7 @@ Requires: qmail-toaster >= 1.03
 Obsoletes: qmail-pop3d-toaster
 BuildRequires: libtool, autoconf, automake, pkgconfig, sqlite-devel, postgresql-devel
 BuildRequires: mysql-devel, openldap-devel, krb5-devel
+BuildRequires: openssl
 #%if %{?fedora}00%{?rhel} > 5
 #BuildRequires: quota-devel
 BuildRequires: quota, libcap-devel, pam-devel
