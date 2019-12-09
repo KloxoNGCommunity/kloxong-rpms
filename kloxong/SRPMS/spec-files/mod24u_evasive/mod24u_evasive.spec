@@ -18,9 +18,11 @@ Source0:	http://www.zdziarski.com/projects/mod_evasive/mod_evasive_%{version}_ap
 Source1:	mod_evasive.conf
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:	httpd-devel
-Requires:		httpd
-Requires:		httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
+BuildRequires:	httpd24u-devel
+Requires:		httpd24u
+# Hardcode httpd-mm value for copr build
+Requires:	httpd-mmn = 20120211x8664
+#Requires:		httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
 Obsoletes:		mod_evasive
 
 %description
