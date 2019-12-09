@@ -207,7 +207,9 @@ exit 0
 
 %files
 %defattr(-,root,root,-)
+%if 0%{?fedora} < 15 || 0%{?rhel} < 7
 /usr/share/httpd/manual/mod/
+%endif
 # mod_fcgid.html.en is explicitly encoded as ISO-8859-1
 %doc CHANGES-FCGID LICENSE-FCGID NOTICE-FCGID README-FCGID STATUS-FCGID
 %doc docs/manual/mod/mod_fcgid.html.en modules/fcgid/ChangeLog
