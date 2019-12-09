@@ -31,6 +31,15 @@ rm -rf $RPM_BUILD_ROOT
 %pre
 
 %post
+ Create group and user for build if they don't exist
+-------------------------------------------------------------------------------
+if [ -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
+	/usr/sbin/groupadd -g 89 -r vchkpw 2>&1 || :
+fi
+
+if [ -z "`/usr/bin/id -u vpopmail 2>/dev/null`" ]; then
+	/usr/sbin/useradd -u 89 -r -M -d %{vdir}  -s /sbin/nologin -c "Vpopmail User" -g vchkpw vpopmail 2>&1 || :
+fi
 
 %preun
 
