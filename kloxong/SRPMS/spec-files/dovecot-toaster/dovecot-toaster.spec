@@ -54,7 +54,7 @@ Patch5: dovecot-2.1-privatetmp.patch
 #wait for network
 Patch6: dovecot-2.1.10-waitonline.patch
 Patch7: dovecot-2.2.7-10c0aae82d0d.patch
-
+Requires: openssl >= 0.9.7f-4
 Requires: qmail-toaster >= 1.03
 Obsoletes: qmail-pop3d-toaster
 BuildRequires: libtool, autoconf, automake, pkgconfig, sqlite-devel, postgresql-devel
