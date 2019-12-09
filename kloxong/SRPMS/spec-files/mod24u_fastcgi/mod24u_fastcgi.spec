@@ -39,8 +39,8 @@ BuildRoot: %{_tmppath}/%{real_name}-%{version}-%{release}-root
 BuildRequires: autoconf
 BuildRequires: automake
 BuildRequires: gcc-c++
-BuildRequires: httpd-devel >= 2.0
-Requires: httpd >= 2.0
+BuildRequires: httpd-devel >= 2.4
+Requires: httpd >= 2.4
 
 #%{!?_without_selinux:BuildRequires: checkpolicy, policycoreutils}
 
