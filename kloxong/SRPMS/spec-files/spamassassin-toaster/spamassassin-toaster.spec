@@ -6,7 +6,7 @@
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel 
 ## MR -- exist in 3.4.0
-BuildRequires:	perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF
+BuildRequires:	perl-devel, perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF
 BuildRequires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL
 BuildRequires:	perl-Encode-Detect, perl-Net-Patricia 
 Requires:	perl-Digest-SHA1, perl-HTTP-Parser, perl-Pod-Usage, procmail
