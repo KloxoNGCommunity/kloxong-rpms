@@ -46,7 +46,7 @@ BuildRequires: rpm gcc make binutils coreutils grep
 BuildRequires: glibc glibc-devel procps
 BuildRequires: diffutils
 
-%if 0%{?fedora_version} || 0%{?centos_version} || 0%{?rhel_version}
+%if 0%{?fedora} || 0%{?centos} || 0%{?rhel}
 Requires(pre): shadow-utils
 Requires(postun): shadow-utils
 %endif
@@ -54,7 +54,7 @@ Requires(postun): shadow-utils
 Requires(pre): pwdutils
 Requires(postun): pwdutils
 %endif
-%if %{undefined fedora_version} && %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined suse_version}
+%if %{undefined fedora} && %{undefined centos_} && %{undefined rhel} && %{undefined sles_version} && %{undefined suse_version}
 #BuildRequires: sysuser-tools
 %endif
 %if 0%{?suse_version} >= 1500 || 0%{?sles_version} >= 15
@@ -64,7 +64,7 @@ Requires(postun): pwdutils
 
 %if %build_on_obs == 1
 ##################################### OBS ####################################
-%if 0%{?rhel_version} == 700
+%if 0%{?rhel} == 700
 BuildRequires: groff-base
 %else
 BuildRequires: groff
@@ -102,7 +102,7 @@ Provides: user(qmails)      > 999
 Provides: group(nofiles)    > 999
 Provides: group(qmail)      > 999
 Provides: smtp_daemon
-#%if %{undefined fedora_version} && %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined suse_version}
+#%if %{undefined fedora} && %{undefined centos} && %{undefined rhel} && %{undefined sles_version} && %{undefined suse_version}
 #%sysusers_requires
 #%endif
 #%if 0%{?suse_version} >= 1500 || 0%{?sles_version} >= 15
@@ -143,9 +143,9 @@ This package contains the documentation for %{name}
 %setup
 
 %build
-%if %{undefined fedora_version} && %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined suse_version}
-%sysusers_generate_pre %{S:5} notqmail
-%endif
+#%if %{undefined fedora} && %{undefined centos} && %{undefined rhel} && %{undefined sles_version} && %{undefined suse_version}
+#%sysusers_generate_pre %{S:5} notqmail
+#%endif
 %if 0%{?suse_version} >= 1500 || 0%{?sles_version} >= 15
 %sysusers_generate_pre %{S:5} notqmail
 %endif
@@ -295,7 +295,7 @@ then
 fi
 sleep 5
 
-%if 0%{?fedora_version} || 0%{?centos_version} || 0%{?rhel_version} || 0%{?suse_version} < 1500 || 0%{?sles_version < 15}
+%if 0%{?fedora} || 0%{?centos} || 0%{?rhel} || 0%{?suse_version} < 1500 || 0%{?sles_version < 15}
 %pre
 /usr/bin/getent group nofiles   > /dev/null || /usr/sbin/groupadd nofiles
 /usr/bin/getent group qmail     > /dev/null || /usr/sbin/groupadd qmail
