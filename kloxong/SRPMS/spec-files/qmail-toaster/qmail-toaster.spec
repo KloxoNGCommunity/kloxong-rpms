@@ -237,7 +237,7 @@ mkdir -p %{buildroot}
 # to add them to installation script for qmail-toaster
 # Add users and groups as per Life With Qmail
 #-------------------------------------------------------------------------------
-gif [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
+if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
 	/usr/sbin/groupadd -g 2107 -r nofiles 2>&1 || :
 fi
 if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
