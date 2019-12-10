@@ -637,6 +637,11 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Tue Dec 10 2019 Dionysis Kladis <dkstiler@gmail.com> - 1:2.2.24-1
+- Handling properly systemd  to compile for centos 7
+- Compile for Kloxong 
+- Making Copr acceptable spec file
+
 * Fri Jun 17 2016 Mustafa Ramadhan <mustafa@bigraf.com> - 1:2.2.24-1
 - Update to 2.2.24
 - Compile for Kloxo-MR
