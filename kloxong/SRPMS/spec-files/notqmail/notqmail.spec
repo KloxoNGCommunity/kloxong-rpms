@@ -55,10 +55,10 @@ Requires(pre): pwdutils
 Requires(postun): pwdutils
 %endif
 %if %{undefined fedora_version} && %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined suse_version}
-BuildRequires: sysuser-tools
+#BuildRequires: sysuser-tools
 %endif
 %if 0%{?suse_version} >= 1500 || 0%{?sles_version} >= 15
-BuildRequires: sysuser-tools
+#BuildRequires: sysuser-tools
 %endif
 
 
