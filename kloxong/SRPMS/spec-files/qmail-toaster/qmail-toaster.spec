@@ -235,40 +235,41 @@ mkdir -p %{buildroot}
 
 # We need to create users and groups for qmail to compile properly as we also need
 # to add them to installation script for qmail-toaster in a chroot enviroment we cant 
+# commenting group and users creation at build and trying to find a work around 
 # Add users and groups as per Life With Qmail
 #-------------------------------------------------------------------------------
-if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
-	groupadd -g 2107 -r nofiles 2>&1 || :
-fi
-if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
-	groupadd -g 2108 -r qmail 2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
-	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
-	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
-	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
-	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
-	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
-	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
-	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
-fi
+#if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
+#	groupadd -g 2107 -r nofiles 2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
+#	groupadd -g 2108 -r qmail 2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
+#	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
+#	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
+#	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
+#	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
+#	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
+#	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
+#	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
+#fi
 
 # We may need this to build and in order for qmail-toaster to have access to /home/vpopmail/include/ 
-if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
-	adduser qmail vchkpw 2>&1   || :
-fi
+#if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
+#	adduser qmail vchkpw 2>&1   || :
+#fi
 
 
 # We have gcc written in a temp file
