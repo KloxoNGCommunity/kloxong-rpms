@@ -244,8 +244,6 @@ fi
 %files
 #-------------------------------------------------------------------------------
 %defattr (-,vpopmail,vchkpw)
-# qmail-toaster builder can't access %(vdir)/include from chroot user - change permission to 755
-#%attr(0700,vpopmail,vchkpw) %dir %{vdir}
 %attr(0755,vpopmail,vchkpw) %dir %{vdir}
 %attr(0755,vpopmail,vchkpw) %dir %{vdir}/bin
 %attr(0755,vpopmail,vchkpw) %dir %{vdir}/etc
