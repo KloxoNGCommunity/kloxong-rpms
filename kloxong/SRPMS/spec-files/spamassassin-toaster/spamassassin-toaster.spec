@@ -7,13 +7,13 @@
 BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel 
 ## MR -- exist in 3.4.0
 BuildRequires:	perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF
-BuildRequires:	perl-Geo-IP, perl-IO-Socket-INET6, perl(IO::Socket::SSL)
+BuildRequires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL
 BuildRequires:	perl-Encode-Detect, perl-Net-Patricia 
-Requires:	perl-Digest-SHA1, perl-HTTP-Parser, perl(Pod::Usage), procmail
+Requires:	perl-Digest-SHA1, perl-HTTP-Parser, perl-Pod-Usage, procmail
 Requires:	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 ## MR -- exist in 3.4.0
 Requires:	perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF
-Requires:	perl-Geo-IP, perl-IO-Socket-INET6, perl(IO::Socket::SSL)
+Requires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL
 Requires:	perl-Encode-Detect, perl-Net-Patricia
 %define	ccflags %{optflags}
 %define	ldflags %{optflags}
