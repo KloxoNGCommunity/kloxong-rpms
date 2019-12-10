@@ -102,12 +102,12 @@ Provides: user(qmails)      > 999
 Provides: group(nofiles)    > 999
 Provides: group(qmail)      > 999
 Provides: smtp_daemon
-%if %{undefined fedora_version} && %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined suse_version}
-%sysusers_requires
-%endif
-%if 0%{?suse_version} >= 1500 || 0%{?sles_version} >= 15
-%sysusers_requires
-%endif
+#%if %{undefined fedora_version} && %{undefined centos_version} && %{undefined rhel_version} && %{undefined sles_version} && %{undefined suse_version}
+#%sysusers_requires
+#%endif
+#%if 0%{?suse_version} >= 1500 || 0%{?sles_version} >= 15
+#%sysusers_requires
+#%endif
 
 %if %build_on_obs == 1
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXXX)
