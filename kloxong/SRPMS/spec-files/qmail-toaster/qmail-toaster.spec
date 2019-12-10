@@ -72,18 +72,22 @@ Patch7:	qmail_qmail-smtpd-linefeed.patch
 Patch8:	qmail_qmail-empf.patch
 
 Patch9:	qmail_qmail-vpopmail-devel.patch
-Patch10:	qmail_qmail-uids.patch
+Patch10: qmail_qmail-uids.patch
 
-Patch11:	qmail_qmail-nocram.patch
-Patch12:	qmail_splogger-nostamp.patch
+Patch11: qmail_qmail-nocram.patch
+Patch12: qmail_splogger-nostamp.patch
 
-Patch20:	qmail_qmail-outgoingip_rediff.patch
-Patch21:	qmail_qmail-outgoingips_rediff.patch
+Patch20: qmail_qmail-outgoingip_rediff.patch
+Patch21: qmail_qmail-outgoingips_rediff.patch
 
-Patch30:	qmail_qmailtoaster-any-to-cname.patch
+Patch30: qmail_qmailtoaster-any-to-cname.patch
 
-Requires:		ucspi-tcp-toaster >= 0.88, vpopmail-toaster >= 5.4.17, libsrs2-toaster >= 1.0.18
-BuildRequires:	vpopmail-toaster >= 5.4.17, libdomainkeys-toaster >= 0.68, libsrs2-toaster >= 1.0.18
+Requires: ucspi-tcp-toaster >= 0.88
+Requires: vpopmail-toaster >= 5.4.17
+Requires: libsrs2-toaster >= 1.0.18
+BuildRequires: vpopmail-toaster >= 5.4.17
+BuildRequires: libdomainkeys-toaster >= 0.68
+BuildRequires: libsrs2-toaster >= 1.0.18
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 #Conflicts:	sendmail, exim, smail, postfix, qmail
