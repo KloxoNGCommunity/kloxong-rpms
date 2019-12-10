@@ -50,7 +50,7 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 perl -pi -e's/CFLAGS=/CFLAGS=%{optflags} -fPIC /' Makefile
 #this is a hack to work later we should use patch 
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-perl -pi -e's/cat dns.lib/-lresolv /' Makefile
+perl -pi -e's/`cat dns.lib`/-lresolv /' Makefile
 %else
 echo -- "-lresolv" > dns.lib
 %endif
@@ -107,6 +107,9 @@ install -p dknewkey dktest %{buildroot}%{_bindir}
 #------------------------------------------------------------------------------------
 %changelog
 #------------------------------------------------------------------------------------
+* Tue Dec 10 2019 Dionysis Kladis <dkstiler@gmail.com> 0.68-1.3.7.kng
+- Work around to compile in centos 7 inside a Copr container
+
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.68-1.3.7.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
 
