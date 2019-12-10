@@ -24,7 +24,7 @@ Source1:	mailfilter.bz2
 Source2:	subscribeIMAP.sh.bz2
 Url:		http://www.flounder.net/~mrsam/maildrop/
 BuildRoot:	%{_tmppath}/%{name}-buildroot
-BuildRequires:	vpopmail-toaster >= 5.3.8
+BuildRequires:	vpopmail-toaster >= 5.3.8, pcre-devel
 #BuildRequires:  courier-imap-toaster
 Packager:       Jake Vickers <jake@qmailtoaster.com>
 
