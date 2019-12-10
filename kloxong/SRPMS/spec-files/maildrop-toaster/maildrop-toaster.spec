@@ -1,7 +1,7 @@
 %define	name maildrop
 %define	pversion 2.0.3
 %define 	bversion 1.3
-%define	rpmrelease 10.kng%{?dist}
+%define	rpmrelease 11.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	ccflags %{optflags}
@@ -183,6 +183,9 @@ bunzip2 %{buildroot}%{_bindir}/subscribeIMAP.sh.bz2
 #-------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------
+* Tue Dec 10 2019 John Pierce <john@luckytanuki.com> - 2.0.3-1.3.11.kng
+-  Add pcre-devel to BuildRequires 
+
 * Fri Jun 17 2016 Mustafa Ramadhan <mustafa@bigraf.com> - 2.0.3-1.3.10.mr
 - disable BuildRequires to courier-imap-toaster because use by dovecot-toaster also
 
