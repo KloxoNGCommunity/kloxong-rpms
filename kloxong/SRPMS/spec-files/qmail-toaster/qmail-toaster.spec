@@ -227,35 +227,36 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
 mkdir -p %{buildroot}
 
+# What sort of monster sets users in the build area? - comment out
 # Add users and groups as per Life With Qmail
 #-------------------------------------------------------------------------------
-if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
-	/usr/sbin/groupadd -g 2107 -r nofiles 2>&1 || :
-fi
-if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
-	/usr/sbin/groupadd -g 2108 -r qmail 2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
-	/usr/sbin/useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
-fi
+#if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
+#	/usr/sbin/groupadd -g 2107 -r nofiles 2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
+#	/usr/sbin/groupadd -g 2108 -r qmail 2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
+#	/usr/sbin/useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
+#fi
 
 
 # We have gcc written in a temp file
