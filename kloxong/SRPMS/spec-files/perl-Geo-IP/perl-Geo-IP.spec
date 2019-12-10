@@ -10,7 +10,7 @@
 Summary:       A Perl module to look up location and network information
 Name:          perl-%{modn}
 Version:       %{modv}
-Release:       1%{?dist}%{?pext}
+Release:       1.kng%{?dist}%{?pext}
 License:       GPL+ or Artistic
 Group:         Development/Libraries
 Source0:       http://search.cpan.org/CPAN/authors/id/M/MA/MAXMIND/%{modn}-%{modv}.tar.gz
