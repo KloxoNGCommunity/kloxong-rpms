@@ -583,9 +583,9 @@ if [ -f /tmp/qmail/var/qmail/control/tlshosts/exhaustivelist ]; then
 fi
 
 #we may need this to have access to /home/vpopmail/include/ 
-if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
-	/usr/sbin/adduser qmail vchkpw 2>&1   || :
-fi
+#if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
+#	/usr/sbin/adduser qmail vchkpw 2>&1   || :
+#fi
 
 #-------------------------------------------------------------------------------
 %preun
