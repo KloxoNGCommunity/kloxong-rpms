@@ -104,7 +104,7 @@ echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
 
 echo "%{_prefix}" >conf-home
 
-make prog install
+make
 
 
 #----------------------------------------------------------------------------------
