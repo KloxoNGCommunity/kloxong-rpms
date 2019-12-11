@@ -34,7 +34,7 @@ Patch1:		o_creat.patch.bz2
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 #BuildPreReq:		qmail-toaster >= 1.03-1.2.4, ripmime-toaster
 BuildRequires:	qmail-toaster >= 1.03-1.2.4, ripmime
-BuildRequires:	mysql-devel mysql-libs
+BuildRequires:	mysql-devel, mysql-libs
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav-toaster, ripmime-toaster
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd
 Requires:	qmail-toaster >= 1.03-1.2.4

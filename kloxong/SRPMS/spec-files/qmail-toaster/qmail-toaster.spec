@@ -85,6 +85,8 @@ Patch30: qmail_qmailtoaster-any-to-cname.patch
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
+Requires: mysql-devel
+Requires: mysql-libs
 BuildRequires: vpopmail-toaster >= 5.4.17
 BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: libsrs2-toaster >= 1.0.18
