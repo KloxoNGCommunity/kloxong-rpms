@@ -25,7 +25,7 @@ for XML, LDAP, database interfaces, URI parsing and more.
 Group: Development/Libraries
 Summary: APR utility library development kit
 Requires: apr-util = %{version}-%{release}, apr-devel
-%if %{?rhel}0 > 60
+%if %{?rhel}0 > 60 
 Requires: libdb4-devel
 %else
 Requires: db4-devel
@@ -42,7 +42,7 @@ library of C data structures and routines.
 Group: Development/Libraries 
 Summary: APR utility library DBM driver
 %if %{?rhel}0 > 60
-BuildRequires: : libdb4-devel
+BuildRequires: libdb4-devel
 %else
 BuildRequires: db4-devel
 %endif
