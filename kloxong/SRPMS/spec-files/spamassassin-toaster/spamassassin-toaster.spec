@@ -277,7 +277,7 @@ fi
 %attr(1700,qmaill,qmail) %dir %{qdir}/supervise/spamd
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise/spamd/log
 %attr(0755,qmaill,qmail) %dir %{qdir}/supervise/spamd/supervise
-%attr(0700,qmaill,qmail) %dir /var/log/qmail
+#%attr(0700,qmaill,qmail) %dir /var/log/qmail
 %attr(0755,qmaill,qmail) %dir /var/log/qmail/spamd
 
 # Files
