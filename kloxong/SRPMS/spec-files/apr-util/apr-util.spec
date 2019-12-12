@@ -25,7 +25,12 @@ for XML, LDAP, database interfaces, URI parsing and more.
 Group: Development/Libraries
 Summary: APR utility library development kit
 Requires: apr-util = %{version}-%{release}, apr-devel
-Requires: db4-devel, expat-devel
+%if %{?rhel}0 > 60
+Requires: libdb4-devel
+%else
+Requires: db4-devel
+%endif
+Requires: expat-devel
 
 %description devel
 This package provides the support files which can be used to 
@@ -36,7 +41,11 @@ library of C data structures and routines.
 %package dbm
 Group: Development/Libraries 
 Summary: APR utility library DBM driver
+%if %{?rhel}0 > 60
+BuildRequires: : libdb4-devel
+%else
 BuildRequires: db4-devel
+%endif
 Requires: apr-util = %{version}-%{release}
 
 %description dbm
