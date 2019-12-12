@@ -26,7 +26,7 @@ Group: Development/Libraries
 Summary: APR utility library development kit
 Requires: apr-util = %{version}-%{release}, apr-devel
 %if %{?rhel}0 > 60 
-Requires: libdb4-devel, libdb4-devel-static
+Requires: compat-db, libdb4-devel, libdb4-devel-static
 %else
 Requires: db4-devel
 %endif
@@ -42,7 +42,7 @@ library of C data structures and routines.
 Group: Development/Libraries 
 Summary: APR utility library DBM driver
 %if %{?rhel}0 > 60
-BuildRequires: libdb4-devel, libdb4-devel-static
+BuildRequires: compat-db, libdb4-devel, libdb4-devel-static
 %else
 BuildRequires: db4-devel
 %endif
