@@ -26,6 +26,7 @@ URL:		http://cr.yp.to/daemontools.html
 Source:		daemontools-%{pversion}.tar.bz2
 Source1:	daemontools-%{pversion}-man.tar.bz2
 Patch:		daemontools-toaster-errno.patch.bz2
+Patch1: daemontools-toaster-centos7.patch
 Buildroot:	%{_tmppath}/%{name}-%{version}
 Obsoletes:	daemontools-toaster-doc
 Packager:	Jake Vickers <jake@qmailtoaster.com>
@@ -51,6 +52,9 @@ tries again, without losing any data.
 %define name daemontools
 %setup -q -n %{name}-%{pversion}
 %patch -p0
+%if %{?fedora}0 > 140 || %{?rhel}0 > 60
+%patch1 -p0
+%endif
 
 #----------------------------------------------------------------------------------
 %setup -q -T -D -c -a 1 -n %{name}-%{pversion}
@@ -70,13 +74,13 @@ tries again, without losing any data.
 mkdir -p %{buildroot}
 
 # We have gcc written in a temp file
-#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >src/conf-cc
-#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >src/conf-ld
+echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >src/conf-cc
+echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >src/conf-ld
 
 # Delete gcc temp file
-#[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
-#echo "%{_prefix}" >src/conf-home
+echo "%{_prefix}" >src/conf-home
 
 package/compile
 
