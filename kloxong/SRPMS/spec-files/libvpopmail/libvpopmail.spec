@@ -138,11 +138,12 @@ make libvpopmail.a
 
 make DESTDIR=%{buildroot} install-data-local
 
+# disabling the devel patch we dont need this library handling
 # shubes 11/18/2013 - This is a hack.
 # TODO: Need to get proper object library handling implemented
-%ifarch x86_64
-  sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
- %endif
+#%ifarch x86_64
+#  sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
+# %endif
 
 %{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
 %{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
