@@ -140,12 +140,13 @@ make DESTDIR=%{buildroot} install-data-local
 %ifarch x86_64
   sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
 %endif
-# why moving those libraries to another place since we use on other packages just copying for not
-# we mau  meed tp find a better way later
-%{__cp} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
-%{__cp} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
+
+%{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
+%{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
 
 %{__rm} -rf %{buildroot}%{vdir}
+# In order to compile qmail the library is hardcoded so we add a symlink until a better way is found
+%{__ln} -f -s /home/vpopmail/etc/lib_deps    /etc/libvpopmail/lib_deps
 
 #-------------------------------------------------------------------------------
 %clean
