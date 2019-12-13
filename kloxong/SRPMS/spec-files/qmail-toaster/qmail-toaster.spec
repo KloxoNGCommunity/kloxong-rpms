@@ -82,6 +82,8 @@ Patch21: qmail_qmail-outgoingips_rediff.patch
 
 Patch30: qmail_qmailtoaster-any-to-cname.patch
 
+Patch:40: qmail-toaster-centos-7-chroot.patch
+
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
@@ -211,7 +213,10 @@ this package.
 %patch21 -p1
 
 %patch30 -p1
-
+# fixing compile error in qmail and centos 7 needs a check that cant be done in a chroot enviroment
+%if %{?fedora}0 > 140 || %{?rhel}0 > 60
+%patch40 -p1
+%endif
 
 %define name qmail
 
@@ -219,6 +224,7 @@ this package.
 #-------------------------------------------------------------------------------
 %{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
 %{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
+
 
 
 # Cleanup for the gcc
@@ -235,38 +241,37 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 mkdir -p %{buildroot}
 
 
-# We need to create users and groups for qmail to compile properly as we also need
-# to add them to installation script for qmail-toaster in a chroot enviroment we cant 
-# commenting group and users creation at build and trying to find a work around 
+ 
+# Commenting group and users creation at build and trying to find a work around 
 # Add users and groups as per Life With Qmail
 #-------------------------------------------------------------------------------
-if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
-	groupadd -g 2107 -r nofiles 2>&1 || :
-fi
-if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
-	groupadd -g 2108 -r qmail 2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
-	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
-	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
-	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
-	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
-	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
-	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
-fi
-if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
-	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
-fi
+#if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
+#	groupadd -g 2107 -r nofiles 2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
+#	groupadd -g 2108 -r qmail 2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
+#	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
+#	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
+#	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
+#	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
+#	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
+#	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
+#fi
+#if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
+#	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
+#fi
 
 # We may need this to build and in order for qmail-toaster to have access to /home/vpopmail/include/ 
 #if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
