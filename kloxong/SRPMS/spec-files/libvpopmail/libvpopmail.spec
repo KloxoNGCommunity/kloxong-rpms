@@ -139,6 +139,7 @@ make DESTDIR=%{buildroot} install-data-local
 # TODO: Need to get proper object library handling implemented
 %ifarch x86_64
   sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
+  ln -f -s %{buildroot}%{vdir}/lib_deps    %{buildroot}%{_sysconfdir}/%{name}/lib_deps
 %endif
 
 %{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
@@ -146,7 +147,7 @@ make DESTDIR=%{buildroot} install-data-local
 
 %{__rm} -rf %{buildroot}%{vdir}
 # In order to compile qmail the library is hardcoded so we add a symlink until a better way is found
-ln -f -s /home/vpopmail/etc/lib_deps    /etc/libvpopmail/lib_deps
+
 
 #-------------------------------------------------------------------------------
 %clean
