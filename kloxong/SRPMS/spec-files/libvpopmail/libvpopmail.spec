@@ -154,13 +154,13 @@ make DESTDIR=%{buildroot} install-data-local
 #-------------------------------------------------------------------------------
 %files -n %{name}-devel
 #-------------------------------------------------------------------------------
-%defattr (-,root,root)
-%attr(0755,root,root) %dir %{_sysconfdir}/%{name}
-%attr(0755,root,root) %dir %{_includedir}/%{name}
-%attr(0755,root,root) %dir %{_libdir}/%{name}
-%attr(0644,root,root)      %{_sysconfdir}/%{name}/*_deps
-%attr(0644,root,root)      %{_includedir}/%{name}/*
-%attr(0644,root,root)      %{_libdir}/%{name}/*
+%defattr (-,vpopmail,vchkpw)
+%attr(0755,vpopmail,vchkpw) %dir %{_sysconfdir}/%{name}
+%attr(0755,vpopmail,vchkpw) %dir %{_includedir}/%{name}
+%attr(0755,vpopmail,vchkpw) %dir %{_libdir}/%{name}
+%attr(0644,vpopmail,vchkpw)      %{_sysconfdir}/%{name}/*_deps
+%attr(0644,vpopmail,vchkpw)      %{_includedir}/%{name}/*
+%attr(0644,vpopmail,vchkpw)      %{_libdir}/%{name}/*
 
 #-------------------------------------------------------------------------------
 %changelog
