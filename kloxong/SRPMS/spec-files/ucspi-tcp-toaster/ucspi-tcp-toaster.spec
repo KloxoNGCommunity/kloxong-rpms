@@ -30,6 +30,7 @@ Patch0:	ucspi-tcp-%{pversion}-ipv6.patch
 Patch10:	ucspi-tcp-toaster-04182004_rediff.patch
 Patch11:	ucspi-tcp-rbltimeout_rediff.patch
 Patch12:	ucspi-tcp-limits.patch
+Patch1:   ucspi-tcp-centos7.patch
 
 Buildroot:	%{_tmppath}/%{pname}-%{version}
 Requires:	daemontools-toaster >= 0.76-1.2.2
@@ -81,6 +82,9 @@ different networks.
 %patch11 -p1
 ## MR -- no need because include in patch0
 #%patch12 -p1
+%if %{?fedora}0 > 140 || %{?rhel}0 > 60
+%patch1 -p0
+%endif
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------------
@@ -96,14 +100,14 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 mkdir -p %{buildroot}
 
 # We have gcc written in a temp file
-#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
-#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
+echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
+echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
 echo "gcc %{optflags}"    >conf-cc
 echo "gcc -s %{optflags}" >conf-ld
 
 
 # Delete gcc temp file
-#[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
 echo "%{_prefix}" >conf-home
 
@@ -177,6 +181,14 @@ install -m 644 *.8 %{buildroot}%{_mandir}/man8
 #----------------------------------------------------------------------------------
 %changelog
 #----------------------------------------------------------------------------------
+* Fri Dec 13 2019 Dionysis Kladis <dkstiler@gmail.com> 0.88-1.3.12.kng
+- Adding a patch while dissabling the chkshsgr || ( cat warn-shsgr; exit 1 )
+  with resulted error "Oops. Your getgroups() returned 0, and setgroups() failed; this means
+  that I can't reliably do my shsgr test. Please either ``make'' as root
+  or ``make'' while you're in one or more supplementary groups.
+  make: *** [hasshsgr.h] Error 1"
+-  Making the package copr ready to build on centos 7 or fedora 15 withour elevated priviledges
+
 * Thu May 14 2015 Mustafa Ramadhan <mustafa@bigraf.com> 0.88-1.3.12.mr
 - add ipv6 patch
 - rediff other patches
