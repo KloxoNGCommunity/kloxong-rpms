@@ -99,7 +99,12 @@ mkdir -p %{buildroot}
 #echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
 #echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
 echo "gcc %{optflags}"    >conf-cc
+%if %{?fedora}0 > 140 || %{?rhel}0 > 60
+echo "gcc -s %{optflags}" >conf-ld -m64
+%else
 echo "gcc -s %{optflags}" >conf-ld
+%endif
+
 # Delete gcc temp file
 #[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
