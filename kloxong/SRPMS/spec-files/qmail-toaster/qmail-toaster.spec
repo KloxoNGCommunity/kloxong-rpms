@@ -82,7 +82,7 @@ Patch21: qmail_qmail-outgoingips_rediff.patch
 
 Patch30: qmail_qmailtoaster-any-to-cname.patch
 
-Patch:40: qmail-toaster-centos-7-chroot.patch
+Patch40: qmail-toaster-centos-7-chroot.patch
 
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
