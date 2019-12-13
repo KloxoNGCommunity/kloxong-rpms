@@ -1,5 +1,5 @@
---- Makefile	2001-07-12 19:49:49.000000000 +0300
-+++ Makefile.ch	2019-12-13 05:53:06.807137585 +0200
+--- ./src/Makefile	2001-07-12 19:49:49.000000000 +0300
++++ ../daemontools-0.76/src/Makefile	2019-12-13 05:53:06.807137585 +0200
 @@ -165,7 +165,7 @@
  
  hasshsgr.h: chkshsgr choose compile hasshsgr.h1 hasshsgr.h2 load \
