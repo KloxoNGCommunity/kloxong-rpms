@@ -269,7 +269,7 @@ fi
 %attr(0444,vpopmail,vchkpw) %{vdir}/doc/doc_html/*
 %attr(0444,vpopmail,vchkpw) %{vdir}/doc/man_html/*
 
-%attr(4755,root,root) %{vdir}/bin/vchkpw
+%attr(4755,vpopmail,vchkpw) %{vdir}/bin/vchkpw
 
 
 #-------------------------------------------------------------------------------
