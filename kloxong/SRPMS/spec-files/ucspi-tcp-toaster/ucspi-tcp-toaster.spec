@@ -83,7 +83,7 @@ different networks.
 ## MR -- no need because include in patch0
 #%patch12 -p1
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-%patch1 -p0
+%patch1 -p1
 %endif
 
 # Cleanup for gcc
