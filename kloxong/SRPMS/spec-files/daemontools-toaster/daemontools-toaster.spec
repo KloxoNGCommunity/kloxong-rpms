@@ -157,6 +157,14 @@ done
 #----------------------------------------------------------------------------------
 %changelog
 #----------------------------------------------------------------------------------
+*Fri Dec 13 2019 Dionysis Kladis <dkstiler@gmail.com> 0.76-1.3.7.kng
+- Adding a patch while dissabling the chkshsgr || ( cat warn-shsgr; exit 1 )
+  with resulted error "Oops. Your getgroups() returned 0, and setgroups() failed; this means
+  that I can't reliably do my shsgr test. Please either ``make'' as root
+  or ``make'' while you're in one or more supplementary groups.
+  make: *** [hasshsgr.h] Error 1"
+- Making the package copr ready to build on centos 7 withour elevated priviledges
+
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.76-1.3.7.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
 
