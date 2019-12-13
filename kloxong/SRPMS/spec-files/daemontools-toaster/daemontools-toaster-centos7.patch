@@ -1,3 +1,4 @@
+diff -Naur ./src/Makefile ../daemontools-0.76/src/Makefile
 --- ./src/Makefile	2001-07-12 19:49:49.000000000 +0300
 +++ ../daemontools-0.76/src/Makefile	2019-12-13 05:53:06.807137585 +0200
 @@ -165,7 +165,7 @@
