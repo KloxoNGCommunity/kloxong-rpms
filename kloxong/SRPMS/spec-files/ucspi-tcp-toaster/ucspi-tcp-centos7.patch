@@ -1,6 +1,6 @@
 diff -Naur ./src/Makefile ../ucspi-tcp-0.88/Makefile
 --- ./src/Makefile	2000-03-18 17:18:42.000000000 +0200
-+++ ../ucspi-tcp-0.88/Makefile	2019-12-13 07:11:05.236040064 +0200
++++ ./ucspi-tcp-0.88/Makefile	2019-12-13 07:11:05.236040064 +0200
 @@ -328,7 +328,7 @@
  hasshsgr.h: \
  choose compile load tryshsgr.c hasshsgr.h1 hasshsgr.h2 chkshsgr \
