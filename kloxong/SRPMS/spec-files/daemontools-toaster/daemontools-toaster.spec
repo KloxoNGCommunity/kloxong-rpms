@@ -65,7 +65,7 @@ tries again, without losing any data.
 #----------------------------------------------------------------------------------
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
-#echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
+echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
 #----------------------------------------------------------------------------------
 %build
