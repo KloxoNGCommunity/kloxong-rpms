@@ -38,11 +38,11 @@ BuildRequires:	mysql-devel >= 5.0.22
 
 %description -n %{name}-devel
 Headers and libs for building packages which use vpopmail.
-
-vpopmail has been patched as follows:
-etc/     is in /etc/libvpopmail (only devel related files)
-include/ is in /usr/include/libvpopmail
-lib/     is in /usr/lib/libvpopmail
+# we disable thos patch since it couses problems with kloxo we have hardcoded paths
+#vpopmail has been patched as follows:
+#etc/     is in /etc/libvpopmail (only devel related files)
+#include/ is in /usr/include/libvpopmail
+#lib/     is in /usr/lib/libvpopmail
  
            libvpopmail 5.4.33
             Current settings
@@ -145,8 +145,8 @@ make DESTDIR=%{buildroot} install-data-local
 #  sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
 # %endif
 
-%{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
-%{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
+%{__cv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
+%{__cv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
 #we dont need to delete the whole dir we fail
 #%{__rm} -rf %{buildroot}%{vdir}
 #cleaning up since with those files are unpackaged
