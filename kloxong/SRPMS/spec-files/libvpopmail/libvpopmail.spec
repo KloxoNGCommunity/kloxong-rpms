@@ -139,8 +139,7 @@ make DESTDIR=%{buildroot} install-data-local
 # TODO: Need to get proper object library handling implemented
 %ifarch x86_64
   sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
-  ln -f -s %{buildroot}%{vdir}/lib_deps    %{buildroot}%{_sysconfdir}/%{name}/lib_deps
-%endif
+ %endif
 
 %{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
 %{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
