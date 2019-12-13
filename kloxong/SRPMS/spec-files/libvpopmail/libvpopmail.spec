@@ -148,8 +148,7 @@ make DESTDIR=%{buildroot} install-data-local
 %{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
 %{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
 
-%{__rm} -rf %{buildroot}%{vdir}
-# In order to compile qmail the library is hardcoded so we add a symlink until a better way is found
+#%{__rm} -rf %{buildroot}%{vdir}
 
 
 #-------------------------------------------------------------------------------
@@ -169,8 +168,6 @@ make DESTDIR=%{buildroot} install-data-local
 %defattr (0444,vpopmail,vchkpw)
 %{vdir}/etc/inc_deps
 %{vdir}/etc/lib_deps
-%{vdir}/include/*
-%{vdir}/lib/libvpopmail.a
 
 %attr(0644,vpopmail,vchkpw)      %{_includedir}/%{name}/*
 %attr(0644,vpopmail,vchkpw)      %{_libdir}/%{name}/*
