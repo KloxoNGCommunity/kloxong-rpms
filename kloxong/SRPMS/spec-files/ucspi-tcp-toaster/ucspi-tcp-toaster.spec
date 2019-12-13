@@ -96,11 +96,12 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 mkdir -p %{buildroot}
 
 # We have gcc written in a temp file
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
-
+#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
+#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
+echo "gcc %{optflags}"    >conf-cc
+echo "gcc -s %{optflags}" >conf-ld
 # Delete gcc temp file
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+#[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
 echo "%{_prefix}" >conf-home
 
