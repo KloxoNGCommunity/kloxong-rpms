@@ -140,9 +140,10 @@ make DESTDIR=%{buildroot} install-data-local
 %ifarch x86_64
   sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
 %endif
-# why moving those libraries to another place since we use on other packages
-#%{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
-#%{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
+# why moving those libraries to another place since we use on other packages just copying for not
+# we mau  meed tp find a better way later
+%{__cp} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
+%{__cp} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
 
 %{__rm} -rf %{buildroot}%{vdir}
 
