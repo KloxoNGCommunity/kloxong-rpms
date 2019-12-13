@@ -145,8 +145,8 @@ make DESTDIR=%{buildroot} install-data-local
 #  sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
 # %endif
 
-%{__cv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
-%{__cv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
+%{__cp} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
+%{__cp} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
 #we dont need to delete the whole dir we fail
 #%{__rm} -rf %{buildroot}%{vdir}
 #cleaning up since with those files are unpackaged
