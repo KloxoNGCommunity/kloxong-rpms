@@ -147,9 +147,13 @@ make DESTDIR=%{buildroot} install-data-local
 
 %{__mv} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
 %{__mv} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
-
+#we dont need to delete the whole dir we fail
 #%{__rm} -rf %{buildroot}%{vdir}
-
+#cleaning up since with those files are unpackaged
+%{__rm} -rf %{buildroot}%{vdir}/doc
+%{__rm} -r %{buildroot}%{vdir}/etc/vlimits.default
+%{__rm} -r %{buildroot}%{vdir}/etc/vpopmail.mysql
+%{__rm} -r %{buildroot}%{vdir}/etc/vusagec.conf
 
 #-------------------------------------------------------------------------------
 %clean
