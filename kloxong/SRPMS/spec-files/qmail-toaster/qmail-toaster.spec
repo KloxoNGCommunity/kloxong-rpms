@@ -90,7 +90,7 @@ Requires: mysql-libs
 BuildRequires: vpopmail-toaster >= 5.4.17
 BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: libsrs2-toaster >= 1.0.18
-BuildRequires: libvpopmail-devel >= 5.4.17
+
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 #Conflicts:	sendmail, exim, smail, postfix, qmail
