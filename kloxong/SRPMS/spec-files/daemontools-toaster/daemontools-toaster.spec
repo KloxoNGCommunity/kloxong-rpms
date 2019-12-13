@@ -61,7 +61,7 @@ tries again, without losing any data.
 #----------------------------------------------------------------------------------
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
-echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
+#echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
 #----------------------------------------------------------------------------------
 %build
@@ -70,13 +70,13 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 mkdir -p %{buildroot}
 
 # We have gcc written in a temp file
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >src/conf-cc
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >src/conf-ld
+#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >src/conf-cc
+#echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >src/conf-ld
 
 # Delete gcc temp file
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+#[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
-echo "%{_prefix}" >src/conf-home
+#echo "%{_prefix}" >src/conf-home
 
 package/compile
 
