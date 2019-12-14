@@ -233,7 +233,9 @@ echo
 %{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
 %{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
-
+# Adding proper path of library depedencies
+#-------------------------------------------------------------------------------
+echo "VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`" > Makefile
 
 # Cleanup for the gcc
 #-------------------------------------------------------------------------------
