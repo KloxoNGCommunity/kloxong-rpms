@@ -349,7 +349,7 @@ for i in send smtp submission pop3 smtp-ssl; do
 done
 
 #-------------------------------------------------------------------------------
-install -d -m750 -%{buildroot}%{qdir}/queue
+install -d -m750 %{buildroot}%{qdir}/queue
 install -d -m2755 %{buildroot}%{qdir}/alias
 
 install -d -m755 %{buildroot}/var/log/qmail
