@@ -853,7 +853,6 @@ fi
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/send
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/smtp-ssl
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/submission
-%attr(0755,root,qmail) %{buildroot}/var/log/qmail/pop3
 
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/cur
@@ -863,7 +862,7 @@ fi
 # tls 
 #-------------------------------------------------------------------------------
 %attr(0644,root,qmail) %{qdir}/control/tlshosts
-%attr(0644,root,qmail) %{qdir}/control/tlshosts/exhaustivelist
+
 
 # config (qmail)
 #-------------------------------------------------------------------------------
