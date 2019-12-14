@@ -84,8 +84,8 @@ one domain per SQL table = --disable-many-domains
 %patch2 -p1
 # disabling this patch since in our case this one moves the /etc/inc_deps
 # inside the /etc/libvpopmail/inc_dep and our qmail-toaster package fail to compile
-# later on we see what we can do with that 
-#%patch3 -p1
+# If This is enabled we need to do the same on libvpopmail 
+%patch3 -p1
 
 #-------------------------------------------------------------------------------
 %build
