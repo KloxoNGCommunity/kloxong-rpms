@@ -85,7 +85,7 @@ Patch21: qmail_qmail-outgoingips_rediff.patch
 Patch30: qmail_qmailtoaster-any-to-cname.patch
 
 Patch40: qmail-toaster-centos-7-chroot.patch
-Patch41: qmail_kloxong-vpopmail-devel.patch
+
 
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
@@ -224,7 +224,7 @@ this package.
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
 %patch40 -p1
 %endif
-%patch41 -p1
+echo
 
 %define name qmail
 
