@@ -13,7 +13,9 @@ Requires:		openssl >= 0.9.8, sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools
 Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
-%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
+# we may not find the old library path in the new one if
+#%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
+%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
 %define	ldflags %{optflags}
 
 
