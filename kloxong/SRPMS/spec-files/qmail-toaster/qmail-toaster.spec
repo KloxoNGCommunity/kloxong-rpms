@@ -93,6 +93,7 @@ Requires: mysql-libs
 
 BuildRequires: libvpopmail-devel >= 5.4.17
 BuildRequires: mysql-devel
+BuildRequires: libsrs2-toaster >= 1.0.18
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 #Conflicts:	sendmail, exim, smail, postfix, qmail
