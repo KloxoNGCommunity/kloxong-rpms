@@ -94,7 +94,7 @@ Requires: mysql
 Requires: mysql-libs
 
 
-#BuildRequires: libvpopmail-devel >= 5.4.17
+BuildRequires: libvpopmail-devel >= 5.4.17
 BuildRequires: mysql-devel
 BuildRequires: libsrs2-toaster >= 1.0.18
 BuildRequires: libdomainkeys-toaster >= 0.68
