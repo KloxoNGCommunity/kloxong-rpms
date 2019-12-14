@@ -312,14 +312,14 @@ export PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
 # install directories
 #-------------------------------------------------------------------------------
-install -d -o root -g qmail %{buildroot}%{qdir}
-install -d -o alias -g qmail %{buildroot}%{qdir}/alias
-install -d -g qmail %{buildroot}%{qdir}/control
-install -d -g qmail %{buildroot}%{qdir}/owners
-install -d -g qmail %{buildroot}%{qdir}/users
-install -d -g qmail %{buildroot}%{qdir}/control/domainkeys
-install -d -g qmail %{buildroot}%{qdir}/control/tlshosts
-install -d -g qmail %{buildroot}%{qdir}/control/tlshosts/exhaustivelist
+install -d %{buildroot}%{qdir}
+install -d %{buildroot}%{qdir}/alias
+install -d %{buildroot}%{qdir}/control
+install -d %{buildroot}%{qdir}/owners
+install -d %{buildroot}%{qdir}/users
+install -d %{buildroot}%{qdir}/control/domainkeys
+install -d %{buildroot}%{qdir}/control/tlshosts
+install -d %{buildroot}%{qdir}/control/tlshosts/exhaustivelist
 install -d %{buildroot}%{qdir}/bin
 install -d %{buildroot}%{_libdir}
 install -d %{buildroot}%{qdir}/man
@@ -327,37 +327,37 @@ install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_bindir}
 
 #-------------------------------------------------------------------------------
-install -d -m755 -o 0 -g qmail %{buildroot}%{qdir}
+install -d -m755 %{buildroot}%{qdir}
 for i in bin boot control doc man users; do
-  install -d -m755 -o 0 -g qmail %{buildroot}%{qdir}/$i
+  install -d -m755 %{buildroot}%{qdir}/$i
 done
 
 for i in man1 man5 man7 man8; do
-  install -d -m755 -o 0 -g qmail %{buildroot}%{qdir}/man/$i
+  install -d -m755 %{buildroot}%{qdir}/man/$i
 done
 
 for i in cat1 cat5 cat7 cat8; do
-  install -d -m755 -o 0 -g qmail %{buildroot}%{qdir}/man/$i
+  install -d -m755 %{buildroot}%{qdir}/man/$i
 done
 
 #-------------------------------------------------------------------------------
-install -d -m700 -o 0 -g 0 %{buildroot}%{qdir}/supervise
+install -d -m700 %{buildroot}%{qdir}/supervise
 for i in send smtp submission pop3 smtp-ssl; do
-  install -d -m1751 -o 0 -g qmail %{buildroot}%{qdir}/supervise/$i
-  install -d -m751 -o 0 -g qmail %{buildroot}%{qdir}/supervise/$i/log
-  install -d -m751 -o 0 -g qmail %{buildroot}%{qdir}/supervise/$i/supervise
+  install -d -m1751 %{buildroot}%{qdir}/supervise/$i
+  install -d -m751 %{buildroot}%{qdir}/supervise/$i/log
+  install -d -m751 %{buildroot}%{qdir}/supervise/$i/supervise
 done
 
 #-------------------------------------------------------------------------------
-install -d -m750 -o qmailq -g qmail %{buildroot}%{qdir}/queue
-install -d -m2755 -o alias -g qmail %{buildroot}%{qdir}/alias
+install -d -m750 -%{buildroot}%{qdir}/queue
+install -d -m2755 %{buildroot}%{qdir}/alias
 
-install -d -m755 -o qmaill -g 0 %{buildroot}/var/log/qmail
-install -d -m755 -o qmaill -g 0 %{buildroot}/var/log/qmail/send
-install -d -m755 -o qmaill -g 0 %{buildroot}/var/log/qmail/smtp
-install -d -m755 -o qmaill -g 0 %{buildroot}/var/log/qmail/submission
-install -d -m755 -o qmaill -g 0 %{buildroot}/var/log/qmail/pop3
-install -d -m755 -o qmaill -g 0 %{buildroot}/var/log/qmail/smtp-ssl
+install -d -m755 %{buildroot}/var/log/qmail
+install -d -m755 %{buildroot}/var/log/qmail/send
+install -d -m755 %{buildroot}/var/log/qmail/smtp
+install -d -m755 %{buildroot}/var/log/qmail/submission
+install -d -m755 %{buildroot}/var/log/qmail/pop3
+install -d -m755 %{buildroot}/var/log/qmail/smtp-ssl
 
 # install binaries
 #-------------------------------------------------------------------------------
@@ -385,30 +385,30 @@ done
 # install docs
 #-------------------------------------------------------------------------------
 for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES FILES.warlord HISTORY.warlord INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INSTALL.warlord INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.domainkeys README.qregex README.remote-auth README.starttls README.tap README.warlord REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION ChangeLog.empf README.empf; do
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/doc
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/doc
 done
 
 for i in qreceipt condredirect mailsubj except maildirmake preline tcp-env bouncesaying maildir2mbox qbiff forward maildirwatch; do
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.1 %{buildroot}%{qdir}/man/man1
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat1
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.1 %{buildroot}%{qdir}/man/man1
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat1
 done
 
 for i in qmail-users maildir qmail-header envelopes mbox tcp-environ qmail-control qmail-log addresses dot-qmail; do
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.5 %{buildroot}%{qdir}/man/man5
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat5
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.5 %{buildroot}%{qdir}/man/man5
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat5
 done
 
 for i in qmail-limits forgeries qmail; do
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.7 %{buildroot}%{qdir}/man/man7
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat7
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.7 %{buildroot}%{qdir}/man/man7
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat7
 done
 
 for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.8 %{buildroot}%{qdir}/man/man8
-  install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.8 %{buildroot}%{qdir}/man/man8
+  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
 done
 
-install -m644 -o 0 -g qmail $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
+install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
 
 # install boot
 #-------------------------------------------------------------------------------
@@ -800,6 +800,7 @@ fi
 #-------------------------------------------------------------------------------
 
 %defattr(-,-,qmail)
+
 # /usr/bin
 # /var/qmail/bin
 
@@ -829,7 +830,8 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/man/man5
 %attr(0755,root,qmail) %dir %{qdir}/man/man7
 %attr(0755,root,qmail) %dir %{qdir}/man/man8
-%attr(0750,qmailq,qmail) %dir %{qdir}/queue
+%attr(0755,root,qmail) %{qdir}/owners
+
 
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise
 %attr(1700,qmaill,qmail) %dir %{qdir}/supervise/send
@@ -851,11 +853,17 @@ fi
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/send
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/smtp-ssl
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/submission
+%attr(0755,root,qmail) %{buildroot}/var/log/qmail/pop3
 
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/cur
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/new
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/tmp
+
+# tls 
+#-------------------------------------------------------------------------------
+%attr(0644,root,qmail) %{qdir}/control/tlshosts
+%attr(0644,root,qmail) %{qdir}/control/tlshosts/exhaustivelist
 
 # config (qmail)
 #-------------------------------------------------------------------------------
@@ -893,6 +901,7 @@ fi
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
 #%attr(-,root,qmail) %{qdir}/bin/qmail-queue
+%attr(-,root,qmail) %{qdir}/control/domainkeys
 
 # supervise
 #-------------------------------------------------------------------------------
@@ -930,7 +939,7 @@ fi
 %attr(0700,qmails,qmail) %dir %{qdir}/queue/remote
 %attr(0700,qmails,qmail) %{qdir}/queue/remote/*
 %attr(0750,qmailq,qmail) %dir %{qdir}/queue/todo
-
+%attr(0750,qmailq,qmail) %{qdir}/queue
 # boot files
 #-------------------------------------------------------------------------------
 %attr(0755,root,qmail) %{qdir}/boot/home
