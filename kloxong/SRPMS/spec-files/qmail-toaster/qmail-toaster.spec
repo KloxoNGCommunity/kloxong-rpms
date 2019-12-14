@@ -207,8 +207,8 @@ this package.
 %patch6 -p0
 %patch7 -p0
 %patch8 -p1
-
-#%patch9 -p1
+# I am really courious what happens if i enable that patch
+%patch9 -p1
 %patch10 -p1
 
 %patch11 -p1
