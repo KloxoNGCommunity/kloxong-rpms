@@ -138,12 +138,12 @@ make libvpopmail.a
 
 make DESTDIR=%{buildroot} install-data-local
 
-# disabling the devel patch we dont need this library handling
+# disabling the devel patch we dont need this library handling if we dont use development
 # shubes 11/18/2013 - This is a hack.
 # TODO: Need to get proper object library handling implemented
-#%ifarch x86_64
-#  sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
-# %endif
+%ifarch x86_64
+  sed -i 's|/usr/lib/|/usr/lib64/|' %{buildroot}%{_sysconfdir}/%{name}/lib_deps
+ %endif
 
 %{__cp} %{buildroot}%{vdir}/include/*  %{buildroot}%{_includedir}/%{name}/.
 %{__cp} %{buildroot}%{vdir}/lib/*      %{buildroot}%{_libdir}/%{name}/.
@@ -163,9 +163,10 @@ make DESTDIR=%{buildroot} install-data-local
 %attr(0755,vpopmail,vchkpw) %dir %{_sysconfdir}/%{name}
 %attr(0755,vpopmail,vchkpw) %dir %{_includedir}/%{name}
 %attr(0755,vpopmail,vchkpw) %dir %{_libdir}/%{name}
-# this is not needed as well since we disable the development patch
-#%attr(0644,vpopmail,vchkpw)      %{_sysconfdir}/%{name}/*_deps
-#this is for ouc case speficic but we will see if we need them
+# this is not needed as well if we disable the development patch
+%attr(0644,vpopmail,vchkpw)      %{_sysconfdir}/%{name}/*_deps
+
+# this is for ouc case speficic but we will see if we need them
 #%attr(0755,vpopmail,vchkpw) %dir %{vdir}
 #%attr(0755,vpopmail,vchkpw) %dir %{vdir}/bin
 #%attr(0755,vpopmail,vchkpw) %dir %{vdir}/etc
