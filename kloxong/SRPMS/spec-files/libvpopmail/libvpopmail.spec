@@ -165,9 +165,12 @@ make DESTDIR=%{buildroot} install-data-local
 %attr(0755,vpopmail,vchkpw) %dir %{_libdir}/%{name}
 # this is not needed as well since we disable the development patch
 #%attr(0644,vpopmail,vchkpw)      %{_sysconfdir}/%{name}/*_deps
-%defattr (0444,vpopmail,vchkpw)
-%{vdir}/etc/inc_deps
-%{vdir}/etc/lib_deps
+#this is for ouc case speficic but we will see if we need them
+#%attr(0755,vpopmail,vchkpw) %dir %{vdir}
+#%attr(0755,vpopmail,vchkpw) %dir %{vdir}/bin
+#%attr(0755,vpopmail,vchkpw) %dir %{vdir}/etc
+#%attr(0755,vpopmail,vchkpw) %dir %{vdir}/include
+#%attr(0755,vpopmail,vchkpw) %dir %{vdir}/lib
 
 %attr(0644,vpopmail,vchkpw)      %{_includedir}/%{name}/*
 %attr(0644,vpopmail,vchkpw)      %{_libdir}/%{name}/*
