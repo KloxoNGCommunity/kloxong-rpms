@@ -859,9 +859,6 @@ fi
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/new
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/tmp
 
-# tls 
-#-------------------------------------------------------------------------------
-%attr(0644,root,qmail) %{qdir}/control/tlshosts
 
 
 # config (qmail)
