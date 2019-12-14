@@ -89,6 +89,7 @@ Patch40: qmail-toaster-centos-7-chroot.patch
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
+Requires: libdomainkeys-toaster
 Requires: mysql
 Requires: mysql-libs
 
