@@ -318,8 +318,8 @@ install -d %{buildroot}%{qdir}/control
 install -d %{buildroot}%{qdir}/owners
 install -d %{buildroot}%{qdir}/users
 install -d %{buildroot}%{qdir}/control/domainkeys
-install -d %{buildroot}%{qdir}/control/tlshosts
-install -d %{buildroot}%{qdir}/control/tlshosts/exhaustivelist
+#install -d %{buildroot}%{qdir}/control/tlshosts
+#install -d %{buildroot}%{qdir}/control/tlshosts/exhaustivelist
 install -d %{buildroot}%{qdir}/bin
 install -d %{buildroot}%{_libdir}
 install -d %{buildroot}%{qdir}/man
@@ -818,8 +818,8 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/boot
 %attr(0755,root,qmail) %dir %{qdir}/control
 %attr(0755,root,qmail) %dir %{qdir}/control/domainkeys
-%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
-%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
+#%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
+#%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
 %attr(0755,root,qmail) %dir %{qdir}/doc
 %attr(0755,root,qmail) %dir %{qdir}/man
 %attr(0755,root,qmail) %dir %{qdir}/man/cat1
