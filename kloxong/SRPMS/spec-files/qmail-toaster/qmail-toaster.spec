@@ -8,7 +8,7 @@
 %define	crontab /etc/crontab
 %define	rcpath /etc
 %define	_initpath /etc/rc.d/init.d
-BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5
+BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
 Requires:		openssl >= 0.9.8, sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools
 Provides:	smtpdaemon, MTA
