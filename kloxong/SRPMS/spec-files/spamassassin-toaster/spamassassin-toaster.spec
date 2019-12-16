@@ -7,12 +7,12 @@
 BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel, wget
 ## MR -- exist in 3.4.0
 BuildRequires:	perl-devel, perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Time-HiRes
-BuildRequires:	perl-Geo-IP, perl-IO-Socket-SSL, perl-Razor-Agent, perl-IO-Socket-INET6
+BuildRequires:	perl-Geo-IP, perl-Razor-Agent
 BuildRequires:	perl-Encode-Detect, perl-Net-Patricia, perl-Digest-SHA, gnupg, procmail
-BuildRequires:  perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch, perl-Mail-DKIM, perl-File-Fetch
+BuildRequires:  perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch, perl-Mail-DKIM
 
 Requires:	perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Razor-Agent
-Requires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL, perl-Digest-SHA 
+Requires:	perl-Geo-IP, perl-Digest-SHA 
 Requires:	perl-Encode-Detect, perl-Net-Patricia, perl-Time-HiRes, perl-Mail-DKIM
 Requires: 	perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch, wget
 Requires:	perl-Digest-SHA1, perl-HTTP-Parser, procmail, gnupg
@@ -20,10 +20,23 @@ Requires:	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 ## MR -- exist in 3.4.0
 
 
-#%if %{?fedora}0 >= 150 || %{?rhel}0 >= 60 
-#BuildRequires: perl-IO-Socket-INET6
-#Requires: perl-IO-Socket-IP-INET6
-#%endif
+%if %{?fedora}0 > 150 || %{?rhel}0 > 60 
+BuildRequires: perl-IO-Socket-IP
+BuildRequires: perl-HTML-Parser
+BuildRequires: perl-DB_File
+BuildRequires: perl-libwww-perl
+
+Requires: perl-DB_File
+Requires: perl-IO-Socket-IP-IP
+Requires: perl-HTML-Parser
+Requires: perl-libwww-perl
+else
+BuildRequires: perl-IO-Socket-INET6 
+BuildRequires: perl-IO-Socket-SSL
+
+Requires: perl-IO-Socket-IP-INET6
+Requires: perl-IO-Socket-SSL
+%endif
 
 %define	ccflags %{optflags}
 %define	ldflags %{optflags}
