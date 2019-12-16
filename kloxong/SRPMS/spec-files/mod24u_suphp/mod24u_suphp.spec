@@ -23,11 +23,11 @@ Source0: http://projects.marsching.org/suphp/download/%{real_name}-%{version}.ta
 Patch0: suphp-0.7.2_accept-httpd-2.4.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires: httpd24u-devel >= 2.4, gcc-c++, automake, autoconf, libtool, apr15u-devel
+BuildRequires: httpd-devel >= 2.4, gcc-c++, automake, autoconf, libtool, apr15u-devel
 # Hardcode httpd-mm value for copr build
 Requires:	httpd-mmn = 20120211x8664
 #Requires: httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
-Requires: httpd24u >= 2.4, /usr/bin/php-cgi
+Requires: httpd >= 2.4, /usr/bin/php-cgi
 
 %description
 The suPHP Apache module together with suPHP itself provides an easy way to
