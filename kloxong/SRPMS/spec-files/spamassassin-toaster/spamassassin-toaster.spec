@@ -19,14 +19,9 @@ Requires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL, perl-Digest-SHA
 Requires:	perl-Encode-Detect, perl-Net-Patricia, perl-Time-HiRes, perl-Mail-DKIM
 Requires: 	perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch, wget
 
-%if %{?fedora}0 > 150 || %{?rhel}0 > 60 
+%if %{?fedora}0 >= 150 || %{?rhel}0 >= 60 
 BuildRequires: perl-IO-Socket-IP
 Requires: perl-IO-Socket-IP
-%endif
-
-%if %{?fedora}0 <= 150 || %{?rhel}0 <= 60 
-BuildRequires: rh-perl524-perl-IO-Socket-IP
-Requires: rh-perl524-perl-IO-Socket-IP
 %endif
 
 %define	ccflags %{optflags}
