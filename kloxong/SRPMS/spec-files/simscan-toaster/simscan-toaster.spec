@@ -130,11 +130,11 @@ mkdir -p %{buildroot}
 
 # install directories
 #-------------------------------------------------------------------------------
-install -d -o root -g root %{buildroot}%{qdir}
-install -d -o root -g root %{buildroot}%{qdir}/bin
-install -d -o root -g root %{buildroot}%{qdir}/control
-install -d -m750 -o clam -g root %{buildroot}%{qdir}/%{name}
-install -d -o root -g root %{buildroot}%{_datadir}/doc/%{name}-%{pversion}
+install -d %{buildroot}%{qdir}
+install -d %{buildroot}%{qdir}/bin
+install -d %{buildroot}%{qdir}/control
+install -d -m750 %{buildroot}%{qdir}/%{name}
+install -d %{buildroot}%{_datadir}/doc/%{name}-%{pversion}
 
 install -d %{buildroot}%{qdir}/supervise
 install -d %{buildroot}%{qdir}/supervise/clamd
@@ -143,12 +143,14 @@ install -d %{buildroot}%{qdir}/supervise/clamd/supervise
 
 # install files
 #-------------------------------------------------------------------------------
-install -m4711 -o clam -g root $RPM_BUILD_DIR/%{name}-%{pversion}/%{name} %{buildroot}%{qdir}/bin/%{name}
-install -m4755 -o root -g root $RPM_BUILD_DIR/%{name}-%{pversion}/simscanmk %{buildroot}%{qdir}/bin/simscanmk
+install -m4711 $RPM_BUILD_DIR/%{name}-%{pversion}/%{name} %{buildroot}%{qdir}/bin/%{name}
+install -m4755 $RPM_BUILD_DIR/%{name}-%{pversion}/simscanmk %{buildroot}%{qdir}/bin/simscanmk
+#if we need those later we should make them set attributes to files
 #install -m755  -o root -g root %{SOURCE1} %{buildroot}%{qdir}/bin/update-%{name}.bz2
 #bunzip2 %{buildroot}%{qdir}/bin/update-%{name}.bz2
-install -m755  -o root -g root %{SOURCE1} %{buildroot}%{qdir}/bin/update-%{name}
+install -m755 %{SOURCE1} %{buildroot}%{qdir}/bin/update-%{name}
 
+#if we need those later we should make them set attributes to files
 #install %{SOURCE4} %{buildroot}%{qdir}/supervise/clamd/run.bz2
 #bunzip2 %{buildroot}%{qdir}/supervise/clamd/run.bz2
 #install %{SOURCE5} %{buildroot}%{qdir}/supervise/clamd/log/run.bz2
@@ -160,7 +162,7 @@ install %{SOURCE5} %{buildroot}%{qdir}/supervise/clamd/log/down
 # install docs
 #-------------------------------------------------------------------------------
 for i in AUTHORS ChangeLog INSTALL README TODO ssattach.example; do
- install -m644 -o 0 -g 0 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{_datadir}/doc/%{name}-%{pversion}
+ install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{_datadir}/doc/%{name}-%{pversion}
 done
 
 pushd %{buildroot}%{qdir}/control
@@ -218,11 +220,21 @@ fi
 %files 
 #-------------------------------------------------------------------------------
 %defattr(644,clam,clam)
+#qdir on install was root,root probably should be clam,root
+%attr(0750,clam,root) %{qdir}
+#bin was on install root, root again it should be clam,root
+%attr(0750,clam,root) %{qdir}/bin
+%attr(4711,clam,root) %{qdir}/bin/%{name}
+# control was root,root it should be clam,root
+%attr(0750,clam,root) %{qdir}/control
 %attr(0750,clam,root) %dir %{qdir}/%{name}
 %attr(4755,root,root) %{qdir}/bin/simscanmk
+
 %attr(0755,root,root) %{qdir}/bin/update-%{name}
 %attr(4711,clam,root) %{qdir}/bin/%{name}
+%attr(0644,root,root) %{_datadir}/doc/%{name}-%{pversion}
 %attr(0644,root,root) %{_datadir}/doc/%{name}-%{pversion}/*
+
 
 %attr(0644,clam,root) %config(noreplace) %{qdir}/control/simcontrol
 
@@ -237,6 +249,10 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Dec 16 2019 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.8.kng
+- Fix %install section moving permitions to %files in accordance with copr directives
+- 
+
 * Sat Mar 28 2015 Mustafa Ramadhan <mustafa@bigraf.com> 1.4.0-1.4.8.mr
 - set no 'requires' for clamav, clamd and ripmime (need manual install)
 
