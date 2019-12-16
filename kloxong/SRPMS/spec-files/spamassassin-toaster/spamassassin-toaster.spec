@@ -9,14 +9,14 @@ BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel
 BuildRequires:	perl-devel, perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Time-HiRes
 BuildRequires:	perl-Geo-IP, perl-IO-Socket-SSL, perl-Razor-Agent
 BuildRequires:	perl-Encode-Detect, perl-Net-Patricia, perl-Digest-SHA
-BuildRequires:  perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch
+BuildRequires:  perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch, perl-Mail-DKIM
 
-Requires:	perl-Digest-SHA1, perl-HTTP-Parser, procmail, perl-Mail-DKIM
+Requires:	perl-Digest-SHA1, perl-HTTP-Parser, procmail
 Requires:	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 ## MR -- exist in 3.4.0
 Requires:	perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Razor-Agent
 Requires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL, perl-Digest-SHA 
-Requires:	perl-Encode-Detect, perl-Net-Patricia, perl-Time-HiRes , perl-Mail-DKIM
+Requires:	perl-Encode-Detect, perl-Net-Patricia, perl-Time-HiRes, perl-Mail-DKIM
 Requires: 	perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch, wget
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 60 
@@ -24,8 +24,7 @@ BuildRequires: perl-IO-Socket-IP
 Requires: perl-IO-Socket-IP
 %endif
 
-%if %{?fedora}00%{?rhel} < 6
-%define _initddir %{_initrddir}
+%if %{?fedora}0 <= 150 || %{?rhel}0 <= 60 
 BuildRequires: rh-perl524-perl-IO-Socket-IP
 Requires: rh-perl524-perl-IO-Socket-IP
 %endif
