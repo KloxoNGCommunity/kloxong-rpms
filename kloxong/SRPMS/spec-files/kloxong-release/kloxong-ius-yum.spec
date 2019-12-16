@@ -21,11 +21,8 @@ Provides yum file for ius for 24u install
 
 %build
 
-%install
-%{__rm} -rf %{buildroot}
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/yum.repos.d/
 
-cat > %{buildroot}/%{_sysconfdir}/yum.repos.d/kloxongius.repo << _EOF_
+cat > kloxongius.repo << _EOF_
 
 [kloxong-ius]
 name=KloxoNG - IUS Community Packages for EL \$releasever
@@ -53,11 +50,11 @@ exclude=mysql51* mysql56*
 _EOF_
 
 
-%{__cp} -f %{buildroot}/%{_sysconfdir}/yum.repos.d/kloxongius.repo %{_sysconfdir}/yum.repos.d/kloxongius.repo
+%install
+%{__rm} -rf %{buildroot}
+%{__mkdir} -p %{buildroot}%{_sysconfdir}/yum.repos.d/
+install -m 755 kloxong.repo %{buildroot}%{_sysconfdir}/yum.repos.d/kloxongius.repo
 
-%clean
-
-%post
 
 %files
 %defattr(-, root, root, 0755)
@@ -65,11 +62,5 @@ _EOF_
 %config %{_sysconfdir}/yum.repos.d/kloxongius.repo
 
 %changelog
-* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
-- rebrand to Kloxo Next Generation
-- change product name to kloxong
-- add obsolete for kloxomr 
-- change MRatWork to kloxong
-
-* Mon Dec 16 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 0.0.1-1
-- first release
+* Mon Dec 16 2019 John Parnell Pierce <john@luckytanuki.com> 
+- Create new spec for ius only yum
