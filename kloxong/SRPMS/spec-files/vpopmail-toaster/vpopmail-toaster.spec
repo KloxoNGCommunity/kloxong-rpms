@@ -1,7 +1,7 @@
 %define	name vpopmail
 %define	pversion 5.4.33
 %define 	bversion 1.4
-%define	rpmrelease 5.kng%{?dist}
+%define	rpmrelease 6.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf, mysql-devel >= 5.0.22, mysql >= 5.0.22 
@@ -216,9 +216,10 @@ fi
 #-------------------------------------------------------------------------------
 %preun
 #-------------------------------------------------------------------------------
+# Check user exists before deleting
 if [ "$1" = 0 ]; then
-	userdel vpopmail 2> /dev/null
-	groupdel vchkpw 2> /dev/null
+	getent passwd vpopmail >/dev/null 2>&1 && userdel vpopmail 2> /dev/null
+	getent group vchkpw >/dev/null 2>&1 && groupdel vchkpw 2> /dev/null
 fi
 
 
@@ -275,6 +276,8 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Tue Dec 16 2019 John Pierce <john@luckytanuki.com> 5.4.33-1.4.6.kng
+- Add check for vpopmail user before deleting the user
 * Tue Dec 10 2019 John Pierce <john@luckytanuki.com> 5.4.33-1.4.5.kng
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 5.4.33-1.4.4.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
