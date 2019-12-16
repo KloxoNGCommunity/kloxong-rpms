@@ -30,7 +30,7 @@ Requires: perl-DB_File
 Requires: perl-IO-Socket-IP-IP
 Requires: perl-HTML-Parser
 Requires: perl-libwww-perl
-else
+%else
 BuildRequires: perl-IO-Socket-INET6 
 BuildRequires: perl-IO-Socket-SSL
 
