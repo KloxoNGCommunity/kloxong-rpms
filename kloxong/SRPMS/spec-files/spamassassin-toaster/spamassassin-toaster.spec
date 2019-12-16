@@ -326,6 +326,10 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Tue Dec 17 2019 Dionysis Kladis <dkstiler@gmail.com> 3.4.1-1.4.7.kng
+- Fix depedencies for copr chroot build enviroment
+- adding handling for centos 7 and centos 6
+
 * Fri Sep 04 2015 Mustafa Ramadhan <mustafa@bigraf.com> 3.4.1-1.4.7.mr
 - update to 3.4.1
 
