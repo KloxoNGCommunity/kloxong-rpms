@@ -53,7 +53,7 @@ _EOF_
 %install
 %{__rm} -rf %{buildroot}
 %{__mkdir} -p %{buildroot}%{_sysconfdir}/yum.repos.d/
-install -m 755 kloxong.repo %{buildroot}%{_sysconfdir}/yum.repos.d/kloxongius.repo
+install -m 755 kloxongius.repo %{buildroot}%{_sysconfdir}/yum.repos.d/kloxongius.repo
 
 
 %files
