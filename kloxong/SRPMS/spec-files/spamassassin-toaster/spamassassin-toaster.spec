@@ -4,21 +4,31 @@
 %define	rpmrelease 8.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
-BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel, wget , fetch
+BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel, wget
 ## MR -- exist in 3.4.0
 BuildRequires:	perl-devel, perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Time-HiRes
 BuildRequires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL, perl-Razor-Agent
-BuildRequires:	perl-Encode-Detect, perl-Net-Patricia, perl-Digest-SHA, perl-IO-Socket-IP 
-BuildRequires:  perl-DBI, perl-Net-DNS-Nameserver, perl-GnuPG-Interface
-Requires:	perl-Digest-SHA1, perl-HTTP-Parser, procmail, perl-IO-Socket-IP, perl-Mail-DKIM
+BuildRequires:	perl-Encode-Detect, perl-Net-Patricia, perl-Digest-SHA 
+BuildRequires:  perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch
+
+Requires:	perl-Digest-SHA1, perl-HTTP-Parser, procmail, perl-Mail-DKIM
 Requires:	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 ## MR -- exist in 3.4.0
 Requires:	perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Razor-Agent
 Requires:	perl-Geo-IP, perl-IO-Socket-INET6, perl-IO-Socket-SSL, perl-Digest-SHA 
 Requires:	perl-Encode-Detect, perl-Net-Patricia, perl-Time-HiRes , perl-Mail-DKIM
-Requires: 	perl-DBI, perl-Net-DNS-Nameserver,perl-GnuPG-Interface
+Requires: 	perl-DBI, perl-Net-DNS-Nameserver, perl-File-Fetch
+%if %{?fedora}0 < 150 || %{?rhel}0 < 60  
+BuildRequires: rh-perl524-perl-IO-Socket-IP
+Requires: rh-perl524-perl-IO-Socket-IP
+%else
+BuildRequires: perl-IO-Socket-IP
+Requires: perl-IO-Socket-IP
+%endif
+
 %define	ccflags %{optflags}
 %define	ldflags %{optflags}
+
 
 
 ############### RPM ################################
