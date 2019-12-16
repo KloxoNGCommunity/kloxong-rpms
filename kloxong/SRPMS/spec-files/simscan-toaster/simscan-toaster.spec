@@ -250,7 +250,7 @@ fi
 %changelog
 #-------------------------------------------------------------------------------
 * Mon Dec 16 2019 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.8.kng
-- Fix %install section moving permitions to %files in accordance with copr directives
+- Fix install section moving permitions to files section in accordance with copr directives
 - 
 
 * Sat Mar 28 2015 Mustafa Ramadhan <mustafa@bigraf.com> 1.4.0-1.4.8.mr
