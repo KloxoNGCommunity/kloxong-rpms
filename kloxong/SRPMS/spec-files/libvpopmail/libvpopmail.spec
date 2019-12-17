@@ -38,11 +38,11 @@ BuildRequires:	mysql-devel >= 5.0.22
 
 %description -n %{name}-devel
 Headers and libs for building packages which use vpopmail.
-# we disable thos patch since it couses problems with kloxo we have hardcoded paths
-#vpopmail has been patched as follows:
-#etc/     is in /etc/libvpopmail (only devel related files)
-#include/ is in /usr/include/libvpopmail
-#lib/     is in /usr/lib/libvpopmail
+
+vpopmail has been patched as follows:
+etc/     is in /etc/libvpopmail (only devel related files)
+include/ is in /usr/include/libvpopmail
+lib/     is in /usr/lib/libvpopmail
  
            libvpopmail 5.4.33
             Current settings
@@ -82,9 +82,8 @@ one domain per SQL table = --disable-many-domains
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-# disabling this patch since in our case this one moves the /etc/inc_deps
-# inside the /etc/libvpopmail/inc_dep and our qmail-toaster package fail to compile
-# If This is enabled we need to do the same on libvpopmail 
+# We are using the devel patch here and configure properly
+# Beware if This is enabled we need to do the same on libvpopmail and set proper paths on qmail-toaster
 %patch3 -p1
 
 #-------------------------------------------------------------------------------
@@ -179,6 +178,10 @@ make DESTDIR=%{buildroot} install-data-local
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Tue Dec 17 20169 Dionysis Kladis <dkstiler@gmail.com> - 5.4.33-1.1.kng
+- Compile for KloxoNG (need by dovecot-toaster compile)
+- Moving seting permissions directives from  install section to files
+- Enabling devel patch for libvpopmail and preparing the rest packages as well 
 
 * Fri Jun 17 2016 Mustafa Ramadhan <mustafa@bigraf.com> - 5.4.33-1
 - Compile for Kloxo-MR (need by dovecot-toaster compile)
