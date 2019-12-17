@@ -1088,7 +1088,7 @@ fi
 #-------------------------------------------------------------------------------
 * Sun Dec 15 2019 Dionysis Kladis <dkstiler@gmail.com> 1.03-1.3.57.kng
 - Fixing error build at a chroot enviroment failure with chksgh
-- Fixing file creation and moving seting permitions to %files insead of %install
+- Fixing file creation and moving seting permitions to files insead of install
 - Making the spec file compatible with copr build utility
 
 * Thu Jul 27 2017 Mustafa Ramadhan <mustafa@bigraf.com> 1.03-1.3.57.mr
