@@ -31,6 +31,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 BuildRequires:    %{_includedir}/ltdl.h
 BuildRequires:	libtool-ltdl-devel, mysql-devel, zlib-devel, gdbm-devel, expect, gcc-c++
 BuildRequires:	qmail-toaster >= 1.03-1.3.15
+BuildRequires: vpopmail-toaster >= 5.4.17
 Requires:	qmail-toaster >= 1.03-1.3.15
 Obsoletes:	courier-imap-toaster < 4
 Packager:       Jake Vickers <jake@qmailtoaster.com>
