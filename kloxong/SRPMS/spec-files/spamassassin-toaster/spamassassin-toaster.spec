@@ -27,7 +27,7 @@ BuildRequires: perl-DB_File
 BuildRequires: perl-libwww-perl
 
 Requires: perl-DB_File
-Requires: perl-IO-Socket-IP-IP
+Requires: perl-IO-Socket-IP
 Requires: perl-HTML-Parser
 Requires: perl-libwww-perl
 %else
