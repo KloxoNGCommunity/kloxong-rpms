@@ -34,7 +34,7 @@ Requires: perl-libwww-perl
 BuildRequires: perl-IO-Socket-INET6 
 BuildRequires: perl-IO-Socket-SSL
 
-Requires: perl-IO-Socket-IP-INET6
+Requires: perl-IO-Socket-INET6
 Requires: perl-IO-Socket-SSL
 %endif
 
