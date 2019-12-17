@@ -5,7 +5,7 @@
 
 %define	release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
-%define		ccflags %{optflags} -I/usr/include/libvpopmail -L/usr/lib/libvpopmail
+%define		ccflags %{optflags}
 %define		ldflags %{optflags}
 
 ############### RPM ################################
@@ -58,6 +58,8 @@ This package, courier-authlib, allows the new courier imap to use vpopmail for a
 
 echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
+# we need to Set the path for our vpopmail-toaster library path of lib_deps
+%{__perl} -pi -e "s|${vpopmail_home}/etc/inc_deps|/etc/libvpopmail/lib_deps|g" configure
 
 #----------------------------------------------------------------------------------
 %build
