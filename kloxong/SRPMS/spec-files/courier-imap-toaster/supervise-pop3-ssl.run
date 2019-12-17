@@ -23,4 +23,3 @@ exec /usr/bin/envdir ./env/ \
 	/usr/bin/couriertls -server -tcpd \
 	/usr/sbin/pop3login \
 	/usr/bin/pop3d Maildir 2>&1
-

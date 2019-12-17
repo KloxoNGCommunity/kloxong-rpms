@@ -23,5 +23,3 @@ exec /usr/bin/envdir ./env/ \
 	/usr/bin/tcpserver -v -R -H -l $HOSTNAME $IP $PORT \
 	/usr/sbin/imaplogin \
 	/usr/bin/imapd Maildir 2>&1
-
-

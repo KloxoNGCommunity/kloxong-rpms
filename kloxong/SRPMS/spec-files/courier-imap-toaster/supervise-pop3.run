@@ -22,4 +22,3 @@ exec /usr/bin/envdir ./env/ \
 	/usr/bin/tcpserver -v -R -H -l $HOSTNAME $IP $PORT \
 	/usr/sbin/pop3login \
 	/usr/bin/pop3d Maildir 2>&1
-

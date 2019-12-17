@@ -8,3 +8,4 @@
 
 exec /usr/bin/setuidgid qmaill \
 	/var/qmail/bin/splogger pop3 2>&1
+ 
