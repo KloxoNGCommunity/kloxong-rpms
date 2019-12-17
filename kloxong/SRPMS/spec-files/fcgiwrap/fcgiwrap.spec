@@ -15,6 +15,7 @@ Patch0: %name-%version.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:      autoconf
+BuildRequires:      automake
 BuildRequires:      fcgi-devel
 Requires:           spawn-fcgi
 
