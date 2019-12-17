@@ -16,7 +16,12 @@ Group: System Environment/Daemons
 Source: http://www.modsecurity.org/download/modsecurity-apache_%{version}.tar.gz
 Source1: mod_security.conf
 Requires: httpd
-BuildRequires: httpd-devel libxml2-devel pcre-devel curl-devel lua-devel
+BuildRequires: httpd-devel 
+BuildRequires: libxml2-devel 
+BuildRequires: pcre-devel 
+BuildRequires: curl-devel 
+BuildRequires: lua-devel
+BuildRequires: openldap-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
