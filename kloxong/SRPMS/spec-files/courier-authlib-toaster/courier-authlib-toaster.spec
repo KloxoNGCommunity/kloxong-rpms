@@ -5,7 +5,7 @@
 
 %define	release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
-%define		ccflags %{optflags}
+%define		ccflags %{optflags} -I/usr/include/libvpopmail -L/usr/lib/libvpopmail
 %define		ldflags %{optflags}
 
 ############### RPM ################################
