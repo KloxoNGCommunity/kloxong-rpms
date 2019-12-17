@@ -173,7 +173,7 @@ fi
 
 %build
 # forcibly prevent use of bundled apr, apr-util, pcre
-rm -rf srclib/{pcre}
+rm -rf srclib/{apr,apr-util,pcre}
 
 # regenerate configure scripts
 autoheader && autoconf || exit 1
@@ -204,11 +204,9 @@ mkdir $mpm; pushd $mpm
 	--includedir=%{_includedir}/httpd \
 	--libexecdir=%{_libdir}/httpd/modules \
 	--datadir=%{contentdir} \
-    --with-installbuilddir=%{_libdir}/httpd/build \
+        --with-installbuilddir=%{_libdir}/httpd/build \
 	--with-mpm=$mpm \
-    --with-included-apr \
-	--with-egd \ 
-	--with-devrandom \
+        --with-apr=%{_prefix} --with-apr-util=%{_prefix}/apr-util \
 	--enable-suexec --with-suexec \
 	--with-suexec-caller=%{suexec_caller} \
 	--with-suexec-docroot=%{contentdir} \
