@@ -14,6 +14,9 @@ BuildRequires:	automake, autoconf
 %define	vtoaster %{pversion}
 %define	builddate Fri Jun 12 2009
 
+
+
+
 Name:		%{name}-toaster
 Summary:	Simscan for qmail-toaster
 Version:	%{vtoaster}
@@ -38,7 +41,15 @@ BuildRequires:	mysql-devel, mysql-libs, clamav, ripmime, clamd, spamassassin-toa
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav-toaster, ripmime-toaster
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd
 Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd, spamassassin-toaster 
+
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
+BuildRequires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+Requires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+%endif
+
 Obsoletes:	clamav-toaster, ripmime-toaster
+
+
 Packager:	Eric Shubert <eric@datamatters.us>
 
 %define	name simscan
@@ -46,6 +57,13 @@ Packager:	Eric Shubert <eric@datamatters.us>
 %define	qbin /var/qmail/bin
 %define	qcont /var/qmail/control
 %define	qtcp %{_sysconfdir}/tcprules.d/tcp.smtp
+
+# we need to handle that for user selection centos 7 and centos 6
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
+%define scanuser	clamscan
+%else
+%define scanuser	clam
+%endif
 
 #-------------------------------------------------------------------------------
 %description
@@ -109,7 +127,7 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
 %configure \
-	--enable-user=clam \
+	--enable-user=%scanuser \
 	--enable-attach \
 	--enable-ripmime=/usr/bin/ripmime \
 	--enable-per-domain \
@@ -251,7 +269,8 @@ fi
 #-------------------------------------------------------------------------------
 * Mon Dec 16 2019 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.8.kng
 - Fix install section moving permitions to files section in accordance with copr directives
-- 
+- Adding missing depedencies for centos 6 and centos 7
+- Adding an if statement to configure properly the user for centos 7
 
 * Sat Mar 28 2015 Mustafa Ramadhan <mustafa@bigraf.com> 1.4.0-1.4.8.mr
 - set no 'requires' for clamav, clamd and ripmime (need manual install)
