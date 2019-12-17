@@ -42,6 +42,7 @@ Packager:       Jake Vickers <jake@qmailtoaster.com>
 
 %define vdeps /etc/libvpopmail/lib_deps
 %define vlib /usr/lib/libvpopmail
+%define {vpopmail_home} /home/vpopmail
 
 #------------------------------------------------------------------------------------
 %description
