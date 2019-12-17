@@ -22,6 +22,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:      pam-devel,pcre-devel,zlib-devel,openssl-devel,perl(ExtUtils::Embed)
 BuildRequires:      GeoIP-devel
+BuildRequires:      mysql-devel
 Requires:           pcre,zlib,openssl
 Requires:           GeoIP
 Requires:           perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
