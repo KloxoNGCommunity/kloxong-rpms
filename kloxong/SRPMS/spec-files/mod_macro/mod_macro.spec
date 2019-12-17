@@ -16,7 +16,7 @@ Vendor:        Fabien Coelho <mod.macro@coelho.net>
 Provides:      httpd-mod(%{modn}) = %{modv}
 Provides:      %{name} = %{modv}
 #Requires:      httpd = %{httpv}
-BuildRequires: httpd-devel >= 2.2 %{_sbindir}/apxs
+BuildRequires: httpd-devel >= 2.2 
 BuildRequires: libtool
 
 
