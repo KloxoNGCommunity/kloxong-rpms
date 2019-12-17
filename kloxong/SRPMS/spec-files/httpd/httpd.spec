@@ -207,6 +207,8 @@ mkdir $mpm; pushd $mpm
     --with-installbuilddir=%{_libdir}/httpd/build \
 	--with-mpm=$mpm \
     --with-included-apr \
+	--with-egd \ 
+	--with-devrandom \
 	--enable-suexec --with-suexec \
 	--with-suexec-caller=%{suexec_caller} \
 	--with-suexec-docroot=%{contentdir} \
