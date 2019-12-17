@@ -145,6 +145,10 @@ fi
 %{_bindir}/domain*
 
 %changelog
+* Tue Dec 17 2019 Dionysis Kladis <dkstiler@gmail.com> 5.0.1-1.kng
+- Adding missing depedency
+- Compile on corp for kloxong
+
 * Tue May 19 2015 Mustafa Ramadhan <mustafa@bigraf.com> 5.0.1-1.mr
 - update to 5.0.1
 
