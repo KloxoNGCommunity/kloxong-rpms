@@ -61,7 +61,7 @@ Group: System Environment/Daemons
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: autoconf, perl, pkgconfig, findutils, ed
 BuildRequires: db4-devel, expat-devel, zlib-devel, libselinux-devel
-BuildRequires: apr-devel >= 1.2.0, apr-util-devel >= 1.2.0, pcre-devel >= 5.0
+BuildRequires: apr-devel >= 1.2.0, apr-util-devel >= 1.2.0, pcre-devel >= 5.0, openldap-devel
 Requires: initscripts >= 8.36, /etc/mime.types, system-logos >= 7.92.1-1
 Obsoletes: httpd-suexec
 Requires(pre): /usr/sbin/useradd
@@ -206,7 +206,7 @@ mkdir $mpm; pushd $mpm
 	--datadir=%{contentdir} \
         --with-installbuilddir=%{_libdir}/httpd/build \
 	--with-mpm=$mpm \
-        --with-apr=%{_prefix} --with-apr-util=%{_prefix}/apr-util \
+        --with-apr=%{_prefix} --with-apr-util=%{_prefix} \
 	--enable-suexec --with-suexec \
 	--with-suexec-caller=%{suexec_caller} \
 	--with-suexec-docroot=%{contentdir} \
