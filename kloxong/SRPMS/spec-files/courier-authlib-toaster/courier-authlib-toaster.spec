@@ -58,6 +58,9 @@ This package, courier-authlib, allows the new courier imap to use vpopmail for a
 
 echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
+# we need to Set the path for our vpopmail-toaster library path of lib_deps
+%{__perl} -pi -e "s|CFLAGS="`cat ${vpopmail_home}/etc/inc_deps`|CFLAGS="`cat /etc/libvpopmail/lib_deps`|g" configure
+%{__perl} -pi -e "s|VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"|VPOPMAILLIBS="`cat /usr/lib/libvpopmail`"|g" configure
 
 #----------------------------------------------------------------------------------
 %build
@@ -86,9 +89,7 @@ mkdir -p %{buildroot}
     --with-ssl \
     --with-redhat
 
-# we need to Set the path for our vpopmail-toaster library path of lib_deps
-%{__perl} -pi -e "s|CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"|CFLAGS="`cat /etc/libvpopmail/lib_deps` $CFLAGS"|g" configure
-%{__perl} -pi -e "s|VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"|VPOPMAILLIBS="`cat /usr/lib/libvpopmail`"|g" configure
+
 
 %{__make}
 
