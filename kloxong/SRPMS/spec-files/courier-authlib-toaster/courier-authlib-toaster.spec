@@ -171,6 +171,11 @@ fi
 #------------------------------------------------------------------------------------
 %changelog
 #------------------------------------------------------------------------------------
+* Wed Dec 18 2019 Dionysis Kladis <dkstiler@gmail.com> 0.59.2-1.3.13.kng
+- added missing depedencies
+- added a patch to work with modified qmail-toaster packages named courier-authlib-library-toaster-kloxong.patch
+- make it compile in chroot enviroment of copr
+
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.59.2-1.3.13.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
 
