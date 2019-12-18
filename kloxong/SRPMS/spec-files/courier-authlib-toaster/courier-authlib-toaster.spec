@@ -53,7 +53,7 @@ This package, courier-authlib, allows the new courier imap to use vpopmail for a
 #------------------------------------------------------------------------------------
 %setup -q -n %{name}-%{pversion}
 
-%patch1 -p0
+%patch1 -p1
 
 # Cleanup for the compiler
 #------------------------------------------------------------------------------------
