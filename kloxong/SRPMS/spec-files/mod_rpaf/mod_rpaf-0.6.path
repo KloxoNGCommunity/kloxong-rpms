@@ -1,0 +1,120 @@
+diff -Naur mod_rpaf-0.6/mod_rpaf-2.0.c mod_rpaf-0.6_ok/mod_rpaf-2.0.c
+--- mod_rpaf-2.0.c	2008-01-01 06:05:40.000000000 +0300
++++ mod_rpaf-2.0.c	2009-07-30 20:46:37.000000000 +0400
+@@ -71,6 +71,7 @@
+ #include "http_protocol.h"
+ #include "http_vhost.h"
+ #include "apr_strings.h"
++#include <arpa/inet.h>
+ 
+ module AP_MODULE_DECLARE_DATA rpaf_module;
+ 
+@@ -149,12 +150,16 @@
+     rpaf_cleanup_rec *rcr = (rpaf_cleanup_rec *)data;
+     rcr->r->connection->remote_ip   = apr_pstrdup(rcr->r->connection->pool, rcr->old_ip);
+     rcr->r->connection->remote_addr->sa.sin.sin_addr.s_addr = apr_inet_addr(rcr->r->connection->remote_ip);
++
+     return APR_SUCCESS;
+ }
+ 
+ static int change_remote_ip(request_rec *r) {
+     const char *fwdvalue;
+     char *val;
++    apr_port_t tmpport;
++    apr_pool_t *tmppool;
++    
+     rpaf_server_cfg *cfg = (rpaf_server_cfg *)ap_get_module_config(r->server->module_config,
+                                                                    &rpaf_module);
+ 
+@@ -167,8 +172,11 @@
+         if (cfg->headername && (fwdvalue = apr_table_get(r->headers_in, cfg->headername))) {
+             //
+         } else if (fwdvalue = apr_table_get(r->headers_in, "X-Forwarded-For")) {
+-            //
+-        } else {
++            // 
++	} else if (fwdvalue = apr_table_get(r->headers_in, "X-Real-IP")) {
++	    //
++	}
++	else {
+             return DECLINED;
+         }
+ 
+@@ -180,12 +188,19 @@
+                 if (*fwdvalue != '\0')
+                     ++fwdvalue;
+             }
+-            rcr->old_ip = apr_pstrdup(r->connection->pool, r->connection->remote_ip);
+-            rcr->r = r;
+-            apr_pool_cleanup_register(r->pool, (void *)rcr, rpaf_cleanup, apr_pool_cleanup_null);
+-            r->connection->remote_ip = apr_pstrdup(r->connection->pool, ((char **)arr->elts)[((arr->nelts)-1)]);
+-            r->connection->remote_addr->sa.sin.sin_addr.s_addr = apr_inet_addr(r->connection->remote_ip);
+-            if (cfg->sethostname) {
++	     rcr->old_ip = apr_pstrdup(r->connection->pool, r->connection->remote_ip);
++	     rcr->r = r;
++             apr_pool_cleanup_register(r->pool, (void *)rcr, rpaf_cleanup, apr_pool_cleanup_null);
++             r->connection->remote_ip = apr_pstrdup(r->connection->pool, ((char **)arr->elts)[((arr->nelts)-1)]);
++    	     r->connection->remote_addr->sa.sin.sin_addr.s_addr = apr_inet_addr(r->connection->remote_ip);
++	     
++	     tmppool = r->connection->remote_addr->pool;
++	     tmpport = r->connection->remote_addr->port;
++	     memset(r->connection->remote_addr, '\0', sizeof(apr_sockaddr_t));
++	     r->connection->remote_addr = NULL;
++	     apr_sockaddr_info_get(&(r->connection->remote_addr), r->connection->remote_ip, APR_UNSPEC, tmpport, 0, tmppool);
++	    
++	    if (cfg->sethostname) {
+                 const char *hostvalue;
+                 if (hostvalue = apr_table_get(r->headers_in, "X-Forwarded-Host")) {
+                     /* 2.0 proxy frontend or 1.3 => 1.3.25 proxy frontend */
+@@ -197,10 +212,14 @@
+                     apr_table_set(r->headers_in, "Host", apr_pstrdup(r->pool, hostvalue));
+                     r->hostname = apr_pstrdup(r->pool, hostvalue);
+                     ap_update_vhost_from_headers(r);
+-                }
+-            }
+-
+-        }
++                 } else if (hostvalue = apr_table_get(r->headers_in, "X-Real-IP")) {
++		    /* nginx proxy frontend or 1.3 mod_realip */
++		    apr_table_set(r->headers_in, "Host", apr_pstrdup(r->pool, hostvalue));
++		    r->hostname = apr_pstrdup(r->pool, hostvalue);
++		    ap_update_vhost_from_headers(r);
++		}
++	}
++	}
+     }
+     return DECLINED;
+ }
+@@ -218,14 +237,14 @@
+                  rpaf_sethostname,
+                  NULL,
+                  RSRC_CONF,
+-                 "Let mod_rpaf set the hostname from X-Host header and update vhosts"
++                 "Let mod_rpaf set the hostname from X-Host or X-Real-IP header and update vhosts"
+                  ),
+     AP_INIT_ITERATE(
+                     "RPAFproxy_ips",
+                     rpaf_set_proxy_ip,
+                     NULL,
+                     RSRC_CONF,
+-                    "IP(s) of Proxy server setting X-Forwarded-For header"
++                    "IP(s) of Proxy server setting X-Forwarded-For or X-Real-IP header"
+                     ),
+     AP_INIT_TAKE1(
+                     "RPAFheader",
+@@ -237,8 +256,15 @@
+     { NULL }
+ };
+ 
++static int rpaf_init_handler(apr_pool_t *p, apr_pool_t *plog,apr_pool_t *ptemp, server_rec *s)
++{
++ap_add_version_component(p, "mod_rpaf/0.6");
++return OK;
++}
++
+ static void register_hooks(apr_pool_t *p) {
+     ap_hook_post_read_request(change_remote_ip, NULL, NULL, APR_HOOK_FIRST);
++    ap_hook_post_config(rpaf_init_handler, NULL, NULL, APR_HOOK_MIDDLE);
+ }
+ 
+ module AP_MODULE_DECLARE_DATA rpaf_module = {
