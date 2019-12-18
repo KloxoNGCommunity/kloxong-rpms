@@ -1,0 +1,37 @@
+--- scripts/Makefile.am
++++ scripts/Makefile.am
+@@ -35,7 +35,7 @@ if CROSSCOMPILING
+ 	@echo "NOTICE: we can't generate zsh completion when cross-compiling!"
+ else # if not cross-compiling:
+ 	@if ! test -x "$(PERL)"; then echo "No perl: can't install completion.pl"; exit 0; fi
+-	$(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell zsh > $@
++	LD_LIBRARY_PATH=$(top_builddir)/lib/.libs $(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell zsh > $@
+ endif
+ 
+ $(FISH_COMPLETION_FUNCTION_FILENAME): completion.pl
+@@ -43,7 +43,7 @@ if CROSSCOMPILING
+ 	@echo "NOTICE: we can't generate fish completion when cross-compiling!"
+ else # if not cross-compiling:
+ 	@if ! test -x "$(PERL)"; then echo "No perl: can't install completion.pl"; exit 0; fi
+-	$(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell fish > $@
++	LD_LIBRARY_PATH=$(top_builddir)/lib/.libs $(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell fish > $@
+ endif
+ 
+ install-data-local:
+--- scripts/Makefile.in
++++ scripts/Makefile.in
+@@ -563,12 +563,12 @@ all-local: $(ZSH_COMPLETION_FUNCTION_FIL
+ $(ZSH_COMPLETION_FUNCTION_FILENAME): completion.pl
+ @CROSSCOMPILING_TRUE@	@echo "NOTICE: we can't generate zsh completion when cross-compiling!"
+ @CROSSCOMPILING_FALSE@	@if ! test -x "$(PERL)"; then echo "No perl: can't install completion.pl"; exit 0; fi
+-@CROSSCOMPILING_FALSE@	$(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell zsh > $@
++@CROSSCOMPILING_FALSE@	LD_LIBRARY_PATH=$(top_builddir)/lib/.libs $(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell zsh > $@
+ 
+ $(FISH_COMPLETION_FUNCTION_FILENAME): completion.pl
+ @CROSSCOMPILING_TRUE@	@echo "NOTICE: we can't generate fish completion when cross-compiling!"
+ @CROSSCOMPILING_FALSE@	@if ! test -x "$(PERL)"; then echo "No perl: can't install completion.pl"; exit 0; fi
+-@CROSSCOMPILING_FALSE@	$(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell fish > $@
++@CROSSCOMPILING_FALSE@	LD_LIBRARY_PATH=$(top_builddir)/lib/.libs $(PERL) $(srcdir)/completion.pl --curl $(top_builddir)/src/curl$(EXEEXT) --shell fish > $@
+ 
+ install-data-local:
+ @CROSSCOMPILING_TRUE@	@echo "NOTICE: we can't install zsh completion when cross-compiling!"
