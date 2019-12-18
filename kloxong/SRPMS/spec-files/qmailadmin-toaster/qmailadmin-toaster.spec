@@ -6,8 +6,9 @@
 %define		release %{bversion}.%{rpmrelease}
 %define		apacheuser apache
 %define		apachegroup apache
+BuildRequires: automake
 #BuildRequires:	mysql-devel >= 5.0.22, mysql >= 5.0.22, httpd >= 2.2.3, automake
-#Requires:	mysql >= 5.0.22, httpd >= 2.2.3
+#Requires:	mysql >= 5.0.22, httpd >= 2.2.3,
 %define		ccflags %{optflags} 
 %define		ldflags %{optflags}
 

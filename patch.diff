@@ -1,0 +1,49 @@
+diff --git a/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/admin/pages/home.php b/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/admin/pages/home.php
+index 7ca85f7..c175604 100644
+--- a/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/admin/pages/home.php	
++++ b/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/admin/pages/home.php	
+@@ -82,7 +82,7 @@ class page {
+ 			}
+ 		}
+ 		$array['NOTEPAD'] = $db->resources('admin_notes');
+-		$content_notepad = $style->replaceVar('tpl/notepad.tpl', $array);
++	/*	$content_notepad = $style->replaceVar('tpl/notepad.tpl', $array);
+ 		echo '<br />'; //br it, br it
+ 		echo $main->table('Admin Notepad', $content_notepad, 'auto', 'auto');
+ 		require_once(LINK.'rss/rss_fetch.inc');
+@@ -106,6 +106,7 @@ class page {
+ 		}
+ 		echo "<br />";
+ 		echo $main->table('THT News & Updates', $news);
++	*/	
+ 	}
+ }
+ ?>
+diff --git a/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/addserver.tpl b/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/addserver.tpl
+index d2817e2..f46e087 100644
+--- a/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/addserver.tpl	
++++ b/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/addserver.tpl	
+@@ -37,7 +37,7 @@ $(window).load(function () {
+   </tr>
+   <tr>
+     <td>Username:</td>
+-    <td><input type="text" name="user" id="user" /><a title="Username to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
++    <td><input type="text" name="user" id="user" /><a title="Username ('Auxiliary Login' for Kloxo/Kloxo-NG) to connect to WebHost Manager" class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
+   </tr>
+   <tr>
+     <td valign="top" width="20%"><span id="passtext"></span></td>
+diff --git a/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/viewserver.tpl b/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/viewserver.tpl
+index e7e0767..018f63e 100644
+--- a/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/viewserver.tpl	
++++ b/kloxong/SRPMS/spec-files/kloxong-panel-tht/tht-1.2.6 - Copy/includes/tpl/viewserver.tpl	
+@@ -41,8 +41,8 @@ $(window).load(function () {
+   <tr>
+     <td>Username:</td>
+     <td><input type="text" name="user" id="user" value="%USER%" />
+-    <a title="The username to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
+-  </tr>
++    <a title="The username ('Auxiliary Login' for Kloxo/Kloxo-NG to access the server." class="tooltip"><img src="<URL>themes/icons/information.png" /></a></td>
++	</tr>
+   <tr>
+     <td valign="top" width="20%"><span id="passtext"></span></td>
+     <td><span id="passbox"></span></td>
