@@ -11,8 +11,8 @@
  	then
 -		CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"
 -		VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"
-+		CFLAGS="/etc/libvpopmail/lib_deps $CFLAGS"
-+		VPOPMAILLIBS="/usr/lib/libvpopmail"
++		CFLAGS="/etc/libvpopmail/inc_deps $CFLAGS"
++		VPOPMAILLIBS="/etc/libvpopmail/lib_deps"
  	else
 -		{ { echo "$as_me:$LINENO: error: ${vpopmail_home}/etc/lib_deps does not exist - upgrade vpopmail to the current version or fix the permissions on this file" >&5
 +		if test -f ${vpopmail_home}/etc/lib_deps
