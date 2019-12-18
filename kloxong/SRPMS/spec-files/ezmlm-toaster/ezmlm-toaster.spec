@@ -9,8 +9,8 @@
 %define         apacheuser apache
 %define         apachegroup apache
 #BuildRequires:  mysql-devel >= 5.0.22, mysql >= 5.0.22
-BuildRequires: Requires:       mysql >= 5.0.22
-zlib-devel
+Requires:       mysql >= 5.0.22
+BuildRequires: zlib-devel
 %define	gccver	gcc
 %define	ccflags %{optflags}
 %define	ldflags %{optflags}
