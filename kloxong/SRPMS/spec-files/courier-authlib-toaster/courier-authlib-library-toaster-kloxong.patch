@@ -1,16 +1,29 @@
 --- courier-authlib-0.59.2.orig/configure	2007-04-06 22:38:47.000000000 +0300
-+++ courier-authlib-0.59.2/configure	2019-12-18 17:33:46.451737069 +0200
-@@ -23077,8 +23077,11 @@
++++ courier-authlib-0.59.2/configure	2019-12-18 21:02:02.335023484 +0200
+@@ -23077,15 +23077,21 @@
  
  EOF
  	sleep 5
 -
 -	if test -f ${vpopmail_home}/etc/lib_deps
++	
 +	if test -f /etc/libvpopmail/lib_deps & -f /usr/lib/libvpopmail
-+	then
+ 	then
+-		CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"
+-		VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"
 +		CFLAGS="/etc/libvpopmail/lib_deps $CFLAGS"
 +		VPOPMAILLIBS="/usr/lib/libvpopmail"
-+	else if -f ${vpopmail_home}/etc/lib_deps
- 	then
- 		CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"
- 		VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"
+ 	else
+-		{ { echo "$as_me:$LINENO: error: ${vpopmail_home}/etc/lib_deps does not exist - upgrade vpopmail to the current version or fix the permissions on this file" >&5
++		if test -f ${vpopmail_home}/etc/lib_deps
++		then
++			CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"
++			VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"
++		else
++			{ { echo "$as_me:$LINENO: error: ${vpopmail_home}/etc/lib_deps does not exist - upgrade vpopmail to the current version or fix the permissions on this file" >&5
+ echo "$as_me: error: ${vpopmail_home}/etc/lib_deps does not exist - upgrade vpopmail to the current version or fix the permissions on this file" >&2;}
+    { (exit 1); exit 1; }; }
++		fi
+ 	fi
+ fi
+ 
