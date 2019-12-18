@@ -5,7 +5,7 @@
 
 %define	release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
-%define		ccflags %{optflags} /etc/libvpopmail/lib_deps
+%define		ccflags %{optflags}
 %define		ldflags %{optflags}
 
 ############### RPM ################################
@@ -53,7 +53,7 @@ This package, courier-authlib, allows the new courier imap to use vpopmail for a
 #------------------------------------------------------------------------------------
 %setup -q -n %{name}-%{pversion}
 
-%patch1 -p1
+%patch1 -p0
 
 # Cleanup for the compiler
 #------------------------------------------------------------------------------------
