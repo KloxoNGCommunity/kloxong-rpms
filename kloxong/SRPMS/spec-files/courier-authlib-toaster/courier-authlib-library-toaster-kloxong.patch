@@ -7,7 +7,7 @@
 -
 -	if test -f ${vpopmail_home}/etc/lib_deps
 +	
-+	if test -f /etc/libvpopmail/lib_deps & -f /usr/lib/libvpopmail
++	if test -f /etc/libvpopmail/lib_deps
  	then
 -		CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"
 -		VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"
