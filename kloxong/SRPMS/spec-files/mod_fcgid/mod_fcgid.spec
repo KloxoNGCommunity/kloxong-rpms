@@ -36,7 +36,7 @@
 
 Name:		mod_fcgid
 Version:	2.3.9
-Release:	1%{?dist}
+Release:	1.kng%{?dist}
 Summary:	FastCGI interface module for Apache 2
 Group:		System Environment/Daemons
 License:	ASL 2.0

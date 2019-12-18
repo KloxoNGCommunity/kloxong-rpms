@@ -1,7 +1,7 @@
 Name:           mod_rpaf
 Version:        0.6
 #Release:        2%{?dist}
-Release:        4%{?dist}
+Release:        4.kng%{?dist}
 Summary:        Reverse proxy add forward module for Apache
 
 Group:          System Environment/Daemons
