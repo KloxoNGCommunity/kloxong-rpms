@@ -53,7 +53,11 @@ Source12:	fastcgi.fc
 Patch0:		mod_fcgid-2.3.4-fixconf-shellbang.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(id -nu)
 BuildRequires:	httpd-devel >= 2.0, pkgconfig
-Requires:	httpd-mmn = %{_httpd_mmn}
+%if 0%{?fedora} > 17 || 0%{?rhel} > 6
+Requires:	httpd-mmn = 20120211x8664
+%else
+Requires:	httpd-mmn = 20120211x8664
+%endif
 # sed required for fixconf script
 Requires:	/bin/sed
 # systemd-units needed for ownership of /usr/lib/tmpfiles.d directory
