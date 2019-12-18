@@ -17,7 +17,7 @@ Source3:	trafficserver.tmpfilesd
 URL:		http://trafficserver.apache.org/index.html
 BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:	autoconf, automake, libtool, openssl-devel, tcl-devel, expat-devel
-BuildRequires:	pcre-devel, zlib-devel, xz-devel, gcc-c++
+BuildRequires:	pcre-devel, zlib-devel, xz-devel, gcc-c++, perl-ExtUtils-MakeMaker
 BuildRequires:	redhat-rpm-config
 ExclusiveArch:	%{ix86} x86_64 ia64 %{arm}
 Requires: initscripts
