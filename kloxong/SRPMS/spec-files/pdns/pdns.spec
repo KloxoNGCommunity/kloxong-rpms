@@ -11,6 +11,8 @@
 %define hardening yes
 %endif
 
+%define _unpackaged_files_terminate_build 0
+
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
