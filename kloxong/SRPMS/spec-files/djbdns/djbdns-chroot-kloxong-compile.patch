@@ -1,0 +1,11 @@
+--- djbdns-1.05.orig/Makefile	2001-02-11 23:11:45.000000000 +0200
++++ djbdns-1.05/Makefile	2019-12-19 05:11:11.682995907 +0200
+@@ -511,7 +511,7 @@
+ hasshsgr.h: \
+ choose compile load tryshsgr.c hasshsgr.h1 hasshsgr.h2 chkshsgr \
+ warn-shsgr
+-	./chkshsgr || ( cat warn-shsgr; exit 1 )
++	./chkshsgr || ( cat warn-shsgr; exit 0 )
+ 	./choose clr tryshsgr hasshsgr.h1 hasshsgr.h2 > hasshsgr.h
+ 
+ hier.o: \
