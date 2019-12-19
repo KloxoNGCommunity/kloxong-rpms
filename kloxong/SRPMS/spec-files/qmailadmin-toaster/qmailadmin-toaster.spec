@@ -31,6 +31,7 @@ URL:		http://www.inter7.com/qmailadmin
 Source0:	qmailadmin-%{pversion}.tar.bz2
 Source1:	help.tar.bz2
 Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
+Patch2: 	qmailadmin-noroot.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 BuildRequires: libvpopmail-devel >= 5.4.17
