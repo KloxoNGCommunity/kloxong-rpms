@@ -35,7 +35,7 @@ and mod_suexec(performance).
 %build
 
 #%{_sbindir}/apxs -i -c -l cap %{name}.c
-%{_httpd_apxs} -c -Wc,"%{optflags} -Wall -pedantic -std=c99" -l cap %{name}.c.c
+%{_httpd_apxs} -c -Wc,"%{optflags} -Wall -pedantic -std=c99" -l cap %{name}.c
 
 
 %install
