@@ -88,8 +88,8 @@ support via the users language settings on their browser.
 %setup  -q -n %{name}-%{pversion}
 
 
-#%patch1 -p1
-%patch2 -p1
+%patch1 -p1
+#%patch2 -p1
 %patch3 -p1
 
 # Cleanup for gcc
