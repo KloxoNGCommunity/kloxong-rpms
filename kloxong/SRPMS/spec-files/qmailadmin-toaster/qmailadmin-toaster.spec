@@ -218,6 +218,13 @@ rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 #------------------------------------------------------------------------------
 %changelog
 #------------------------------------------------------------------------------
+* Thu Dec 19 2019 Dionysis Kladis <dkstiler@gmail.com> 1.2.16-1.4.2.kng
+- Fix missing depedencies
+- Adding patch to fix no root compile error 
+- Adding patches to address library locations for qmail vpopmail toaster library locations
+- Adding bug fix patch for bounce from qmailtoaster repo
+- Compile on copr fedora repo with chroot enviroment
+
 * Tue Aug 22 2017 Mustafa Ramadhan <mustafa@bigraf.com> 1.2.16-1.4.2.mr
 - recompile without BuildRequires mysql and httpd
 
