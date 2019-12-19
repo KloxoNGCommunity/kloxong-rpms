@@ -37,6 +37,7 @@ Patch12: tinydns-alias-chain-truncation.patch
 Patch13: dnscache-cname-handling.patch
 Patch14: dnscache-strict-forwardonly.patch
 Patch15: axfrdns-tcp-large-packet.patch
+Patch30: djbdns-chroot-kloxong-compile.patch
 Summary: A Secure DNS server (Domain Name Server).
 Packager: david@summersoft.fay.ar.us
 #Requires: ucspi-tcp >= 0.88-4
@@ -51,6 +52,9 @@ Buildroot: %{_tmppath}/%{name}-%{version}-%{release}
 A secure DNS server (Domain Name Server).
 
 %changelog
+* Thu Dec 19 2019 Dionysis Kladis <dkstiler@gmail.com> 1.05-17.5
+- added a patch to compile properly in chroot enviroment without root 
+
 * Sun Aug 31 2014 Mustafa Ramadhan <mustafa@bigraf.com> 1.05-17.5
 - add detect '/etc/sysconfig/djbdns' if exists in djbdns.init
 
@@ -202,6 +206,9 @@ A secure DNS server (Domain Name Server).
 
 # axfrdns tcp large packet patch.
 %patch15 -p0
+
+# disablind chkshgr check on compile we later need to check it on install 
+%patch30 -p1
 
 # Move binaries to /bin
 echo "/" > conf-home
