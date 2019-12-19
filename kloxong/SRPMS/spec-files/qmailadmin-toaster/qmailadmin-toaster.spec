@@ -37,6 +37,8 @@ BuildRequires:  autorespond-toaster >= 2.0.2, ezmlm-toaster >= 0.53.324, bzip2
 Requires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 Requires:	control-panel-toaster >= 0.2
 Requires:	autorespond-toaster >= 2.0.2, ezmlm-toaster >= 0.53.324
+Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
+
 Packager:       Bharath Chari <qmailtoaster@arachnis.com> 
 
 
@@ -79,6 +81,8 @@ support via the users language settings on their browser.
 %define name qmailadmin
 %setup  -q -n %{name}-%{pversion}
 
+
+%patch1 -p1
 
 
 # Cleanup for gcc
