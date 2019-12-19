@@ -191,7 +191,7 @@ install -m644 ./javascripts.js %{buildroot}%{htdocs}/scripts/
 install -m644 ./styles.css %{buildroot}%{htdocs}/scripts/
 install -m644 ./email.php %{buildroot}%{htdocs}/admin/email/index.php
 
-%{_dopasswd} -bc %{buildroot}%{basedir}/include/admin.htpasswd admin toaster >/dev/null 2>&1
+#%{_dopasswd} -bc %{buildroot}%{basedir}/include/admin.htpasswd admin toaster >/dev/null 2>&1
 
 # whats this thing is doing here ? that should be in post area but commenting just to compile properly
 #[ -f %{buildroot}%{basedir}/include/admin.pass ] || echo "toaster" > %{buildroot}%{basedir}/include/admin.pass
@@ -218,6 +218,10 @@ fi
 %post
 #----------------------------------------------------------------------
 if [ $1 = "1" ]; then
+
+if [ ! -s %{basedir}/include/admin.htpasswd ]; then
+  %{_dopasswd} -bc %{basedir}/include/admin.htpasswd admin toaster >/dev/null 2>&1
+fi
 
 [ -f %{basedir}/include/htpasswd ] 	|| ln -s `which %{_dopasswd}` %{basedir}/include/htpasswd
 
