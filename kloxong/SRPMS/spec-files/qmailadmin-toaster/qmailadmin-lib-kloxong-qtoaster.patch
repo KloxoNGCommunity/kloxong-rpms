@@ -11,12 +11,12 @@
 -auth_libs=`cat $vpopmaildir/etc/lib_deps`
 +if test -f /etc/libvpopmail/lib_deps
 +	 	then
-+		$as_echo "We set qmail vpopmail toaster library locations"
++		$as_echo "Setting qmail & vpopmail toaster library locations"
 +		auth_incs=`cat /etc/libvpopmail/inc_deps`
 +		
 +		auth_libs=`cat /etc/libvpopmail/lib_deps`		
 + 	else
-+		$as_echo "We set qmail vpopmail library locations"
++		$as_echo "Setting qmail & vpopmail native library locations"
 +		auth_incs=`cat $vpopmaildir/etc/inc_deps`
 +		
 +		auth_libs=`cat $vpopmaildir/etc/lib_deps`			
