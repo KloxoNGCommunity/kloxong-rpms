@@ -1,16 +1,8 @@
-#
-# PowerDNS server el5/el6 spec file
-#
-# - to disable devtoolset-2 use --without devtoolset
-# - to disable lua use --without lua
-#
-%{?!rhel:%define rhel 0}
-%if 0%{?rhel} == 5
-%define hardening no
-%else
-%define hardening yes
+%if 0%{?rhel} >= 7
+# Only works on EL7
+%global _hardened_build 1
+%global backends %{nil}
 %endif
-
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
@@ -20,180 +12,310 @@ Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons
 URL:			http://www.powerdns.com/
-Source0:		http://downloads.powerdns.com/releases/pdns-4.1.8.tar.bz2
+Source0:		http://downloads.powerdns.com/releases/%{name}-%{version}.tar.bz2
 Patch0:			pdns-git-init.patch
 Patch1:			pdns-4.1.1-disable-secpoll.patch
+%if 0%{?rhel} < 7
+Source1: pdns.init
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+%if 0%{?rhel} >= 7
+Requires(post): systemd-sysv
+Requires(post): systemd-units
+Requires(preun): systemd-units
+Requires(postun): systemd-units
+BuildRequires: systemd
+BuildRequires: systemd-units
+BuildRequires: systemd-devel
 
-#%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
-#BuildRequires:		devtoolset-2-gcc devtoolset-2-gcc-c++
-#BuildRequires:		devtoolset-2-binutils
-#%endif
+BuildRequires: protobuf-devel
+BuildRequires: protobuf-compiler
+BuildRequires: p11-kit-devel
+BuildRequires: libcurl-devel
+BuildRequires: boost-devel
+%else
+BuildRequires: boost148-devel
+BuildRequires: boost148-program-options
+%endif
+
+
+Requires(pre): shadow-utils
+%ifarch aarch64
+BuildRequires: lua-devel
+%define lua_implementation lua
+%else
+BuildRequires: luajit-devel
+%define lua_implementation luajit
+%endif
+
+BuildRequires: libsodium-devel
+BuildRequires: bison
+BuildRequires: openssl-devel
 
 BuildRequires:		openssl-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
-
-%if %{!?_without_lua:1}%{?_without_lua:0}
-BuildRequires:		lua-devel
-%endif
 
 Provides:		powerdns = %{version}-%{release}
 Obsoletes:		pdns-server
 Obsoletes:		pdns-server-dnssec-tools
 Obsoletes:		pdns-server-backend-bind
 
+%global backends %{backends} bind
 
 %description
 PowerDNS is a versatile nameserver which supports a large number
 of different backends ranging from simple zonefiles to relational
 databases and load balancing/failover algorithms.
 
-%package		backend-bind
-Summary:		Bind backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+%description
+The PowerDNS Nameserver is a modern, advanced and high performance
+authoritative-only nameserver. It is written from scratch and conforms
+to all relevant DNS standards documents.
+Furthermore, PowerDNS interfaces with almost any database.
 
-%description		backend-bind
-The BindBackend parses a Bind-style named.conf and extracts information about
-zones from it. It makes no attempt to honour other configuration flags,
-which you should configure (when available) using the PDNS native configuration.
+%package tools
+Summary: Extra tools for %{name}
+Group: System Environment/Daemons
 
-%package		backend-mysql
-Summary:		MySQL backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		mysql-devel
-Obsoletes:		pdns-server-backend-mysql
+%description tools
+This package contains the extra tools for %{name}
 
-%description		backend-mysql
-This package contains the MySQL backend for the PowerDNS nameserver.
+%package backend-mysql
+Summary: MySQL backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: mysql-devel
+%global backends %{backends} gmysql
 
-%package		backend-postgresql
-Summary:		postgesql backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		postgresql-devel
-Obsoletes:		pdns-server-backend-postgresql
+%description backend-mysql
+This package contains the gmysql backend for %{name}
 
-%description		backend-postgresql
-This package contains the postgesql backend for the PowerDNS nameserver.
+%package backend-postgresql
+Summary: PostgreSQL backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: postgresql-devel
+%global backends %{backends} gpgsql
 
-%package		backend-sqlite
-Summary:		sqlite3 backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		sqlite-devel
-Obsoletes:		pdns-server-backend-sqlite3
-Obsoletes:		pdns-backend-sqlite3 < 3.4.0-2
+%description backend-postgresql
+This package contains the gpgsql backend for %{name}
 
-%description		backend-sqlite
-This package contains the sqlite3 backend for the PowerDNS nameserver.
+%package backend-pipe
+Summary: Pipe backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%global backends %{backends} pipe
 
-%package		backend-ldap
-Summary:		LDAP backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		openldap-devel
-Obsoletes:		pdns-server-backend-ldap
+%description backend-pipe
+This package contains the pipe backend for %{name}
 
-%description		backend-ldap
-This package contains the LDAP backend for the PowerDNS nameserver.
+%package backend-remote
+Summary: Remote backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%global backends %{backends} remote
 
-%package		backend-lua
-Summary:		Lua backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{version}-%{release}
-BuildRequires:		lua-devel
+%description backend-remote
+This package contains the remote backend for %{name}
 
-%description		backend-lua
-This package contains the Lua backent for the PowerDNS nameserver.
+%package backend-ldap
+Summary: LDAP backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: openldap-devel
+%global backends %{backends} ldap
 
-%package		backend-mydns
-Summary:		MyDNS backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		mysql-devel
+%description backend-ldap
+This package contains the LDAP backend for %{name}
 
-%description		backend-mydns
-This package contains the MyDNS backend for the PowerDNS nameserver.
+%package backend-lua2
+Summary: Lua backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%global backends %{backends} lua2
 
-%package		backend-pipe
-Summary:		Pipe/coprocess backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes:		pdns-server-backend-pipe
+%description backend-lua2
+This package contains the lua2 backend for %{name}
 
-%description		backend-pipe
-This package contains the pipe backend for the PowerDNS nameserver. This
-allows PowerDNS to retrieve domain info from a process that accepts
-questions on stdin and returns answers on stdout.
+%package backend-sqlite
+Summary: SQLite backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: sqlite-devel
+%global backends %{backends} gsqlite3
 
-%package		backend-remote
-Summary:		Experimental remotere backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-Obsoletes:		pdns-server-backend-remote
+%description backend-sqlite
+This package contains the SQLite backend for %{name}
 
-%description		backend-remote
-This package contains the remote backend for the PowerDNS nameserver. This
-backend provides json based unix socket / pipe / http remoting for powerdns.
+%if 0%{?rhel} >= 7
+%package backend-odbc
+Summary: UnixODBC backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: unixODBC-devel
+%global backends %{backends} godbc
 
-%package		tools
-Summary:		PowerDNS DNS tools
-Group:			Applications/System
-Conflicts:		%{name} < %{epoch}:%{version}-%{release}
-Conflicts:		%{name} > %{epoch}:%{version}-%{release}
-Obsoletes:		pdns-server-tools
+%description backend-odbc
+This package contains the godbc backend for %{name}
 
-%description		tools
-This package contains the the PowerDNS DNS tools.
+%package backend-geoip
+Summary: Geo backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: yaml-cpp-devel
+%if 0%{?rhel} <= 7
+BuildRequires: geoip-devel
+%endif
+BuildRequires: libmaxminddb-devel
+%global backends %{backends} geoip
+
+%description backend-geoip
+This package contains the geoip backend for %{name}
+It allows different answers to DNS queries coming from different
+IP address ranges or based on the geoipgraphic location
+
+%package backend-lmdb
+Summary: LMDB backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: lmdb-devel
+%global backends %{backends} lmdb
+
+%description backend-lmdb
+This package contains the lmdb backend for %{name}
+
+%package backend-tinydns
+Summary: TinyDNS backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: tinycdb-devel
+%global backends %{backends} tinydns
+
+%description backend-tinydns
+This package contains the TinyDNS backend for %{name}
+
+%package ixfrdist
+BuildRequires: yaml-cpp-devel
+Summary: A progrm to redistribute zones over AXFR and IXFR
+Group: System Environment/Daemons
+
+%description ixfrdist
+This package contains the ixfrdist program.
+%endif
+
 
 %prep
-%setup -q -n pdns-4.1.8
-%patch0 -p1 -b .init
+
+%if 0%{?rhel} == 6
+%setup -n %{name}-%{version}
+%else
+%autosetup -p1 -n %{name}-%{version}
+%endif
+
+#we will use the above not hardcoded names
+#%setup -q -n pdns-4.1.8
+# we use original init script
+#%patch0 -p1 -b .init
+# not sure why we need this patch
 %patch1 -p1 -b .disable-secpoll
 
 %build
-#%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
-#export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$PATH
-#%endif
+export CPPFLAGS="-DLDAP_DEPRECATED"
 
 %configure \
-    --sysconfdir=%{_sysconfdir}/%{name} \
-    --with-sqlite3 \
-    --with-lua=%{!?_without_lua:yes}%{?_without_lua:no} \
-    --enable-hardening=%{hardening} \
-    --with-modules="" \
-    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
-    --disable-static \
-    --enable-tools
+  --enable-option-checking=fatal \
+  --sysconfdir=%{_sysconfdir}/%{name} \
+  --disable-static \
+  --disable-dependency-tracking \
+  --disable-silent-rules \
+  --with-modules='' \
+  --with-lua=%{lua_implementation} \
+  --with-dynmodules='%{backends} random' \
+  --enable-tools \
+  --with-libsodium \
+  --enable-unit-tests \
+%if 0%{?rhel} >= 7
+  --enable-lua-records \
+  --enable-experimental-pkcs11 \
+  --enable-systemd \
+  --enable-ixfrdist
+%else
+  --disable-lua-records \
+  --without-protobuf \
+  --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
+  CXXFLAGS=-std=gnu++11
+%endif
+
+#we will use the above more feature rich configure
+#%configure \
+#   --sysconfdir=%{_sysconfdir}/%{name} \
+#    --with-sqlite3 \
+#    --with-lua=%{!?_without_lua:yes}%{?_without_lua:no} \
+#    --enable-hardening=%{hardening} \
+#    --with-modules="" \
+#    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
+#    --disable-static \
+#    --enable-tools
 
 
 %{__make} %{?_smp_mflags}
 
 %install
+#cleaning up the build just in case
 [ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
 
-%{__make} DESTDIR=%{buildroot} install
+make install DESTDIR=%{buildroot}
+
+#%{__make} DESTDIR=%{buildroot} install
+#%{__rm} -f %{buildroot}%{_libdir}/%{name}/*.la
+
 %{__rm} -f %{buildroot}%{_libdir}/%{name}/*.la
+%{__rm} -rf %{buildroot}%{_docdir}
 
-install -d %{buildroot}%{_sysconfdir}/%{name}/
+%if 0%{?rhel} == 6
+%{__install} -D -p %{SOURCE1} %{buildroot}%{_initrddir}/pdns
+%endif
 
-# fix the config
-%{__mv} %{buildroot}%{_sysconfdir}/%{name}/pdns.conf-dist %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
+# no use for this 
+#install -d %{buildroot}%{_sysconfdir}/%{name}/
 
-cat >> %{buildroot}%{_sysconfdir}/%{name}/pdns.conf << EOF
-setuid=pdns
-setgid=pdns
-EOF
+%{buildroot}/usr/sbin/pdns_server --no-config --config | sed \
+  -e 's!# daemon=.*!daemon=no!' \
+  -e 's!# guardian=.*!guardian=no!' \
+  -e 's!# launch=.*!&\\nlaunch=!' \
+  -e 's!# setgid=.*!setgid=pdns!' \
+  -e 's!# setuid=.*!setuid=pdns!' \
+  > %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
+%{__rm} %{buildroot}%{_sysconfdir}/%{name}/pdns.conf-dist
+%{__rm} %{buildroot}/usr/bin/stubquery
 
 chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
 
-# install sysv scripts
-install -d %{buildroot}%{_initrddir}
-install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
+# fix the config no need for this anymore
+#%{__mv} %{buildroot}%{_sysconfdir}/%{name}/pdns.conf-dist %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
+
+# we set the config above another method 
+#cat >> %{buildroot}%{_sysconfdir}/%{name}/pdns.conf << EOF
+#setuid=pdns
+#setgid=pdns
+#EOF
+
+chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
+
+%if 0%{?rhel} >= 7
+# rename zone2ldap to pdns-zone2ldap (#1193116)
+%{__mv} %{buildroot}/%{_bindir}/zone2ldap %{buildroot}/%{_bindir}/pdns-zone2ldap
+%{__mv} %{buildroot}/%{_mandir}/man1/zone2ldap.1 %{buildroot}/%{_mandir}/man1/pdns-zone2ldap.1
+%endif
+
+
+# install sysv scripts not needed we use them on setup
+#install -d %{buildroot}%{_initrddir}
+#install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
+
+%check
+PDNS_TEST_NO_IPV6=1 make %{?_smp_mflags} -C pdns check || (cat pdns/test-suite.log && false)
 
 
 %pre
@@ -203,69 +325,119 @@ getent passwd pdns >/dev/null || \
 	-c "PowerDNS authoritative server user" pdns
 exit 0
 
+%if 0%{?rhel} >= 7
+if [ "`stat -c '%U:%G' %{_sysconfdir}/%{name}`" = "root:root" ]; then
+  chown -R root:pdns /etc/powerdns
+  # Make sure that pdns can read it; the default used to be 0600
+  chmod g+r /etc/powerdns/pdns.conf
+fi
+chown -R pdns:pdns /var/lib/powerdns || :
+%endif
+
 %post
+%if 0%{?rhel} >= 7
+%systemd_post pdns.service
+%else
 /sbin/chkconfig --add pdns
+%endif
 
 %preun
+%if 0%{?rhel} >= 7
+%systemd_preun pdns.service
+%else
 if [ $1 -eq 0 ]; then
-    /sbin/service pdns stop >/dev/null 2>&1 || :
-    /sbin/chkconfig --del pdns
+  /sbin/service pdns stop >/dev/null 2>&1 || :
+  /sbin/chkconfig --del pdns
 fi
+%endif
 
 %postun
+%if 0%{?rhel} >= 7
+%systemd_postun_with_restart pdns.service
+%else
 if [ $1 -ge 1 ]; then
-    /sbin/service pdns condrestart >/dev/null 2>&1
+  /sbin/service pdns condrestart >/dev/null 2>&1 || :
 fi
+%endif
+
 
 %files
-%doc COPYING INSTALL NOTICE README
-%dir %{_sysconfdir}/%{name}/
-%dir %{_libdir}/%{name}/
-%config(noreplace) %attr(0600,root,root) %{_sysconfdir}/%{name}/pdns.conf
-%config(noreplace) %attr(0755,root,root) %{_initrddir}/pdns
+%doc COPYING README
 %{_bindir}/pdns_control
 %{_bindir}/pdnsutil
+%{_bindir}/zone2sql
+%{_bindir}/zone2json
 %{_sbindir}/pdns_server
+%{_libdir}/%{name}/libbindbackend.so
 %{_mandir}/man1/pdns_control.1.gz
 %{_mandir}/man1/pdns_server.1.gz
+%{_mandir}/man1/zone2sql.1.gz
+%{_mandir}/man1/zone2json.1.gz
 %{_mandir}/man1/pdnsutil.1.gz
+%dir %{_libdir}/%{name}/
+%{_libdir}/%{name}/librandombackend.so
+%config(noreplace) %{_sysconfdir}/%{name}/pdns.conf
 
-%files backend-bind
-%{_libdir}/%{name}/libbindbackend.so
-%doc pdns/bind-dnssec.schema.sqlite3.sql
+%if 0%{?rhel} >= 7
+%{_bindir}/pdns-zone2ldap
+%{_mandir}/man1/pdns-zone2ldap.1.gz
+%{_unitdir}/pdns.service
+%{_unitdir}/pdns@.service
+%else
+%{_bindir}/zone2ldap
+%{_mandir}/man1/zone2ldap.1.gz
+%{_initrddir}/pdns
+%endif
+
+%files tools
+%{_bindir}/calidns
+%{_bindir}/dnsgram
+%{_bindir}/dnsreplay
+%{_bindir}/dnsscan
+%{_bindir}/dnsscope
+%{_bindir}/dnswasher
+%{_bindir}/dumresp
+%{_bindir}/ixplore
+%{_bindir}/pdns_notify
+%{_bindir}/nproxy
+%{_bindir}/nsec3dig
+%{_bindir}/saxfr
+%{_bindir}/sdig
+%{_mandir}/man1/calidns.1.gz
+%{_mandir}/man1/dnsgram.1.gz
+%{_mandir}/man1/dnsreplay.1.gz
+%{_mandir}/man1/dnsscan.1.gz
+%{_mandir}/man1/dnsscope.1.gz
+%{_mandir}/man1/dnswasher.1.gz
+%{_mandir}/man1/dumresp.1.gz
+%{_mandir}/man1/ixplore.1.gz
+%{_mandir}/man1/pdns_notify.1.gz
+%{_mandir}/man1/nproxy.1.gz
+%{_mandir}/man1/nsec3dig.1.gz
+%{_mandir}/man1/saxfr.1.gz
+%{_mandir}/man1/sdig.1.gz
+%{_bindir}/dnsbulktest
+%{_bindir}/dnspcap2calidns
+%{_bindir}/dnstcpbench
+%{_mandir}/man1/dnsbulktest.1.gz
+%{_mandir}/man1/dnspcap2calidns.1.gz
+%{_mandir}/man1/dnstcpbench.1.gz
+%if 0%{?rhel} >= 7
+%{_bindir}/dnspcap2protobuf
+%{_mandir}/man1/dnspcap2protobuf.1.gz
+%endif
 
 %files backend-mysql
+%doc modules/gmysqlbackend/schema.mysql.sql
+%doc modules/gmysqlbackend/dnssec-3.x_to_3.4.0_schema.mysql.sql
+%doc modules/gmysqlbackend/nodnssec-3.x_to_3.4.0_schema.mysql.sql
 %{_libdir}/%{name}/libgmysqlbackend.so
-%doc %{_defaultdocdir}/%{name}/schema.mysql.sql
-%doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.mysql.sql
-%doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.mysql.sql
-%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.mysql.sql
 
 %files backend-postgresql
+%doc modules/gpgsqlbackend/schema.pgsql.sql
+%doc modules/gpgsqlbackend/dnssec-3.x_to_3.4.0_schema.pgsql.sql
+%doc modules/gpgsqlbackend/nodnssec-3.x_to_3.4.0_schema.pgsql.sql
 %{_libdir}/%{name}/libgpgsqlbackend.so
-%doc %{_defaultdocdir}/%{name}/schema.pgsql.sql
-%doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.pgsql.sql
-%doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.pgsql.sql
-%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.pgsql.sql
-
-%files backend-sqlite
-%{_libdir}/%{name}/libgsqlite3backend.so
-%doc %{_defaultdocdir}/%{name}/schema.sqlite3.sql
-%doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.sqlite3.sql
-%doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
-
-%files backend-ldap
-%{_libdir}/%{name}/libldapbackend.so
-%doc %{_defaultdocdir}/%{name}/dnsdomain2.schema
-%doc %{_defaultdocdir}/%{name}/pdns-domaininfo.schema
-
-%files backend-lua
-%{_libdir}/%{name}/libluabackend.so
-%doc modules/luabackend/README
-
-%files backend-mydns
-%{_libdir}/%{name}/libmydnsbackend.so
-%doc %{_defaultdocdir}/%{name}/schema.mydns.sql
 
 %files backend-pipe
 %{_libdir}/%{name}/libpipebackend.so
@@ -273,43 +445,51 @@ fi
 %files backend-remote
 %{_libdir}/%{name}/libremotebackend.so
 
-%files tools
-%{_bindir}/zone2json
-%{_bindir}/zone2ldap
-%{_bindir}/zone2sql
- %{_bindir}/calidns
- %{_bindir}/dnsgram
- %{_bindir}/dnsreplay
- %{_bindir}/dnsscan
- %{_bindir}/dnsscope
- %{_bindir}/dnswasher
- %{_bindir}/dumresp
- %{_bindir}/ixplore
- %{_bindir}/nproxy
- %{_bindir}/nsec3dig
- %{_bindir}/pdns_notify
- %{_bindir}/saxfr
- %{_bindir}/sdig
- %{_bindir}/stubquery
-%{_mandir}/man1/zone2json.1.gz
-%{_mandir}/man1/zone2ldap.1.gz
-%{_mandir}/man1/zone2sql.1.gz
- %{_mandir}/man1/calidns.1.gz
- %{_mandir}/man1/dnsgram.1.gz
- %{_mandir}/man1/dnsreplay.1.gz
- %{_mandir}/man1/dnsscan.1.gz
- %{_mandir}/man1/dnsscope.1.gz
- %{_mandir}/man1/dnswasher.1.gz
- %{_mandir}/man1/dumresp.1.gz
- %{_mandir}/man1/ixplore.1.gz
- %{_mandir}/man1/nproxy.1.gz
- %{_mandir}/man1/nsec3dig.1.gz
- %{_mandir}/man1/pdns_notify.1.gz
- %{_mandir}/man1/saxfr.1.gz
- %{_mandir}/man1/sdig.1.gz
+%files backend-ldap
+%{_libdir}/%{name}/libldapbackend.so
 
+%doc modules/ldapbackend/dnsdomain2.schema
+%doc modules/ldapbackend/pdns-domaininfo.schema
+
+%files backend-lua2
+%{_libdir}/%{name}/liblua2backend.so
+
+%files backend-sqlite
+%doc modules/gsqlite3backend/schema.sqlite3.sql
+%doc modules/gsqlite3backend/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
+%doc modules/gsqlite3backend/nodnssec-3.x_to_3.4.0_schema.sqlite3.sql
+%{_libdir}/%{name}/libgsqlite3backend.so
+
+%if 0%{?rhel} >= 7
+%files backend-odbc
+%doc modules/godbcbackend/schema.mssql.sql
+%{_libdir}/%{name}/libgodbcbackend.so
+
+%files backend-geoip
+%{_libdir}/%{name}/libgeoipbackend.so
+
+%files backend-lmdb
+%{_libdir}/%{name}/liblmdbbackend.so
+
+%files backend-tinydns
+%{_libdir}/%{name}/libtinydnsbackend.so
+
+%files ixfrdist
+%{_bindir}/ixfrdist
+%{_mandir}/man1/ixfrdist.1.gz
+%{_mandir}/man5/ixfrdist.yml.5.gz
+%{_sysconfdir}/%{name}/ixfrdist.example.yml
+%{_unitdir}/ixfrdist.service
+%{_unitdir}/ixfrdist@.service
+%endif
 
 %changelog
+* Fri Dec 20 2019 Dionysis Kladis <dkstiler@gmail.com> 4.1.8-1.kng
+- Fixign hardcoded paths
+- fix spec file to woth without input
+- make the spec file compatible with centos 6 and centos 7 based on pdns original repo
+- included the original init from pdns repo and handling it 
+
 * Fri Mar 22 2019 Kees Monshouwer <mind04@monshouwer.org> 4.1.8-1
 - update to version 4.1.8
 
