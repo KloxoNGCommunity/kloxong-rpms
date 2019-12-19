@@ -31,12 +31,17 @@ URL:		http://www.inter7.com/qmailadmin
 Source0:	qmailadmin-%{pversion}.tar.bz2
 Source1:	help.tar.bz2
 Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
-Patch2: 	qmailadmin-noroot.patch
+Patch2: 	qmailadmin-vpop-devel.patch
+Patch3: 	qmailadmin-noroot.patch
+Patch4: 	qmailadmin-bounce-fix.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 BuildRequires: libvpopmail-devel >= 5.4.17
 BuildRequires:  autorespond-toaster >= 2.0.2, ezmlm-toaster >= 0.53.324, bzip2
 BuildRequires:	mysql-devel, mysql
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:  bzip2
 Requires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 Requires:	control-panel-toaster >= 0.2
 Requires:	autorespond-toaster >= 2.0.2, ezmlm-toaster >= 0.53.324
@@ -83,10 +88,11 @@ support via the users language settings on their browser.
 %define name qmailadmin
 %setup  -q -n %{name}-%{pversion}
 
-
+# patch 1 and 2 need to go together to find libraries path
 %patch1 -p1
 %patch2 -p1
-
+%patch3 -p1
+%patch4	-p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
@@ -212,6 +218,13 @@ rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 #------------------------------------------------------------------------------
 %changelog
 #------------------------------------------------------------------------------
+* Thu Dec 19 2019 Dionysis Kladis <dkstiler@gmail.com> 1.2.16-1.4.2.kng
+- Fix missing depedencies
+- Adding patch to fix no root compile error 
+- Adding patches to address library locations for qmail vpopmail toaster library locations
+- Adding bug fix patch for bounce from qmailtoaster repo
+- Compile on copr fedora repo with chroot enviroment
+
 * Tue Aug 22 2017 Mustafa Ramadhan <mustafa@bigraf.com> 1.2.16-1.4.2.mr
 - recompile without BuildRequires mysql and httpd
 
