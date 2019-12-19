@@ -1,21 +1,24 @@
 --- qmailadmin-1.2.16.orig/configure	2011-02-22 16:45:48.000000000 +0200
-+++ qmailadmin-1.2.16/configure	2019-12-19 01:47:53.808612601 +0200
-@@ -4698,11 +4698,16 @@
++++ qmailadmin-1.2.16/configure	2019-12-19 04:59:11.478867290 +0200
+@@ -4698,11 +4698,18 @@
  
  fi
  
-+if test -f /etc/libvpopmail/lib_deps
-+ 	then
-+		auth_incs=`cat /etc/libvpopmail/inc_deps`
-+	 echo "We set qmail vpopmail toaster library locations"
-+		auth_libs=`cat /etc/libvpopmail/lib_deps`		
-+ 	else
-+		auth_incs=`cat $vpopmaildir/etc/inc_deps`
-
+-
 -
 -auth_incs=`cat $vpopmaildir/etc/inc_deps`
 -
 -auth_libs=`cat $vpopmaildir/etc/lib_deps`
++if test -f /etc/libvpopmail/lib_deps
++	 	then
++		$as_echo "We set qmail vpopmail toaster library locations"
++		auth_incs=`cat /etc/libvpopmail/inc_deps`
++		
++		auth_libs=`cat /etc/libvpopmail/lib_deps`		
++ 	else
++		$as_echo "We set qmail vpopmail library locations"
++		auth_incs=`cat $vpopmaildir/etc/inc_deps`
++		
 +		auth_libs=`cat $vpopmaildir/etc/lib_deps`			
 +fi
  
