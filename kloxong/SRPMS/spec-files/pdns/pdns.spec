@@ -219,6 +219,7 @@ This package contains the ixfrdist program.
 
 %build
 export CPPFLAGS="-DLDAP_DEPRECATED"
+# we comment since its not applicable in our version
 
 %configure \
   --enable-option-checking=fatal \
@@ -230,7 +231,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --with-lua=%{lua_implementation} \
   --with-dynmodules='%{backends} random' \
   --enable-tools \
-  --with-libsodium \
+#  --with-libsodium \
   --enable-unit-tests \
 %if 0%{?rhel} >= 7
   --enable-lua-records \
@@ -238,7 +239,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-systemd \
   --enable-ixfrdist
 %else
-  --disable-lua-records \
+#  --disable-lua-records \
   --without-protobuf \
   --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
   CXXFLAGS=-std=gnu++11
