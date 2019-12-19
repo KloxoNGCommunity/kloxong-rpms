@@ -33,7 +33,7 @@ Source1:	help.tar.bz2
 Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
 Patch2: 	qmailadmin-vpop-devel.patch
 Patch3: 	qmailadmin-noroot.patch
-
+Patch4: 	qmailadmin-bounce-fix.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 BuildRequires: libvpopmail-devel >= 5.4.17
