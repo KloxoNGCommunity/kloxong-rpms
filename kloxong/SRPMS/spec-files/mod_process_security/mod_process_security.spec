@@ -62,6 +62,11 @@ rm -rf %{buildroot}
 
 
 %changelog
+* Thu Dec 19 2019 Dionysis Kladis <dkstiler@gmail.com> - 1.1.4-2.kng
+- added missing directives updated spec file
+- updated to version 1.1.4
+- created a conf file to store configuration
+
 * Tue Sep 16 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 1.0-2.mr
 - add BuildRequires to libcap-devel
 
