@@ -9,7 +9,7 @@
 
 Summary:	Apache module to process security in the webserver config
 Name:		mod_process_security
-Version:	1.0
+Version:	1.1.4
 Release:	2.kng%{?dist}
 Group:		System Environment/Daemons
 License:	ASL 2.0
@@ -61,13 +61,13 @@ EOF
 %install
 rm -rf $%{buildroot}
 mkdir -p %{buildroot}/%{modulesdir}
+
 install -D -p -m 0755 .libs/mod_process_security.so \
-    %{buildroot}%{modulesdir}/mod_process_security.so
+    %{buildroot}%{_httpd_moddir}/mod_process_security.so
 
 install -D -p -m 0644 %{SOURCE1} \
-    %{buildroot}%{_sysconfdir}/httpd/conf.d/mod_process_security.conf
-
-
+    %{buildroot}%{_httpd_confdir}/mod_process_security.conf
+    
 #%{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
 #%{__install} -Dp -m 0644 process_security.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/process_security.conf
 
