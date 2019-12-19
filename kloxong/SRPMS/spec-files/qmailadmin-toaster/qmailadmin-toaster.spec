@@ -85,6 +85,7 @@ support via the users language settings on their browser.
 
 
 %patch1 -p1
+%patch2 -p1
 
 
 # Cleanup for gcc
