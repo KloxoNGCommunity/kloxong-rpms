@@ -196,6 +196,11 @@ install -m644 ./email.php %{buildroot}%{htdocs}/admin/email/index.php
 # whats this thing is doing here ? that should be in post area but commenting just to compile properly
 #[ -f %{buildroot}%{basedir}/include/admin.pass ] || echo "toaster" > %{buildroot}%{basedir}/include/admin.pass
 
+# stolen from QMailToaster
+touch            %{buildroot}%{basedir}/include/admin.htpasswd
+echo "toaster" > %{buildroot}%{basedir}/include/admin.pass
+
+
 
 #----------------------------------------------------------------------
 %clean
