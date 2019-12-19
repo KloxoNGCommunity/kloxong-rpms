@@ -193,7 +193,8 @@ install -m644 ./email.php %{buildroot}%{htdocs}/admin/email/index.php
 
 %{_dopasswd} -bc %{buildroot}%{basedir}/include/admin.htpasswd admin toaster >/dev/null 2>&1
 
-[ -f %{buildroot}%{basedir}/include/admin.pass ] || echo "toaster" > %{buildroot}%{basedir}/include/admin.pass
+# whats this thing is doing here ? that should be in post area but commenting just to compile properly
+#[ -f %{buildroot}%{basedir}/include/admin.pass ] || echo "toaster" > %{buildroot}%{basedir}/include/admin.pass
 
 
 #----------------------------------------------------------------------
