@@ -5,7 +5,7 @@
 
 %define	release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
-%define		ccflags %{optflags} /etc/libvpopmail/lib_deps
+%define		ccflags %{optflags}
 %define		ldflags %{optflags}
 
 ############### RPM ################################
@@ -36,6 +36,7 @@ BuildRequires: libvpopmail-devel >= 5.4.17
 Requires:	qmail-toaster >= 1.03-1.3.15, vpopmail-toaster >= 5.4.17
 Obsoletes:	courier-imap-toaster < 4
 Packager:       Jake Vickers <jake@qmailtoaster.com>
+Patch1: courier-authlib-library-toaster-kloxong.patch
 
 %define	name courier-authlib
 
@@ -52,6 +53,7 @@ This package, courier-authlib, allows the new courier imap to use vpopmail for a
 #------------------------------------------------------------------------------------
 %setup -q -n %{name}-%{pversion}
 
+%patch1 -p1
 
 # Cleanup for the compiler
 #------------------------------------------------------------------------------------
@@ -59,10 +61,7 @@ This package, courier-authlib, allows the new courier imap to use vpopmail for a
 
 echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
-# we need to Set the path for our vpopmail-toaster library path of lib_deps
-#%{__perl} -pi -e s|CFLAGS="`cat ${vpopmail_home}/etc/inc_deps` $CFLAGS"|CFLAGS="`/etc/libvpopmail/lib_deps` $CFLAGS"|e configure
 
-%{__perl} -pi -e s|VPOPMAILLIBS="`cat ${vpopmail_home}/etc/lib_deps`"|VPOPMAILLIBS="`/usr/lib/libvpopmail`"|e configure
 
 #----------------------------------------------------------------------------------
 %build
@@ -172,6 +171,11 @@ fi
 #------------------------------------------------------------------------------------
 %changelog
 #------------------------------------------------------------------------------------
+* Wed Dec 18 2019 Dionysis Kladis <dkstiler@gmail.com> 0.59.2-1.3.13.kng
+- added missing depedencies
+- added a patch to work with modified qmail-toaster packages named courier-authlib-library-toaster-kloxong.patch
+- make it compile in chroot enviroment of copr
+
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.59.2-1.3.13.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
 

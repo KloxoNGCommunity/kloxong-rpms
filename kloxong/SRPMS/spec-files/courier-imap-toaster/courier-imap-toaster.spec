@@ -274,6 +274,9 @@ fi
 #-----------------------------------------------------------------------------
 %changelog
 #-----------------------------------------------------------------------------
+* Wed Dec 18 2019 Dionysis Kladis <dkstiler@gmail.com> 0.59.2-1.3.20.kng
+- Recompile it for kloxong in copr chroot enviroment
+
 * Fri Jun 17 2015 Mustafa Ramadhan <mustafa@bigraf.com> 0.59.2-1.3.20.mr
 - Set to use pop3 (beside pop3-ssl, imap4 and imap4-ssl) instead from qmail-pop3d-toaster
 - set no obsolete for dovecot-toaster

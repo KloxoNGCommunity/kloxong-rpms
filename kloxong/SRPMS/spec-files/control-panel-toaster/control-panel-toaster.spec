@@ -195,7 +195,6 @@ install -m644 ./email.php %{buildroot}%{htdocs}/admin/email/index.php
 
 [ -f %{buildroot}%{basedir}/include/admin.pass ] || echo "toaster" > %{buildroot}%{basedir}/include/admin.pass
 
-chown %{apacheuser}:%{apachegroup} %{buildroot}%{basedir}/include/*
 
 #----------------------------------------------------------------------
 %clean
@@ -257,6 +256,7 @@ fi
 %attr(755,%{apacheuser},%{apachegroup}) %dir %{htdocs}/admin
 %attr(755,%{apacheuser},%{apachegroup}) %dir %{htdocs}/images
 %attr(755,%{apacheuser},%{apachegroup}) %dir %{basedir}/include
+%attr(755,%{apacheuser},%{apachegroup}) %dir %{basedir}/include/*
 %attr(644,root,%{apachegroup}) %{htdocs}/admin/*.php
 %attr(644,root,%{apachegroup}) %{htdocs}/admin/*.php
 %attr(644,%{apacheuser},%{apachegroup}) %{htdocs}/images/*.gif
@@ -274,6 +274,10 @@ fi
 #----------------------------------------------------------------------
 %changelog
 #----------------------------------------------------------------------
+* Thu Dec 19 2019 Dionysis Kladis <dkstiler@gmail.com> 0.5-1.4.1.kng
+- fixing missplaced chown command from install to files section
+- compiling for copr 
+
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.5-1.4.1.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
 
