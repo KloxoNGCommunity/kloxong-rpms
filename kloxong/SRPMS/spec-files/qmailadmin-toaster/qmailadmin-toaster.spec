@@ -30,15 +30,16 @@ Group:		Networking/Other
 URL:		http://www.inter7.com/qmailadmin
 Source0:	qmailadmin-%{pversion}.tar.bz2
 Source1:	help.tar.bz2
+Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 BuildRequires: libvpopmail-devel >= 5.4.17
 BuildRequires:  autorespond-toaster >= 2.0.2, ezmlm-toaster >= 0.53.324, bzip2
+BuildRequires:	mysql-devel, mysql
 Requires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 Requires:	control-panel-toaster >= 0.2
 Requires:	autorespond-toaster >= 2.0.2, ezmlm-toaster >= 0.53.324
-Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
-
+Requires:	mysql
 Packager:       Bharath Chari <qmailtoaster@arachnis.com> 
 
 
