@@ -14,7 +14,7 @@ Release:	2.kng%{?dist}
 Group:		System Environment/Daemons
 License:	ASL 2.0
 URL:		https://github.com/matsumoto-r/mod_process_security
-Source0:	%{name}-%{version}.tar.bz2
+Source0: https://github.com/matsumotory/%{name}/archive/v%{version}.tar.gz
 Source1: mod_process_security.conf
 BuildRequires: httpd-devel
 BuildRequires: pkgconfig
