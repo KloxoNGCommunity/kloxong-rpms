@@ -1,8 +1,9 @@
 %if 0%{?rhel} >= 7
 # Only works on EL7
 %global _hardened_build 1
-%global backends %{nil}
 %endif
+%global backends %{nil}
+
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
