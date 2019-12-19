@@ -11,7 +11,7 @@
 +		auth_libs=`cat /etc/libvpopmail/lib_deps`		
 + 	else
 +		auth_incs=`cat $vpopmaildir/etc/inc_deps`
-+  echo "We set qmail vpopmail original library locations"
+
 -
 -auth_incs=`cat $vpopmaildir/etc/inc_deps`
 -
