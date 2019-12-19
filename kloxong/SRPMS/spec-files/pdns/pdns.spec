@@ -18,6 +18,7 @@ Patch0:			pdns-git-init.patch
 Patch1:			pdns-4.1.1-disable-secpoll.patch
 %if 0%{?rhel} < 7
 Source1: pdns.init
+%endif
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %if 0%{?rhel} >= 7
