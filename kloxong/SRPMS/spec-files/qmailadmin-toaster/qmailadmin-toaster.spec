@@ -88,10 +88,11 @@ support via the users language settings on their browser.
 %define name qmailadmin
 %setup  -q -n %{name}-%{pversion}
 
-# patch 1 and 2 need to go together
+# patch 1 and 2 need to go together to find libraries path
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4	-p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
