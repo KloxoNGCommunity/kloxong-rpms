@@ -26,10 +26,10 @@ Patch1:			pdns-4.1.1-disable-secpoll.patch
 BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 
-%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
-BuildRequires:		devtoolset-2-gcc devtoolset-2-gcc-c++
-BuildRequires:		devtoolset-2-binutils
-%endif
+#%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
+#BuildRequires:		devtoolset-2-gcc devtoolset-2-gcc-c++
+#BuildRequires:		devtoolset-2-binutils
+#%endif
 
 BuildRequires:		openssl-devel
 BuildRequires:		boost-devel
@@ -156,9 +156,9 @@ This package contains the the PowerDNS DNS tools.
 %patch1 -p1 -b .disable-secpoll
 
 %build
-%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
-export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$PATH
-%endif
+#%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
+#export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$PATH
+#%endif
 
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
