@@ -64,11 +64,6 @@ Obsoletes:		pdns-server-backend-bind
 %global backends %{backends} bind
 
 %description
-PowerDNS is a versatile nameserver which supports a large number
-of different backends ranging from simple zonefiles to relational
-databases and load balancing/failover algorithms.
-
-%description
 The PowerDNS Nameserver is a modern, advanced and high performance
 authoritative-only nameserver. It is written from scratch and conforms
 to all relevant DNS standards documents.
