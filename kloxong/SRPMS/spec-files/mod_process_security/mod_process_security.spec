@@ -57,8 +57,8 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%{modulesdir}/%{name}.so
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/process_security.conf
+%config(noreplace) %{_httpd_confdir}/mod_process_security.conf
+%{_httpd_moddir}/mod_process_security.so
 
 
 %changelog
