@@ -32,6 +32,7 @@ Source0:	qmailadmin-%{pversion}.tar.bz2
 Source1:	help.tar.bz2
 Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
 Patch2: 	qmailadmin-noroot.patch
+Patch3: 	qmailadmin-vpop-devel.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 BuildRequires: libvpopmail-devel >= 5.4.17
@@ -89,7 +90,7 @@ support via the users language settings on their browser.
 
 %patch1 -p1
 %patch2 -p1
-
+%patch3 -p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
