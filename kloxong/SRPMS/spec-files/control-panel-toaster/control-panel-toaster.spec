@@ -266,7 +266,6 @@ fi
 %attr(755,%{apacheuser},%{apachegroup}) %dir %{htdocs}/admin
 %attr(755,%{apacheuser},%{apachegroup}) %dir %{htdocs}/images
 %attr(755,%{apacheuser},%{apachegroup}) %dir %{basedir}/include
-%attr(755,%{apacheuser},%{apachegroup}) %dir %{basedir}/include/*
 %attr(644,root,%{apachegroup}) %{htdocs}/admin/*.php
 %attr(644,root,%{apachegroup}) %{htdocs}/admin/*.php
 %attr(644,%{apacheuser},%{apachegroup}) %{htdocs}/images/*.gif
