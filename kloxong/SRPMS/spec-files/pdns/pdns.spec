@@ -225,13 +225,13 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
 #  --enable-unit-tests \
 %if 0%{?rhel} >= 7
 #  --enable-lua-records \
-  --enable-experimental-pkcs11 \
+#  --enable-experimental-pkcs11 \
   --enable-systemd \
   --enable-ixfrdist 
 %else
 #  comments as it not applicable bellow 4.2
 #  --disable-lua-records \
-  --without-protobuf \
+#  --without-protobuf \
   --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
   CXXFLAGS=-std=gnu++11
 %endif
