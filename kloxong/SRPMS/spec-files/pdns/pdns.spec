@@ -456,8 +456,9 @@ fi
 %doc modules/ldapbackend/dnsdomain2.schema
 %doc modules/ldapbackend/pdns-domaininfo.schema
 
-%files backend-lua2
-%{_libdir}/%{name}/liblua2backend.so
+# disable lua2 backend we also dont need this
+#%files backend-lua2
+#%{_libdir}/%{name}/liblua2backend.so
 
 %files backend-sqlite
 %doc modules/gsqlite3backend/schema.sqlite3.sql
