@@ -43,7 +43,7 @@ BuildRequires: boost148-program-options
 
 Requires(pre): shadow-utils
 #%ifarch aarch64
-BuildRequires: lua-devel >=5.1
+BuildRequires: lua-devel >= 5.1.0
 %define lua_implementation lua
 #%else
 #BuildRequires: luajit-devel
