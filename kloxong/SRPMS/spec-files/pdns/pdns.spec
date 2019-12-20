@@ -42,14 +42,18 @@ BuildRequires: boost148-program-options
 
 
 Requires(pre): shadow-utils
-%ifarch aarch64
 BuildRequires: lua-devel 
 %define lua_implementation lua
-%else
-BuildRequires: luajit-devel
-%define lua_implementation luajit
-%endif
 
+BuildRequires: bison	
+BuildRequires: boost-devel	
+BuildRequires: gcc-c++	
+BuildRequires: libsodium-devel	
+BuildRequires: lua-devel	
+BuildRequires: openssl-devel	
+BuildRequires: protobuf-compiler	
+BuildRequires: protobuf-devel	
+BuildRequires: python2-virtualenv	
 BuildRequires: libsodium-devel
 BuildRequires: bison
 BuildRequires: openssl-devel
@@ -222,14 +226,12 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
 # we comment since its not applicable in our version
 
 %configure \
-  --enable-option-checking=fatal \
-  --with-redhat \
   --sysconfdir=%{_sysconfdir}/%{name} \
   --disable-static \
   --disable-dependency-tracking \
   --disable-silent-rules \
   --with-modules='' \
-  --with-lua=%{lua_implementation} \
+  --with-lua \
   --with-dynmodules='%{backends} random' \
   --enable-tools \
 # we need to use enable instead of with since we are bellow 4.2
@@ -242,7 +244,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-systemd \
   --enable-ixfrdist \
 %else
-# it not applicable bellow 4.2
+#  comments as it not applicable bellow 4.2
   --disable-lua-records \
   --without-protobuf \
   --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
