@@ -226,7 +226,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
 %if 0%{?rhel} >= 7
 #  --enable-lua-records \
 #  --enable-experimental-pkcs11 \
-  --enable-systemd \
+  --enable-systemd = yes \
   --enable-ixfrdist 
 %else
 #  comments as it not applicable bellow 4.2
