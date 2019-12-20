@@ -42,13 +42,13 @@ BuildRequires: boost148-program-options
 
 
 Requires(pre): shadow-utils
-%ifarch aarch64
-BuildRequires: lua-devel
+#%ifarch aarch64
+BuildRequires: lua-devel >=5.1
 %define lua_implementation lua
-%else
-BuildRequires: luajit-devel
-%define lua_implementation luajit
-%endif
+#%else
+#BuildRequires: luajit-devel
+#%define lua_implementation luajit
+#%endif
 
 BuildRequires: libsodium-devel
 BuildRequires: bison
