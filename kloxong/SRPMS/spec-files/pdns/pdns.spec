@@ -215,7 +215,7 @@ This package contains the ixfrdist program.
 # we use original init script
 #%patch0 -p1 -b .init
 # not sure why we need this patch
-%patch1 -p1 -b .disable-secpoll
+#%patch1 -p1 -b .disable-secpoll
 
 %build
 export CPPFLAGS="-DLDAP_DEPRECATED"
@@ -231,7 +231,9 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --with-lua=%{lua_implementation} \
   --with-dynmodules='%{backends} random' \
   --enable-tools \
+# we need to use enable instead of with since we are bellow 4.2
 #  --with-libsodium \
+  --enable-libsodium \
   --enable-unit-tests \
 %if 0%{?rhel} >= 7
   --enable-lua-records \
@@ -239,6 +241,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-systemd \
   --enable-ixfrdist
 %else
+# it not applicable bellow 4.2
 #  --disable-lua-records \
   --without-protobuf \
   --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
