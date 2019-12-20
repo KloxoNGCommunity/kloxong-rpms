@@ -129,11 +129,12 @@ BuildRequires: openldap-devel
 %description backend-ldap
 This package contains the LDAP backend for %{name}
 
-%package backend-lua2
-Summary: Lua backend for %{name}
-Group: System Environment/Daemons
-Requires: %{name}%{?_isa} = %{version}-%{release}
-%global backends %{backends} lua2
+#we may not need this backend as it does not compiles 
+#%package backend-lua2
+#Summary: Lua backend for %{name}
+#Group: System Environment/Daemons
+#Requires: %{name}%{?_isa} = %{version}-%{release}
+#%global backends %{backends} lua2
 
 %description backend-lua2
 This package contains the lua2 backend for %{name}
