@@ -227,7 +227,6 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --disable-silent-rules \
   --with-modules='' \
   --with-lua \
-# we dont need all so we select  
   --with-dynmodules='%{backends} random' \
   --enable-tools \
 # we need to use enable instead of with since we are bellow 4.2
@@ -238,7 +237,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-lua-records \
   --enable-experimental-pkcs11 \
   --enable-systemd \
-  --enable-ixfrdist \
+  --enable-ixfrdist 
 %else
 #  comments as it not applicable bellow 4.2
   --disable-lua-records \
