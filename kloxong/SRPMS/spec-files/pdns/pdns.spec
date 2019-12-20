@@ -38,7 +38,7 @@ BuildRequires: boost-devel
 %else
 BuildRequires: boost148-devel
 BuildRequires: boost148-program-options
-BuildRequires: devtoolset-7
+BuildRequires: devtoolset-8
 %endif
 
 
