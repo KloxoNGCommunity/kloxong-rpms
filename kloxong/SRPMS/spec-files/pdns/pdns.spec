@@ -27,8 +27,8 @@ BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 
 %if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
-BuildRequires:		devtoolset-2-gcc devtoolset-2-gcc-c++
-BuildRequires:		devtoolset-2-binutils
+BuildRequires:		devtoolset-8-gcc devtoolset-8-gcc-c++
+BuildRequires:		devtoolset-8-binutils
 %endif
 
 BuildRequires:		openssl-devel
@@ -159,7 +159,7 @@ This package contains the the PowerDNS DNS tools.
 
 %build
 %if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
-export PATH=/opt/rh/devtoolset-2/root/usr/bin/:$PATH
+export PATH=/opt/rh/devtoolset-8/root/usr/bin/:$PATH
 %endif
 
 %if 0%{?rhel} == 6
