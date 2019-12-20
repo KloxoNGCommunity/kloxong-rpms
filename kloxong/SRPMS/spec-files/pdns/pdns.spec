@@ -169,9 +169,6 @@ It allows different answers to DNS queries coming from different
 IP address ranges or based on the geoipgraphic location
 
 
-%description backend-lmdb
-This package contains the lmdb backend for %{name}
-
 %package backend-tinydns
 Summary: TinyDNS backend for %{name}
 Group: System Environment/Daemons
