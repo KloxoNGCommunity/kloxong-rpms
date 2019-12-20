@@ -201,9 +201,7 @@ This package contains the ixfrdist program.
 %prep
 
 %if 0%{?rhel} == 6
-./opt/rh/devtoolset-8/enable
 %setup -n %{name}-%{version}
-
 %else
 %autosetup -p1 -n %{name}-%{version}
 %endif
