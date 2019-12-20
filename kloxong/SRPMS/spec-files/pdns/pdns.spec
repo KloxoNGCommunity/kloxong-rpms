@@ -223,6 +223,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
 
 %configure \
   --enable-option-checking=fatal \
+  --with-redhat \
   --sysconfdir=%{_sysconfdir}/%{name} \
   --disable-static \
   --disable-dependency-tracking \
@@ -239,7 +240,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-lua-records \
   --enable-experimental-pkcs11 \
   --enable-systemd \
-  --enable-ixfrdist
+  --enable-ixfrdist \
 %else
 # it not applicable bellow 4.2
   --disable-lua-records \
