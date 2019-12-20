@@ -211,41 +211,41 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
 . /opt/rh/devtoolset-8/enable
 %endif
 
-%configure \
-  --sysconfdir=%{_sysconfdir}/%{name} \
-  --disable-static \
-  --disable-dependency-tracking \
-  --disable-silent-rules \
-  --with-modules='' \
-  --with-lua \
-  --with-dynmodules='%{backends} random' \
-  --enable-tools \
+#%configure \
+#  --sysconfdir=%{_sysconfdir}/%{name} \
+#  --disable-static \
+#  --disable-dependency-tracking \
+#  --disable-silent-rules \
+#  --with-modules='' \
+#  --with-lua \
+#  --with-dynmodules='%{backends} random' \
+#  --enable-tools \
 # we need to comment since we are bellow 4.2
 #  --with-libsodium \
 #  --enable-unit-tests \
 %if 0%{?rhel} >= 7
 #  --enable-lua-records \
 #  --enable-experimental-pkcs11 \
-  --enable-systemd = yes \
-  --enable-ixfrdist 
-%else
+#  --enable-systemd = yes \
+#  --enable-ixfrdist 
+#%else
 #  comments as it not applicable bellow 4.2
 #  --disable-lua-records \
 #  --without-protobuf \
-  --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
-  CXXFLAGS=-std=gnu++11
-%endif
+#  --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
+#  CXXFLAGS=-std=gnu++11
+#%endif
 
-#we will use the above more feature rich configure
-#%configure \
-#   --sysconfdir=%{_sysconfdir}/%{name} \
-#    --with-sqlite3 \
-#    --with-lua=%{!?_without_lua:yes}%{?_without_lua:no} \
-#    --enable-hardening=%{hardening} \
-#    --with-modules="" \
-#    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
-#    --disable-static \
-#    --enable-tools
+#Revert do orginal 'MIND' config to see if it will build
+%configure \
+   --sysconfdir=%{_sysconfdir}/%{name} \
+    --with-sqlite3 \
+    --with-lua=%{!?_without_lua:yes}%{?_without_lua:no} \
+    --enable-hardening=%{hardening} \
+    --with-modules="" \
+    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
+    --disable-static \
+    --enable-tools
 
 
 %{__make} %{?_smp_mflags}
