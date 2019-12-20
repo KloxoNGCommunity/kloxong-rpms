@@ -131,14 +131,14 @@ BuildRequires: openldap-devel
 This package contains the LDAP backend for %{name}
 
 #we may not need this backend as it does not compile bellow 4.2 version
-#%package backend-lua2
-#Summary: Lua backend for %{name}
-#Group: System Environment/Daemons
+%package backend-lua2
+Summary: Lua backend for %{name}
+Group: System Environment/Daemons
 #Requires: %{name}%{?_isa} = %{version}-%{release}
-#%global backends %{backends} lua2
+%global backends %{backends} lua2
 
-#%description backend-lua2
-#This package contains the lua2 backend for %{name}
+%description backend-lua2
+This package contains the lua2 backend for %{name}
 
 %package backend-sqlite
 Summary: SQLite backend for %{name}
@@ -233,7 +233,9 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --disable-silent-rules \
   --with-modules='' \
   --with-lua \
-  --with-dynmodules='%{backends} random' \
+# we dont need all so we select  
+  --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
+#  --with-dynmodules='%{backends} random' \
   --enable-tools \
 # we need to use enable instead of with since we are bellow 4.2
 #  --with-libsodium \
