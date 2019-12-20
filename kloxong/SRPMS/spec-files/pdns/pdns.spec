@@ -218,8 +218,9 @@ This package contains the ixfrdist program.
 %build
 export CPPFLAGS="-DLDAP_DEPRECATED"
 # we comment since its not applicable in our version
-if
-
+%if 0%{?rhel} == 6
+. /opt/rh/devtoolset-3/enable
+%endif
 
 %configure \
   --sysconfdir=%{_sysconfdir}/%{name} \
