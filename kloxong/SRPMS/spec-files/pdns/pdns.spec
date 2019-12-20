@@ -204,7 +204,6 @@ This package contains the ixfrdist program.
 # not sure why we need this patch
 #%patch1 -p1 -b .disable-secpoll
 
-
 %build
 export CPPFLAGS="-DLDAP_DEPRECATED"
 # we comment since its not applicable in our version
