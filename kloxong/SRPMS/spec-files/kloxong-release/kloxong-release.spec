@@ -12,8 +12,8 @@ BuildArch: noarch
 Packager: John Parnell Pierce <john@luckytanuki.com>
 Vendor: Kloxo Next Generation Repository, http://%{repohost}/
 #BuildRequires: redhat-rpm-config
-Obsoletes: mratwork-release kloxong-testing
-Conflicts: mratwork-testing kloxong-testing
+Obsoletes: mratwork-release > 0 , kloxong-testing > 0
+Conflicts: mratwork-testing > 0 , kloxong-testing > 0
 
 %description
 Kloxo Next Generation rpm release. This package contains yum configuration for the Kloxo Next Generation RPM Repository.
@@ -22,11 +22,29 @@ Kloxo Next Generation rpm release. This package contains yum configuration for t
 
 %build
 
-%install
-%{__rm} -rf %{buildroot}
-%{__mkdir} -p %{buildroot}/%{_sysconfdir}/yum.repos.d/
+cat > kloxong.repo << _EOF_
+[kloxong-copr]
+name=Copr repo for kloxong
+baseurl=https://copr-be.cloud.fedoraproject.org/results/kloxong/kloxong/epel-\$releasever-\$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/kloxong/kloxong/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
 
-cat > %{buildroot}/%{_sysconfdir}/yum.repos.d/kloxong.repo << _EOF_
+[kloxong-copr-httpd24]
+name=Copr repo for kloxong
+baseurl=https://copr-be.cloud.fedoraproject.org/results/kloxong/httpd24/epel-\$releasever-\$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/kloxong/httpd24/pubkey.gpg
+repo_gpgcheck=0
+enabled=1
+enabled_metadata=1
+
 [kloxong-release-neutral-noarch]
 name=KloxoNG - release-neutral-noarch
 baseurl=https://%{repohost}/kloxong/release/neutral/noarch/
@@ -97,21 +115,21 @@ name=KloxoNG - IUS Community Packages for EL \$releasever
 baseurl=https://repo.ius.io/\$releasever/\$basearch
 enabled=1
 gpgcheck=0
-exclude=mysql51* mysql56*
+exclude=mysql51* mysql56* mariadb*
 
 [kloxong-ius-archive]
 name=KloxoNG - IUS Community Packages for EL \$releasever (archive)
 baseurl=https://repo.ius.io/archive/\$releasever/\$basearch
 enabled=1
 gpgcheck=0
-exclude=mysql51* mysql56*
+exclude=mysql51* mysql56*  mariadb*
 
 [kloxong-ius-testing]
 name=KloxoNG - IUS Community Packages for EL \$releasever (testing)
 baseurl=https://repo.ius.io/testing/\$releasever/\$basearch
 enabled=0
 gpgcheck=0
-exclude=mysql51* mysql56*
+exclude=mysql51* mysql56*  mariadb*
 
 # ==================================
 
@@ -184,14 +202,14 @@ exclude=cairo*
 
 # for nginx
 [kloxong-nginx]
-name=Kloxo-MR - nginx repo
+name=KloxoNG - nginx repo
 baseurl=http://nginx.org/packages/mainline/centos/\$releasever/\$basearch/
 enabled=1
 gpgcheck=0
 
 # for nginx-stable
 [kloxong-nginx-stable]
-name=Kloxo-MR - nginx-stable repo
+name=KloxoNG - nginx-stable repo
 baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
 enabled=1
 gpgcheck=0
@@ -200,7 +218,7 @@ gpgcheck=0
 
 # for mariadb
 [kloxong-mariadb]
-name=Kloxo-MR - mariadb repo
+name=KloxoNG - mariadb repo
 baseurl=http://yum.mariadb.org/10.0/centos/\$releasever/\$basearch/
 enabled=1
 gpgcheck=0
@@ -209,7 +227,7 @@ gpgcheck=0
 
 # for atrpms
 [kloxong-atrpms]
-name=Kloxo-MR - Fedora Core \$releasever - $basearch - ATrpms
+name=KloxoNG - Fedora Core \$releasever - $basearch - ATrpms
 baseurl=http://dl.atrpms.net/el\$releasever-\$basearch/atrpms/stable
 enabled=0
 gpgcheck=0
@@ -317,12 +335,18 @@ gpgcheck=0
 
 _EOF_
 
+%install
+%{__rm} -rf %{buildroot}
+%{__mkdir} -p %{buildroot}%{_sysconfdir}/yum.repos.d/
+install -m 755 kloxong.repo %{buildroot}%{_sysconfdir}/yum.repos.d/kloxong.repo
+
+
 %{__rm} -rf %{_sysconfdir}/yum.repos.d/kloxo.repo
-%{__rm} -rf %{_sysconfdir}/yum.repos.d/kloxo-mr.repo
+%{__rm} -rf %{_sysconfdir}/yum.repos.d/KloxoNG.repo
 %{__rm} -rf %{_sysconfdir}/yum.repos.d/kloxo-custom.repo
 %{__rm} -rf %{_sysconfdir}/yum.repos.d/lxcenter.repo
 %{__rm} -rf %{_sysconfdir}/yum.repos.d/lxlabs.repo
-%{__cp} -f %{buildroot}/%{_sysconfdir}/yum.repos.d/kloxong.repo %{_sysconfdir}/yum.repos.d/kloxong.repo
+
 
 %clean
 
@@ -331,7 +355,7 @@ _EOF_
 %files
 %defattr(-, root, root, 0755)
 %dir %{_sysconfdir}/yum.repos.d/
-%config %{_sysconfdir}/yum.repos.d/kloxong.repo
+%{_sysconfdir}/yum.repos.d/kloxong.repo
 
 %changelog
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
