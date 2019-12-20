@@ -130,15 +130,6 @@ BuildRequires: openldap-devel
 %description backend-ldap
 This package contains the LDAP backend for %{name}
 
-#we may not need this backend as it does not compile bellow 4.2 version
-%package backend-lua2
-Summary: Lua backend for %{name}
-Group: System Environment/Daemons
-#Requires: %{name}%{?_isa} = %{version}-%{release}
-%global backends %{backends} lua2
-
-%description backend-lua2
-This package contains the lua2 backend for %{name}
 
 %package backend-sqlite
 Summary: SQLite backend for %{name}
@@ -210,7 +201,9 @@ This package contains the ixfrdist program.
 %prep
 
 %if 0%{?rhel} == 6
+./opt/rh/devtoolset-8/enable
 %setup -n %{name}-%{version}
+
 %else
 %autosetup -p1 -n %{name}-%{version}
 %endif
@@ -225,6 +218,8 @@ This package contains the ixfrdist program.
 %build
 export CPPFLAGS="-DLDAP_DEPRECATED"
 # we comment since its not applicable in our version
+if
+
 
 %configure \
   --sysconfdir=%{_sysconfdir}/%{name} \
@@ -234,8 +229,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --with-modules='' \
   --with-lua \
 # we dont need all so we select  
-  --with-dynmodules="bind gmysql gpgsql gsqlite ldap lua mydns pipe remote" \
-#  --with-dynmodules='%{backends} random' \
+  --with-dynmodules='%{backends} random' \
   --enable-tools \
 # we need to use enable instead of with since we are bellow 4.2
 #  --with-libsodium \
@@ -458,9 +452,6 @@ fi
 %doc modules/ldapbackend/dnsdomain2.schema
 %doc modules/ldapbackend/pdns-domaininfo.schema
 
-# disable lua2 backend we also dont need this
-#%files backend-lua2
-#%{_libdir}/%{name}/liblua2backend.so
 
 %files backend-sqlite
 %doc modules/gsqlite3backend/schema.sqlite3.sql
