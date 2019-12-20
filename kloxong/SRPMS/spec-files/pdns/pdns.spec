@@ -220,9 +220,8 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --with-lua \
   --with-dynmodules='%{backends} random' \
   --enable-tools \
-# we need to use enable instead of with since we are bellow 4.2
-  --with-libsodium \
-# --enable-libsodium \
+# we need to comment since we are bellow 4.2
+#  --with-libsodium \
   --enable-unit-tests \
 %if 0%{?rhel} >= 7
   --enable-lua-records \
