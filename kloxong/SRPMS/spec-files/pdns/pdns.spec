@@ -52,8 +52,7 @@ BuildRequires: libsodium-devel
 BuildRequires: lua-devel	
 BuildRequires: openssl-devel	
 BuildRequires: protobuf-compiler	
-BuildRequires: protobuf-devel	
-BuildRequires: python2-virtualenv	
+BuildRequires: protobuf-devel		
 BuildRequires: libsodium-devel
 BuildRequires: bison
 BuildRequires: openssl-devel
