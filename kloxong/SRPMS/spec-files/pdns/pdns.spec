@@ -234,7 +234,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --with-modules='' \
   --with-lua \
 # we dont need all so we select  
-  --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
+  --with-dynmodules="bind gmysql gpgsql gsqlite ldap lua mydns pipe remote" \
 #  --with-dynmodules='%{backends} random' \
   --enable-tools \
 # we need to use enable instead of with since we are bellow 4.2
