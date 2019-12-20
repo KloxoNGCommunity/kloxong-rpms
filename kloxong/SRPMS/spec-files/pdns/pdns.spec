@@ -242,7 +242,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-ixfrdist
 %else
 # it not applicable bellow 4.2
-#  --disable-lua-records \
+  --disable-lua-records \
   --without-protobuf \
   --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
   CXXFLAGS=-std=gnu++11
