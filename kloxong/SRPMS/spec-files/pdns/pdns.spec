@@ -222,7 +222,7 @@ export CPPFLAGS="-DLDAP_DEPRECATED"
   --enable-tools \
 # we need to comment since we are bellow 4.2
 #  --with-libsodium \
-  --enable-unit-tests \
+#  --enable-unit-tests \
 %if 0%{?rhel} >= 7
   --enable-lua-records \
   --enable-experimental-pkcs11 \
