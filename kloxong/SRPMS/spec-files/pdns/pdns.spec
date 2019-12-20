@@ -38,6 +38,7 @@ BuildRequires: boost-devel
 %else
 BuildRequires: boost148-devel
 BuildRequires: boost148-program-options
+BuildRequires: devtoolset-7
 %endif
 
 
@@ -129,15 +130,15 @@ BuildRequires: openldap-devel
 %description backend-ldap
 This package contains the LDAP backend for %{name}
 
-#we may not need this backend as it does not compiles 
+#we may not need this backend as it does not compile bellow 4.2 version
 #%package backend-lua2
 #Summary: Lua backend for %{name}
 #Group: System Environment/Daemons
 #Requires: %{name}%{?_isa} = %{version}-%{release}
 #%global backends %{backends} lua2
 
-%description backend-lua2
-This package contains the lua2 backend for %{name}
+#%description backend-lua2
+#This package contains the lua2 backend for %{name}
 
 %package backend-sqlite
 Summary: SQLite backend for %{name}
