@@ -919,6 +919,7 @@ fi
 
 # qmail queue
 #-------------------------------------------------------------------------------
+%dir %attr(0750,qmailq,qmail) %{qdir}/queue
 %attr(0700,qmails,qmail) %dir %{qdir}/queue/bounce
 %dir %attr(0700,qmails,qmail) %{qdir}/queue/info
 %attr(0700,qmails,qmail) %{qdir}/queue/info/*
@@ -935,7 +936,7 @@ fi
 %attr(0700,qmails,qmail) %dir %{qdir}/queue/remote
 %attr(0700,qmails,qmail) %{qdir}/queue/remote/*
 %attr(0750,qmailq,qmail) %dir %{qdir}/queue/todo
-%attr(0750,qmailq,qmail) %{qdir}/queue
+
 # boot files
 #-------------------------------------------------------------------------------
 %attr(0755,root,qmail) %{qdir}/boot/home
