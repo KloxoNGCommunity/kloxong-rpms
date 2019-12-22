@@ -920,12 +920,12 @@ fi
 # qmail queue
 #-------------------------------------------------------------------------------
 %attr(0700,qmails,qmail) %dir %{qdir}/queue/bounce
-%attr(0700,qmails,qmail) %dir %{qdir}/queue/info
+%dir %attr(0700,qmails,qmail) %{qdir}/queue/info
 %attr(0700,qmails,qmail) %{qdir}/queue/info/*
 %attr(0700,qmailq,qmail) %dir %{qdir}/queue/intd
 %attr(0700,qmails,qmail) %dir %{qdir}/queue/local
 %attr(0700,qmails,qmail) %{qdir}/queue/local/*
-%attr(0750,qmailq,qmail) %dir %{qdir}/queue/lock
+%dir %attr(0750,qmailq,qmail) %{qdir}/queue/lock
 %attr(0600,qmails,qmail) %{qdir}/queue/lock/sendmutex
 %attr(0644,qmailr,qmail) %{qdir}/queue/lock/tcpto
 %attr(-,qmails,qmail) %{qdir}/queue/lock/trigger
