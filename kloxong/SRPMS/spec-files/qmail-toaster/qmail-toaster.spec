@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 57.kng%{?dist}
+%define 	rpmrelease 58.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -1087,6 +1087,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Sun Dec 22 2019 John Pierce <john@luckytanuki.com> 1.03-1.3.58.kng
+- Fix directive for /queue that was changing ownership of mutex file
+
 * Sun Dec 15 2019 Dionysis Kladis <dkstiler@gmail.com> 1.03-1.3.57.kng
 - Fixing error build at a chroot enviroment failure with chksgh
 - Fixing file creation and moving seting permitions to files insead of install
