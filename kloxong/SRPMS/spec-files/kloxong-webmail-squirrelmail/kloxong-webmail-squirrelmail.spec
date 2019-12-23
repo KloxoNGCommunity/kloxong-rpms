@@ -150,7 +150,7 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 
 * Mon Dec 23 2019 John Parnell Pierce <john@luckytanuki.com> - 1.4.22-7.kng
-- Remove dups from %files
+- Remove dups from files
 
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
