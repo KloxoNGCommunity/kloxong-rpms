@@ -121,6 +121,8 @@ fi
 %defattr(-,root,root)
 %config %{_sysconfdir}/spamdyke.conf
 # permissions (
+%attr(-, qmaild, qmail) %dir /var/qmail/spamdyke
+%attr(-, qmaild, qmail) %dir /var/qmail/spamdyke/greylist
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_senders
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_senders
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_recipients
@@ -134,7 +136,6 @@ fi
 %{_bindir}/spamdyke
 %{_bindir}/spamdyke-qrv
 # permissions
-%attr(-, qmaild, qmail) /var/qmail/spamdyke
 /etc/cron.daily/spamdyke
 /usr/share/spamdyke/spamdyke.sql
 
