@@ -1,7 +1,7 @@
 %define 	name daemontools
 %define 	pversion 0.76
 %define 	bversion 1.3
-%define 	rpmrelease 7.kng%{?dist}
+%define 	rpmrelease 8.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	ccflags %{optflags}
@@ -132,7 +132,7 @@ done
 %attr(0755,root,root) %{_bindir}/setlock
 %attr(0755,root,root) %{_bindir}/setuidgid
 %attr(0755,root,root) %dir %{cmddir}
-%attr(0755,root,root) %{cmddir}/*
+%{cmddir}/*
 %attr(0755,root,root) %dir %{srvdir}
 
 %attr(0644,root,root) %{_mandir}/man8/envdir.8.*
@@ -157,6 +157,9 @@ done
 #----------------------------------------------------------------------------------
 %changelog
 #----------------------------------------------------------------------------------
+*Mon Dec 23 2019 John Pierce <john@luckytanuki.com> 0.76-1.3.8.kng
+- Permissions  not required on symlinks
+
 *Fri Dec 13 2019 Dionysis Kladis <dkstiler@gmail.com> 0.76-1.3.7.kng
 - Adding a patch while dissabling the chkshsgr || ( cat warn-shsgr; exit 1 )
   with resulted error "Oops. Your getgroups() returned 0, and setgroups() failed; this means
