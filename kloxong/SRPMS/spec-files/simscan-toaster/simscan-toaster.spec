@@ -244,12 +244,12 @@ fi
 %attr(0750,clam,root) %dir %{qdir}/bin
 %attr(4711,clam,root) %{qdir}/bin/%{name}
 # control was root,root it should be clam,root
-%attr(0750,clam,root) %{qdir}/control
+#%attr(0750,clam,root) dir %{qdir}/control
 %attr(0750,clam,root) %dir %{qdir}/%{name}
 %attr(4755,root,root) %{qdir}/bin/simscanmk
 
 %attr(0755,root,root) %{qdir}/bin/update-%{name}
-%attr(4711,clam,root) %{qdir}/bin/%{name}
+
 %attr(0644,root,root) %dir %{_datadir}/doc/%{name}-%{pversion}
 %attr(0644,root,root) %{_datadir}/doc/%{name}-%{pversion}/*
 
