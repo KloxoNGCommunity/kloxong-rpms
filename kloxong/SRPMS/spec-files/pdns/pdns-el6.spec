@@ -1,36 +1,49 @@
 #
-# PowerDNS server el7 spec file
+# PowerDNS server el5/el6 spec file
 #
-%global _hardened_build 1
+# - to disable devtoolset-2 use --without devtoolset
+# - to disable lua use --without lua
+#
+%{?!rhel:%define rhel 0}
+%if 0%{?rhel} == 5
+%define hardening no
+%else
+%define hardening yes
+%endif
+
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
 Version:		4.1.13
-Release:		2.kng%{dist}
+Release:		1%{dist}
 Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons
 URL:			http://www.powerdns.com/
 Source0:		http://downloads.powerdns.com/releases/pdns-4.1.13.tar.bz2
-Source1:		pdns.service
-Patch0:			pdns-4.1.1-disable-secpoll.patch
+Patch0:			pdns-git-init.patch
+Patch1:			pdns-4.1.1-disable-secpoll.patch
+BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-BuildRequires:		systemd-units
-BuildRequires:		systemd-devel
-BuildRequires:		gcc
-BuildRequires:		gcc-c++
-BuildRequires:		krb5-devel
+
+%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
+BuildRequires:		devtoolset-8-gcc devtoolset-8-gcc-c++
+BuildRequires:		devtoolset-8-binutils
+%endif
+
+BuildRequires:		openssl-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
-BuildRequires:		lua-devel
-BuildRequires:		protobuf-devel
 
-Requires(pre):		shadow-utils
-Requires(post):		systemd-sysv
-Requires(post):		systemd-units
-Requires(preun):	systemd-units
-Requires(postun):	systemd-units
+%if %{!?_without_lua:1}%{?_without_lua:0}
+BuildRequires:		lua-devel
+%endif
+
 Provides:		powerdns = %{version}-%{release}
+Obsoletes:		pdns-server
+Obsoletes:		pdns-server-dnssec-tools
+Obsoletes:		pdns-server-backend-bind
+
 
 %description
 PowerDNS is a versatile nameserver which supports a large number
@@ -52,6 +65,7 @@ Summary:		MySQL backend for %{name}
 Group:			System Environment/Daemons
 Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
 BuildRequires:		mysql-devel
+Obsoletes:		pdns-server-backend-mysql
 
 %description		backend-mysql
 This package contains the MySQL backend for the PowerDNS nameserver.
@@ -61,6 +75,7 @@ Summary:		postgesql backend for %{name}
 Group:			System Environment/Daemons
 Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
 BuildRequires:		postgresql-devel
+Obsoletes:		pdns-server-backend-postgresql
 
 %description		backend-postgresql
 This package contains the postgesql backend for the PowerDNS nameserver.
@@ -69,6 +84,9 @@ This package contains the postgesql backend for the PowerDNS nameserver.
 Summary:		sqlite3 backend for %{name}
 Group:			System Environment/Daemons
 Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+BuildRequires:		sqlite-devel
+Obsoletes:		pdns-server-backend-sqlite3
+Obsoletes:		pdns-backend-sqlite3 < 3.4.0-2
 
 %description		backend-sqlite
 This package contains the sqlite3 backend for the PowerDNS nameserver.
@@ -78,6 +96,7 @@ Summary:		LDAP backend for %{name}
 Group:			System Environment/Daemons
 Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
 BuildRequires:		openldap-devel
+Obsoletes:		pdns-server-backend-ldap
 
 %description		backend-ldap
 This package contains the LDAP backend for the PowerDNS nameserver.
@@ -104,6 +123,7 @@ This package contains the MyDNS backend for the PowerDNS nameserver.
 Summary:		Pipe/coprocess backend for %{name}
 Group:			System Environment/Daemons
 Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes:		pdns-server-backend-pipe
 
 %description		backend-pipe
 This package contains the pipe backend for the PowerDNS nameserver. This
@@ -114,6 +134,7 @@ questions on stdin and returns answers on stdout.
 Summary:		Experimental remotere backend for %{name}
 Group:			System Environment/Daemons
 Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+Obsoletes:		pdns-server-backend-remote
 
 %description		backend-remote
 This package contains the remote backend for the PowerDNS nameserver. This
@@ -124,31 +145,43 @@ Summary:		PowerDNS DNS tools
 Group:			Applications/System
 Conflicts:		%{name} < %{epoch}:%{version}-%{release}
 Conflicts:		%{name} > %{epoch}:%{version}-%{release}
+Obsoletes:		pdns-server-tools
 
 %description		tools
 This package contains the the PowerDNS DNS tools.
 
+
 %prep
 %setup -q -n pdns-4.1.13
-%patch0 -p1 -b .disable-secpoll
+%patch0 -p1 -b .init
+%patch1 -p1 -b .disable-secpoll
+
 
 %build
+%if %{!?_without_devtoolset:1}%{?_without_devtoolset:0}
+export PATH=/opt/rh/devtoolset-8/root/usr/bin/:$PATH
+%endif
+
+%if 0%{?rhel} == 6
+. /opt/rh/devtoolset-8/enable
+%endif
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
-    --with-lua \
-    --with-protobuf \
+    --with-lua=%{!?_without_lua:yes}%{?_without_lua:no} \
+    --enable-hardening=%{hardening} \
     --with-modules="" \
     --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
     --disable-static \
     --enable-tools
 
-sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
-sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
 %{__make} %{?_smp_mflags}
 
+
 %install
+[ "%{buildroot}" != "/" ] && %{__rm} -rf %{buildroot}
+
 %{__make} DESTDIR=%{buildroot} install
 %{__rm} -f %{buildroot}%{_libdir}/%{name}/*.la
 
@@ -164,10 +197,10 @@ EOF
 
 chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
 
-# install our systemd service file
-%{__rm} -f %{buildroot}%{_unitdir}/pdns.service
-%{__rm} -f %{buildroot}%{_unitdir}/pdns@.service
-install -p -D -m 644 %{SOURCE1} %{buildroot}%{_unitdir}/pdns.service
+# install sysv scripts
+install -d %{buildroot}%{_initrddir}
+install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
+
 
 %pre
 getent group pdns >/dev/null || groupadd -r pdns
@@ -177,20 +210,25 @@ getent passwd pdns >/dev/null || \
 exit 0
 
 %post
-%systemd_post pdns.service
+/sbin/chkconfig --add pdns
 
 %preun
-%systemd_preun pdns.service
+if [ $1 -eq 0 ]; then
+    /sbin/service pdns stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del pdns
+fi
 
 %postun
-%systemd_postun_with_restart pdns.service
+if [ $1 -ge 1 ]; then
+    /sbin/service pdns condrestart >/dev/null 2>&1
+fi
 
 %files
 %doc COPYING INSTALL NOTICE README
 %dir %{_sysconfdir}/%{name}/
 %dir %{_libdir}/%{name}/
 %config(noreplace) %attr(0600,root,root) %{_sysconfdir}/%{name}/pdns.conf
-%{_unitdir}/pdns.service
+%config(noreplace) %attr(0755,root,root) %{_initrddir}/pdns
 %{_bindir}/pdns_control
 %{_bindir}/pdnsutil
 %{_sbindir}/pdns_server
@@ -247,19 +285,16 @@ exit 0
 %{_bindir}/zone2ldap
 %{_bindir}/zone2sql
  %{_bindir}/calidns
- %{_bindir}/dnsbulktest
  %{_bindir}/dnsgram
  %{_bindir}/dnsreplay
  %{_bindir}/dnsscan
  %{_bindir}/dnsscope
- %{_bindir}/dnstcpbench
  %{_bindir}/dnswasher
  %{_bindir}/dumresp
  %{_bindir}/ixplore
  %{_bindir}/nproxy
  %{_bindir}/nsec3dig
  %{_bindir}/pdns_notify
- %{_bindir}/dnspcap2protobuf
  %{_bindir}/saxfr
  %{_bindir}/sdig
  %{_bindir}/stubquery
@@ -267,27 +302,21 @@ exit 0
 %{_mandir}/man1/zone2ldap.1.gz
 %{_mandir}/man1/zone2sql.1.gz
  %{_mandir}/man1/calidns.1.gz
- %{_mandir}/man1/dnsbulktest.1.gz
  %{_mandir}/man1/dnsgram.1.gz
  %{_mandir}/man1/dnsreplay.1.gz
  %{_mandir}/man1/dnsscan.1.gz
  %{_mandir}/man1/dnsscope.1.gz
- %{_mandir}/man1/dnstcpbench.1.gz
  %{_mandir}/man1/dnswasher.1.gz
  %{_mandir}/man1/dumresp.1.gz
  %{_mandir}/man1/ixplore.1.gz
  %{_mandir}/man1/nproxy.1.gz
  %{_mandir}/man1/nsec3dig.1.gz
  %{_mandir}/man1/pdns_notify.1.gz
- %{_mandir}/man1/dnspcap2protobuf.1.gz
  %{_mandir}/man1/saxfr.1.gz
  %{_mandir}/man1/sdig.1.gz
 
 
 %changelog
-* Mon Dec 23 2019 John Pierce <john@luckytanuki.com> 4.1.13-2
-- Build for Kloxo NG
-
 * Thu Aug 08 2019 Kees Monshouwer <mind04@monshouwer.org> 4.1.13-1
 - update to version 4.1.13
 
@@ -335,6 +364,7 @@ exit 0
 
 * Thu Jun 22 2017 Kees Monshouwer <mind04@monshouwer.org> 4.0.4-1
 - update to version 4.0.4
+- remove el5 specific parts from spec file
 
 * Tue Jan 17 2017 Kees Monshouwer <mind04@monshouwer.org> 4.0.3-1
 - update to version 4.0.3
@@ -378,4 +408,41 @@ exit 0
 - add lua backend
 
 * Tue Sep 30 2014 Kees Monshouwer <mind04@monshouwer.org> 3.4.0-1
-- initial el7 build for PowerDNS server
+- Update to 3.4.0
+- Rename package from pdns-server to pdns
+- Changed user from powerdns to pdns
+- Changed module location
+- New and migration .sql files after the schema change
+- Add saxfr to pdns-tools
+- Bind backend is now a dynmodule
+- Add mydns backend
+
+* Mon Jan 20 2014 Kees Monshouwer <mind04@monshouwer.org> 3.3.1-2
+- Fix pdns-tools dependency problem
+
+* Tue Dec 17 2013 Kees Monshouwer <mind04@monshouwer.org> 3.3.1-1
+- Update to 3.3.1
+
+* Mon Jul 08 2013 Kees Monshouwer <mind04@monshouwer.org> 3.3-2
+- Add remote backend
+
+* Fri Jul 05 2013 Kees Monshouwer <mind04@monshouwer.org> 3.3-1
+- Update to 3.3
+- Add geo backend
+
+* Thu Jan 17 2013 Kees Monshouwer <mind04@monshouwer.org> 3.2-1
+- Update to 3.2
+- Add sqlite3 backend
+
+* Wed Sep 05 2012 Kees Monshouwer <mind04@monshouwer.org> 3.1-2
+- Fix powerdns user and primary group creation
+- Improve spec file
+
+* Fri May 04 2012 Kees Monshouwer <mind04@monshouwer.org> 3.1-1
+- Update to 3.1
+
+* Sun Jan 08 2012 Kees Monshouwer <mind04@monshouwer.org> 3.0.1-1
+- Update to 3.0.1
+
+* Fri Jul 22 2011 Kees Monshouwer <mind04@monshouwer.org> 3.0-1
+- Initial build for PowerDNS 3.0
