@@ -5,7 +5,7 @@
 Name: %{productname}-%{packagename}
 Summary: SquirrelMail webmail client
 Version: 1.4.22
-Release: 6.kng%{?dist}
+Release: 7.kng%{?dist}
 License: GPL
 URL: http://www.squirrelmail.org/
 Group: Applications/Internet
@@ -127,13 +127,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,lxlabs,lxlabs)
-%config %dir %{kloxo}/squirrelmail
+%dir %{kloxo}/squirrelmail
 %attr(640,root,root) %config(noreplace) %{kloxo}/squirrelmail/*.php
 %attr(640,root,root) %config(noreplace) %{kloxo}/squirrelmail/default_pref
 %doc doc/*
-%dir %{kloxo}/squirrelmail
 %{kloxo}/squirrelmail/class
-%{kloxo}/squirrelmail/config
+%config %{kloxo}/squirrelmail/config
 %{kloxo}/squirrelmail/functions
 %{kloxo}/squirrelmail/help
 %{kloxo}/squirrelmail/images
@@ -149,6 +148,10 @@ rm -rf $RPM_BUILD_ROOT
 #%{_sysconfdir}/cron.daily/squirrelmail.cron
 
 %changelog
+
+* Mon Dec 23 2019 John Parnell Pierce <john@luckytanuki.com> - 1.4.22-7.kng
+- Remove dups from %files
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 
