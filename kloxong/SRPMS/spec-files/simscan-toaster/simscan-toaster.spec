@@ -1,7 +1,7 @@
 %define	name simscan
 %define	pversion 1.4.0
 %define 	bversion 1.4
-%define	rpmrelease 8.kng%{?dist}
+%define	rpmrelease 9.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
@@ -239,9 +239,9 @@ fi
 #-------------------------------------------------------------------------------
 %defattr(644,clam,clam)
 #qdir on install was root,root probably should be clam,root
-%attr(0750,clam,root) %dir %{qdir}
+#%attr(0750,clam,root) %dir %{qdir}
 #bin was on install root, root again it should be clam,root
-%attr(0750,clam,root) %dir %{qdir}/bin
+#%attr(0750,clam,root) %dir %{qdir}/bin
 %attr(4711,clam,root) %{qdir}/bin/%{name}
 # control was root,root it should be clam,root
 #%attr(0750,clam,root) dir %{qdir}/control
@@ -256,7 +256,7 @@ fi
 
 %attr(0644,clam,root) %config(noreplace) %{qdir}/control/simcontrol
 
-%attr(0755,qmaill,qmail)  %dir %{qdir}/supervise
+#%attr(0755,qmaill,qmail)  %dir %{qdir}/supervise
 %attr(1700,qmaill,qmail)  %dir %{qdir}/supervise/clamd
 %attr(0700,qmaill,qmail)  %dir %{qdir}/supervise/clamd/log
 %attr(0755,qmaill,qmail)  %dir %{qdir}/supervise/clamd/supervise
@@ -267,6 +267,8 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Dec 23 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
+- Comment out folders already provided by Requires
 * Mon Dec 16 2019 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.8.kng
 - Fix install section moving permitions to files section in accordance with copr directives
 - Adding missing depedencies for centos 6 and centos 7
