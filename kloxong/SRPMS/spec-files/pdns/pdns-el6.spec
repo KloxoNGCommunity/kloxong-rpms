@@ -27,7 +27,7 @@ BuildRoot:		%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 
 %if 0%{?rhel} == 6
-BuildRequires:		devtoolset-8
+BuildRequires:		devtoolset-7
 #BuildRequires:		devtoolset-4-binutils
 %endif
 
@@ -163,7 +163,7 @@ This package contains the the PowerDNS DNS tools.
 %endif
 
 %if 0%{?rhel} == 6
-. /opt/rh/devtoolset-8/enable
+. /opt/rh/devtoolset-7/enable
 %endif
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
