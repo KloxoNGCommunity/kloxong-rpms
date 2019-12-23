@@ -71,7 +71,7 @@ Pure-FTPd to be protected in the same way other FTP servers are in Fedora
 
 %prep
 %setup -q
-%patch0 -p0 -b .config
+%patch0 -p1 -b .config
 #%patch2 -p0 -b .paminclude
 #%patch2 -p0 -b .paminclude
 install -pm 644 %{SOURCE6} README.SELinux
