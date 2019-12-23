@@ -239,9 +239,9 @@ fi
 #-------------------------------------------------------------------------------
 %defattr(644,clam,clam)
 #qdir on install was root,root probably should be clam,root
-%attr(0750,clam,root) %{qdir}
+%attr(0750,clam,root) %dir %{qdir}
 #bin was on install root, root again it should be clam,root
-%attr(0750,clam,root) %{qdir}/bin
+%attr(0750,clam,root) %dir %{qdir}/bin
 %attr(4711,clam,root) %{qdir}/bin/%{name}
 # control was root,root it should be clam,root
 %attr(0750,clam,root) %{qdir}/control
@@ -250,7 +250,7 @@ fi
 
 %attr(0755,root,root) %{qdir}/bin/update-%{name}
 %attr(4711,clam,root) %{qdir}/bin/%{name}
-%attr(0644,root,root) %{_datadir}/doc/%{name}-%{pversion}
+%attr(0644,root,root) %dir %{_datadir}/doc/%{name}-%{pversion}
 %attr(0644,root,root) %{_datadir}/doc/%{name}-%{pversion}/*
 
 
