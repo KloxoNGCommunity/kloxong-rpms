@@ -1,0 +1,10 @@
+[Unit]
+Description=One-time configuration for pure-ftpd
+
+ConditionPathExists=|!/etc/pki/pure-ftpd/pure-ftpd.pem
+
+[Service]
+Type=oneshot
+RemainAfterExit=no
+
+ExecStart=/usr/bin/sscg --ca-file /etc/pki/pure-ftpd/ca.crt --cert-file /etc/pki/pure-ftpd/pure-ftpd.pem --cert-key-file /etc/pki/pure-ftpd/pure-ftpd.pem
