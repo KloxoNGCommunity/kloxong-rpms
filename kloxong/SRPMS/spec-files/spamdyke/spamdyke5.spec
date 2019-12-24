@@ -1,7 +1,7 @@
 Summary:	A drop-in connection-time spam filter for qmail.
 Name:		spamdyke
 Version:	5.0.1
-Release:	1.kng%{?dist}
+Release:	2.kng%{?dist}
 License:	GPL
 Group:		Applications/Internet
 Packager:	Mustafa Ramadhan <mustafa.ramadhan@lxcenter.org>
@@ -121,6 +121,8 @@ fi
 %defattr(-,root,root)
 %config %{_sysconfdir}/spamdyke.conf
 # permissions (
+%attr(-, qmaild, qmail) %dir /var/qmail/spamdyke
+%attr(-, qmaild, qmail) %dir /var/qmail/spamdyke/greylist
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_senders
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_senders
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_recipients
@@ -134,7 +136,6 @@ fi
 %{_bindir}/spamdyke
 %{_bindir}/spamdyke-qrv
 # permissions
-%attr(-, qmaild, qmail) /var/qmail/spamdyke
 /etc/cron.daily/spamdyke
 /usr/share/spamdyke/spamdyke.sql
 
@@ -145,6 +146,9 @@ fi
 %{_bindir}/domain*
 
 %changelog
+* Mon Dec 23 2019 John Pierce <john@luckytanuki.com>  5.0.1-2.kng
+- Fix warning: File listed twice errors
+
 * Tue Dec 17 2019 Dionysis Kladis <dkstiler@gmail.com> 5.0.1-1.kng
 - Adding missing depedency
 - Compile on corp for kloxong
