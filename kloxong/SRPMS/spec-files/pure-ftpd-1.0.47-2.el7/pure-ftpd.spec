@@ -7,7 +7,11 @@ Group:      System Environment/Daemons
 License:    BSD
 URL:        http://www.pureftpd.org
 Source0:    http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-%{version}.tar.bz2
+%if  %{?rhel}0 > 60
 Source1:    pure-ftpd.service
+%else
+Source1:    pure-ftpd.init
+$endif
 Source2:    pure-ftpd.logrotate
 Source3:    pure-ftpd.xinetd
 Source4:    pure-ftpd.pure-ftpwho.pam
@@ -36,18 +40,29 @@ Patch10:    0003-Revert-Remove-pure-vpopauth.-That-script-is-terrible.patch
 Patch11: 0001-Temporarily-disable-TLSv1.3-support.patch
 
 Provides:   ftpserver
-BuildRequires:  pam-devel, perl, python, libcap-devel
+BuildRequires:  pam-devel, perl,  libcap-devel
+%if  %{?rhel}0 > 70
+BuildRequires: python3,  autoconf-archive
+BuildRequires: systemd-units
+Requires(post): systemd-sysv
+Requires(post): systemd-units
+Requires(preun): systemd-units
+Requires(postun): systemd-units
+%else
+BuildRequires: python, autoconf
+Requires(post):   chkconfig
+Requires(preun):  chkconfig, initscripts
+Requires(postun): initscripts
+%endif
+
 %{!?_without_ldap:BuildRequires:  openldap-devel}
 %{!?_without_mysql:BuildRequires: mysql-devel}
 %{!?_without_pgsql:BuildRequires: postgresql-devel}
 %{!?_without_tls:BuildRequires: openssl-devel}
 BuildRequires: checkpolicy, selinux-policy-devel
-BuildRequires: systemd-units
-BuildRequires: automake autoconf-archive
-Requires(post): systemd-sysv
-Requires(post): systemd-units
-Requires(preun): systemd-units
-Requires(postun): systemd-units
+
+BuildRequires: automake
+
 Requires:   logrotate, usermode
 
 
