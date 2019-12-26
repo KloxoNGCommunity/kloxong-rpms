@@ -11,7 +11,7 @@ Source0:    http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-%{vers
 Source1:    pure-ftpd.service
 %else
 Source1:    pure-ftpd.init
-$endif
+%endif
 Source2:    pure-ftpd.logrotate
 Source3:    pure-ftpd.xinetd
 Source4:    pure-ftpd.pure-ftpwho.pam
