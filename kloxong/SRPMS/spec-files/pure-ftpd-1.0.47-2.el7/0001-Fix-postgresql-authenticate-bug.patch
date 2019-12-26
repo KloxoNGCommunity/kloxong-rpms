@@ -1,0 +1,25 @@
+From 6a256a21e48177e1d73d7e70b2292c76ac40ffb7 Mon Sep 17 00:00:00 2001
+From: t-asaka <tasaka@seqsense.com>
+Date: Mon, 28 May 2018 22:29:25 +0900
+Subject: [PATCH] Fix postgresql authenticate bug
+
+---
+ src/log_pgsql.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/log_pgsql.c b/src/log_pgsql.c
+index 4df654e..3825afb 100644
+--- a/src/log_pgsql.c
++++ b/src/log_pgsql.c
+@@ -504,7 +504,7 @@ void pw_pgsql_check(AuthResult * const result,
+         crypto_crypt++;
+         crypto_md5++;
+         crypto_sha1++;
+-    } else if (strcasecmp(crypto, PASSWD_SQL_ARGON2)) {
++    } else if (strcasecmp(crypto, PASSWD_SQL_ARGON2) == 0) {
+         crypto_argon2++;
+     } else if (strcasecmp(crypto, PASSWD_SQL_SCRYPT) == 0) {
+         crypto_scrypt++;
+-- 
+2.20.1
+

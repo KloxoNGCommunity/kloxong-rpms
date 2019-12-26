@@ -14,6 +14,8 @@ Source6:    pure-ftpd.README.SELinux
 Source7:    pure-ftpd.pureftpd.te
 Source8:    pure-ftpd-with-tls-init.service
 Source9:    pure-ftpd-with-tls.service
+
+
 Patch0:     0001-modify-pam.patch
 Patch1:     0002-fedora-specific-config-file.patch
 

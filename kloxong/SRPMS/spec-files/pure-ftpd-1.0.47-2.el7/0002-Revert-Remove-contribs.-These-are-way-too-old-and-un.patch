@@ -1,0 +1,693 @@
+From 1956de44a6385a6a891a0f18468335884b30eb7c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ond=C5=99ej=20Lyson=C4=9Bk?= <olysonek@redhat.com>
+Date: Wed, 6 Feb 2019 12:39:54 +0100
+Subject: [PATCH 2/3] Revert "Remove contribs. These are way too old and
+ unmaintained."
+
+This reverts commit ba526ef1525c09d63a309f3e0c22ecf1308d9070.
+---
+ Makefile.am                       |   2 +
+ README.Contrib                    | 137 +++++++++++++++
+ contrib/Makefile.am               |   3 +
+ contrib/pure-stat.pl              | 213 +++++++++++++++++++++++
+ contrib/xml_python_processors.txt | 274 ++++++++++++++++++++++++++++++
+ 5 files changed, 629 insertions(+)
+ create mode 100644 README.Contrib
+ create mode 100644 contrib/Makefile.am
+ create mode 100755 contrib/pure-stat.pl
+ create mode 100644 contrib/xml_python_processors.txt
+
+diff --git a/Makefile.am b/Makefile.am
+index a3c769f..635181a 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -10,6 +10,7 @@ EXTRA_DIST = \
+ 	README.MySQL \
+ 	README.PGSQL \
+ 	README.Configuration-File \
++	README.Contrib \
+ 	README.Virtual-Users \
+ 	README.Authentication-Modules \
+ 	README.Windows \
+@@ -25,6 +26,7 @@ EXTRA_DIST = \
+ SUBDIRS = \
+ 	puredb \
+ 	src \
++	contrib \
+ 	man \
+ 	pam \
+ 	gui \
+diff --git a/README.Contrib b/README.Contrib
+new file mode 100644
+index 0000000..0a23ab5
+--- /dev/null
++++ b/README.Contrib
+@@ -0,0 +1,137 @@
++
++
++You can send whatever you want to be included in that list to
++<j at pureftpd.org> or to the mailing list.
++
++  Thank you,
++
++
++                  -Frank.
++
++-----------------------------------------------------------------------------
++
++Warning: contributed packages haven't received any code audit. Please
++report bugs directly to authors.
++
++-----------------------------------------------------------------------------
++
++* Redmine Pure-FTPd plugin
++http://github.com/bytemine/redmine_pureftpd_user/
++
++This Redmine plugin maintains a table with pureftpd compatible users.
++
++
++* FTPd Auth Handler
++http://onrails.org/articles/2009/03/06/integrating-ftp-with-rails
++
++An extauth handler in Ruby.
++
++
++* Domain technologie control panel, as used on GPLHost
++http://github.com/carlosl/dtc
++
++
++* PureFTPd Manager
++http://jeanmatthieu.free.fr/pureftpd/
++
++PureFTPd Manager is a small Cocoa frontend to PureFTPd for Mac OS X. It
++includes a wizard to easily set up your server, Rendezvous support to
++publish your server efficiently, and groovy interfaces for virtual users and
++hosts management.
++
++
++* PureAdmin
++http://purify.sourceforge.net/
++
++PureAdmin is a graphical tool used to make the management of PureFTPd a
++little easier. It is not dependent on a specific desktop environment such as
++GNOME or KDE, but is designed with the GNOME Human Interface Guidelines in
++mind.
++
++
++* Pure-FTPd PHP User Manager
++http://ppum.sourceforge.net/
++
++ppum (PureFTPd PHP User Manager) is a PureFTPD PHP User Management System
++designed for an easy Web-based administration of SQL stored and
++authenticated FTP users.
++
++
++* User manager for Pure-FTPd
++http://machiel.generaal.net/index.php?subject=user_manager_pureftpd
++
++User manager for PureFTPd allows administrators to easily create, change, or
++delete 'virtual' PureFTPd users. It comes with a set of very good
++documentation to help with the setup of PureFTPd, MySQL, and this application.
++
++
++* PureUserAdmin
++http://pureuseradmin.sourceforge.net/
++
++PureUserAdmin is a PHP based webbased application. Sys admins can use it to
++easily manage the virtual users for their FTP server. PureUserAdmin is
++developed to be used with Pure-FTPd but it should be able to be used with
++other FTP servers as long as the FTP server gets the useraccount info from
++MySQL or PostgreSQL.
++
++
++* PurePostPro
++http://82.71.1.246/stuff/purepostpro/
++
++PurePostPro is a Perl/MySQL script that enables user uploads to be managed
++more easily. New uploads are logged in a MySQL database, and duplicate files
++are tracked using MD5 checksums.
++
++
++* MySQmail Pure-FTPd logger
++http://www.gplhost.com/software-mysqmail.html
++http://packages.debian.org/en/squeeze/mail/mysqmail-pure-ftpd-logger
++
++MySQMail is a set of tiny daemon loggers for mail and FTP servers that save
++traffic information in a MySQL database. The information is split by domain
++and by user so that it's easy to measure all the traffic for a given domain
++name in real time.
++
++This package provides a logger for FTP traffic handled by Pure-FTPd.
++
++
++
++                                 ----------
++
++
++
++Current content of the "contrib" directory:
++
++* xml_python_processors.txt (author: Jason Lunz):
++
++  Two scripts to postprocess pure-ftpwho XML output. One returns a list of
++dicts with the ftpwho data, each dict representing a connected client's
++attribute. If you want to develop something related to ftpwho in Python,
++this is a very good base.
++
++  The other script creates a web page similar to "pure-ftpwho -w", but
++better: you can choose which columns you want in which order and sort
++the rows on multiple fields. You can also see bandwidth totals per
++account.
++
++* redhat.init (author: Bernhard Weisshuhn):
++
++  A sample Red Hat init script.
++
++* suse.init (author: Marc Thoben):
++
++  A sample SuSE init script.
++
++* pure-vpopauth.pl (author: Dan Caescu):
++
++  An external authentication module for pure-ftpd using vpasswd
++vpopmail password files.
++  Run it the standard way with pure-authd.
++
++* pure-stat.pl (author: Julien Andrieux):
++
++  This script parses Apache-like log files and generates nice text summaries.
++
++* Vidibus::Pureftpd (author: Andre Pankratz):
++  A Ruby gem that p rovides an ActiveModel-based abstraction of Pure-FTPd's
++virtual users.
+diff --git a/contrib/Makefile.am b/contrib/Makefile.am
+new file mode 100644
+index 0000000..5056d5f
+--- /dev/null
++++ b/contrib/Makefile.am
+@@ -0,0 +1,3 @@
++EXTRA_DIST = \
++	xml_python_processors.txt \
++	pure-stat.pl
+diff --git a/contrib/pure-stat.pl b/contrib/pure-stat.pl
+new file mode 100755
+index 0000000..c26a4f8
+--- /dev/null
++++ b/contrib/pure-stat.pl
+@@ -0,0 +1,213 @@
++#!/usr/bin/env perl -w
++#--------------------------------------------------------------
++# PROJECT : pure-ftpd statistics
++# FILE : pure-stat.pl
++# DESCRIPTION : see below (Purpose)
++# AUTHOR : Chill
++# DATE : 08/01/2002
++# COMMENT:
++# PARAMETER : none
++# FROM FILE : none
++#--------------------------------------------------------------
++# PURPOSE
++# get the log file $CONST_LOGFILE
++# parse it and generate stats
++# to avoid loading a huge log file, a summary file ($CONST_SUMFILE),
++# is generated
++
++#CONSTANT DELCARATION
++my $CONST_USER=0;
++my $CONST_TUPLOAD=1;
++my $CONST_TDOWNLOAD=2;
++my $CONST_LCONNECTION=3;
++my $CONST_LOGFILE="/var/log/pureftpd.log";
++my $CONST_SUMFILE="/var/log/pureftpd.stat.log";
++
++#FUNCTION DECLARATION
++sub castSize;	
++
++#CREATE USERS ARRAY (UGLY, BUT USEFUL FOR DISPLAY)
++my @users = (["login", "upload", "download", "last connection"]);
++
++#MAIN VARIABLES INIT
++my $total_upload = 0;
++my $total_download = 0;
++
++
++#FUNCTION DEFINITION
++
++#MODIFY 1234bytes => 1.2Mb...
++sub castSize
++{
++	my $value = shift;
++
++       	if ($value > 1073741824)
++       	{
++       	        $value = $value / 1073741824;
++       	        @fvalue = ($value, "Gb");
++       	}
++       	elsif ($value > 1048576)
++       	{
++       	        $value = $value / 1048576;
++       	        @fvalue = ($value, "Mb");
++       	}
++	elsif ($value > 1024)
++       	{
++       	        $value = $value / 1024;
++       	        @fvalue = ($value, "Kb");
++       	}
++       	else
++       	{
++       	        @fvalue = ($value, "b");
++       	}
++	return @fvalue;
++}
++#END sub castSize
++
++#LOAD SUMMARY FILE INTO ARRAY
++open(SUMF,$CONST_SUMFILE);
++my @sumlist = <SUMF>;
++close SUMF;
++
++#PARSING SUMMARY FILE INTO ARRAY
++foreach $sumentry (@sumlist)
++{
++	($slogin, $sbytes_ul, $sbytes_dl, $sdate) =  $sumentry =~ m/^(\S+) (\S+) (\S+) \[([^\]\[]+)\]/;
++	push @users, [$slogin, $sbytes_ul, $sbytes_dl, $sdate];
++	$total_upload += $sbytes_ul;
++	$total_download += $sbytes_dl;
++}
++
++#LOAD LOG FILE INTO ARRAY
++open(LOG,$CONST_LOGFILE);
++my @loglist = <LOG>;
++close LOG;
++
++#PARSING  ARRAY IF NOT EMPTY
++if ($#loglist != -1)
++{
++	#GENERATE FILE EXTENSION AS yearmonthmdayhourmin
++	@dlist = gmtime(time);
++	$ext = sprintf("%02d%02d%02d%02d%02d", $dlist[5], $dlist[4]+1, $dlist[3], $dlist[2]+2, $dlist[1]);
++	undef @dlist;
++
++	#WE BACKUP THE LOG FILE
++	system ("gzip $CONST_LOGFILE -S .$ext.gz && touch $CONST_LOGFILE");
++
++	foreach $logentry (@loglist)
++	{
++		#LET'S GRAB THE LOG ENTRY
++		($ip, $tiret, $login, $date, $request, $status, $bytes) =  $logentry =~ m/^(\S+) (\S+) (\S+) \[([^\]\[]+)\] \"([^"]*)\" (\S+) (\S+)/; 
++			
++		#ADD OR MODIFY USERS
++		#IS THE USER IN THE SUMMARY FILE
++		my $gotuser = 0;
++		my $indexuser = 0;
++	
++		for $i ( 1 .. $#users )
++		{
++			if ($users[$i][$CONST_USER] eq $login)
++			{
++				$gotuser = 1;
++				$indexuser = $i;
++				last;
++			}
++		}
++		
++		#YES, WE DON'T ADD HIM, WE UPGRADE HIM
++		if ($gotuser)
++		{
++			if ( $request =~ "PUT")
++			{
++			#UPLOAD CASE
++				$users[$indexuser][$CONST_TUPLOAD] += $bytes;
++				$total_upload += $bytes;
++			}
++			elsif ( $request =~ "GET")
++			{
++			#DOWNLOAD CASE
++				$users[$indexuser][$CONST_TDOWNLOAD] += $bytes;
++				$total_download += $bytes;
++			}
++			#LAST CONNECTION
++			$users[$indexuser][$CONST_LCONNECTION] = $date;
++		}
++		else
++		{
++		#NOPE, WE ADD HIM
++			if ( $request =~ "GET")
++			{
++			#DOWNLOAD CASE
++				push @users, [$login, 0, $bytes, $date];
++				$total_download += $bytes;
++			}
++			elsif ( $request =~ "PUT")
++			{
++			#UPLOAD CASE
++				push @users, [$login, $bytes, 0, $date];
++				$total_upload += $bytes;
++			}
++		}
++	}
++}
++	
++#PRINT RESULTS
++#LET'S CLEAN THE SUMMARY FILE
++system ("rm -f $CONST_SUMFILE && touch $CONST_SUMFILE");
++
++#TABLE HEADER
++print "----------------------------------------------\n";
++print "$users[$i][$CONST_USER]\t|\t$users[$i][$CONST_TUPLOAD]\t\t|\t$users[$i][$CONST_TDOWNLOAD]\t\t|\t$users[$i][$CONST_LCONNECTION]\n";
++print "----------------------------------------------\n";
++
++#TABLE BODY
++for $i ( 1 .. $#users )
++{
++        if ($total_upload <= 0)
++        {
++                $percent_upload=0;
++        } else {
++		$percent_upload= 100*$users[$i][$CONST_TUPLOAD]/$total_upload;
++        }
++        if ($total_download <= 0)
++        {
++                $percent_download=0;
++        } else {
++		$percent_download= 100*$users[$i][$CONST_TDOWNLOAD]/$total_download;
++	}
++
++	@actual_upload = castSize $users[$i][$CONST_TUPLOAD];
++	@actual_download = castSize $users[$i][$CONST_TDOWNLOAD];
++
++	$strLogin = sprintf "%s", $users[$i][$CONST_USER];
++	$strUl = sprintf "%.1f %s (%.1f%%)", ($actual_upload[0],$actual_upload[1],$percent_upload);
++	$strDl = sprintf "%.1f %s (%.1f%%)", ($actual_download[0],$actual_download[1],$percent_download);
++	$strDate = sprintf "%s", ($users[$i][$CONST_LCONNECTION]);
++
++	#PRINT ON STDOUT
++	printf "%s\t|\t%s\t", ($strLogin, $strUl);
++	if ( length($strUl) < 8)
++	{
++		printf "\t";
++	}
++	printf "|\t%s\t", $strDl;
++	if ( length($strDl) < 8)
++	{
++		printf "\t";
++	}
++	printf "|\t%s\n", $strDate;
++	printf "\n";
++
++	#PRINT SUMMARY FILE
++	system ("echo -e '$users[$i][$CONST_USER] $users[$i][$CONST_TUPLOAD] $users[$i][$CONST_TDOWNLOAD] [$users[$i][$CONST_LCONNECTION]]' >> $CONST_SUMFILE");
++}
++
++#PREPARE BYTES, MBYTES OR GBYTES
++@ftotal_upload = castSize $total_upload;
++@ftotal_download = castSize $total_download;
++
++#TABLE FOOTER
++print "----------------------------------------------\n";
++printf "*\t|\t%.2f %s\t|\t%.2f %s\n", ($ftotal_upload[0],$ftotal_upload[1],$ftotal_download[0],$ftotal_download[1]);
++print "----------------------------------------------\n";
++
+diff --git a/contrib/xml_python_processors.txt b/contrib/xml_python_processors.txt
+new file mode 100644
+index 0000000..c4f7ba9
+--- /dev/null
++++ b/contrib/xml_python_processors.txt
+@@ -0,0 +1,274 @@
++From: Jason Lunz
++
++I've been fooling around with parsing the XML output of "pure-ftpwho -x"
++in python and doing things with it. The results could be useful to a lot
++of people, so I'm posting everything here. Maybe it can become part of a
++contrib/ dir in the distribution.
++
++mind you, none of this has been written with elegance or efficiency in
++mind. but it's a good basis for other work.
++
++Here's a python module that parses the XML pure-ftpwho data and returns
++a list of dicts, with each dict representing a connected client's
++attributes:
++
++    #! /usr/bin/env python2
++
++    import os
++    from xml.sax import handler, make_parser
++
++    class ftpwho_handler(handler.ContentHandler):
++	def __init__(self):
++	    handler.ContentHandler.__init__(self)
++	    self.clear()
++
++	def startElement(self, name, attrs):
++	    if name != 'client': return
++	    d = {}
++	    for (k, v) in attrs.items():
++		d[k] = v
++	    self.clients.append(d)
++
++	def clear(self):
++	    self.clients = []
++
++    parser = make_parser()
++    fh = ftpwho_handler()
++    parser.setContentHandler(fh)
++
++    def numberize(dicts):
++	for c in dicts:
++	    for k in ('pid', 'time', 'localport', 'percentage', 'bandwidth'):
++		if c.has_key(k):
++		    c[k] = int(c[k])
++	    for k in ('current_size', 'resume', 'total_size'):
++		if c.has_key(k):
++		    c[k] = long(c[k])
++	return dicts
++
++    def clients():
++	fh.clear()
++	parser.parse(os.popen('pure-ftpwho -x'))
++	return numberize(fh.clients)
++
++
++Building on that, I wrote html_ftpwho.py, which turns the aforementioned
++client list into HTML output. The output resembles what you get with
++"pure-ftpwho -w", but you can choose which columns you want in which
++order, and sort the rows on multiple fields. You also can see bandwidth
++totals per account.
++
++    #! /usr/bin/env python2
++
++    import getopt
++    import pure_ftpwho
++    import sys
++    from string import capitalize, lower
++
++    def range_idx(list, first = 1, cmp_func = cmp):
++	for i in range(first+1, len(list)):
++	    if cmp_func(list[first], list[i]):
++		return i
++	return len(list)
++	    
++    def dcmp(a, b, key):
++	if a.has_key(key):
++	    if b.has_key(key):
++		return cmp(a[key], b[key])
++	    else:
++		return 1
++	else:
++	    if b.has_key(key):
++		return -1
++	    else:
++		return 0
++
++    def multisort(dicts, keys):
++	if not keys:
++	    return dicts
++	dicts.sort(lambda x, y, key=keys[0]: dcmp(x, y, key))
++	ret = []
++	first = last = 0
++	while last < len(dicts):
++	    last = range_idx(dicts, first, lambda x, y, k=keys[0]: dcmp(x, y, k))
++	    add = multisort(dicts[first:last], keys[1:])
++	    if(add):
++		ret.extend(add)
++	    first = last
++	return ret
++
++    def col_heading(key):
++	headings = {'pid' : 'PID'}
++	if headings.has_key(key):
++	    return headings[key]
++	else:
++	    return capitalize(lower(key))
++
++    def size_abbrev(num, order=-1):
++	abbr = ['b', 'K', 'M', 'G', 'T']
++	if order == -1:
++	    q = 1
++	    for i in range(len(abbr)):
++		p = pow(1024, i+1)
++		if num < p:
++		    return (float(num)/q, abbr[i], i)
++		q = p
++	else:
++	    return (float(num)/pow(1024, order), abbr[order], order)
++
++    def celltext(dict, type):
++	sizes = ['current_size', 'total_size', 'percentage', 'bandwidth']
++	align = ''
++	ret = ''
++	if type == 'stats':
++	    align = ' align="right"'
++	    if filter(lambda k, d=dict: d.has_key(k), sizes):
++		bw, abbr, order = size_abbrev(dict['bandwidth'])
++		if order == 0:
++		    format = '%d'
++		else:
++		    format = '%.1f'
++		sf = format + '/' + format
++		sf += '&nbsp;%s&nbsp;(%d%%&nbsp;-&nbsp;' + format
++		sf += '&nbsp;%s/s)'
++		ret = sf % (size_abbrev(dict['current_size'], order)[0],
++		    size_abbrev(dict['total_size'], order)[0],
++		    abbr, dict['percentage'], bw, abbr)
++	elif not dict.has_key(type):
++	    ret = '&nbsp;'
++	elif type in sizes:
++	    ret = size_abbrev(dict[type])
++	elif type == 'time':
++	    align = ' align="right"'
++	    str = ''
++	    minutes, seconds = divmod(dict[type], 60)
++	    hours, minutes = divmod(minutes, 60)
++	    days, hours = divmod(hours, 24)
++	    if(days):
++		str += '%dd' % days
++	    if(hours):
++		str += '%02d:' % hours
++	    ret = str + '%02d:%02d' % (minutes, seconds)
++	else:
++	    ret = dict[type]
++	return '<td%s>%s</td>' % (align, ret)
++	    
++    def html(dicts, order, headings, stream, totals):
++	sorted = multisort(dicts, order)
++	stream.write('''<!DOCTYPE html PUBLIC "-//W3C/DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
++    <html>
++    <title>Pure-FTPd server status</title>
++    <body bgcolor="#ffffff" text="#000000">
++    ''')
++	if(totals):
++	    stream.write('<table cellspacing="4" border="2" cellpadding="4">')
++	    stream.write('<tr><th>Account</th><th>Total Bandwidth</th></tr>')
++	    for k in totals.keys():
++		stream.write('<tr><td>%s</td>' % k)
++		stream.write('<td>%d&nbsp;%s/s</td></tr>\n' % size_abbrev(totals[k])[:2])
++	    stream.write('</table><BR>\n')
++	stream.write('<div align="center">')
++	stream.write('<table width="100%" cellspacing="4" border="2" cellpadding="4">')
++	for k in headings:
++	    stream.write('<th>%s</th>' % col_heading(k))
++	stream.write('\n')
++	for d in sorted:
++	    stream.write('<tr valign="middle">\n')
++	    for k in headings:
++		stream.write('%s' % celltext(d, k))
++	    stream.write('\n</tr>\n')
++	stream.write('</table></div></body></html>\n')
++
++    def arg_expand(list, opts):
++	optmap = {
++	    'A':'account',
++	    'B':'bandwidth',
++	    'C':'current_size',
++	    'F':'file',
++	    'H':'host',
++	    'L':'localhost',
++	    'O':'localport',
++	    'P':'percentage',
++	    'D':'pid',
++	    'R':'resume',
++	    'S':'state',
++	    'T':'time',
++	    'X':'stats',
++	    'Z':'total_size' }
++	for l in opts:
++	    if optmap.has_key(l):
++		list.append(optmap[l])
++	    else:
++		print 'unrecognized column %s' % l
++		sys.exit(1)
++
++    def usage():
++	print '''usage: html_ftpwho.py [options]
++    -c <orderstr>  columns to output	(default "AXTSHF")
++    -o <orderstr>  sort order		(default "SABT")
++    -t             show totals per account
++
++    <orderstr> is a string of letters, each representing a client attribute:
++	A - account
++	B - bandwidth
++	C - current_size
++	F - file
++	H - host
++	L - localhost
++	O - localport
++	P - percentage
++	D - pid
++	R - resume
++	S - state
++	T - time
++	X - stats
++	Z - total_size
++    '''
++	sys.exit(1)
++
++    try:
++	optlist, args = getopt.getopt(sys.argv[1:], 'hc:o:t')
++    except getopt.error, msg:
++	print msg
++	usage()
++
++    ord_arg = ''
++    col_arg = ''
++    show_totals = 0
++    for opt in optlist:
++	if '-c' == opt[0]:
++	    col_arg += opt[1]
++	elif '-h' == opt[0]:
++	    usage()
++	elif '-o' == opt[0]:
++	    ord_arg += opt[1]
++	elif '-t' == opt[0]:
++	    show_totals = 1
++	else:
++	    print 'unrecognized option "%s"' % opt[0]
++	    usage()
++
++    if not ord_arg:
++	ord_arg = 'SABT'
++    if not col_arg:
++	col_arg = 'AXTSHF'
++    order = []
++    columns = []
++    arg_expand(order, ord_arg)
++    arg_expand(columns, col_arg)
++
++    cl = pure_ftpwho.clients()
++    totals = {}
++    if show_totals:
++	for c in cl:
++	    if c.has_key('bandwidth'):
++		try:
++		    totals[c['account']] += c['bandwidth']
++		except KeyError:
++		    totals[c['account']] = c['bandwidth']
++
++    html(cl, order, columns, sys.stdout, totals)
++
++suggestions/patches welcome,
++
++Jason
+-- 
+2.20.1
+
