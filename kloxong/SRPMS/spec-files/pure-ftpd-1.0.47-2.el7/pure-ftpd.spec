@@ -7,11 +7,11 @@ Group:      System Environment/Daemons
 License:    BSD
 URL:        http://www.pureftpd.org
 Source0:    http://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-%{version}.tar.bz2
-%if  %{?rhel}0 > 60
+#%if  %{?rhel}0 > 60
 Source1:    pure-ftpd.service
-%else
-Source1:    pure-ftpd.init
-%endif
+#%else
+#Source1:    pure-ftpd.init
+#%endif
 Source2:    pure-ftpd.logrotate
 Source3:    pure-ftpd.xinetd
 Source4:    pure-ftpd.pure-ftpwho.pam
