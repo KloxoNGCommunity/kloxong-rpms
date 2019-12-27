@@ -18,6 +18,7 @@ Source4:    pure-ftpd.pure-ftpwho.pam
 Source5:    pure-ftpd.pure-ftpwho.consoleapp
 Source6:    pure-ftpd.README.SELinux
 Source7:    pure-ftpd.pureftpd.te
+Source8:    pure-ftpd.init
 Patch0:     pure-ftpd-1.0.47-config.patch
 Patch1:     pure-ftpd-1.0.40-paminclude.patch
 # Upstream patch:
@@ -88,9 +89,15 @@ Rebuild switches:
 Summary:    SELinux support for Pure-FTPD
 Group:      System Environment/Daemons
 Requires:   %{name} = %{version}
+%if  %{?rhel}0 > 70
 Requires(post): policycoreutils, initscripts, %{name}
 Requires(preun): policycoreutils, initscripts, %{name}
 Requires(postun): policycoreutils
+%else
+Requires(post): policycoreutils, initscripts, %{name}
+Requires(preun): policycoreutils, initscripts, %{name}
+Requires(postun): policycoreutils
+%endif
 
 %description selinux
 This package adds SELinux enforcement to Pure-FTPD. Install it if you want
@@ -181,7 +188,12 @@ install -p -m 644 man/pure-quotacheck.8 $RPM_BUILD_ROOT%{_mandir}/man8
 install -p -m 644 man/pure-authd.8 $RPM_BUILD_ROOT%{_mandir}/man8
 
 # Init script
+%if  %{?rhel}0 > 70
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
+%else
+install -p -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}
+%endif
+
 
 # Pam 
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/pam.d
@@ -211,7 +223,13 @@ install -p -m 644 -D pureftpd.pp $RPM_BUILD_ROOT%{_datadir}/selinux/packages/%{n
 
 
 %post
+%if  %{?rhel}0 > 70
 %systemd_post pure-ftpd.service
+%else
+if [ "$1" -le "1" ]; then # fist install
+    /sbin/chkconfig --add pure-ftpd
+fi
+%endif
 
 %if 0%{!?_without_tls:1}
 # TLS Certificate
@@ -222,34 +240,81 @@ fi
 %endif
 
 %preun
+%if  %{?rhel}0 > 70
 %systemd_preun pure-ftpd.service
+%else
+if [ "$1" -lt "1" ]; then
+    if [ -f /etc/rc.d/init.d/pure-ftpd ] ; then
+        /sbin/service pure-ftpd stop > /dev/null 2>&1 || :
+        /sbin/chkconfig --del pure-ftpd
+    fi
+fi
+%endif
 
 %postun
+%if  %{?rhel}0 > 70
 %systemd_postun_with_restart pure-ftpd.service
+%else
+if [ "$1" -ge "1" ]; then 
+    if [ -f /etc/rc.d/init.d/pure-ftpd ] ; then
+        /sbin/service pure-ftpd condrestart > /dev/null 2>&1 
+    fi
+fi
+%endif
 
 
 %post selinux
+%if  %{?rhel}0 > 70
 if [ "$1" -le "1" ]; then # Fist install
     semodule -i %{_datadir}/selinux/packages/%{name}/pureftpd.pp 2>/dev/null || :
     fixfiles -R pure-ftpd restore || :
     /sbin/service pure-ftpd condrestart > /dev/null 2>&1  || :
 fi
+%else
+if [ "$1" -le "1" ]; then # Fist install
+    if [ -f /etc/rc.d/init.d/pure-ftpd ] ; then
+        semodule -i %{_datadir}/selinux/packages/%{name}/pureftpd.pp 2>/dev/null || :
+        fixfiles -R pure-ftpd restore || :
+        /sbin/service pure-ftpd condrestart > /dev/null 2>&1 || :
+    fi
+fi
+%endif
 
 %preun selinux
+%if  %{?rhel}0 > 70
 if [ "$1" -lt "1" ]; then # Final removal
     semodule -r pureftpd 2>/dev/null || :
     fixfiles -R pure-ftpd restore || :
     /sbin/service pure-ftpd condrestart > /dev/null 2>&1 || :
 fi
+%else
+if [ "$1" -lt "1" ]; then # Final removal
+    if [ -f /etc/rc.d/init.d/pure-ftpd ] ; then
+        semodule -r pureftpd 2>/dev/null || :
+        fixfiles -R pure-ftpd restore || :
+        /sbin/service pure-ftpd condrestart > /dev/null 2>&1 || :
+    fi
+fi
+%endif
 
 %postun selinux
+%if  %{?rhel}0 > 70
 if [ "$1" -ge "1" ]; then # Upgrade
     # Replaces the module if it is already loaded
     semodule -i %{_datadir}/selinux/packages/%{name}/pureftpd.pp 2>/dev/null || :
     # no need to restart the daemon
 fi
+%else
+if [ "$1" -ge "1" ]; then # Upgrade
+    if [ -f /etc/rc.d/init.d/pure-ftpd ] ; then
+        # Replaces the module if it is already loaded
+        semodule -i %{_datadir}/selinux/packages/%{name}/pureftpd.pp 2>/dev/null || :
+        # no need to restart the daemon
+    fi
+fi
+%endif
 
-
+%if  %{?rhel}0 > 70
 %triggerun -- pure-ftpd < 1.0.32-2
 # Save the current service runlevel info
 # User must manually run systemd-sysv-convert --apply pure-ftpd
@@ -259,6 +324,7 @@ fi
 # Run these because the SysV package being removed won't do them
 /sbin/chkconfig --del pure-ftpd >/dev/null 2>&1 || :
 /bin/systemctl try-restart pure-ftpd.service >/dev/null 2>&1 || :
+%endif
 
 
 %files
