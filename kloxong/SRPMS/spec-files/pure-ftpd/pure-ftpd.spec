@@ -126,8 +126,8 @@ install -d -m 755 $RPM_BUILD_ROOT%{_localstatedir}/ftp
 
 # Conf
 install -p -m 755 configuration-file/pure-config.pl $RPM_BUILD_ROOT%{_sbindir}
-install -p -m 644 configuration-file/pure-ftpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
-install -p -m 755 configuration-file/pure-config.py $RPM_BUILD_ROOT%{_sbindir}
+#install -p -m 644 configuration-file/pure-ftpd.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
+#install -p -m 755 configuration-file/pure-config.py $RPM_BUILD_ROOT%{_sbindir}
 install -p -m 644 pureftpd-ldap.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install -p -m 644 pureftpd-mysql.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 install -p -m 644 pureftpd-pgsql.conf $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
