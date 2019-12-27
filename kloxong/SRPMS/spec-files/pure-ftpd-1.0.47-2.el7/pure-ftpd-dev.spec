@@ -191,7 +191,7 @@ install -p -m 644 man/pure-authd.8 $RPM_BUILD_ROOT%{_mandir}/man8
 %if  %{?rhel}0 > 70
 install -p -m 644 %{SOURCE1} $RPM_BUILD_ROOT%{_unitdir}/%{name}.service
 %else
-install -p -m 755 %{SOURCE1} $RPM_BUILD_ROOT%{_initrddir}/%{name}
+install -p -m 755 %{SOURCE8} $RPM_BUILD_ROOT%{_initrddir}/%{name}
 %endif
 
 
@@ -203,9 +203,9 @@ install -p -m 644 pam/pure-ftpd $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/%{name}
 
-# xinetd support
+# xinetd support (Kloxo uses pureftp rather than pure-ftp)
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
-install -p -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/%{name}
+install -p -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/pureftp
 
 # pure-ftpwho and non-root users
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/security/console.apps
@@ -339,7 +339,7 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%config(noreplace) %{_sysconfdir}/xinetd.d/%{name}
+%config(noreplace) %{_sysconfdir}/xinetd.d/pureftp
 %config(noreplace) %{_sysconfdir}/pam.d/pure-ftpwho
 %config(noreplace) %{_sysconfdir}/security/console.apps/pure-ftpwho
 %{!?_without_tls:%{_sysconfdir}/pki/%{name}}
