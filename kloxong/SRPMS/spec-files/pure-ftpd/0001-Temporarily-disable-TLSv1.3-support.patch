@@ -1,0 +1,30 @@
+From f9e232ffb44c96538f2a12c4bc4970f228f971cd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Ond=C5=99ej=20Lyson=C4=9Bk?= <olysonek@redhat.com>
+Date: Tue, 12 Feb 2019 11:17:16 +0100
+Subject: [PATCH] Temporarily disable TLSv1.3 support
+
+Disable TLSv1.3 until support for it is fixed in pure-ftpd. This is a
+workaround for the following issue:
+https://github.com/jedisct1/pure-ftpd/issues/102
+---
+ src/tls.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/tls.c b/src/tls.c
+index c4e2a1b..41d619f 100644
+--- a/src/tls.c
++++ b/src/tls.c
+@@ -301,6 +301,10 @@ int tls_init_library(void)
+ # endif
+ # ifdef SSL_OP_NO_TLSv1_2
+     SSL_CTX_clear_options(tls_ctx, SSL_OP_NO_TLSv1_2);
++# endif
++    /* Disable TLSv1.3 support until it works properly in pure-ftpd */
++# ifdef SSL_OP_NO_TLSv1_3
++    SSL_CTX_set_options(tls_ctx, SSL_OP_NO_TLSv1_3);
+ # endif
+     if (tlsciphersuite != NULL) {
+         if (SSL_CTX_set_cipher_list(tls_ctx, tlsciphersuite) != 1) {
+-- 
+2.20.1
+
