@@ -1,6 +1,6 @@
 Name:       pure-ftpd
 Version:    1.0.49
-Release:    1.kng%{?dist}
+Release:    2.kng%{?dist}
 Summary:    Lightweight, fast and secure FTP server
 
 Group:      System Environment/Daemons
@@ -265,6 +265,9 @@ fi
 
 
 %changelog
+* Fri Dec 27 2019 John Pierce <john@luckytanuki.com> -1.0.49-2.kng
+- Fix patches to restore pure-config.pl files
+ 
 * Sun Jun 15 2019 Mustafa Ramadhan <mustafa@bigraf.com> - 1.0.49-1.mr
 - update to 1.0.49
 

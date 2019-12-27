@@ -1,3 +1,0 @@
-USER=root
-PROGRAM=/usr/sbin/pure-ftpwho
-GUI=no

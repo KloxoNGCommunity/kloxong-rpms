@@ -1,5 +1,0 @@
-/var/log/pureftpd.log {
-    weekly
-    notifempty
-    missingok
-}
