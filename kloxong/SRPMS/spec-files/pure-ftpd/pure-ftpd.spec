@@ -33,6 +33,9 @@ Patch7:     0001-Revert-After-20-years-say-goodbye-to-the-external-co.patch
 Patch8:     0001-Revert-No-more-contrib-Makefile.in.patch
 Patch9:     0002-Revert-Remove-contribs.-These-are-way-too-old-and-un.patch
 Patch10:    0003-Revert-Remove-pure-vpopauth.-That-script-is-terrible.patch
+# Temporarily disable TLSv1.3 to workaround
+# https://github.com/jedisct1/pure-ftpd/issues/102
+Patch11: 0001-Temporarily-disable-TLSv1.3-support.patch
 Provides:   ftpserver
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  pam-devel, perl, python, libcap-devel
