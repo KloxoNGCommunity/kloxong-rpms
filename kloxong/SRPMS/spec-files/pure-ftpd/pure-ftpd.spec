@@ -79,6 +79,7 @@ cp -p %{SOURCE7} selinux/pureftpd.te
 
 
 %build
+autoreconf -fi
 %configure  --with-paranoidmsg \
             --with-capabilities \
             --with-privsep \
