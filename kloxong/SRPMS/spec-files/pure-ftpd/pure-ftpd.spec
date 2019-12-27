@@ -14,28 +14,7 @@ Source4:    pure-ftpd.pure-ftpwho.pam
 Source5:    pure-ftpd.pure-ftpwho.consoleapp
 Source6:    pure-ftpd.README.SELinux
 Source7:    pure-ftpd.pureftpd.te
-#Patch0:     pure-ftpd-1.0.27-config.patch
-#Patch2:     pure-ftpd-paminclude.patch
-#Patch3:     pure-ftpd-paminclude-1.0.49.patch
-Patch0:     pure-ftpd-1.0.47-config.patch
-Patch1:     pure-ftpd-1.0.40-paminclude.patch
-# Upstream patch:
-Patch2:     0001-Exit-when-given-an-invalid-cmdline-option.patch
-# Upstream patch:
-Patch3:     0002-Complain-when-both-options-and-config-file-are-given.patch
-# Upstream patch:
-Patch4:     0001-Increase-MAX_DATA_SIZE-due-to-Argon2id-requirements.patch
-# Upstream patch:
-Patch6:     0001-Fix-postgresql-authenticate-bug.patch
-
-# Revert pure-config.pl and contrib removal:
-Patch7:     0001-Revert-After-20-years-say-goodbye-to-the-external-co.patch
-Patch8:     0001-Revert-No-more-contrib-Makefile.in.patch
-Patch9:     0002-Revert-Remove-contribs.-These-are-way-too-old-and-un.patch
-Patch10:    0003-Revert-Remove-pure-vpopauth.-That-script-is-terrible.patch
-# Temporarily disable TLSv1.3 to workaround
-# https://github.com/jedisct1/pure-ftpd/issues/102
-Patch11: 0001-Temporarily-disable-TLSv1.3-support.patch
+Patch0:     pure_kloxo.patch
 Provides:   ftpserver
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires:  pam-devel, perl, python, libcap-devel
@@ -91,17 +70,9 @@ Pure-FTPd to be protected in the same way other FTP servers are in Fedora
 
 %prep
 %setup -q
-%patch0 -p1 -b .config
-%patch1 -p1 -b .paminclude
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch6 -p1
-%patch7 -p1
-%patch8 -p1
-%patch9 -p1
-%patch10 -p1
-%patch11 -p1
+
+%patch0 -p1 -b .kloxopatch
+
 install -pm 644 %{SOURCE6} README.SELinux
 mkdir selinux
 cp -p %{SOURCE7} selinux/pureftpd.te

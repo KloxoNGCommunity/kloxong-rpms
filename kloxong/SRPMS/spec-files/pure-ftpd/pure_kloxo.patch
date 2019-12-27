@@ -1,55 +1,13 @@
-From 54a54e837535f8582634ba18d9008d1ee84aadc1 Mon Sep 17 00:00:00 2001
-From: =?UTF-8?q?Ond=C5=99ej=20Lyson=C4=9Bk?= <olysonek@redhat.com>
-Date: Wed, 6 Feb 2019 09:31:01 +0100
-Subject: [PATCH] Revert "After 20 years, say goodbye to the external config
- file parsers"
-
-This reverts commit 623796f70f336225eb27dee4a82c43b53b9cc466.
----
- Makefile.am                          |   2 +
- configuration-file/Makefile.am       |   3 +
- configuration-file/pure-config.pl.in | 127 ++++++++++++++++++
- configuration-file/pure-config.py.in | 188 +++++++++++++++++++++++++++
- configure.ac                         |  11 ++
- 5 files changed, 331 insertions(+)
- create mode 100644 configuration-file/Makefile.am
- create mode 100644 configuration-file/pure-config.pl.in
- create mode 100644 configuration-file/pure-config.py.in
-
-diff --git a/Makefile.am b/Makefile.am
-index 87da26e..a3c769f 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -5,6 +5,7 @@ EXTRA_DIST = \
- 	CONTACT \
- 	FAQ \
- 	Makefile.gui \
-+	README.Configuration-File \
- 	README.LDAP \
- 	README.MySQL \
- 	README.PGSQL \
-@@ -27,6 +28,7 @@ SUBDIRS = \
- 	man \
- 	pam \
- 	gui \
-+	configuration-file \
- 	m4
- 
- sysconf_DATA = \
-diff --git a/configuration-file/Makefile.am b/configuration-file/Makefile.am
-new file mode 100644
-index 0000000..4639909
---- /dev/null
-+++ b/configuration-file/Makefile.am
+diff -ruN pure-ftpd-1.0.49/configuration-file/Makefile.am pure-ftpd-1.0.49-new/configuration-file/Makefile.am
+--- pure-ftpd-1.0.49/configuration-file/Makefile.am	1970-01-01 10:00:00.000000000 +1000
++++ pure-ftpd-1.0.49-new/configuration-file/Makefile.am	2019-12-27 07:48:25.677999999 +1100
 @@ -0,0 +1,3 @@
 +CLEANFILES = \
 +	pure-config.pl \
 +	pure-config.py
-diff --git a/configuration-file/pure-config.pl.in b/configuration-file/pure-config.pl.in
-new file mode 100644
-index 0000000..ea675c8
---- /dev/null
-+++ b/configuration-file/pure-config.pl.in
+diff -ruN pure-ftpd-1.0.49/configuration-file/pure-config.pl.in pure-ftpd-1.0.49-new/configuration-file/pure-config.pl.in
+--- pure-ftpd-1.0.49/configuration-file/pure-config.pl.in	1970-01-01 10:00:00.000000000 +1000
++++ pure-ftpd-1.0.49-new/configuration-file/pure-config.pl.in	2019-12-27 07:48:25.679000001 +1100
 @@ -0,0 +1,127 @@
 +#! @PERL@
 +
@@ -178,11 +136,9 @@ index 0000000..ea675c8
 +        print "Running: $PUREFTPD ", join(" ", @flg), "\n";
 +}
 +exec { $PUREFTPD } ($PUREFTPD, @flg) or die "cannot exec $PUREFTPD: $!";
-diff --git a/configuration-file/pure-config.py.in b/configuration-file/pure-config.py.in
-new file mode 100644
-index 0000000..c458a20
---- /dev/null
-+++ b/configuration-file/pure-config.py.in
+diff -ruN pure-ftpd-1.0.49/configuration-file/pure-config.py.in pure-ftpd-1.0.49-new/configuration-file/pure-config.py.in
+--- pure-ftpd-1.0.49/configuration-file/pure-config.py.in	1970-01-01 10:00:00.000000000 +1000
++++ pure-ftpd-1.0.49-new/configuration-file/pure-config.py.in	2019-12-27 07:48:25.679000001 +1100
 @@ -0,0 +1,188 @@
 +#! @PYTHON@
 +
@@ -372,11 +328,10 @@ index 0000000..c458a20
 +        print("Running:", args + argv)
 +
 +    os.execv(pureftpd, args + argv)
-diff --git a/configure.ac b/configure.ac
-index 5d91d12..e66a578 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -91,6 +91,14 @@ AX_CHECK_LINK_FLAG([-Wl,-z,relro], [LDFLAGS="$LDFLAGS -Wl,-z,relro"])
+diff -ruN pure-ftpd-1.0.49/configure.ac pure-ftpd-1.0.49-new/configure.ac
+--- pure-ftpd-1.0.49/configure.ac	2019-04-03 21:41:30.000000000 +1100
++++ pure-ftpd-1.0.49-new/configure.ac	2019-12-27 07:53:06.555000491 +1100
+@@ -96,6 +96,18 @@
  AX_CHECK_LINK_FLAG([-Wl,-z,now], [LDFLAGS="$LDFLAGS -Wl,-z,now"])
  AX_CHECK_LINK_FLAG([-Wl,-z,noexecstack], [LDFLAGS="$LDFLAGS -Wl,-z,noexecstack"])
  
@@ -388,10 +343,14 @@ index 5d91d12..e66a578 100644
 +python_possible_path="/usr/bin:/usr/local/bin:/bin:/opt/python/bin:/opt/python/usr/bin:/opt/python/usr/local/bin"
 +AC_PATH_PROG(PYTHON,python,/usr/bin/env python,$python_possible_path)
 +
- if test -d /usr/local/include; then
-   CPPFLAGS="$CPPFLAGS -I/usr/local/include"
- fi
-@@ -1462,6 +1470,9 @@ AH_VERBATIM([NDEBUG], [/* Never ever ignore assertions */
++if test -d /usr/local/include; then
++    CPPFLAGS="$CPPFLAGS -I/usr/local/include"
++fi
++
+ if test "x$cross_compiling" != "xyes"; then
+   for path in \
+     /usr/kerberos \
+@@ -1465,6 +1477,9 @@
  AC_CONFIG_FILES(Makefile src/Makefile pam/Makefile man/Makefile
  gui/Makefile m4/Makefile pure-ftpd.conf puredb/Makefile
  puredb/src/Makefile
@@ -400,7 +359,154 @@ index 5d91d12..e66a578 100644
 +configuration-file/pure-config.py
  man/pure-ftpd.8 man/pure-ftpwho.8 man/pure-mrtginfo.8 man/pure-uploadscript.8
  man/pure-statsdecode.8 man/pure-quotacheck.8 man/pure-pw.8 man/pure-pwconvert.8
- man/pure-authd.8)
--- 
-2.20.1
-
+ man/pure-authd.8 man/pure-certd.8)
+diff -ruN pure-ftpd-1.0.49/Makefile.am pure-ftpd-1.0.49-new/Makefile.am
+--- pure-ftpd-1.0.49/Makefile.am	2019-03-26 05:04:04.000000000 +1100
++++ pure-ftpd-1.0.49-new/Makefile.am	2019-12-27 07:48:25.675999998 +1100
+@@ -43,6 +43,7 @@
+ 	man \
+ 	pam \
+ 	gui \
++	configuration-file \
+ 	m4
+ 
+ install-data-local:
+diff -ruN pure-ftpd-1.0.49/pam/pure-ftpd pure-ftpd-1.0.49-new/pam/pure-ftpd
+--- pure-ftpd-1.0.49/pam/pure-ftpd	2018-01-04 23:13:36.000000000 +1100
++++ pure-ftpd-1.0.49-new/pam/pure-ftpd	2019-12-27 07:47:49.249000002 +1100
+@@ -4,12 +4,13 @@
+ # Install it in /etc/pam.d/pure-ftpd or add to /etc/pam.conf
+ 
+ auth       required     pam_listfile.so item=user sense=deny file=/etc/ftpusers onerr=succeed
++auth       include      password-auth
+ auth       required     pam_shells.so
+ auth       required     pam_nologin.so
+ 
+-account    required     pam_stack.so service=system-auth
++account    include      password-auth
+ 
+-password   required     pam_stack.so service=system-auth
+-
+-session    required     pam_stack.so service=system-auth
++password   include      password-auth
+ 
++session    required     pam_loginuid.so
++session    include      password-auth
+diff -ruN pure-ftpd-1.0.49/pure-ftpd.conf.in pure-ftpd-1.0.49-new/pure-ftpd.conf.in
+--- pure-ftpd-1.0.49/pure-ftpd.conf.in	2019-03-26 02:48:42.000000000 +1100
++++ pure-ftpd-1.0.49-new/pure-ftpd.conf.in	2019-12-27 07:48:08.410000001 +1100
+@@ -9,7 +9,7 @@
+ # instead of command-line options, please run the
+ # following command :
+ #
+-# @sbindir@/sbin/pure-ftpd @sysconfdir@/pure-ftpd.conf
++# @sbindir@/pure-ftpd @sysconfdir@/pure-ftpd.conf
+ #
+ # Online documentation:
+ # https://www.pureftpd.org/project/pure-ftpd/doc
+@@ -42,7 +42,7 @@
+ 
+ 
+ # Run as a background process
+-
++# Important: this must be set to 'yes' for the systemd service to work.
+ Daemonize                    yes
+ 
+ 
+@@ -106,34 +106,34 @@
+ 
+ # LDAP configuration file (see README.LDAP)
+ 
+-# LDAPConfigFile               /etc/pureftpd-ldap.conf
++# LDAPConfigFile               @sysconfigdir@/pureftpd-ldap.conf
+ 
+ 
+ 
+ # MySQL configuration file (see README.MySQL)
+ 
+-# MySQLConfigFile              /etc/pureftpd-mysql.conf
++# MySQLConfigFile              @sysconfigdir@/pureftpd-mysql.conf
+ 
+ 
+ # PostgreSQL configuration file (see README.PGSQL)
+ 
+-# PGSQLConfigFile              /etc/pureftpd-pgsql.conf
++# PGSQLConfigFile              @sysconfigdir@/pureftpd-pgsql.conf
+ 
+ 
+ # PureDB user database (see README.Virtual-Users)
+ 
+-# PureDB                       /etc/pureftpd.pdb
++# PureDB                       @sysconfigdir@/pureftpd.pdb
+ 
+ 
+ # Path to pure-authd socket (see README.Authentication-Modules)
+ 
+-# ExtAuth                      /var/run/ftpd.sock
++# ExtAuth                      @localstatedir@/run/ftpd.sock
+ 
+ 
+ 
+ # If you want to enable PAM authentication, uncomment the following line
+ 
+-# PAMAuthentication            yes
++PAMAuthentication            yes
+ 
+ 
+ 
+@@ -238,8 +238,7 @@
+ # For example, a value of 100 prevents all users whose user id is below
+ # 100 from logging in. If you want "root" to be able to log in, use 0.
+ 
+-MinUID                       100
+-
++MinUID                       1000
+ 
+ 
+ # Allow FXP transfers for authenticated users.
+@@ -277,7 +276,7 @@
+ 
+ # Prevent anonymous users from uploading new files (no = upload is allowed)
+ 
+-AnonymousCantUpload          no
++AnonymousCantUpload          yes
+ 
+ 
+ 
+@@ -301,21 +300,21 @@
+ # fw.c9x.org - jedi [13/Apr/2017:19:36:39] "GET /ftp/linux.tar.bz2" 200 21809338
+ # This log file can then be processed by common HTTP traffic analyzers.
+ 
+-# AltLog                       clf:/var/log/pureftpd.log
++AltLog                       clf:@localstatedir@/log/pureftpd.log
+ 
+ 
+ 
+ # Create an additional log file with transfers logged in a format optimized
+ # for statistic reports.
+ 
+-# AltLog                       stats:/var/log/pureftpd.log
++# AltLog                       stats:@localstatedir@/log/pureftpd.log
+ 
+ 
+ 
+ # Create an additional log file with transfers logged in the standard W3C
+ # format (compatible with many HTTP log analyzers)
+ 
+-# AltLog                       w3c:/var/log/pureftpd.log
++# AltLog                       w3c:@localstatedir@/log/pureftpd.log
+ 
+ 
+ 
+@@ -346,9 +345,9 @@
+ 
+ 
+ # If your pure-ftpd has been compiled with standalone support, you can change
+-# the location of the pid file. The default is /var/run/pure-ftpd.pid
++# the location of the pid file. The default is @localstatedir@/run/pure-ftpd.pid
+ 
+-# PIDFile                      /var/run/pure-ftpd.pid
++#PIDFile                     @localstatedir@/run/pure-ftpd.pid
+ 
+ 
+ 
