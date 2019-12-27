@@ -41,15 +41,17 @@ Patch11: 0001-Temporarily-disable-TLSv1.3-support.patch
 
 Provides:   ftpserver
 BuildRequires:  pam-devel, perl,  libcap-devel
+BuildRequires: automake,  autoconf-archive
+
 %if  %{?rhel}0 > 70
-BuildRequires: python3,  autoconf-archive
+BuildRequires: python3
 BuildRequires: systemd-units
 Requires(post): systemd-sysv
 Requires(post): systemd-units
 Requires(preun): systemd-units
 Requires(postun): systemd-units
 %else
-BuildRequires: python, autoconf
+BuildRequires: python
 Requires(post):   chkconfig
 Requires(preun):  chkconfig, initscripts
 Requires(postun): initscripts
@@ -61,7 +63,6 @@ Requires(postun): initscripts
 %{!?_without_tls:BuildRequires: openssl-devel}
 BuildRequires: checkpolicy, selinux-policy-devel
 
-BuildRequires: automake
 
 Requires:   logrotate, usermode
 
