@@ -1,6 +1,6 @@
 Name:       pure-ftpd
 Version:    1.0.49
-Release:    2.kng%{?dist}
+Release:    3.kng%{?dist}
 Summary:    Lightweight, fast and secure FTP server
 
 Group:      System Environment/Daemons
@@ -155,8 +155,8 @@ install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
 install -p -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/%{name}
 
 # xinetd support
-install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
-install -p -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/pureftp
+#install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d
+#install -p -m 644 %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/xinetd.d/pureftp
 
 # pure-ftpwho and non-root users
 install -d -m 755 $RPM_BUILD_ROOT%{_sysconfdir}/security/console.apps
@@ -249,7 +249,7 @@ fi
 %config(noreplace) %{_sysconfdir}/%{name}
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%config(noreplace) %{_sysconfdir}/xinetd.d/pureftp
+#%config(noreplace) %{_sysconfdir}/xinetd.d/pureftp
 %config(noreplace) %{_sysconfdir}/pam.d/pure-ftpwho
 %config(noreplace) %{_sysconfdir}/security/console.apps/pure-ftpwho
 
@@ -265,6 +265,9 @@ fi
 
 
 %changelog
+* Fri Sun 29 2019 John Pierce <john@luckytanuki.com> -1.0.49-3.kng
+- Remove xinetd.d from build and use xinetd.d provided by kloxo 
+
 * Fri Dec 27 2019 John Pierce <john@luckytanuki.com> -1.0.49-2.kng
 - Fix patches to restore pure-config.pl files
  
