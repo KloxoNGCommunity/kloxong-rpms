@@ -265,7 +265,7 @@ fi
 
 
 %changelog
-* Sun 29 2019 John Pierce <john@luckytanuki.com> -1.0.49-3.kng
+* Sun Dec 29 2019 John Pierce <john@luckytanuki.com> -1.0.49-3.kng
 - Remove xinetd.d from build and use xinetd.d provided by kloxo 
 
 * Fri Dec 27 2019 John Pierce <john@luckytanuki.com> -1.0.49-2.kng
