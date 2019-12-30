@@ -4,15 +4,14 @@
 %define packagename2 phpmyadmin
 
 Name: %{productname}-%{packagename2}
-Version: 4.9.1
-#Release: 1%{?dist}
-Release: 1.kng%{?dist}
+Version: 4.0.10.20
+Release: 2.kng%{?dist}
 Summary: Web based MySQL browser written in php
 
 Group: Applications/Internet
 License: GPLv2+
 URL: http://www.phpmyadmin.net/
-Source0: https://files.phpmyadmin.net/phpMyAdmin/%{version}/%{packagename}-%{version}-all-languages.tar.gz
+Source0: http://downloads.sourceforge.net/sourceforge/phpmyadmin/%{packagename}-%{version}-all-languages.tar.gz
 
 #Source10: http://downloads.sourceforge.net/sourceforge/phpmyadmin/arctic_ocean-3.3.zip
 #Source11: http://downloads.sourceforge.net/sourceforge/phpmyadmin/smooth_yellow-3.3.zip
@@ -34,8 +33,8 @@ BuildRequires: unzip
 #Requires: php-gd >= 5.2.0
 #Requires: php-mcrypt >= 5.2.0
 Provides: phpmyadmin = %{version}-%{release}
-Obsoletes: kloxo-phpMyAdmin, kloxomr-thirdparty-phpmyadmin >= 4.1
-Conflicts: kloxomr-thirdparty-phpmyadmin < 4.1
+
+Obsoletes: kloxomr-thirdparty-phpmyadmin
 
 %description
 phpMyAdmin is a tool written in PHP intended to handle the administration of
@@ -83,10 +82,8 @@ rm -rf %{buildroot}
 
 %post
 # generate a secret key for this install
-#sed -i -e "/'blowfish_secret'/s/MUSTBECHANGEDONINSTALL/$RANDOM$RANDOM$RANDOM$RANDOM/" \
-#    %{kloxo}/%{packagename}/config.inc.php
-
-sed -i "s:// \$cfg['Servers'][\$i]['central_columns']:\$cfg['Servers'][\$i]['central_columns']:g" %{kloxo}/%{packagename}/config.inc.php
+sed -i -e "/'blowfish_secret'/s/MUSTBECHANGEDONINSTALL/$RANDOM$RANDOM$RANDOM$RANDOM/" \
+    %{kloxo}/%{packagename}/config.inc.php
 rm -rf %{kloxo}/%{packagename}/config.inc.php.*
 
 %files
@@ -97,125 +94,31 @@ rm -rf %{kloxo}/%{packagename}/config.inc.php.*
 
 
 %changelog
-* Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 4.6.6-1.mr
-- update to 4.6.6
+* Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com>  - 4.0.10.20-2.kng
+- change product name to kloxong
+- add obsolete for kloxomr 
 
-* Wed Dec 09 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.15.1-1.mr
-- update to 4.4.15.1
+* Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.20-1.mr
+- update to 4.0.10.20
 
-* Fri Sep 04 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.14-1.mr
-- update to 4.4.14
+* Thu May 14 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.10-1.mr
+- update to 4.0.10.10
 
-* Fri Jun 05 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.9-1.mr
-- update to 4.4.9
-
-* Thu May 14 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.6.1-1.mr
-- update to 4.4.6.1
-
-* Wed May 06 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.5-1.mr
-- update to 4.4.5
-
-* Sat May 02 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.4-2.mr
+* Mon Mar 09 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.9-2.mr
 - not use %config for security reason
 - remove config.inc.php.*
 
-* Sun Apr 26 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.4-1.mr
+* Mon Mar 09 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.9-1.mr
 - update
 
-* Tue Apr 14 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.2-1.mr
+* Sun Jan 10 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.8-1.mr
 - update
 
-* Sat Apr 11 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.1.1-1.mr
+* Wed Dec 03 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.6-1.mr
 - update
 
-* Thu Apr 02 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.4.0-1.mr
+* Fri Oct 09 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10.4-2.mr
 - update
-
-* Mon Mar 30 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.13-1.mr
-- update
-
-* Sun Mar 22 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.12-1.mr
-- update
-
-* Mon Mar 09 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.11.1-1.mr
-- update
-
-* Sat Feb 21 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.10-1.mr
-- update
-
-* Thu Feb 12 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.9-1.mr
-- update
-
-* Sun Jan 25 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.8-1.mr
-- update
-
-* Sun Jan 10 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.6-1.mr
-- update
-
-* Sun Jan 04 2015 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.4-1.mr
-- update
-
-* Mon Dec 29 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.3-1.mr
-- update
-
-* Tue Dec 16 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.2-1.mr
-- update
-- enable 'central_columns'
-
-* Sat Dec 13 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.1-1.mr
-- update
-
-* Mon Dec 08 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.3.0-1.mr
-- update
-
-* Wed Dec 03 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.13-1.mr
-- update
-
-* Thu Nov 06 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.11-1.mr
-- update
-
-* Tue Oct 21 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.10.1-1.mr
-- update
-
-* Fri Oct 09 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.9.1-1.mr
-- update
-
-* Sat Sep 27 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.9-1.mr
-- update
-
-* Sun Sep 07 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.8-1.mr
-- update
-
-* Wed Aug 31 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.7.1-1.mr
-- update
-
-* Wed Aug 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.6-1.mr
-- for kloxomr7
-- set conflicts and obsoletes
-
-* Sun Jul 27 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.6-1.mr
-- update to 4.2.6
-
-* Fri Jun 27 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.5-1.mr
-- update to 4.2.5
-
-* Mon May 19 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.1-1.mr
-- update to 4.2.1
-
-* Mon May 12 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.2.0-1.mr
-- update to 4.2.0
-
-* Wed Apr 30 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.1.14-1.mr
-- update to 4.1.14
-
-* Mon Apr 21 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.1.13-1.mr
-- update to 4.1.13
-
-* Tue Apr 1 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.1.12-1.mr
-- update to 4.1.12
-
-* Sun Feb 23 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.1.10-1.mr
-- update to 4.1.10
 
 * Tue Feb 4 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 4.0.10-1.mr
 - update to 4.0.10 (still stay in 4.0.x because php 5.2 issue)
