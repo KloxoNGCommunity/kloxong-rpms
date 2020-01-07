@@ -1,7 +1,7 @@
 %define	name libdomainkeys
-%define	pversion 0.68
+%define	pversion 0.69
 %define 	bversion 1.3
-%define	rpmrelease 7.kng%{?dist}
+%define	rpmrelease 1.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	openssl-devel
@@ -23,6 +23,8 @@ License:	Yahoo! DomainKeys Public License
 Group:		System Environment/Libraries
 URL:		http://domainkeys.sourceforge.net/
 Source0:	libdomainkeys-%{version}.tar.gz
+Patch0:	libdomainkeys-openssl-1.1.patch
+Patch1:	libdomainkeys-0.69.diff
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 Provides:	libdomainkeys-devel = %{pversion}
 Obsoletes:	libdomainkeys
@@ -40,7 +42,8 @@ DomainKey Implementor's library.
 %prep
 #------------------------------------------------------------------------------------
 %setup -q -n %{name}-%{pversion}
-
+%patch0 -p1
+#%patch1 -p1
 
 # Cleanup for gcc
 #------------------------------------------------------------------------------------
