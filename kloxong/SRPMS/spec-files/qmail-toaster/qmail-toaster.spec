@@ -11,6 +11,7 @@
 BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
 Requires:		openssl >= 0.9.8, sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools
+BuildRequires:	perl
 Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
 # we may not find the old library path in the new one if
@@ -1156,10 +1157,10 @@ fi
 - hostname for defaultdomain/defaulthost/plusdomain
 - mod qmail run for smtp/smtp-ssl/submission for with/-out soflimit and spamdyke 5.x
 
-* Wed Jan 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 1.03-1.3.34.mr
+* Wed Jan 22 2014 Mustafa Ramadhan <mustafa@bigraf.com> 1.03-1.3.34.mr
 - fix issue related to dkimsign.pl and qmail-remote.new (again)
 
-* Wed Jan 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 1.03-1.3.33.mr
+* Wed Jan 22 2014 Mustafa Ramadhan <mustafa@bigraf.com> 1.03-1.3.33.mr
 - fix issue related to dkimsign.pl and qmail-remote.new
 
 * Mon Jan 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 1.03-1.3.32.mr
@@ -1250,7 +1251,7 @@ fi
 - Fixed bug in qmailctl (cont had smtpd instead of smtp)
 * Sat Jul 08 2006 Erik A. Espinoza <espinoza@forcenetworks.com> 1.03-1.3.5
 - Enabled "*" and "$" in chkuser for mailing list support
-* Sun Jul 01 2006 Erik A. Espinoza <espinoza@forcenetworks.com> 1.03-1.3.4
+* Sat Jul 01 2006 Erik A. Espinoza <espinoza@forcenetworks.com> 1.03-1.3.4
 - Enabled SRS support in chkuser_settings.h
 - Disabled MyDoom sig in badmimetypes
 * Mon Jun 05 2006 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.3.3
@@ -1283,7 +1284,7 @@ fi
 - Build-10
 - Move qmail-queue to qmail-queue.orig
 - Configure qmail-dk link to qmail-queue
-* Wed Apr 28 2006 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.2.11
+* Fri Apr 28 2006 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.2.11
 - Add qmailtoaster-1.2.1.patch
 - See description for a list of applied patches
 - Fixed MTA provides for distros
@@ -1301,7 +1302,7 @@ fi
 * Fri Jun 03 2005 Torbjorn Turpeinen <tobbe@nyvalls.se> 1.03-1.2.5
 - Gnu/Linux Mandrake 10.0,10.1,10.2 support
 - Add Obsoletes:	qmail-toaster-doc 
-* Thu May 25 2005 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.2.4
+* Thu May 26 2005 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.2.4
 - Update patches - add SPF, chkuser 2.0, spamthrottle, Warlord
 - filtering
 * Sun Feb 27 2005 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.2.3
@@ -1332,7 +1333,7 @@ fi
 - Fixed overmaildirquota.c - will work on new patches later aaarg :(
 * Fri Nov 28 2003 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.0.10
 - Bad build with big patch and chkuser - revertet back with fixes
-* Wed May 27 2003 Miguel Beccari <miguel.beccari@clikka.com> 1.03-1.0.9
+* Tue May 27 2003 Miguel Beccari <miguel.beccari@clikka.com> 1.03-1.0.9
 - Build self-signed certificate for TLS
 * Sat Apr 26 2003 Miguel Beccari <miguel.beccari@clikka.com> 1.03-1.0.8
 - Clean-ups on SPEC file: compilation banner, better gcc detects
@@ -1346,7 +1347,7 @@ fi
 * Mon Mar 31 2003 Miguel Beccari <miguel.beccari@clikka.com> 1.03-1.0.6
 - Conectiva Linux 7.0 support
 - Big DNS patch (was missing???)
-* Sun Feb 15 2003 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.0.5
+* Sat Feb 15 2003 Nick Hemmesch <nick@ndhsoft.com> 1.03-1.0.5
 - Support for Red Hat 8.0
 * Sun Feb 09 2003 Miguel Beccari <miguel.beccari@clikka.com> 1.03-1.0.4
 - Fixed SMTP-AUTH (smtp run script call vpopmail user)
@@ -1399,13 +1400,13 @@ fi
 - Auth working 100%
 - Better macros to detect Mandrake Release
 - Minor clean-ups.
-* Thu Aug 13 2002 Miguel Beccari <miguel.beccari@clikka.com> 0.6.1.03-1
+* Tue Aug 13 2002 Miguel Beccari <miguel.beccari@clikka.com> 0.6.1.03-1
 - New version: 0.6 toaster./bin/qmail-newu
 * Mon Aug 12 2002 Miguel Beccari <miguel.beccari@clikka.com> 0.5.1.03-1
 - Doc package is standalone (someone does not ask for man pages)
 - Checks for gcc-3.2 (default compiler from now)
 - New version: 0.5 toaster.
-* Tue Aug 08 2002 Miguel Beccari <miguel.beccari@clikka.com> 0.4.1.03-1
+* Thu Aug 08 2002 Miguel Beccari <miguel.beccari@clikka.com> 0.4.1.03-1
 - Rebuild against 0.4 toaster
 - Revisited instructions after installed the rpm
 * Tue Jul 30 2002 Miguel Beccari <miguel.beccari@clikka.com> 0.3.1.03-3
