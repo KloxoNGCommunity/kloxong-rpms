@@ -23,7 +23,7 @@ Group:		System Environment/Libraries
 URL:		http://domainkeys.sourceforge.net/
 Source0:	libdomainkeys-%{version}.tar.gz
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
-Provides:	libdomainkeys-devel = %{evr}
+Provides:	libdomainkeys-devel = %{pversion}
 Obsoletes:	libdomainkeys
 Packager:       Jake Vickers <jake@qmailtoaster.com>
 
