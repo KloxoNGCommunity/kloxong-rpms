@@ -5,6 +5,7 @@
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	openssl-devel
+BuildRequires:	perl
 %define		ccflags %{optflags}
 %define		ldflags %{optflags}
 
