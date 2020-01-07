@@ -5,6 +5,7 @@
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	openssl-devel
+BuildRequires:	perl
 %define		ccflags %{optflags}
 %define		ldflags %{optflags}
 
@@ -46,7 +47,7 @@ SRS implementation library.
 echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
 
-perl -pi -e's/CFLAGS=/CFLAGS=%{optflags} -fPIC /' Makefile
+perl -pi -e's|CFLAGS=|CFLAGS=%{optflags} -fPIC |' Makefile
 
 
 #----------------------------------------------------------------------------------
