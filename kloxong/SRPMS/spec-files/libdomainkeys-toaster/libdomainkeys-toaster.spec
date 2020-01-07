@@ -48,7 +48,7 @@ DomainKey Implementor's library.
 
 echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
-perl -pi -e's/CFLAGS=/CFLAGS=%{optflags} -fPIC /' Makefile
+perl -pi -e's|CFLAGS=|CFLAGS=%{optflags} -fPIC |' Makefile
 #this is a hack to work later we should use patch 
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
 perl -pi -e's/`cat dns.lib`/-lresolv /' Makefile
