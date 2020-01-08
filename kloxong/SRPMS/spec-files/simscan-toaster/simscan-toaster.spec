@@ -175,6 +175,7 @@ install -m755 %{SOURCE1} %{buildroot}%{qdir}/bin/update-%{name}
 #bunzip2 %{buildroot}%{qdir}/supervise/clamd/log/run.bz2
 
 install %{SOURCE4} %{buildroot}%{qdir}/supervise/clamd/down
+perl -pi -e's| clam | %scanuser |' %{buildroot}%{qdir}/supervise/clamd/down
 install %{SOURCE5} %{buildroot}%{qdir}/supervise/clamd/log/down
 
 # install docs
