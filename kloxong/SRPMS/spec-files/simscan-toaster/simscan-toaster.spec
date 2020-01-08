@@ -267,7 +267,7 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
-* Wed Jan 8 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
+* Wed Jan 8 2020 John Pierce <john@luckytanuki.com>  1.4.0-1.4.10.kng
 - Comment out folders already provided by Requires
 * Mon Dec 23 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
 - Comment out folders already provided by Requires
