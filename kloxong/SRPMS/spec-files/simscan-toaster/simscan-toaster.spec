@@ -1,7 +1,7 @@
 %define	name simscan
 %define	pversion 1.4.0
 %define 	bversion 1.4
-%define	rpmrelease 9.kng%{?dist}
+%define	rpmrelease 10.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
@@ -237,15 +237,15 @@ fi
 #-------------------------------------------------------------------------------
 %files 
 #-------------------------------------------------------------------------------
-%defattr(644,clam,clam)
+%defattr(644,%scanuser,%scanuser)
 #qdir on install was root,root probably should be clam,root
-#%attr(0750,clam,root) %dir %{qdir}
+#%attr(0750,%scanuser,root) %dir %{qdir}
 #bin was on install root, root again it should be clam,root
-#%attr(0750,clam,root) %dir %{qdir}/bin
-%attr(4711,clam,root) %{qdir}/bin/%{name}
+#%attr(0750,%scanuser,root) %dir %{qdir}/bin
+%attr(4711,%scanuser,root) %{qdir}/bin/%{name}
 # control was root,root it should be clam,root
-#%attr(0750,clam,root) dir %{qdir}/control
-%attr(0750,clam,root) %dir %{qdir}/%{name}
+#%attr(0750,%scanuser,root) dir %{qdir}/control
+%attr(0750,%scanuser,root) %dir %{qdir}/%{name}
 %attr(4755,root,root) %{qdir}/bin/simscanmk
 
 %attr(0755,root,root) %{qdir}/bin/update-%{name}
@@ -254,7 +254,7 @@ fi
 %attr(0644,root,root) %{_datadir}/doc/%{name}-%{pversion}/*
 
 
-%attr(0644,clam,root) %config(noreplace) %{qdir}/control/simcontrol
+%attr(0644,%scanuser,root) %config(noreplace) %{qdir}/control/simcontrol
 
 #%attr(0755,qmaill,qmail)  %dir %{qdir}/supervise
 %attr(1700,qmaill,qmail)  %dir %{qdir}/supervise/clamd
@@ -267,6 +267,8 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Wed Jan 8 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
+- Comment out folders already provided by Requires
 * Mon Dec 23 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
 - Comment out folders already provided by Requires
 * Mon Dec 16 2019 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.8.kng
