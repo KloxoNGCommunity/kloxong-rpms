@@ -5,9 +5,9 @@
 
 Name: %{productname}-%{packagename}
 Summary: Roundcube webmail client
-Version: 1.4.0
+Version: 1.4.2
 #Release: 1%{?dist}
-Release: 2.kng%{?dist}
+Release: 1.kng%{?dist}
 License: GPL
 URL: http://www.roundcube.net/
 Group: Applications/Internet
@@ -60,6 +60,9 @@ install -D -m 755 $RPM_SOURCE_DIR/roundcube_defaults.inc.php $RPM_BUILD_ROOT/hom
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jan 15 2020 John Parnell Pierce <john@luckytanuki.com> - 1.4.2-1.kng
+- Upgrade to roundcube 1.4.2
+
 * Fri Jan 10 2020 John Parnell Pierce <john@luckytanuki.com> - 1.4.0-2.kng
 - Upgrade to roundcube 1.4
 - Change smtp port and add user credentials to login
