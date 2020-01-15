@@ -16,7 +16,7 @@
 
 $default_folder_prefix		= '';
 
-// Courier-imapd settings for Kloxo-MR
+// Courier-imapd settings for Kloxo Next Generation
 
 $sendmail_path = '/var/qmail/bin/sendmail';
 $useSendmail = true;
