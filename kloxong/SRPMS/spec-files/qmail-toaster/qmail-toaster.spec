@@ -228,7 +228,7 @@ this package.
 %endif
 #we need to address openssl compile issues on centos 8 with openssl-1.1 patch
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
-%patch41 -p1
+%patch41 -p0
 %endif
 
 
