@@ -86,6 +86,7 @@ Patch21: qmail_qmail-outgoingips_rediff.patch
 Patch30: qmail_qmailtoaster-any-to-cname.patch
 
 Patch40: qmail-toaster-centos-7-chroot.patch
+Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
 
 
 Requires: ucspi-tcp-toaster >= 0.88
@@ -225,6 +226,12 @@ this package.
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
 %patch40 -p1
 %endif
+#we need to address openssl compile issues on centos 8 with openssl-1.1 patch
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+%patch41 -p1
+%endif
+
+
 echo
 
 %define name qmail
