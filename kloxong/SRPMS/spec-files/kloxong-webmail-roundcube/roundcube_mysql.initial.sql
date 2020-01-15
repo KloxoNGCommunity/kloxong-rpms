@@ -229,4 +229,4 @@ CREATE TABLE IF NOT EXISTS `system` (
 
 /*!40014 SET FOREIGN_KEY_CHECKS=1 */;
 
-INSERT INTO system (name, value) VALUES ('roundcube-version', '2015030800');
+INSERT INTO system (name, value) VALUES ('roundcube-version', '2019092900');
