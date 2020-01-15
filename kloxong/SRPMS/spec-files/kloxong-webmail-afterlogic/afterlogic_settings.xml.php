@@ -45,11 +45,11 @@
 		<IncomingMailPort>143</IncomingMailPort>
 		<IncomingMailUseSSL>Off</IncomingMailUseSSL>
 		<OutgoingMailServer>127.0.0.1</OutgoingMailServer>
-		<OutgoingMailPort>25</OutgoingMailPort>
+		<OutgoingMailPort>587</OutgoingMailPort>
 		<OutgoingMailAuth>AuthCurrentUser</OutgoingMailAuth>
 		<OutgoingMailLogin/>
 		<OutgoingMailPassword/>
-		<OutgoingMailUseSSL>On</OutgoingMailUseSSL>
+		<OutgoingMailUseSSL>Off</OutgoingMailUseSSL>
 		<OutgoingSendingMethod>Specified</OutgoingSendingMethod>
 		<UserQuota>0</UserQuota>
 		<ShowQuotaBar>Off</ShowQuotaBar>
