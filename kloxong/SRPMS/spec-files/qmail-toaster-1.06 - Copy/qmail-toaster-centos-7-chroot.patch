@@ -1,0 +1,12 @@
+diff -Naur  ../qmail-1.03.orig/Makefile ./qmail-1.03/Makefile  > qmail-toaster-centos-7-chroot.patch
+--- qmail-1.03.orig/Makefile	1998-06-15 13:53:16.000000000 +0300
++++ qmail-1.03/Makefile	2019-12-13 08:32:40.109092122 +0200
+@@ -678,7 +678,7 @@
+ 
+ hasshsgr.h: \
+ chkshsgr warn-shsgr tryshsgr.c compile load
+-	./chkshsgr || ( cat warn-shsgr; exit 1 )
++	./chkshsgr || ( cat warn-shsgr; exit 0 )
+ 	( ( ./compile tryshsgr.c \
+ 	&& ./load tryshsgr && ./tryshsgr ) >/dev/null 2>&1 \
+ 	&& echo \#define HASSHORTSETGROUPS 1 || exit 0 ) > \

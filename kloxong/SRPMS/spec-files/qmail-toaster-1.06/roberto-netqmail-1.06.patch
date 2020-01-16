@@ -2243,19 +2243,19 @@ diff -ruN ../netqmail-1.06-original/Makefile-cert.mk netqmail-1.06/Makefile-cert
 +	@echo "cat signed_req.pem >> QMAIL/control/servercert.pem"
 diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 --- ../netqmail-1.06-original/README.PATCH	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/README.PATCH	2020-01-10 22:02:38.543954305 +0100
-@@ -0,0 +1,521 @@
-+v. 2020.01.11
++++ netqmail-1.06/README.PATCH	2019-12-08 09:44:10.947578845 +0100
+@@ -0,0 +1,518 @@
++v. 2019.12.08
 +Combined patch for netqmail-1.06 by Roberto Puzzanghera [roberto dot puzzanghera at sagredo dot eu]
 +More info at https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html
 +==========================================================================================================
 +
 += This patch puts together
-+* Erwin Hoffmann's qmail-authentication patch v. 0.8.3, which updates the patches provided by
++* Erwin Hoffmann's qmail-authentication patch v. 0.8.3 (23.08.2015), which updates the patches provided by
 +  Krysztof Dabrowski and Bjoern Kalkbrenner.
 +  It provides cram-md5, login, plain authentication support for qmail-smtpd and qmail-remote.
 +  http://www.fehcom.de/qmail/smtpauth.html##PATCHES
-+* Frederik Vermeulen's qmail-tls patch v. 20200107
++* Frederik Vermeulen's qmail-tls patch v. 20190517
 +  implements SSL or TLS encrypted and authenticated SMTP.
 +  http://inoa.net/qmail-tls/
 +  The file update_tmprsadh was modified to chown all .pem files to vpopmail.
@@ -2499,21 +2499,17 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 += Changelog
 +
-+2020.01.11
-+-qmail-tls patch updated to v. 20200107
-+ * working client cert authentication with TLSv1.3 (Rolf Eike Beer)
-+
-+2019.12.08
-+-BUG qmail-smtpd.c: now TLS is defined before chkuser.h call, to avoid errors on closing the db connection
++2019-12-08
++-qmail-smtpd.c: now TLS is defined before chkuser.h call, to avoid errors on closing the db connection
 + (tx ChangHo.Na https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html#comment1469)
 +
-+2019.07.12
++2019-07-12
 +-qmail-channels patch added
 + more info here http://www.thesmbexchange.com/eng/qmail-channels_patch.html
 +-improved verbosity of die_read function in qmail-smtpd.c (qmail-smtpd: read failure)
 + more info here https://notes.sagredo.eu/files/qmail/patches/roberto-netqmail-1.06/die_read.patch
 +
-+2019.06.19
++2019-.06.19
 +-DKIM patch updated to v. 1.26
 + * BUG - honor body length tag in verification
 +
@@ -2537,7 +2533,6 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +2019.03.22
 +-fixed a bug causing crashes with qmail-remote when using openssl-1.1 (tx Luca Franceschini)
 +(https://notes.sagredo.eu/files/qmail//patches//roberto-netqmail-1.06/2019.03.22-fix.patch)
-+
 +2019.02.13
 +-Port to openssl-1.1
 +-DKIM patch updated to v. 1.24
@@ -2599,7 +2594,7 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 + -added DISABLETLS environment variable, useful if you want to disable TLS on a desired port
 + -added FORCEAUTHMAILFROM environment variable to REQUIRE that authenticated user and 'mail from' are identical
 + -fixed little bug in 'mail from' address handling (patch by Andre Opperman at http://qmail.cr.yp.narkive.com/kBry
-+  6GJl/bug-in-qmail-smtpd-c-addrparse-function)
++6GJl/bug-in-qmail-smtpd-c-addrparse-function)
 + -added SMTPAUTHMETHOD, SMTPAUTHUSER and SMTP_AUTH_USER env variables for external plugins
 + -qlog patch
 + -reject null senders patch
@@ -2608,8 +2603,8 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2016-12-02
 +-fixed BUG in qmail-remote.c: in case of remote server who doesn't allow EHLO the response for an alternative
-+ HELO was checked twice, making the connection to die. (Thanks to Luca Franceschini)
-+ Patch applied: http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/fix_sagredo_remotehelo.patch
++HELO was checked twice, making the connection to die. (Thanks to Luca Franceschini)
++Patch applied: http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/fix_sagredo_remotehelo.patch
 +
 +2016-09-19
 +-qmail-tls patch updated to v. 20160918
@@ -2674,10 +2669,11 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2013-12-10
 +-the original greetdelay by e.h. has been replaced with the improved patch by John Simpson. Now
-+ communications trying to send commands before the greeting will be closed. Premature disconnections will be
-+ logged as well.
++communications trying to send commands before the greeting will be closed. Premature disconnections will be
++logged as well.
 +-CHKUSER_SENDER_FORMAT enabled to reject fake senders without any domain declared (like <foo>)
-+-chkuser logging: I slightly modified the log line adding the variables' name just to facilitate its interpretation
++-chkuser logging: I slightly modified the log line adding the variables' name just to facilitate its interpretatio
++n
 +-added qmail-moreipme patch
 +
 +2013-12-07
@@ -2691,7 +2687,7 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2013-09-27
 +-DKIM patch upgraded to v. 1.17. Defined -DHAVE_SHA_256 while compiling dkimverify.cpp in the Makefile.
-+ This solved an issue while verifying signatures using sha256.
++This solved an issue while verifying signatures using sha256.
 +
 +2013-09-16
 +-Minor fixes to the DKIM patch.
@@ -2716,9 +2712,10 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2013-08-08
 +-qmail-SPF modified by Manvendra Bhangui to make it IPv6-mapped IPv4 addresses compliant. In order to have it
-+ working with such addresses you have to patch tcpserver.c accordingly. You can use a patch fot ucspi-tcp6-0.98
-+ by Manvendra Bhangui at http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/tcpserver-ipv6mapped_ip
-+ v4.patch or wait for v. 0.99 relase of ucspi-tcp6
++working with such addresses you have to patch tcpserver.c accordingly. You can use a patch fot ucspi-tcp6-0.98
++by Manvendra Bhangui at http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/tcpserver-ipv6mapped_ip
++v4.patch
++or wait for v. 0.99 relase of ucspi-tcp6
 +-added outgoingip patch
 +-added qmail-bounce patch
 +
@@ -3864,9 +3861,9 @@ diff -ruN ../netqmail-1.06-original/README.tap netqmail-1.06/README.tap
 +F:.*@domain.com:joe@example.com
 diff -ruN ../netqmail-1.06-original/README.tls netqmail-1.06/README.tls
 --- ../netqmail-1.06-original/README.tls	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/README.tls	2020-01-10 21:46:22.909448586 +0100
++++ netqmail-1.06/README.tls	2019-04-09 20:42:08.230641152 +0200
 @@ -0,0 +1,98 @@
-+Frederik Vermeulen <qmail-tls akrul inoa.net> 20200107
++Frederik Vermeulen <qmail-tls akrul inoa.net> 20190408
 +http://inoa.net/qmail-tls/
 +
 +This patch implements RFC 3207 in qmail. 
@@ -3877,7 +3874,7 @@ diff -ruN ../netqmail-1.06-original/README.tls netqmail-1.06/README.tls
 +
 +Usage: - install OpenSSL-1.1.0 http://www.openssl.org/ or later
 +         (any version since 0.9.8 is presumed to work)
-+       - apply patch to netqmail-1.06 http://www.usenix.org.uk/mirrors/qmail/netqmail
++       - apply patch to netqmail-1.06 http://qmail.org/netqmail
 +         The patches to qmail-remote.c and qmail-smtpd.c can be applied 
 +         separately.
 +       - provide a server certificate in /var/qmail/control/servercert.pem.
@@ -6479,10 +6476,10 @@ diff -ruN ../netqmail-1.06-original/condredirect.c netqmail-1.06/condredirect.c
    qmail_puts(&qqt,dtline);
 diff -ruN ../netqmail-1.06-original/conf-cc netqmail-1.06/conf-cc
 --- ../netqmail-1.06-original/conf-cc	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/conf-cc	2020-01-10 21:52:13.080721081 +0100
++++ netqmail-1.06/conf-cc	2019-05-24 14:26:25.300939812 +0200
 @@ -1,3 +1,3 @@
 -cc -O2
-+cc -O2 -g -DEXTERNAL_TODO -DTLS=20200107 -I/usr/local/ssl/include -I/home/vpopmail/include
++cc -O2 -g -DEXTERNAL_TODO -DTLS=20190517 -I/usr/local/ssl/include -I/home/vpopmail/include
  
  This will be used to compile .c files.
 diff -ruN ../netqmail-1.06-original/conf-channels netqmail-1.06/conf-channels
@@ -21182,7 +21179,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.8 netqmail-1.06/qmail-remote.8
  envelopes(5),
 diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
 --- ../netqmail-1.06-original/qmail-remote.c	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/qmail-remote.c	2020-01-10 21:48:44.435939624 +0100
++++ netqmail-1.06/qmail-remote.c	2019-04-07 14:55:37.451093660 +0200
 @@ -28,6 +28,7 @@
  #include "timeoutconn.h"
  #include "timeoutread.h"
@@ -21417,7 +21414,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
        substdio_put(&smtpto,&ch,1);
        r = substdio_get(&ssin,&ch,1);
        if (r == 0) perm_partialline();
-@@ -214,30 +363,436 @@
+@@ -214,30 +363,432 @@
    substdio_flush(&smtpto);
  }
  
@@ -21524,10 +21521,6 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
 +  if (SSL_CTX_use_certificate_chain_file(ctx, CLIENTCERT))
 +    SSL_CTX_use_RSAPrivateKey_file(ctx, CLIENTCERT, SSL_FILETYPE_PEM);
 +# undef CLIENTCERT
-+
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
-+  SSL_CTX_set_post_handshake_auth(ctx, 1);
-+#endif
 +
 +  myssl = SSL_new(ctx);
 +  SSL_CTX_free(ctx);
@@ -21867,7 +21860,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
    flagbother = 0;
    for (i = 0;i < reciplist.len;++i) {
      substdio_puts(&smtpto,"RCPT TO:<");
-@@ -297,19 +852,14 @@
+@@ -297,19 +848,14 @@
    if (!stralloc_cats(saout,"@")) temp_nomem();
   
    if (!stralloc_copys(&canonhost,s + j + 1)) temp_nomem();
@@ -21889,7 +21882,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
    if (control_init() == -1) temp_control();
    if (control_readint(&timeout,"control/timeoutremote") == -1) temp_control();
    if (control_readint(&timeoutconnect,"control/timeoutconnect") == -1)
-@@ -324,48 +874,108 @@
+@@ -324,48 +870,108 @@
      case 1:
        if (!constmap_init(&maproutes,routes.s,routes.len,1)) temp_nomem(); break;
    }
@@ -22017,7 +22010,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
    if (!saa_readyplus(&reciplist,0)) temp_nomem();
    if (ipme_init() != 1) temp_oserr();
   
-@@ -414,10 +1024,13 @@
+@@ -414,10 +1020,13 @@
      smtpfd = socket(AF_INET,SOCK_STREAM,0);
      if (smtpfd == -1) temp_oserr();
   
@@ -23374,7 +23367,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.8 netqmail-1.06/qmail-smtpd.8
  tcp-environ(5),
 diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
 --- ../netqmail-1.06-original/qmail-smtpd.c	2007-11-30 21:22:54.000000000 +0100
-+++ netqmail-1.06/qmail-smtpd.c	2019-12-08 18:35:58.114529573 +0100
++++ netqmail-1.06/qmail-smtpd.c	2019-12-08 09:26:53.258219034 +0100
 @@ -12,6 +12,9 @@
  #include "ip.h"
  #include "qmail.h"
@@ -23385,14 +23378,13 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  #include "fmt.h"
  #include "scan.h"
  #include "byte.h"
-@@ -23,44 +26,180 @@
+@@ -23,44 +26,179 @@
  #include "timeoutread.h"
  #include "timeoutwrite.h"
  #include "commands.h"
 +#include "dns.h"
 +#include "wait.h"
 +
-+/* chkuser.h will check if TLS_H is defined, so this has to come before chkuser.h */
 +#ifdef TLS
 +#include <sys/stat.h>
 +#include "tls.h"
@@ -23575,7 +23567,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  void smtp_greet(code) char *code;
  {
-@@ -76,11 +215,33 @@
+@@ -76,11 +214,33 @@
    smtp_greet("221 "); out("\r\n"); flush(); _exit(0);
  }
  
@@ -23609,7 +23601,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  stralloc helohost = {0};
  char *fakehelo; /* pointer into helohost, or 0 */
-@@ -91,11 +252,101 @@
+@@ -91,11 +251,101 @@
    fakehelo = case_diffs(remotehost,helohost.s) ? helohost.s : 0;
  }
  
@@ -23712,7 +23704,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  void setup()
  {
-@@ -109,21 +360,110 @@
+@@ -109,21 +359,110 @@
    if (liphostok == -1) die_control();
    if (control_readint(&timeout,"control/timeoutsmtpd") == -1) die_control();
    if (timeout <= 0) timeout = 1;
@@ -23824,7 +23816,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    local = env_get("TCPLOCALHOST");
    if (!local) local = env_get("TCPLOCALIP");
    if (!local) local = "unknown";
-@@ -131,10 +471,67 @@
+@@ -131,10 +470,67 @@
    if (!remotehost) remotehost = "unknown";
    remoteinfo = env_get("TCPREMOTEINFO");
    relayclient = env_get("RELAYCLIENT");
@@ -23893,7 +23885,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  stralloc addr = {0}; /* will be 0-terminated, if addrparse returns 1 */
  
  int addrparse(arg)
-@@ -155,6 +552,7 @@
+@@ -155,6 +551,7 @@
      terminator = ' ';
      arg += str_chr(arg,':');
      if (*arg == ':') ++arg;
@@ -23901,7 +23893,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
      while (*arg == ' ') ++arg;
    }
  
-@@ -197,6 +595,8 @@
+@@ -197,6 +594,8 @@
    return 1;
  }
  
@@ -23910,7 +23902,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  int bmfcheck()
  {
    int j;
-@@ -207,76 +607,1104 @@
+@@ -207,76 +606,1104 @@
      if (constmap(&mapbmf,addr.s + j,addr.len - j - 1)) return 1;
    return 0;
  }
@@ -25021,7 +25013,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  struct qmail qqt;
  unsigned int bytestooverflow = 0;
-@@ -300,7 +1728,7 @@
+@@ -300,7 +1727,7 @@
    int flagmaybex; /* 1 if this line might match RECEIVED, if fih */
    int flagmaybey; /* 1 if this line might match \r\n, if fih */
    int flagmaybez; /* 1 if this line might match DELIVERED, if fih */
@@ -25030,7 +25022,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    state = 1;
    *hops = 0;
    flaginheader = 1;
-@@ -322,17 +1750,16 @@
+@@ -322,17 +1749,16 @@
      }
      switch(state) {
        case 0:
@@ -25051,7 +25043,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
          if (ch == '\r') { state = 3; continue; }
          state = 0;
          break;
-@@ -351,10 +1778,73 @@
+@@ -351,10 +1777,73 @@
    }
  }
  
@@ -25125,7 +25117,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    when = now();
    out("250 ok ");
    accept_buf[fmt_ulong(accept_buf,(unsigned long) when)] = 0;
-@@ -363,22 +1853,32 @@
+@@ -363,22 +1852,32 @@
    accept_buf[fmt_ulong(accept_buf,qp)] = 0;
    out(accept_buf);
    out("\r\n");
@@ -25160,7 +25152,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    blast(&hops);
    hops = (hops >= MAXHOPS);
    if (hops) qmail_fail(&qqt);
-@@ -386,36 +1886,662 @@
+@@ -386,36 +1885,662 @@
    qmail_put(&qqt,rcptto.s,rcptto.len);
   
    qqx = qmail_close(&qqt);
@@ -29531,8 +29523,8 @@ diff -ruN ../netqmail-1.06-original/srsfilter.c netqmail-1.06/srsfilter.c
 +
 diff -ruN ../netqmail-1.06-original/ssl_timeoutio.c netqmail-1.06/ssl_timeoutio.c
 --- ../netqmail-1.06-original/ssl_timeoutio.c	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/ssl_timeoutio.c	2020-01-10 21:51:32.057157279 +0100
-@@ -0,0 +1,126 @@
++++ netqmail-1.06/ssl_timeoutio.c	2019-04-09 21:12:06.445883062 +0200
+@@ -0,0 +1,114 @@
 +#ifdef TLS
 +#include "select.h"
 +#include "error.h"
@@ -29608,16 +29600,7 @@ diff -ruN ../netqmail-1.06-original/ssl_timeoutio.c netqmail-1.06/ssl_timeoutio.
 +{
 +  int r=0;
 +
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
-+  if (SSL_version(ssl) >= TLS1_3_VERSION){
-+    if(SSL_verify_client_post_handshake(ssl) != 1)
-+      return -EPROTO;
-+  } else
-+#endif
-+  {
-+    r =  SSL_renegotiate(ssl);
-+    if (r<=0) return r;
-+  }
++  SSL_renegotiate(ssl);
 +
 +#if OPENSSL_VERSION_NUMBER >= 0x10001000L
 +  char buf[1]; /* dummy read buffer */
@@ -29625,9 +29608,6 @@ diff -ruN ../netqmail-1.06-original/ssl_timeoutio.c netqmail-1.06/ssl_timeoutio.
 +  fd_set fds;
 +  r = ssl_timeoutio(SSL_do_handshake, t, rfd, wfd, ssl, NULL, 0);
 +  if (r <=0) return r;
-+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
-+  if (SSL_version(ssl) >= TLS1_3_VERSION) return r;
-+#endif
 +
 +  tv.tv_sec = (time_t)t; tv.tv_usec = 0;
 +  FD_ZERO(&fds);  FD_SET(rfd, &fds);

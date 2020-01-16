@@ -1,0 +1,16 @@
+diff -u netqmail-1.06/Makefile netqmail-1.06-new/Makefile
+--- netqmail-1.06/Makefile	2020-01-16 05:59:12.897000010 +1100
++++ netqmail-1.06-new/Makefile	2020-01-16 23:04:25.225000013 +1100
+@@ -1,7 +1,8 @@
+ # Don't edit Makefile! Use conf-* for configuration.
+ 
+-VPOPMAIL_HOME=/home/vpopmail
+-VPOPMAIL_LIBS=`head -1 $(VPOPMAIL_HOME)/etc/lib_deps` `cat dns.lib`
++VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`
++
++LIB_DK=/usr/lib/libdomainkeys.a
+ 
+ SMTPD_CHKUSER_OBJ=chkuser.o dns.o
+ 
+Common subdirectories: netqmail-1.06/old-patches and netqmail-1.06-new/old-patches
+Common subdirectories: netqmail-1.06/other-patches and netqmail-1.06-new/other-patches

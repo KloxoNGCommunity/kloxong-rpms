@@ -70,7 +70,24 @@ Patch2:	qmail-toaster-centos-7-chroot.patch
 Patch3:	qmail_splogger-nostamp.patch
 Patch4:	ipoutgoing2ipoutgoings.patch
 Patch5:	require_auth.patch
-Patch6:	vpopmail-devel.patch
+
+Patch6:	qmail_qmailtoaster-big-dns.patch
+Patch7:	qmail_qmail-smtpd-linefeed.patch
+Patch8:	qmail_qmail-empf.patch
+
+Patch9:	qmail_qmail-vpopmail-devel.patch
+Patch10: qmail_qmail-uids.patch
+
+Patch11: qmail_qmail-nocram.patch
+Patch12: qmail_splogger-nostamp.patch
+
+Patch20: qmail_qmail-outgoingip_rediff.patch
+Patch21: qmail_qmail-outgoingips_rediff.patch
+
+Patch30: qmail_qmailtoaster-any-to-cname.patch
+
+Patch40: qmail-toaster-centos-7-chroot.patch
+Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
 
 
 Requires: ucspi-tcp-toaster >= 0.88
@@ -130,7 +147,29 @@ this package.
 %patch3 -p1
 %patch4 -p0
 %patch5 -p1
-%patch6 -p0
+#%patch6 -p0
+#%patch7 -p0
+#%patch8 -p1
+# I am really courious what happens if i enable that patch fails to compile with libdomainkeys error
+##%patch9 -p1
+#%patch10 -p1
+
+#%patch11 -p1
+#%patch12 -p1
+
+##%patch20 -p1
+#%patch21 -p1
+
+#%patch30 -p1
+# fixing compile error in qmail and centos 7 needs a check that cant be done in a chroot enviroment
+%if %{?fedora}0 > 140 || %{?rhel}0 > 60
+#%patch40 -p1
+%endif
+#we need to address openssl compile issues on centos 8 with openssl-1.1 patch
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+#%patch41 -p0
+%endif
+
 
 echo
 
