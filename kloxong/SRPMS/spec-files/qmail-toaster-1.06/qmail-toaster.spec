@@ -68,23 +68,23 @@ Patch0:	roberto-netqmail-1.06.patch-2020.01.11.gz
 Patch1:	qmail_qmail-uids.patch
 Patch2:	qmail-toaster-centos-7-chroot.patch
 
-Patch3:	qmail_qmail-dk-0.6.beta.2.patch
-Patch4:	qmail_qmail-smtpd-spf-qq-reject-logging.patch
-Patch5:	qmail_qmail-srs-qt-0.5.patch
-Patch6:	qmail_qmailtoaster-big-dns.patch
-Patch7:	qmail_qmail-smtpd-linefeed.patch
-Patch8:	qmail_qmail-empf.patch
+#Patch3:	qmail_qmail-dk-0.6.beta.2.patch
+#Patch4:	qmail_qmail-smtpd-spf-qq-reject-logging.patch
+#Patch5:	qmail_qmail-srs-qt-0.5.patch
+#Patch6:	qmail_qmailtoaster-big-dns.patch
+#Patch7:	qmail_qmail-smtpd-linefeed.patch
+#Patch8:	qmail_qmail-empf.patch
 
-Patch9:	qmail_qmail-vpopmail-devel.patch
-Patch10: qmail_qmail-uids.patch
+#Patch9:	qmail_qmail-vpopmail-devel.patch
+#Patch10: qmail_qmail-uids.patch
 
-Patch11: qmail_qmail-nocram.patch
-Patch12: qmail_splogger-nostamp.patch
+#Patch11: qmail_qmail-nocram.patch
+#Patch12: qmail_splogger-nostamp.patch
 
-Patch20: qmail_qmail-outgoingip_rediff.patch
-Patch21: qmail_qmail-outgoingips_rediff.patch
+#Patch20: qmail_qmail-outgoingip_rediff.patch
+#Patch21: qmail_qmail-outgoingips_rediff.patch
 
-Patch30: qmail_qmailtoaster-any-to-cname.patch
+#Patch30: qmail_qmailtoaster-any-to-cname.patch
 
 Patch40: qmail-toaster-centos-7-chroot.patch
 Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
