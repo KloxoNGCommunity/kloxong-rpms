@@ -64,7 +64,7 @@ Source201:	qmail_qmail-remote.new
 
 Source300:	qmail_sendmail-wrapper
 
-Patch0:	roberto-netqmail-1.06.patch-2020.01.11.gz
+Patch0:	roberto-netqmail-1.06-2019-12-08.patch
 Patch1:	qmail_qmail-uids.patch
 Patch2:	qmail-toaster-centos-7-chroot.patch
 
