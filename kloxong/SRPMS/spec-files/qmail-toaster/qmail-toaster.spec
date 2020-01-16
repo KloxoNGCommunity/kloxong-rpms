@@ -212,7 +212,7 @@ this package.
 %patch7 -p0
 %patch8 -p1
 # I am really courious what happens if i enable that patch fails to compile with libdomainkeys error
-#%patch9 -p1
+%patch9 -p1
 %patch10 -p1
 
 %patch11 -p1
@@ -239,11 +239,11 @@ echo
 # Remove CRAM-MD5 because qmail-remote-auth doesn't like it
 #-------------------------------------------------------------------------------
 %{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
-%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
+#%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
 # Adding proper path of library depedencies
 #-------------------------------------------------------------------------------
-sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
+#sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 
 # Cleanup for the gcc
 #-------------------------------------------------------------------------------
