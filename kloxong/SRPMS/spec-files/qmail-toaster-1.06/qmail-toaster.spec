@@ -27,7 +27,7 @@ Obsoletes:	qmail-toaster-doc
 %define		qdir /var/qmail
 %define		builddate Thu Feb 24 2011
 
-Name:		%{name}-toaster
+Name:		%{name}-toaster-experimental
 Summary:	qmail Mail Transfer Agent
 Version:	%{vtoaster}
 Release:	%{release}
