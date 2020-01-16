@@ -87,7 +87,6 @@ Patch30: qmail_qmailtoaster-any-to-cname.patch
 
 Patch40: qmail-toaster-centos-7-chroot.patch
 Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
-Patch42: qmail-dkim-netqmail-1-06-patch-1-2-6.patch
 
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
@@ -229,7 +228,6 @@ this package.
 #we need to address openssl compile issues on centos 8 with openssl-1.1 patch
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 %patch41 -p0
-%patch42 -p1
 %endif
 
 
