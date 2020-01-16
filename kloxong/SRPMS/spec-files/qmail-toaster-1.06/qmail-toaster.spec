@@ -1,5 +1,5 @@
 %define 	name qmail
-%define 	pversion 1.03
+%define 	pversion 1.06
 %define 	bversion 1.6
 %define 	rpmrelease 1.kng%{?dist}
 
@@ -35,7 +35,7 @@ License:	GNU
 Group:		System/Servers
 URL:		http://www.qmail.org/
 
-Source:	qmail-%{pversion}.tar.bz2
+Source:		netqmail-%{pversion}.tar.gz
 Source1:	qmail_qmail-aliases
 Source3:	qmail_qmail.rc
 Source4:	qmail_qmail.init
@@ -64,9 +64,10 @@ Source201:	qmail_qmail-remote.new
 
 Source300:	qmail_sendmail-wrapper
 
-Patch0:	roberto-netqmail-1.06.patch-2019.12.08
-Patch1:	qmail_qmailtoaster-chkuser.patch
-Patch2:	qmail_qmail-require_auth.patch
+Patch0:	roberto-netqmail-1.06.patch
+Patch1:	qmail_qmail-uids.patch
+Patch2:	qmail-toaster-centos-7-chroot.patch
+
 Patch3:	qmail_qmail-dk-0.6.beta.2.patch
 Patch4:	qmail_qmail-smtpd-spf-qq-reject-logging.patch
 Patch5:	qmail_qmail-srs-qt-0.5.patch
@@ -141,7 +142,7 @@ this package.
 # Apply composit patch
 #-------------------------------------------------------------------------------
 %patch0 -p1
-#%patch1 -p1
+%patch1 -p1
 #%patch2 -p1
 #%patch3 -p1
 #%patch4 -p0
@@ -196,43 +197,6 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
 mkdir -p %{buildroot}
 
-
- 
-# Commenting group and users creation at build and trying to find a work around 
-# Add users and groups as per Life With Qmail
-#-------------------------------------------------------------------------------
-#if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
-#	groupadd -g 2107 -r nofiles 2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
-#	groupadd -g 2108 -r qmail 2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
-#	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
-#	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
-#	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
-#	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
-#	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
-#	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
-#	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
-#fi
-
-# We may need this to build and in order for qmail-toaster to have access to /home/vpopmail/include/ 
-#if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
-#	adduser qmail vchkpw 2>&1   || :
-#fi
 
 
 # We have gcc written in a temp file
