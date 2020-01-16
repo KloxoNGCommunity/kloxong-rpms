@@ -86,8 +86,8 @@ Patch2:	qmail-toaster-centos-7-chroot.patch
 
 #Patch30: qmail_qmailtoaster-any-to-cname.patch
 
-Patch40: qmail-toaster-centos-7-chroot.patch
-Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
+#Patch40: qmail-toaster-centos-7-chroot.patch
+#Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
 
 
 Requires: ucspi-tcp-toaster >= 0.88
