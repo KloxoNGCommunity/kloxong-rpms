@@ -1,15 +1,16 @@
-diff -u netqmail-1.06/Makefile netqmail-1.06-new/Makefile
---- netqmail-1.06/Makefile	2020-01-16 05:59:12.897000010 +1100
-+++ Makefile	2020-01-16 23:04:25.225000013 +1100
-@@ -1,7 +1,8 @@
+diff -u ../netqmail-1.06/Makefile ./Makefile
+--- ../netqmail-1.06/Makefile   2020-01-17 04:48:54.156000004 +1100
++++ ./Makefile  2020-01-17 05:15:57.658998594 +1100
+@@ -1,11 +1,10 @@
  # Don't edit Makefile! Use conf-* for configuration.
- 
+
 -VPOPMAIL_HOME=/home/vpopmail
 -VPOPMAIL_LIBS=`head -1 $(VPOPMAIL_HOME)/etc/lib_deps` `cat dns.lib`
 +VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`
-+
-+LIB_DK=/usr/lib/libdomainkeys.a
- 
- SMTPD_CHKUSER_OBJ=chkuser.o dns.o
- 
 
+ SMTPD_CHKUSER_OBJ=chkuser.o dns.o
+
+-LIBDOMAINKEYS=/usr/lib
++LIBDOMAINKEYS=/usr/lib64
+
+ DEFINES=-DEXTERNAL_TODO # use to enable external todo
