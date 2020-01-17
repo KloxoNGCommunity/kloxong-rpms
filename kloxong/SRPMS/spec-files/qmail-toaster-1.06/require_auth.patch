@@ -1,9 +1,6 @@
-Only in netqmail-1.06: Makefile.orig
-Common subdirectories: netqmail-1.06/old-patches and netqmail-1.06-new/old-patches
-Common subdirectories: netqmail-1.06/other-patches and netqmail-1.06-new/other-patches
 diff -u netqmail-1.06/qmail-smtpd.c netqmail-1.06-new/qmail-smtpd.c
 --- netqmail-1.06/qmail-smtpd.c	2020-01-16 05:39:21.575000010 +1100
-+++ netqmail-1.06-new/qmail-smtpd.c	2020-01-16 22:30:39.489000854 +1100
++++ qmail-smtpd.c	2020-01-16 22:30:39.489000854 +1100
 @@ -66,6 +66,8 @@
  int timeout = 1200;
  int maxrcpt = -1;
@@ -47,15 +44,15 @@ diff -u netqmail-1.06/qmail-smtpd.c netqmail-1.06-new/qmail-smtpd.c
  /* authtlsvariables: start */
      /* if it is authenticated but MAIL FROM and AUTH USER are different */
      if (smtpauth && seenauth && forceauthmailfrom) {
-@@ -2117,6 +2123,9 @@
+@@ -2117,6 +2124,10 @@
    }
  }
  
 +  x = env_get("REQUIRE_AUTH");
-+  if(x) { scan_ulong(x,&u); if (u>0) require_auth = 1; }
++  if (x) scan_ulong(x,&u); 
++  if (u>0) require_auth = 1;
 +
  #ifdef TLS
  stralloc proto = {0};
  int ssl_verified = 0;
-Only in netqmail-1.06-new: qmail-smtpd.c.orig
-Only in netqmail-1.06-new: qmail-smtpd.c.rej
+
