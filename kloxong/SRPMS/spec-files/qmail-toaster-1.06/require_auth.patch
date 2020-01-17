@@ -44,15 +44,16 @@ diff -u netqmail-1.06/qmail-smtpd.c netqmail-1.06-new/qmail-smtpd.c
  /* authtlsvariables: start */
      /* if it is authenticated but MAIL FROM and AUTH USER are different */
      if (smtpauth && seenauth && forceauthmailfrom) {
-@@ -2117,6 +2124,10 @@
+
+@@ -521,6 +524,10 @@
+     if (case_starts(auth,"!cram")) smtpauth = 12;
+     if (case_starts(auth,"!+cram")) smtpauth = 13;
    }
- }
- 
-+  x = env_get("REQUIRE_AUTH");
-+  if (x) scan_ulong(x,&u); 
-+  if (u>0) require_auth = 1;
 +
- #ifdef TLS
- stralloc proto = {0};
- int ssl_verified = 0;
++  x = env_get("REQUIRE_AUTH");
++  if(x) { scan_ulong(x,&u); if (u>0) require_auth = 1; }
++
+ /* authtlsvariables: start */
+   x = env_get("FORCEAUTHMAILFROM"); if (x) if (!str_diff(x,"1")) { forceauthmailfrom = 1; }
+   #ifdef TLS
 
