@@ -1,0 +1,11 @@
+diff -u ../netqmail-1.06/srs.c ./srs.c
+--- ../netqmail-1.06/srs.c	2020-01-16 05:39:21.601000010 +1100
++++ ./srs.c	2020-01-17 01:55:09.989001103 +1100
+@@ -1,6 +1,6 @@
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-#include </usr/local/include/srs2.h>
++#include <srs2.h>
+ #include "auto_qmail.h"
+ #include "stralloc.h"
+ #include "srs.h"
