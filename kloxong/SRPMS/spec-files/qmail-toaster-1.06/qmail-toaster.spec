@@ -10,7 +10,7 @@
 %define	rcpath /etc
 %define	_initpath /etc/rc.d/init.d
 BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
-Requires:		openssl >= 0.9.8, sh-utils
+Requires:		openssl >= 0.9.8, sh-utils, net-tools
 BuildRequires:	shadow-utils, bzip2, net-tools
 BuildRequires:	perl
 Provides:	smtpdaemon, MTA
@@ -144,7 +144,7 @@ echo
 %{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
 %{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
-# Adding proper path of library depedencies . if we use vpopmail-devel.patch we dont need this line
+# Adding proper path of library depedencies with vpopmail-toaster . if we use vpopmail-devel.patch we dont need this line
 #-------------------------------------------------------------------------------
 #sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 
