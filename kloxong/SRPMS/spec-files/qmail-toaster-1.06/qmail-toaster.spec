@@ -2,6 +2,7 @@
 %define 	pversion 1.06
 %define 	bversion 1.6
 %define 	rpmrelease 1.kng%{?dist}
+%define 	srcname netqmail
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -35,7 +36,7 @@ License:	GNU
 Group:		System/Servers
 URL:		http://www.qmail.org/
 
-Source:		netqmail-%{pversion}.tar.gz
+Source:		%{srcname}-%{pversion}.tar.gz
 Source1:	qmail_qmail-aliases
 Source3:	qmail_qmail.rc
 Source4:	qmail_qmail.init
@@ -71,6 +72,7 @@ Patch3:	qmail_splogger-nostamp.patch
 Patch4:	ipoutgoing2ipoutgoings.patch
 Patch5:	require_auth.patch
 Patch6:	vpopmail-devel.patch
+Patch7:	srs2.patch
 
 
 Requires: ucspi-tcp-toaster >= 0.88
@@ -87,7 +89,7 @@ BuildRequires: libsrs2-toaster >= 1.0.18
 BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: vpopmail-toaster >= 5.4.17
 
-Buildroot:	%{_tmppath}/%{name}-%{version}
+Buildroot:	%{_tmppath}/%{srcname}-%{version}
 #Conflicts:	sendmail, exim, smail, postfix, qmail
 Obsoletes:	sendmail, sendmail-cf, sendmail-doc, sendmail-devel
 Obsoletes:	exim, smail, postfix, qmail, ssmtp
@@ -120,7 +122,7 @@ this package.
 %prep
 #-------------------------------------------------------------------------------
 
-%setup -q -n qmail-%{pversion}
+%setup -q -n %{srcname}-%{pversion}
 
 # Apply composit patch
 #-------------------------------------------------------------------------------
@@ -131,6 +133,7 @@ this package.
 %patch4 -p0
 %patch5 -p1
 %patch6 -p0
+%patch7 -p0
 
 echo
 
@@ -147,9 +150,9 @@ sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 
 # Cleanup for the gcc
 #-------------------------------------------------------------------------------
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+[ -f %{_tmppath}/%{srcname}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{srcname}-%{pversion}-gcc
 
-echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
+echo "gcc" > %{_tmppath}/%{srcname}-%{pversion}-gcc
 
 
 #-------------------------------------------------------------------------------
@@ -162,14 +165,14 @@ mkdir -p %{buildroot}
 
 # We have gcc written in a temp file
 #-------------------------------------------------------------------------------
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
+echo "`cat %{_tmppath}/%{srcname}-%{pversion}-gcc` %{ccflags}"    >conf-cc
+echo "`cat %{_tmppath}/%{srcname}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
 
 
 
 # Delete gcc temp file
 #-------------------------------------------------------------------------------
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+[ -f %{_tmppath}/%{srcname}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{srcname}-%{pversion}-gcc
 
 make clean
 make compile makelib

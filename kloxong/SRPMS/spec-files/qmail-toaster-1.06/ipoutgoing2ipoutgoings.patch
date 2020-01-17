@@ -1,9 +1,6 @@
-Only in netqmail-1.06: Makefile.orig
-Common subdirectories: netqmail-1.06/old-patches and netqmail-1.06-new/old-patches
-Common subdirectories: netqmail-1.06/other-patches and netqmail-1.06-new/other-patches
 diff -u netqmail-1.06/qmail-control.9 netqmail-1.06-new/qmail-control.9
 --- netqmail-1.06/qmail-control.9	2020-01-16 05:39:21.545000010 +1100
-+++ netqmail-1.06-new/qmail-control.9	2020-01-16 21:27:19.913000017 +1100
++++ qmail-control.9	2020-01-16 21:27:19.913000017 +1100
 @@ -71,7 +71,7 @@
  .I localiphost	\fIme	\fRqmail-smtpd
  .I locals	\fIme	\fRqmail-send
@@ -15,7 +12,7 @@ diff -u netqmail-1.06/qmail-control.9 netqmail-1.06-new/qmail-control.9
  .I qmqpservers	\fR(none)	\fRqmail-qmqpc
 diff -u netqmail-1.06/qmail-remote.8 netqmail-1.06-new/qmail-remote.8
 --- netqmail-1.06/qmail-remote.8	2020-01-16 05:39:21.560000009 +1100
-+++ netqmail-1.06-new/qmail-remote.8	2020-01-16 21:27:19.916000010 +1100
++++ qmail-remote.8	2020-01-16 21:27:19.916000010 +1100
 @@ -250,12 +250,22 @@
  takes precedence over this file however).
  
@@ -47,7 +44,7 @@ diff -u netqmail-1.06/qmail-remote.8 netqmail-1.06-new/qmail-remote.8
  Artificial SMTP routes.
 diff -u netqmail-1.06/qmail-remote.c netqmail-1.06-new/qmail-remote.c
 --- netqmail-1.06/qmail-remote.c	2020-01-16 05:39:21.563000009 +1100
-+++ netqmail-1.06-new/qmail-remote.c	2020-01-16 21:33:22.485999700 +1100
++++ qmail-remote.c	2020-01-16 21:33:22.485999700 +1100
 @@ -40,7 +40,9 @@
  static stralloc sauninit = {0};
  
@@ -149,7 +146,7 @@ diff -u netqmail-1.06/qmail-remote.c netqmail-1.06-new/qmail-remote.c
  #ifdef TLS
 diff -u netqmail-1.06/qmail-showctl.c netqmail-1.06-new/qmail-showctl.c
 --- netqmail-1.06/qmail-showctl.c	2020-01-16 05:39:21.569000009 +1100
-+++ netqmail-1.06-new/qmail-showctl.c	2020-01-16 21:34:35.375001499 +1100
++++ qmail-showctl.c	2020-01-16 21:34:35.375001499 +1100
 @@ -239,9 +239,9 @@
    do_str("localiphost",1,"localiphost","Local IP address becomes ");
    do_lst("locals","Messages for me are delivered locally.","Messages for "," are delivered locally.");
@@ -171,7 +168,7 @@ diff -u netqmail-1.06/qmail-showctl.c netqmail-1.06-new/qmail-showctl.c
      substdio_puts(subfdout,": I have no idea what this file does.\n");
 diff -u netqmail-1.06/timeoutconn.c netqmail-1.06-new/timeoutconn.c
 --- netqmail-1.06/timeoutconn.c	2020-01-16 05:39:21.619000009 +1100
-+++ netqmail-1.06-new/timeoutconn.c	2020-01-16 21:27:19.925000013 +1100
++++ timeoutconn.c	2020-01-16 21:27:19.925000013 +1100
 @@ -10,26 +10,20 @@
  #include "byte.h"
  #include "timeoutconn.h"
