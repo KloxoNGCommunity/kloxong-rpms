@@ -143,11 +143,12 @@ echo
 # Remove CRAM-MD5 because qmail-remote-auth doesn't like it
 #-------------------------------------------------------------------------------
 %{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
-%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
+if we use vpopmail-devel we may not need 
+#%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
 # Adding proper path of library depedencies with vpopmail-toaster . if we use vpopmail-devel.patch we dont need this line
 #-------------------------------------------------------------------------------
-sed -i '3 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
+#sed -i '3 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 
 # Cleanup for the gcc
 #-------------------------------------------------------------------------------
