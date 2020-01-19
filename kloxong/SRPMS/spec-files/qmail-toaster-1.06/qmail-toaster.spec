@@ -133,7 +133,7 @@ this package.
 %patch4 -p0
 %patch5 -p1
 #lets see if vpopmail-devel is a problem and go with spec directive for lib_deps
-#%patch6 -p0
+%patch6 -p0
 %patch7 -p0
 
 echo
