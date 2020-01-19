@@ -147,7 +147,7 @@ echo
 
 # Adding proper path of library depedencies with vpopmail-toaster . if we use vpopmail-devel.patch we dont need this line
 #-------------------------------------------------------------------------------
-sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
+sed -i '3 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 
 # Cleanup for the gcc
 #-------------------------------------------------------------------------------
