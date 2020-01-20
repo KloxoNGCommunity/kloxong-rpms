@@ -18,7 +18,7 @@ Obsoletes:	qmail-toaster-doc
 # we may not find the old library path in the new one if
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
 #%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
-%define	ldflags %{optflags}
+%define	ldflags %{optflags} -lresolv
 
 
 ############### RPM ################################
@@ -73,6 +73,7 @@ Patch4:	ipoutgoing2ipoutgoings.patch
 Patch5:	require_auth.patch
 Patch6:	vpopmail-devel.patch
 Patch7:	srs2.patch
+
 
 
 Requires: ucspi-tcp-toaster >= 0.88
@@ -136,6 +137,7 @@ this package.
 %patch6 -p0
 %patch7 -p0
 
+
 echo
 
 %define name qmail
@@ -143,7 +145,7 @@ echo
 # Remove CRAM-MD5 because qmail-remote-auth doesn't like it
 #-------------------------------------------------------------------------------
 %{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
-if we use vpopmail-devel we may not need 
+#if we use vpopmail-devel we may not need 
 #%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
 # Adding proper path of library depedencies with vpopmail-toaster . if we use vpopmail-devel.patch we dont need this line
