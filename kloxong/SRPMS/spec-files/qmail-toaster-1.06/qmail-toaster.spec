@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.06
 %define 	bversion 1.6
-%define 	rpmrelease 1.kng%{?dist}
+%define 	rpmrelease 2.kng%{?dist}
 %define 	srcname netqmail
 
 
@@ -969,6 +969,11 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Jan 20 2020 John Pierce <john@luckytanuki.com> 1.06-1.6.2.kng
+- upgrade to netQmail 1.06
+- add Roberto Puzzanghera's combined patch for netqmail-1.06 v. 2020.01.11 
+- add patches to allow centos 7 build
+
 * Sun Dec 22 2019 John Pierce <john@luckytanuki.com> 1.03-1.3.58.kng
 - Fix directive for /queue that was changing ownership of mutex file
 
