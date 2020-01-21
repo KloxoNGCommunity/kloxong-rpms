@@ -81,7 +81,7 @@ pushd /tmp/tmpssl-$$ > /dev/null
     cat >.cfg <<EOT
 [ req ]
 default_bits                    = 1024
-distinguished_name              = req_DN
+distinguished_name              = req_DN_rsa_ca
 RANDFILE                        = ca.rnd
 [ req_DN ]
 countryName                     = "1. Country Name             (2 letter code)"
@@ -158,7 +158,7 @@ EOT
     cat >.cfg <<EOT
 [ req ]
 default_bits                    = 1024
-distinguished_name              = req_DN
+distinguished_name              = req_DN_singing
 RANDFILE                        = ca.rnd
 [ req_DN ]
 countryName                     = "1. Country Name             (2 letter code)"
