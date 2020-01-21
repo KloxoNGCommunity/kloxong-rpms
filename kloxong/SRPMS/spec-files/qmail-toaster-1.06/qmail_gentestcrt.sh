@@ -81,7 +81,7 @@ pushd /tmp/tmpssl-$$ > /dev/null
     cat >.cfg <<EOT
 [ req ]
 default_bits                    = 1024
-distinguished_name              = req_DN_rsa_ca
+distinguished_name              = req_DN
 RANDFILE                        = ca.rnd
 [ req_DN ]
 countryName                     = "1. Country Name             (2 letter code)"
@@ -96,7 +96,7 @@ localityName                    = "3. Locality Name            (eg, city)     "
 0.organizationName_default      = "Qmail Toaster Server"
 organizationalUnitName          = "5. Organizational Unit Name (eg, section)  "
 organizationalUnitName_default  = "For testing purposes only"
-commonName                      = "6. Common Name  RSA            (eg, CA name)  "
+commonName                      = "6. Common Name              (eg, CA name)  "
 commonName_max                  = 64
 commonName_default              = "www.qmailtoaster.com"
 emailAddress                    = "7. Email Address            (eg, name@FQDN)"
@@ -127,7 +127,7 @@ EOT
     echo "______________________________________________________________________"
     echo ""
     echo "${T_MD}RESULT:${T_ME}"
-    $openssl verify ca.crt
+    $openssl verify -CAfile ca.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
         exit 1
@@ -158,7 +158,7 @@ EOT
     cat >.cfg <<EOT
 [ req ]
 default_bits                    = 1024
-distinguished_name              = req_DN_singing
+distinguished_name              = req_DN
 RANDFILE                        = ca.rnd
 [ req_DN ]
 countryName                     = "1. Country Name             (2 letter code)"
