@@ -80,7 +80,7 @@ pushd /tmp/tmpssl-$$ > /dev/null
     echo "${T_MD}STEP 2: Generating X.509 certificate signing request for CA${T_ME}"
     cat >.cfg <<EOT
 [ req ]
-default_bits                    = 1024
+default_bits                    = 4096
 distinguished_name              = req_DN
 RANDFILE                        = ca.rnd
 [ req_DN ]
@@ -130,7 +130,7 @@ EOT
     $openssl verify -CAfile ca.crt ca.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
-        exit 0
+        exit 1
     fi
     $openssl x509 -text -in ca.crt
     $openssl rsa -text -in ca.key
@@ -142,11 +142,11 @@ EOT
     echo "${T_MD}Generating custom USER${T_ME} [$user]"
     echo "______________________________________________________________________"
     echo ""
-    echo "${T_MD}STEP 5: Generating RSA private key for USER (1024 bit)${T_ME}"
+    echo "${T_MD}STEP 5: Generating RSA private key for USER (4696 bit)${T_ME}"
     if [ ".$randfiles" != . ]; then
-        $openssl genrsa -rand $randfiles -out $user.key 1024
+        $openssl genrsa -rand $randfiles -out $user.key 4096
     else
-        $openssl genrsa -out $user.key 1024
+        $openssl genrsa -out $user.key 4096
     fi
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate RSA private key" 1>&2
@@ -157,7 +157,7 @@ EOT
     echo "${T_MD}STEP 6: Generating X.509 certificate signing request for USER${T_ME}"
     cat >.cfg <<EOT
 [ req ]
-default_bits                    = 1024
+default_bits                    = 4096
 distinguished_name              = req_DN
 RANDFILE                        = ca.rnd
 [ req_DN ]
@@ -168,9 +168,9 @@ countryName_max                 = 2
 stateOrProvinceName             = "2. State or Province Name   (full name)    "
 #stateOrProvinceName_default     = "Unknown"
 localityName                    = "3. Locality Name            (eg, city)     "
-#localityName_default            = "Server Room"
+localityName_default            = "Server"
 0.organizationName              = "4. Organization Name        (eg, company)  "
-0.organizationName_default      = "Qmail Toaster Server"
+0.organizationName_default      = "Qmail Net Toaster Server"
 organizationalUnitName          = "5. Organizational Unit Name (eg, section)  "
 organizationalUnitName_default  = "Test Certificate"
 commonName                      = "6. Common Name              (eg, DOMAIN NAME)  "
@@ -211,7 +211,7 @@ EOT
     echo "______________________________________________________________________"
     echo ""
     echo "${T_MD}RESULT:${T_ME}"
-    $openssl verify -CAfile ca.crt $user.crt
+    $openssl verify -CAfile ca.crt -untrusted $user.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
         exit 1
