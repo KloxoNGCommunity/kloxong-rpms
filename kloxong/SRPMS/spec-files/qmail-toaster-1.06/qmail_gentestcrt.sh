@@ -63,13 +63,13 @@ pushd /tmp/tmpssl-$$ > /dev/null
     echo "${T_MD}Generating custom Certificate Authority (CA)${T_ME}"
     echo "______________________________________________________________________"
     echo ""
-    echo "${T_MD}STEP 1: Generating RSA private key for CA (1024 bit)${T_ME}"
+    echo "${T_MD}STEP 1: Generating RSA private key for CA (4096 bit)${T_ME}"
     cp /dev/null ca.rnd
     echo '01' >ca.ser
     if [ ".$randfiles" != . ]; then
-        $openssl genrsa -rand $randfiles -out ca.key 1024
+        $openssl genrsa -rand $randfiles -out ca.key 4096
     else
-        $openssl genrsa -out ca.key 1024
+        $openssl genrsa -out ca.key 4096
     fi
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate RSA private key" 1>&2
