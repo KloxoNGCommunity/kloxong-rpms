@@ -197,7 +197,7 @@ EOT
 #nsComment        = "CCA generated client certificate"
 #nsCertType       = client
 EOT
-    $openssl x509 -extensions v3_ca -extfile .cfg -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
+    $openssl x509 -extfile .cfg -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate X.509 certificate" 1>&2
         exit 1
