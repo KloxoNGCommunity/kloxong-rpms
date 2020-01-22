@@ -211,7 +211,7 @@ EOT
     echo "______________________________________________________________________"
     echo ""
     echo "${T_MD}RESULT:${T_ME}"
-    $openssl verify -trusted ca.crt -CAfile ca.crt  -untrusted ca.crt $user.crt
+    $openssl verify -CAfile ca.crt  $user.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
         exit 1
