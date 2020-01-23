@@ -112,15 +112,14 @@ EOT
     echo ""
     echo "${T_MD}STEP 3: Generating X.509 certificate for CA signed by itself${T_ME}"
     cat >.cfg <<EOT
-#extensions = x509v3
-#[ x509v3 ]
-#subjectAltName   = email:copy
-#basicConstraints = CA:true,pathlen:0
-#nsComment        = "CCA generated custom CA certificate"
-#nsCertType       = sslCA
+extensions = x509v3
+[ x509v3 ]
+subjectAltName   = email:copy
+basicConstraints = CA:true,pathlen:0
+nsComment        = "CCA generated custom CA certificate"
+nsCertType       = sslCA
 EOT
-   # $openssl x509 -extfile .cfg -req -sha256 -days 365 -signkey ca.key -in ca.csr -out ca.crt
-     $openssl   -req -sha256 -days 365 -signkey ca.key -in ca.csr -out ca.crt
+    $openssl x509 -extfile .cfg -req -sha256 -days 365 -signkey ca.key -in ca.csr -out ca.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate self-signed CA certificate" 1>&2
         exit 1
@@ -191,12 +190,12 @@ EOT
     echo ""
     echo "${T_MD}STEP 7: Generating X.509 certificate signed by own CA${T_ME}"
     cat >.cfg <<EOT
-#extensions = x509v3
-#[ x509v3 ]
-#subjectAltName   = email:copy
-#basicConstraints = CA:false,pathlen:0
-#nsComment        = "CCA generated client certificate"
-#nsCertType       = client
+extensions = x509v3
+[ x509v3 ]
+subjectAltName   = email:copy
+basicConstraints = CA:false,pathlen:0
+nsComment        = "CCA generated client certificate"
+nsCertType       = client
 EOT
     $openssl x509 -extfile .cfg  -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
     if [ $? -ne 0 ]; then
