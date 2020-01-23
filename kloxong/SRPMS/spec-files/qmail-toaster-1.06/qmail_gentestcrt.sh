@@ -67,9 +67,9 @@ pushd /tmp/tmpssl-$$ > /dev/null
     cp /dev/null ca.rnd
     echo '01' >ca.ser
     if [ ".$randfiles" != . ]; then
-        $openssl genrsa -rand $randfiles -des3 -out ca.key 4096
+        $openssl genrsa -rand $randfiles  -out ca.key 4096
     else
-        $openssl genrsa -des3 -out ca.key 4096
+        $openssl genrsa  -out ca.key 4096
     fi
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate RSA private key" 1>&2
