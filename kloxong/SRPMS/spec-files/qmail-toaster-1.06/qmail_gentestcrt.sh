@@ -120,7 +120,7 @@ EOT
 #nsCertType       = sslCA
 EOT
    # $openssl x509 -extfile .cfg -req -sha256 -days 365 -signkey ca.key -in ca.csr -out ca.crt
-     $openssl  -extfile .cfg -req -sha256 -days 365 -signkey ca.key -in ca.csr -out ca.crt
+     $openssl   -req -sha256 -days 365 -signkey ca.key -in ca.csr -out ca.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate self-signed CA certificate" 1>&2
         exit 1
