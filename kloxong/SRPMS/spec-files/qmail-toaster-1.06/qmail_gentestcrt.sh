@@ -67,9 +67,9 @@ pushd /tmp/tmpssl-$$ > /dev/null
     cp /dev/null ca.rnd
     echo '01' >ca.ser
     if [ ".$randfiles" != . ]; then
-        $openssl genrsa -rand $randfiles -out ca.key 4096
+        $openssl genrsa -rand $randfiles -des3 -out ca.key 4096
     else
-        $openssl genrsa -out ca.key 4096
+        $openssl genrsa -des3 -out ca.key 4096
     fi
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate RSA private key" 1>&2
@@ -103,7 +103,7 @@ emailAddress                    = "7. Email Address            (eg, name@FQDN)"
 emailAddress_max                = 40
 #emailAddress_default            = "nick@ndhsoft.com"
 EOT
-    $openssl req -config .cfg -new -key ca.key -out ca.csr
+    $openssl req -config .cfg -new -sha256 -key ca.key -out ca.csr
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate certificate signing request" 1>&2
         exit 1
@@ -144,9 +144,9 @@ EOT
     echo ""
     echo "${T_MD}STEP 5: Generating RSA private key for USER (4696 bit)${T_ME}"
     if [ ".$randfiles" != . ]; then
-        $openssl genrsa -rand $randfiles -out $user.key 4096
+        $openssl genrsa -rand $randfiles -sha256 -out $user.key 4096
     else
-        $openssl genrsa -out $user.key 4096
+        $openssl genrsa -sha256 -out $user.key 4096
     fi
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate RSA private key" 1>&2
@@ -180,7 +180,7 @@ emailAddress                    = "7. Email Address            (eg, name@fqdn)"
 emailAddress_max                = 40
 #emailAddress_default            = "root@localhost"
 EOT
-    $openssl req -config .cfg -new -key $user.key -out $user.csr
+    $openssl req -config .cfg -new -sha256 -key $user.key -out $user.csr
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate certificate signing request" 1>&2
         exit 1
@@ -197,7 +197,7 @@ EOT
 #nsComment        = "CCA generated client certificate"
 #nsCertType       = client
 EOT
-    $openssl x509 -extfile .cfg -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
+    $openssl x509 -extfile .cfg  -sha256 -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate X.509 certificate" 1>&2
         exit 1
@@ -211,8 +211,7 @@ EOT
     echo "______________________________________________________________________"
     echo ""
     echo "${T_MD}RESULT:${T_ME}"
- #   $openssl verify -CAfile ca.crt -CAfile $user.crt $user.crt
-     $openssl verify -CAfile $user.crt $user.crt
+    $openssl verify -CAfile ca.crt  $user.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
         exit 1
