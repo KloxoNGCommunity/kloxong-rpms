@@ -144,9 +144,9 @@ EOT
     echo ""
     echo "${T_MD}STEP 5: Generating RSA private key for USER (4696 bit)${T_ME}"
     if [ ".$randfiles" != . ]; then
-        $openssl genrsa -rand $randfiles -sha256 -out $user.key 4096
+        $openssl genrsa -rand $randfiles -out $user.key 4096
     else
-        $openssl genrsa -sha256 -out $user.key 4096
+        $openssl genrsa -out $user.key 4096
     fi
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate RSA private key" 1>&2
@@ -197,7 +197,7 @@ EOT
 #nsComment        = "CCA generated client certificate"
 #nsCertType       = client
 EOT
-    $openssl x509 -extfile .cfg  -sha256 -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
+    $openssl x509 -extfile .cfg  -days 365 -CAserial ca.ser -CA ca.crt -CAkey ca.key -in $user.csr -req -out $user.crt
     if [ $? -ne 0 ]; then
         echo "cca:Error: Failed to generate X.509 certificate" 1>&2
         exit 1
