@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.06
 %define 	bversion 1.6
-%define 	rpmrelease 2.kng%{?dist}
+%define 	rpmrelease 3.kng%{?dist}
 %define 	srcname netqmail
 
 
@@ -28,7 +28,7 @@ Obsoletes:	qmail-toaster-doc
 %define		qdir /var/qmail
 %define		builddate Thu Feb 24 2011
 
-Name:		%{name}-toaster-experimental
+Name:		%{name}-toaster
 Summary:	qmail Mail Transfer Agent
 Version:	%{vtoaster}
 Release:	%{release}
@@ -969,6 +969,10 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Sat Jan 25 2020 John Pierce <john@luckytanuki.com> 1.06-1.6.3.kng
+- incorporate certificate fix by Dionysis Kladis
+- remove experimental from package name to allow install on kloxong
+ 
 * Mon Jan 20 2020 John Pierce <john@luckytanuki.com> 1.06-1.6.2.kng
 - upgrade to netQmail 1.06
 - add Roberto Puzzanghera's combined patch for netqmail-1.06 v. 2020.01.11 
