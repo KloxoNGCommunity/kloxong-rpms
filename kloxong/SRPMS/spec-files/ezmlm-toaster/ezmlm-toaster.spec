@@ -208,8 +208,13 @@ tar fvxj $RPM_SOURCE_DIR/ezman-%{idxversion}.html.tar.bz2
 
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
 [ -d $RPM_BUILD_DIR/%{name}-%{ezmlmversion} ] && rm -rf $RPM_BUILD_DIR/%{name}-%{ezmlmversion}
+
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-%{gccver}
+%else
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc32 ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc32
+%endif
 
 
 #-------------------------------------------------------------------------------
