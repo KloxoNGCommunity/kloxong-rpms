@@ -25,7 +25,8 @@ Release:	%{release}
 License:	BSD
 Group:		Monitoring
 URL:		http://www.enderunix.org/isoqlog/
-Source0:	isoqlog-%{pversion}.tar.bz2
+#Source0:	isoqlog-%{pversion}.tar.bz2
+Source0:	isoqlog-%{pversion}.tar.gz
 Source1:	isoqlog.conf.bz2	
 Source2:	cron.sh.bz2
 Source3:	toaster-templates.tar.bz2
@@ -34,7 +35,7 @@ Patch1:		isoqlog-2.1-errno.patch.bz2
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 #BuildPreReq:	qmail-toaster >= 1.03, control-panel-toaster >= 0.2
 BuildRequires: qmail-toaster >= 1.03
-BuildRequires: automake
+BuildRequires: automake, gzip
 #Requires:	qmail-toaster >= 1.03, control-panel-toaster >= 0.5
 Requires:	qmail-toaster >= 1.03
 Obsoletes:	isoqlog-toaster-doc
