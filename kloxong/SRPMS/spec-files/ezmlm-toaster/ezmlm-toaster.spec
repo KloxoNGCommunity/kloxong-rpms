@@ -144,7 +144,12 @@ mv idx.h.tmp idx.h
 
 # Fix lib include in Makefile
 #-------------------------------------------------------------------------------
+
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+perl -pi -e 's|`head -1 conf-sqlld`|-L/usr/lib/mysql -L/usr/lib64/libnsl -lnsl -lm -lz|g' Makefile
+%else
 perl -pi -e 's|`head -1 conf-sqlld`|-L/usr/lib/mysql -lnsl -lm -lz|g' Makefile
+%endif
 
 # We have gcc written in a temp file
 #-------------------------------------------------------------------------------
