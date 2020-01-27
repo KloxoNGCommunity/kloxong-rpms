@@ -17,7 +17,7 @@ BuildRequires:	perl, libnsl, glibc, libnsl2
 %endif
 %define	gccver	gcc
 %define	ccflags %{optflags}
-%define	ldflags %{optflags} -L/lib64 -lnsl
+%define	ldflags %{optflags}
 
 ############### RPM ################################
 
