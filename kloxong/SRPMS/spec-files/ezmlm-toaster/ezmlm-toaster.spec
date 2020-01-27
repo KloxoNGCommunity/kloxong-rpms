@@ -3,7 +3,7 @@
 %define	ezmlmversion 0.53
 %define 	pversion %{ezmlmversion}.324
 %define 	bversion 1.3
-%define	rpmrelease 9.kng%{?dist}
+%define	rpmrelease 10.kng%{?dist}
 
 %define         release %{bversion}.%{rpmrelease}
 %define         apacheuser apache
@@ -142,7 +142,7 @@ sed -e 's{^#define TXT_ETC_EZMLMRC \"/etc/ezmlmrc\"{#define TXT_ETC_EZMLMRC \"$R
 
 mv idx.h.tmp idx.h
 
-# Fix lib include in Makefile
+# Fix lib include in Makefile we need 2 seperate centos 7 > for proper library include
 #-------------------------------------------------------------------------------
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
@@ -208,7 +208,7 @@ tar fvxj $RPM_SOURCE_DIR/ezman-%{idxversion}.html.tar.bz2
 
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
 [ -d $RPM_BUILD_DIR/%{name}-%{ezmlmversion} ] && rm -rf $RPM_BUILD_DIR/%{name}-%{ezmlmversion}
-
+# while cleaning there is no gcc32 for centos 8 anymore so adding proper cleaning way with an if for now 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-%{gccver}
 %else
@@ -253,6 +253,11 @@ tar fvxj $RPM_SOURCE_DIR/ezman-%{idxversion}.html.tar.bz2
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Jan 27 2019 Dionysis Kladis <dkstiler@gmail.com> 0.53.324-1.3.9.kng
+- Fixing compile issues and spec file for cenntos 8
+- Added missing depedency libnsl for centos 8
+- Fix a clean up issue folders with reduntanty sections that breaks on centos 8 
+
 * Sat Dec 20 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.53.324-1.3.9.mr
 - cleanup spec based on toaster github (without define like build_cnt_60)
 - disable Requires to apache/httpd
