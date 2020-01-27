@@ -132,7 +132,7 @@ this package.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p0
-%patch5 -p1
+#%patch5 -p1
 #lets see if vpopmail-devel is a problem and go with spec directive for lib_deps
 %patch6 -p0
 %patch7 -p0
