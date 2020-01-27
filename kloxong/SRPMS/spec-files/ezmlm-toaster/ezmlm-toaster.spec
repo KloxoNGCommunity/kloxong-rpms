@@ -142,11 +142,9 @@ sed -e 's{^#define TXT_ETC_EZMLMRC \"/etc/ezmlmrc\"{#define TXT_ETC_EZMLMRC \"$R
 
 mv idx.h.tmp idx.h
 
-
 # Fix lib include in Makefile
 #-------------------------------------------------------------------------------
 perl -pi -e 's|`head -1 conf-sqlld`|-L/usr/lib/mysql -lnsl -lm -lz|g' Makefile
-/sbin/ldconfig
 
 # We have gcc written in a temp file
 #-------------------------------------------------------------------------------
