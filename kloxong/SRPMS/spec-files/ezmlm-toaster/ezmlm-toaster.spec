@@ -146,7 +146,7 @@ mv idx.h.tmp idx.h
 #-------------------------------------------------------------------------------
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
-perl -pi -e 's|`head -1 conf-sqlld`|-L/usr/lib/mysql -L/usr/lib64/libnsl.so.1 -lnsl -lm -lz|g' Makefile
+perl -pi -e 's|`head -1 conf-sqlld`|-L/usr/lib/mysql -L/usr/lib64 -lnsl -lm -lz|g' Makefile
 %else
 perl -pi -e 's|`head -1 conf-sqlld`|-L/usr/lib/mysql -lnsl -lm -lz|g' Makefile
 %endif
