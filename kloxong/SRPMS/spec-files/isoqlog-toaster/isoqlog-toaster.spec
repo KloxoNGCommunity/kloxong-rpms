@@ -1,5 +1,5 @@
 %define	name isoqlog
-%define	pversion 2.1
+%define	pversion 2.2.1
 %define 	bversion 1.3
 %define	rpmrelease 8.kng%{?dist}
 
@@ -60,8 +60,8 @@ day, per month, and years.
 
 %setup -q -n %{name}-%{pversion}
 
-%patch0 -p0
-%patch1 -p1
+#%patch0 -p0
+#%patch1 -p1
 
 # CVS cleanup
 #----------------------------------------------------------------------------
