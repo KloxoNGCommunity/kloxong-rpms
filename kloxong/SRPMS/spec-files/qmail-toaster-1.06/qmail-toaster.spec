@@ -239,11 +239,11 @@ install -d -m755 %{buildroot}/var/log/qmail/smtp-ssl
 
 # install binaries
 #-------------------------------------------------------------------------------
-for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff; do
+for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff qmail-newmvrt update_tmprsadh dkim; do
   install -m755 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-clean qmail-getpw qmail-local qmail-popup qmail-pw2u qmail-remote qmail-rspawn qmail-send splogger; do
+for i in qmail-clean qmail-getpw qmail-local qmail-popup qmail-pw2u qmail-remote qmail-rspawn qmail-send spawn-filter qmail-todo qmail-upq splogger; do
   install -m711 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
@@ -251,12 +251,12 @@ for i in qmail-lspawn qmail-newmrh qmail-newu qmail-start; do
   install -m700 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-dk qmail-queue; do
+for i in qmail-dk qmail-dkim qmail-queue surblqueue; do
   install -m4711 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
 #for i in qmail-badmimetypes qmail-badloadertypes qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter; do
-for i in qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter; do
+for i in qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter surblfilter; do
   install -m755 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
@@ -264,7 +264,7 @@ done
 # install docs
 #-------------------------------------------------------------------------------
 #for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES FILES.warlord HISTORY.warlord INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INSTALL.warlord INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.domainkeys README.qregex README.remote-auth README.starttls README.tap README.warlord REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION ChangeLog.empf README.empf;
-for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.qregex  README.tap REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION README.empf; do
+for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.qregex  README.tap REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION README.empf README.exttodo; do
   install -m644 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i %{buildroot}%{qdir}/doc
 done
 
@@ -284,13 +284,13 @@ for i in qmail-limits forgeries qmail; do
 done
 
 #for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
-for i in qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
+for i in qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote qmail-dk qmail-dkim spawn-filter surblfilter; do
 
   install -m644 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i.8 %{buildroot}%{qdir}/man/man8
   install -m644 $RPM_BUILD_DIR/%{srcname}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
 done
 
-install -m644 $RPM_BUILD_DIR/%{srcname}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
+install -m644 $RPM_BUILD_DIR/%{srcname}-%{pversion}/dkim.8 %{buildroot}%{qdir}/man/man8
 
 # install boot
 #-------------------------------------------------------------------------------
@@ -852,10 +852,14 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/preline
 %attr(0755,root,qmail) %{qdir}/bin/qail
 %attr(0755,root,qmail) %{qdir}/bin/qbiff
+%attr(0755,root,qmail) %{qdir}/bin/qmail-newmvrt
+%attr(0755,root,qmail) %{qdir}/bin/dkim
+%attr(0755,root,qmail) %{qdir}/bin/update_tmprsadh
 #%attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
 #%attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
 %attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dk
+%attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dkim
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
 %attr(0755,root,qmail) %{qdir}/bin/qmail-inject
 %attr(0711,root,qmail) %{qdir}/bin/qmail-local
@@ -866,9 +870,13 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/qmail-qread
 %attr(0755,root,qmail) %{qdir}/bin/qmail-qstat
 %attr(04711,qmailq,qmail) %{qdir}/bin/qmail-queue
+%attr(04711,qmailq,qmail) %{qdir}/bin/surblqueue
 %attr(0711,root,qmail) %{qdir}/bin/qmail-remote
 %attr(0711,root,qmail) %{qdir}/bin/qmail-rspawn
 %attr(0711,root,qmail) %{qdir}/bin/qmail-send
+%attr(0711,root,qmail) %{qdir}/bin/spawn-filter
+%attr(0711,root,qmail) %{qdir}/bin/qmail-todo
+%attr(0711,root,qmail) %{qdir}/bin/qmail-upq
 %attr(0755,root,qmail) %{qdir}/bin/qmail-showctl
 %attr(0755,root,qmail) %{qdir}/bin/qmail-smtpd
 %attr(0755,root,qmail) %{qdir}/bin/qmail-qmqpc
@@ -882,6 +890,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/sendmail
 %attr(0755,root,qmail) %{qdir}/bin/spfquery
 %attr(0755,root,qmail) %{qdir}/bin/srsfilter
+%attr(0755,root,qmail) %{qdir}/bin/surblfilter
 %attr(0711,root,qmail) %{qdir}/bin/splogger
 %attr(0755,root,qmail) %{qdir}/bin/tcp-env
 
@@ -893,60 +902,60 @@ fi
 
 # man pages
 #-------------------------------------------------------------------------------
-%attr(0644,root,qmail) %{qdir}/man/man1/qreceipt.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/condredirect.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/mailsubj.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/except.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/maildirmake.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/preline.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/tcp-env.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/bouncesaying.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/maildir2mbox.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/qbiff.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/forward.1*
-%attr(0644,root,qmail) %{qdir}/man/man1/maildirwatch.1*
-%attr(0644,root,qmail) %{qdir}/man/man5/qmail-users.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/maildir.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/qmail-header.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/envelopes.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/mbox.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/tcp-environ.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/qmail-control.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/qmail-log.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/addresses.5*
-%attr(0644,root,qmail) %{qdir}/man/man5/dot-qmail.5*
-%attr(0644,root,qmail) %{qdir}/man/man7/qmail-limits.7*
-%attr(0644,root,qmail) %{qdir}/man/man7/forgeries.7*
-%attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
-#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
+%attr(0644,root,qmail) %{qdir}/man/man1/*
+#%attr(0644,root,qmail) %{qdir}/man/man1/condredirect.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/mailsubj.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/except.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/maildirmake.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/preline.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/tcp-env.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/bouncesaying.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/maildir2mbox.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/qbiff.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/forward.1*
+#%attr(0644,root,qmail) %{qdir}/man/man1/maildirwatch.1*
+%attr(0644,root,qmail) %{qdir}/man/man5/*
+#%attr(0644,root,qmail) %{qdir}/man/man5/maildir.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/qmail-header.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/envelopes.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/mbox.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/tcp-environ.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/qmail-control.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/qmail-log.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/addresses.5*
+#%attr(0644,root,qmail) %{qdir}/man/man5/dot-qmail.5*
+%attr(0644,root,qmail) %{qdir}/man/man7/*
+#%attr(0644,root,qmail) %{qdir}/man/man7/forgeries.7*
+#%attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
+%attr(0644,root,qmail) %{qdir}/man/man8/*
 #%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-start.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qmqpc.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qmqpd.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qmtpd.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-newu.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpok.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-inject.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-clean.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-getpw.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-command.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-showctl.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-rspawn.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-smtpd.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qstat.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-pw2u.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-queue.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-popup.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-lspawn.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-newmrh.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-local.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-send.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-remote.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-pop3d.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-start.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qmqpc.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qmqpd.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qmtpd.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-newu.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpok.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-inject.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-clean.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-getpw.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-command.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-showctl.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-rspawn.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-smtpd.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-qstat.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-pw2u.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-queue.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-popup.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-lspawn.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-newmrh.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-local.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-send.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-remote.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-pop3d.8*
 
 # qmail docs
 #-------------------------------------------------------------------------------
