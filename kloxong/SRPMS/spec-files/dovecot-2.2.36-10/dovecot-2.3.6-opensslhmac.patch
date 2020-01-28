@@ -1,0 +1,785 @@
+diff -up dovecot-2.2.36/src/auth/auth-token.c.opensslhmac dovecot-2.2.36/src/auth/auth-token.c
+--- dovecot-2.2.36/src/auth/auth-token.c.opensslhmac	2018-04-30 15:52:04.000000000 +0200
++++ dovecot-2.2.36/src/auth/auth-token.c	2019-06-10 15:38:38.834070480 +0200
+@@ -163,17 +163,17 @@ void auth_token_deinit(void)
+ const char *auth_token_get(const char *service, const char *session_pid,
+ 			   const char *username, const char *session_id)
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	unsigned char result[SHA1_RESULTLEN];
+ 
+-	hmac_init(&ctx, (const unsigned char*)username, strlen(username),
++	openssl_hmac_init(&ctx, (const unsigned char*)username, strlen(username),
+ 		  &hash_method_sha1);
+-	hmac_update(&ctx, session_pid, strlen(session_pid));
++	openssl_hmac_update(&ctx, session_pid, strlen(session_pid));
+ 	if (session_id != NULL && *session_id != '\0')
+-		hmac_update(&ctx, session_id, strlen(session_id));
+-	hmac_update(&ctx, service, strlen(service));
+-	hmac_update(&ctx, auth_token_secret, sizeof(auth_token_secret));
+-	hmac_final(&ctx, result);
++		openssl_hmac_update(&ctx, session_id, strlen(session_id));
++	openssl_hmac_update(&ctx, service, strlen(service));
++	openssl_hmac_update(&ctx, auth_token_secret, sizeof(auth_token_secret));
++	openssl_hmac_final(&ctx, result);
+ 
+ 	return binary_to_hex(result, sizeof(result));
+ }
+diff -up dovecot-2.2.36/src/auth/mech-cram-md5.c.opensslhmac dovecot-2.2.36/src/auth/mech-cram-md5.c
+--- dovecot-2.2.36/src/auth/mech-cram-md5.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/auth/mech-cram-md5.c	2019-06-10 15:38:38.834070480 +0200
+@@ -51,7 +51,7 @@ static bool verify_credentials(struct cr
+ {
+ 	
+ 	unsigned char digest[MD5_RESULTLEN];
+-        struct hmac_context ctx;
++        struct orig_hmac_context ctx;
+ 	const char *response_hex;
+ 
+ 	if (size != CRAM_MD5_CONTEXTLEN) {
+@@ -60,10 +60,10 @@ static bool verify_credentials(struct cr
+ 		return FALSE;
+ 	}
+ 
+-	hmac_init(&ctx, NULL, 0, &hash_method_md5);
++	orig_hmac_init(&ctx, NULL, 0, &hash_method_md5);
+ 	hmac_md5_set_cram_context(&ctx, credentials);
+-	hmac_update(&ctx, request->challenge, strlen(request->challenge));
+-	hmac_final(&ctx, digest);
++	orig_hmac_update(&ctx, request->challenge, strlen(request->challenge));
++	orig_hmac_final(&ctx, digest);
+ 
+ 	response_hex = binary_to_hex(digest, sizeof(digest));
+ 
+diff -up dovecot-2.2.36/src/auth/mech-scram-sha1.c.opensslhmac dovecot-2.2.36/src/auth/mech-scram-sha1.c
+--- dovecot-2.2.36/src/auth/mech-scram-sha1.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/auth/mech-scram-sha1.c	2019-06-10 15:38:38.834070480 +0200
+@@ -71,7 +71,7 @@ static const char *get_scram_server_firs
+ 
+ static const char *get_scram_server_final(struct scram_auth_request *request)
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	const char *auth_message;
+ 	unsigned char server_signature[SHA1_RESULTLEN];
+ 	string_t *str;
+@@ -80,10 +80,10 @@ static const char *get_scram_server_fina
+ 			request->server_first_message, ",",
+ 			request->client_final_message_without_proof, NULL);
+ 
+-	hmac_init(&ctx, request->server_key, sizeof(request->server_key),
++	openssl_hmac_init(&ctx, request->server_key, sizeof(request->server_key),
+ 		  &hash_method_sha1);
+-	hmac_update(&ctx, auth_message, strlen(auth_message));
+-	hmac_final(&ctx, server_signature);
++	openssl_hmac_update(&ctx, auth_message, strlen(auth_message));
++	openssl_hmac_final(&ctx, server_signature);
+ 
+ 	str = t_str_new(MAX_BASE64_ENCODED_SIZE(sizeof(server_signature)));
+ 	str_append(str, "v=");
+@@ -221,7 +221,7 @@ static bool parse_scram_client_first(str
+ 
+ static bool verify_credentials(struct scram_auth_request *request)
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	const char *auth_message;
+ 	unsigned char client_key[SHA1_RESULTLEN];
+ 	unsigned char client_signature[SHA1_RESULTLEN];
+@@ -232,10 +232,10 @@ static bool verify_credentials(struct sc
+ 			request->server_first_message, ",",
+ 			request->client_final_message_without_proof, NULL);
+ 
+-	hmac_init(&ctx, request->stored_key, sizeof(request->stored_key),
++	openssl_hmac_init(&ctx, request->stored_key, sizeof(request->stored_key),
+ 		  &hash_method_sha1);
+-	hmac_update(&ctx, auth_message, strlen(auth_message));
+-	hmac_final(&ctx, client_signature);
++	openssl_hmac_update(&ctx, auth_message, strlen(auth_message));
++	openssl_hmac_final(&ctx, client_signature);
+ 
+ 	for (i = 0; i < sizeof(client_signature); i++)
+ 		client_key[i] =
+diff -up dovecot-2.2.36/src/auth/password-scheme.c.opensslhmac dovecot-2.2.36/src/auth/password-scheme.c
+--- dovecot-2.2.36/src/auth/password-scheme.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/auth/password-scheme.c	2019-06-10 15:38:38.834070480 +0200
+@@ -655,11 +655,11 @@ static void
+ cram_md5_generate(const char *plaintext, const char *user ATTR_UNUSED,
+ 		  const unsigned char **raw_password_r, size_t *size_r)
+ {
+-	struct hmac_context ctx;
++	struct orig_hmac_context ctx;
+ 	unsigned char *context_digest;
+ 
+ 	context_digest = t_malloc(CRAM_MD5_CONTEXTLEN);
+-	hmac_init(&ctx, (const unsigned char *)plaintext,
++	orig_hmac_init(&ctx, (const unsigned char *)plaintext,
+ 		  strlen(plaintext), &hash_method_md5);
+ 	hmac_md5_get_cram_context(&ctx, context_digest);
+ 
+diff -up dovecot-2.2.36/src/auth/password-scheme-scram.c.opensslhmac dovecot-2.2.36/src/auth/password-scheme-scram.c
+--- dovecot-2.2.36/src/auth/password-scheme-scram.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/auth/password-scheme-scram.c	2019-06-10 15:38:38.834070480 +0200
+@@ -27,23 +27,23 @@ static void Hi(const unsigned char *str,
+ 	       const unsigned char *salt, size_t salt_size, unsigned int i,
+ 	       unsigned char result[SHA1_RESULTLEN])
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	unsigned char U[SHA1_RESULTLEN];
+ 	unsigned int j, k;
+ 
+ 	/* Calculate U1 */
+-	hmac_init(&ctx, str, str_size, &hash_method_sha1);
+-	hmac_update(&ctx, salt, salt_size);
+-	hmac_update(&ctx, "\0\0\0\1", 4);
+-	hmac_final(&ctx, U);
++	openssl_hmac_init(&ctx, str, str_size, &hash_method_sha1);
++	openssl_hmac_update(&ctx, salt, salt_size);
++	openssl_hmac_update(&ctx, "\0\0\0\1", 4);
++	openssl_hmac_final(&ctx, U);
+ 
+ 	memcpy(result, U, SHA1_RESULTLEN);
+ 
+ 	/* Calculate U2 to Ui and Hi */
+ 	for (j = 2; j <= i; j++) {
+-		hmac_init(&ctx, str, str_size, &hash_method_sha1);
+-		hmac_update(&ctx, U, sizeof(U));
+-		hmac_final(&ctx, U);
++		openssl_hmac_init(&ctx, str, str_size, &hash_method_sha1);
++		openssl_hmac_update(&ctx, U, sizeof(U));
++		openssl_hmac_final(&ctx, U);
+ 		for (k = 0; k < SHA1_RESULTLEN; k++)
+ 			result[k] ^= U[k];
+ 	}
+@@ -94,7 +94,7 @@ int scram_sha1_verify(const char *plaint
+ 		      const unsigned char *raw_password, size_t size,
+ 		      const char **error_r)
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	const char *salt_base64;
+ 	unsigned int iter_count;
+ 	const unsigned char *salt;
+@@ -118,10 +118,10 @@ int scram_sha1_verify(const char *plaint
+ 	   iter_count, salted_password);
+ 
+ 	/* Calculate ClientKey */
+-	hmac_init(&ctx, salted_password, sizeof(salted_password),
++	openssl_hmac_init(&ctx, salted_password, sizeof(salted_password),
+ 		  &hash_method_sha1);
+-	hmac_update(&ctx, "Client Key", 10);
+-	hmac_final(&ctx, client_key);
++	openssl_hmac_update(&ctx, "Client Key", 10);
++	openssl_hmac_final(&ctx, client_key);
+ 
+ 	/* Calculate StoredKey */
+ 	sha1_get_digest(client_key, sizeof(client_key), calculated_stored_key);
+@@ -139,7 +139,7 @@ void scram_sha1_generate(const char *pla
+ 			 const unsigned char **raw_password_r, size_t *size_r)
+ {
+ 	string_t *str;
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	unsigned char salt[16];
+ 	unsigned char salted_password[SHA1_RESULTLEN];
+ 	unsigned char client_key[SHA1_RESULTLEN];
+@@ -157,10 +157,10 @@ void scram_sha1_generate(const char *pla
+ 	   sizeof(salt), SCRAM_DEFAULT_ITERATE_COUNT, salted_password);
+ 
+ 	/* Calculate ClientKey */
+-	hmac_init(&ctx, salted_password, sizeof(salted_password),
++	openssl_hmac_init(&ctx, salted_password, sizeof(salted_password),
+ 		  &hash_method_sha1);
+-	hmac_update(&ctx, "Client Key", 10);
+-	hmac_final(&ctx, client_key);
++	openssl_hmac_update(&ctx, "Client Key", 10);
++	openssl_hmac_final(&ctx, client_key);
+ 
+ 	/* Calculate StoredKey */
+ 	sha1_get_digest(client_key, sizeof(client_key), stored_key);
+@@ -168,10 +168,10 @@ void scram_sha1_generate(const char *pla
+ 	base64_encode(stored_key, sizeof(stored_key), str);
+ 
+ 	/* Calculate ServerKey */
+-	hmac_init(&ctx, salted_password, sizeof(salted_password),
++	openssl_hmac_init(&ctx, salted_password, sizeof(salted_password),
+ 		  &hash_method_sha1);
+-	hmac_update(&ctx, "Server Key", 10);
+-	hmac_final(&ctx, server_key);
++	openssl_hmac_update(&ctx, "Server Key", 10);
++	openssl_hmac_final(&ctx, server_key);
+ 	str_append_c(str, ',');
+ 	base64_encode(server_key, sizeof(server_key), str);
+ 
+diff -up dovecot-2.2.36/src/lib/hmac.c.opensslhmac dovecot-2.2.36/src/lib/hmac.c
+--- dovecot-2.2.36/src/lib/hmac.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/lib/hmac.c	2019-06-10 15:38:38.834070480 +0200
+@@ -7,15 +7,74 @@
+  * This software is released under the MIT license.
+  */
+ 
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <unistd.h>
+ #include "lib.h"
+ #include "hmac.h"
+ #include "safe-memset.h"
+ #include "buffer.h"
+ 
+-void hmac_init(struct hmac_context *_ctx, const unsigned char *key,
++#ifndef HAVE_HMAC_CTX_NEW
++#  define HMAC_Init_ex(ctx, key, key_len, md, impl) \
++	HMAC_Init_ex(&(ctx), key, key_len, md, impl)
++#  define HMAC_Update(ctx, data, len) HMAC_Update(&(ctx), data, len)
++#  define HMAC_Final(ctx, md, len) HMAC_Final(&(ctx), md, len)
++#  define HMAC_CTX_free(ctx) HMAC_cleanup(&(ctx))
++#else
++#  define HMAC_CTX_free(ctx) \
++	STMT_START { HMAC_CTX_free(ctx); (ctx) = NULL; } STMT_END
++#endif
++
++
++void openssl_hmac_init(struct openssl_hmac_context *_ctx, const unsigned char *key,
++		size_t key_len, const struct hash_method *meth)
++{
++ 	struct openssl_hmac_context_priv *ctx = &_ctx->u.priv;
++
++	const EVP_MD *md;
++    const char *ebuf = NULL;
++    const char **error_r = &ebuf;
++
++	md = EVP_get_digestbyname(meth->name);
++	if(md == NULL) {
++		if (error_r != NULL) {
++			*error_r = t_strdup_printf("Invalid digest %s",
++						   meth->name);
++		}
++		//return FALSE;
++	}
++
++// 	int ec;
++
++	i_assert(md != NULL);
++#ifdef HAVE_HMAC_CTX_NEW
++	ctx->ctx = HMAC_CTX_new();
++/*	if (ctx->ctx == NULL)
++		dcrypt_openssl_error(error_r);*/
++#endif
++	/*ec = */HMAC_Init_ex(ctx->ctx, key, key_len, md, NULL);
++}
++
++void orig_hmac_init(struct orig_hmac_context *_ctx, const unsigned char *key,
+ 		size_t key_len, const struct hash_method *meth)
+ {
+-	struct hmac_context_priv *ctx = &_ctx->u.priv;
++    static int no_fips = -1;
++    if (no_fips == -1) {
++        int fd = open("/proc/sys/crypto/fips_enabled", O_RDONLY);
++        if (fd != -1)
++        {
++            char buf[4];
++            if (read(fd, buf, 4) > 0)
++            {
++                no_fips = buf[0] == '0';   
++            }
++            close(fd);   
++        }
++    }
++    i_assert(no_fips);
++	struct orig_hmac_context_priv *ctx = &_ctx->u.priv;
+ 	int i;
+ 	unsigned char k_ipad[64];
+ 	unsigned char k_opad[64];
+@@ -51,9 +110,27 @@ void hmac_init(struct hmac_context *_ctx
+ 	safe_memset(k_opad, 0, 64);
+ }
+ 
+-void hmac_final(struct hmac_context *_ctx, unsigned char *digest)
++void openssl_hmac_final(struct openssl_hmac_context *_ctx, unsigned char *digest)
++{
++	int ec;
++	unsigned char buf[HMAC_MAX_MD_CBLOCK];
++	unsigned int outl;
++//     const char *ebuf = NULL;
++//     const char **error_r = &ebuf;
++
++    struct openssl_hmac_context_priv *ctx = &_ctx->u.priv;
++	ec = HMAC_Final(ctx->ctx, buf, &outl);
++	HMAC_CTX_free(ctx->ctx);
++	if (ec == 1)
++		memcpy(digest, buf, outl);
++//	else
++//		dcrypt_openssl_error(error_r);
++
++}
++
++void orig_hmac_final(struct orig_hmac_context *_ctx, unsigned char *digest)
+ {
+-	struct hmac_context_priv *ctx = &_ctx->u.priv;
++	struct orig_hmac_context_priv *ctx = &_ctx->u.priv;
+ 
+ 	ctx->hash->result(ctx->ctx, digest);
+ 
+@@ -61,35 +138,35 @@ void hmac_final(struct hmac_context *_ct
+ 	ctx->hash->result(ctx->ctxo, digest);
+ }
+ 
+-buffer_t *t_hmac_data(const struct hash_method *meth,
++buffer_t *openssl_t_hmac_data(const struct hash_method *meth,
+ 		      const unsigned char *key, size_t key_len,
+ 		      const void *data, size_t data_len)
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	i_assert(meth != NULL);
+ 	i_assert(key != NULL && key_len > 0);
+ 	i_assert(data != NULL || data_len == 0);
+ 
+ 	buffer_t *res = buffer_create_dynamic(pool_datastack_create(), meth->digest_size);
+-	hmac_init(&ctx, key, key_len, meth);
++	openssl_hmac_init(&ctx, key, key_len, meth);
+ 	if (data_len > 0)
+-		hmac_update(&ctx, data, data_len);
++		openssl_hmac_update(&ctx, data, data_len);
+ 	unsigned char *buf = buffer_get_space_unsafe(res, 0, meth->digest_size);
+-	hmac_final(&ctx, buf);
++	openssl_hmac_final(&ctx, buf);
+ 	return res;
+ }
+ 
+-buffer_t *t_hmac_buffer(const struct hash_method *meth,
++buffer_t *openssl_t_hmac_buffer(const struct hash_method *meth,
+ 			const unsigned char *key, size_t key_len,
+ 			const buffer_t *data)
+ {
+-	return t_hmac_data(meth, key, key_len, data->data, data->used);
++	return openssl_t_hmac_data(meth, key, key_len, data->data, data->used);
+ }
+ 
+-buffer_t *t_hmac_str(const struct hash_method *meth,
++buffer_t *openssl_t_hmac_str(const struct hash_method *meth,
+ 		     const unsigned char *key, size_t key_len,
+ 		     const char *data)
+ {
+-	return t_hmac_data(meth, key, key_len, data, strlen(data));
++	return openssl_t_hmac_data(meth, key, key_len, data, strlen(data));
+ }
+ 
+diff -up dovecot-2.2.36/src/lib/hmac-cram-md5.c.opensslhmac dovecot-2.2.36/src/lib/hmac-cram-md5.c
+--- dovecot-2.2.36/src/lib/hmac-cram-md5.c.opensslhmac	2017-06-23 13:18:28.000000000 +0200
++++ dovecot-2.2.36/src/lib/hmac-cram-md5.c	2019-06-10 15:38:38.835070476 +0200
+@@ -9,10 +9,10 @@
+ #include "md5.h"
+ #include "hmac-cram-md5.h"
+ 
+-void hmac_md5_get_cram_context(struct hmac_context *_hmac_ctx,
++void hmac_md5_get_cram_context(struct orig_hmac_context *_hmac_ctx,
+ 			unsigned char context_digest[CRAM_MD5_CONTEXTLEN])
+ {
+-	struct hmac_context_priv *hmac_ctx = &_hmac_ctx->u.priv;
++	struct orig_hmac_context_priv *hmac_ctx = &_hmac_ctx->u.priv;
+ 	unsigned char *cdp;
+ 
+ 	struct md5_context *ctx = (void*)hmac_ctx->ctx;
+@@ -35,10 +35,10 @@ void hmac_md5_get_cram_context(struct hm
+ 	CDPUT(cdp, ctx->d);
+ }
+ 
+-void hmac_md5_set_cram_context(struct hmac_context *_hmac_ctx,
++void hmac_md5_set_cram_context(struct orig_hmac_context *_hmac_ctx,
+ 			const unsigned char context_digest[CRAM_MD5_CONTEXTLEN])
+ {
+-	struct hmac_context_priv *hmac_ctx = &_hmac_ctx->u.priv;
++	struct orig_hmac_context_priv *hmac_ctx = &_hmac_ctx->u.priv;
+ 	const unsigned char *cdp;
+ 
+ 	struct md5_context *ctx = (void*)hmac_ctx->ctx;
+diff -up dovecot-2.2.36/src/lib/hmac-cram-md5.h.opensslhmac dovecot-2.2.36/src/lib/hmac-cram-md5.h
+--- dovecot-2.2.36/src/lib/hmac-cram-md5.h.opensslhmac	2017-06-23 13:18:28.000000000 +0200
++++ dovecot-2.2.36/src/lib/hmac-cram-md5.h	2019-06-10 15:38:38.835070476 +0200
+@@ -5,9 +5,9 @@
+ 
+ #define CRAM_MD5_CONTEXTLEN 32
+ 
+-void hmac_md5_get_cram_context(struct hmac_context *ctx,
++void hmac_md5_get_cram_context(struct orig_hmac_context *ctx,
+ 		unsigned char context_digest[CRAM_MD5_CONTEXTLEN]);
+-void hmac_md5_set_cram_context(struct hmac_context *ctx,
++void hmac_md5_set_cram_context(struct orig_hmac_context *ctx,
+ 		const unsigned char context_digest[CRAM_MD5_CONTEXTLEN]);
+ 
+ 
+diff -up dovecot-2.2.36/src/lib/hmac.h.opensslhmac dovecot-2.2.36/src/lib/hmac.h
+--- dovecot-2.2.36/src/lib/hmac.h.opensslhmac	2017-06-23 13:18:28.000000000 +0200
++++ dovecot-2.2.36/src/lib/hmac.h	2019-06-10 15:38:38.835070476 +0200
+@@ -3,43 +3,98 @@
+ 
+ #include "hash-method.h"
+ #include "sha1.h"
++#include <openssl/objects.h>
++#include <openssl/hmac.h>
++#include <openssl/err.h>
+ 
+ #define HMAC_MAX_CONTEXT_SIZE 256
+ 
+-struct hmac_context_priv {
++struct openssl_hmac_context_priv {
++#ifdef HAVE_HMAC_CTX_NEW
++	HMAC_CTX *ctx;
++#else
++	HMAC_CTX ctx;
++#endif
++	const struct hash_method *hash;
++};
++
++struct orig_hmac_context_priv {
+ 	char ctx[HMAC_MAX_CONTEXT_SIZE];
+ 	char ctxo[HMAC_MAX_CONTEXT_SIZE];
+ 	const struct hash_method *hash;
+ };
+ 
+-struct hmac_context {
++struct openssl_hmac_context {
++	union {
++		struct openssl_hmac_context_priv priv;
++		uint64_t padding_requirement;
++	} u;
++};
++
++struct orig_hmac_context {
+ 	union {
+-		struct hmac_context_priv priv;
++		struct orig_hmac_context_priv priv;
+ 		uint64_t padding_requirement;
+ 	} u;
+ };
+ 
+-void hmac_init(struct hmac_context *ctx, const unsigned char *key,
++void openssl_hmac_init(struct openssl_hmac_context *ctx, const unsigned char *key,
+ 		size_t key_len, const struct hash_method *meth);
+-void hmac_final(struct hmac_context *ctx, unsigned char *digest);
++void openssl_hmac_final(struct openssl_hmac_context *ctx, unsigned char *digest);
++
++static inline void
++openssl_hmac_update(struct openssl_hmac_context *_ctx, const void *data, size_t size)
++{
++	struct openssl_hmac_context_priv *ctx = &_ctx->u.priv;
++	HMAC_Update(ctx->ctx, data, size);
++/*	if (ec != 1)
++    {
++        const char *ebuf = NULL;
++        const char **error_r = &ebuf;
++		dcrypt_openssl_error(error_r);
++    }*/
++}
++
++void orig_hmac_init(struct orig_hmac_context *ctx, const unsigned char *key,
++		size_t key_len, const struct hash_method *meth);
++void orig_hmac_final(struct orig_hmac_context *ctx, unsigned char *digest);
+ 
+ 
+ static inline void
+-hmac_update(struct hmac_context *_ctx, const void *data, size_t size)
++orig_hmac_update(struct orig_hmac_context *_ctx, const void *data, size_t size)
+ {
+-	struct hmac_context_priv *ctx = &_ctx->u.priv;
++	struct orig_hmac_context_priv *ctx = &_ctx->u.priv;
+ 
+ 	ctx->hash->loop(ctx->ctx, data, size);
+ }
+ 
+-buffer_t *t_hmac_data(const struct hash_method *meth,
++buffer_t *openssl_t_hmac_data(const struct hash_method *meth,
+ 		      const unsigned char *key, size_t key_len,
+ 		      const void *data, size_t data_len);
+-buffer_t *t_hmac_buffer(const struct hash_method *meth,
++buffer_t *openssl_t_hmac_buffer(const struct hash_method *meth,
+ 			const unsigned char *key, size_t key_len,
+ 			const buffer_t *data);
+-buffer_t *t_hmac_str(const struct hash_method *meth,
++buffer_t *openssl_t_hmac_str(const struct hash_method *meth,
+ 		     const unsigned char *key, size_t key_len,
+ 		     const char *data);
+ 
++
++#if 0
++static bool dcrypt_openssl_error(const char **error_r)
++{
++	unsigned long ec;
++
++	if (error_r == NULL) {
++		/* caller is not really interested */
++		return FALSE; 
++	}
++
++	ec = ERR_get_error();
++	*error_r = t_strdup_printf("%s", ERR_error_string(ec, NULL));
++	return FALSE;
++}
++#endif
++
++
++
+ #endif
+diff -up dovecot-2.2.36/src/lib-imap-urlauth/imap-urlauth.c.opensslhmac dovecot-2.2.36/src/lib-imap-urlauth/imap-urlauth.c
+--- dovecot-2.2.36/src/lib-imap-urlauth/imap-urlauth.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/lib-imap-urlauth/imap-urlauth.c	2019-06-10 15:38:38.835070476 +0200
+@@ -83,15 +83,15 @@ imap_urlauth_internal_generate(const cha
+ 			       const unsigned char mailbox_key[IMAP_URLAUTH_KEY_LEN],
+ 			       size_t *token_len_r)
+ {
+-	struct hmac_context hmac;
++	struct openssl_hmac_context hmac;
+ 	unsigned char *token;
+ 
+ 	token = t_new(unsigned char, SHA1_RESULTLEN + 1);
+ 	token[0] = IMAP_URLAUTH_MECH_INTERNAL_VERSION;
+ 
+-	hmac_init(&hmac, mailbox_key, IMAP_URLAUTH_KEY_LEN, &hash_method_sha1);
+-	hmac_update(&hmac, rumpurl, strlen(rumpurl));
+-	hmac_final(&hmac, token+1);
++	openssl_hmac_init(&hmac, mailbox_key, IMAP_URLAUTH_KEY_LEN, &hash_method_sha1);
++	openssl_hmac_update(&hmac, rumpurl, strlen(rumpurl));
++	openssl_hmac_final(&hmac, token+1);
+ 
+ 	*token_len_r = SHA1_RESULTLEN + 1;
+ 	return token;
+diff -up dovecot-2.2.36/src/lib/Makefile.am.opensslhmac dovecot-2.2.36/src/lib/Makefile.am
+--- dovecot-2.2.36/src/lib/Makefile.am.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/lib/Makefile.am	2019-06-10 15:42:28.810140696 +0200
+@@ -306,6 +306,9 @@ headers = \
+ 	wildcard-match.h \
+ 	write-full.h
+ 
++liblib_la_LIBADD = $(SSL_LIBS)
++liblib_la_CFLAGS = $(SSL_CFLAGS)
++
+ test_programs = test-lib
+ noinst_PROGRAMS = $(test_programs)
+ 
+@@ -335,6 +338,7 @@ test_lib_SOURCES = \
+ 	test-hash-format.c \
+ 	test-hash-method.c \
+ 	test-hex-binary.c \
++	test-hmac.c \
+ 	test-imem.c \
+ 	test-ioloop.c \
+ 	test-iso8601-date.c \
+diff -up dovecot-2.2.36/src/lib-ntlm/ntlm-encrypt.c.opensslhmac dovecot-2.2.36/src/lib-ntlm/ntlm-encrypt.c
+--- dovecot-2.2.36/src/lib-ntlm/ntlm-encrypt.c.opensslhmac	2018-04-30 15:52:05.000000000 +0200
++++ dovecot-2.2.36/src/lib-ntlm/ntlm-encrypt.c	2019-06-10 15:38:38.835070476 +0200
+@@ -61,12 +61,12 @@ void ntlm_v1_hash(const char *passwd, un
+ }
+ 
+ static void
+-hmac_md5_ucs2le_string_ucase(struct hmac_context *ctx, const char *str)
+-{
+-	size_t len;
+-	unsigned char *wstr = t_unicode_str(str, 1, &len);
+-
+-	hmac_update(ctx, wstr, len);
++hmac_md5_ucs2le_string_ucase(struct openssl_hmac_context *ctx, const char *str)
++ {
++ 	size_t len;
++ 	unsigned char *wstr = t_unicode_str(str, TRUE, &len);
++ 
++	openssl_hmac_update(ctx, wstr, len);
+ }
+ 
+ static void ATTR_NULL(2)
+@@ -74,13 +74,13 @@ ntlm_v2_hash(const char *user, const cha
+ 	     const unsigned char *hash_v1,
+ 	     unsigned char hash[NTLMSSP_V2_HASH_SIZE])
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 
+-	hmac_init(&ctx, hash_v1, NTLMSSP_HASH_SIZE, &hash_method_md5);
++	openssl_hmac_init(&ctx, hash_v1, NTLMSSP_HASH_SIZE, &hash_method_md5);
+ 	hmac_md5_ucs2le_string_ucase(&ctx, user);
+ 	if (target != NULL)
+ 		hmac_md5_ucs2le_string_ucase(&ctx, target);
+-	hmac_final(&ctx, hash);
++	openssl_hmac_final(&ctx, hash);
+ }
+ 
+ void
+@@ -125,15 +125,15 @@ ntlmssp_v2_response(const char *user, co
+ 		    const unsigned char *blob, size_t blob_size,
+ 		    unsigned char response[NTLMSSP_V2_RESPONSE_SIZE])
+ {
+-	struct hmac_context ctx;
++	struct openssl_hmac_context ctx;
+ 	unsigned char hash[NTLMSSP_V2_HASH_SIZE];
+ 
+ 	ntlm_v2_hash(user, target, hash_v1, hash);
+ 
+-	hmac_init(&ctx, hash, NTLMSSP_V2_HASH_SIZE, &hash_method_md5);
+-	hmac_update(&ctx, challenge, NTLMSSP_CHALLENGE_SIZE);
+-	hmac_update(&ctx, blob, blob_size);
+-	hmac_final(&ctx, response);
++	openssl_hmac_init(&ctx, hash, NTLMSSP_V2_HASH_SIZE, &hash_method_md5);
++	openssl_hmac_update(&ctx, challenge, NTLMSSP_CHALLENGE_SIZE);
++	openssl_hmac_update(&ctx, blob, blob_size);
++	openssl_hmac_final(&ctx, response);
+ 
+ 	safe_memset(hash, 0, sizeof(hash));
+ }
+diff -up dovecot-2.2.36/src/lib/pkcs5.c.opensslhmac dovecot-2.2.36/src/lib/pkcs5.c
+--- dovecot-2.2.36/src/lib/pkcs5.c.opensslhmac	2018-04-30 15:52:04.000000000 +0200
++++ dovecot-2.2.36/src/lib/pkcs5.c	2019-06-10 15:38:38.835070476 +0200
+@@ -52,7 +52,7 @@ int pkcs5_pbkdf2(const struct hash_metho
+ 	size_t l = (length + hash->digest_size - 1)/hash->digest_size; /* same as ceil(length/hash->digest_size) */
+ 	unsigned char dk[l * hash->digest_size];
+ 	unsigned char *block;
+-	struct hmac_context hctx;
++	struct openssl_hmac_context hctx;
+ 	unsigned int c,i,t;
+ 	unsigned char U_c[hash->digest_size];
+ 
+@@ -60,17 +60,17 @@ int pkcs5_pbkdf2(const struct hash_metho
+ 		block = &(dk[t*hash->digest_size]);
+ 		/* U_1 = PRF(Password, Salt|| INT_BE32(Block_Number)) */
+ 		c = htonl(t+1);
+-		hmac_init(&hctx, password, password_len, hash);
+-		hmac_update(&hctx, salt, salt_len);
+-		hmac_update(&hctx, &c, sizeof(c));
+-		hmac_final(&hctx, U_c);
++		openssl_hmac_init(&hctx, password, password_len, hash);
++		openssl_hmac_update(&hctx, salt, salt_len);
++		openssl_hmac_update(&hctx, &c, sizeof(c));
++		openssl_hmac_final(&hctx, U_c);
+ 		/* block = U_1 ^ .. ^ U_iter */
+ 		memcpy(block, U_c, hash->digest_size);
+ 		/* U_c = PRF(Password, U_c-1) */
+ 		for(c = 1; c < iter; c++) {
+-			hmac_init(&hctx, password, password_len, hash);
+-			hmac_update(&hctx, U_c, hash->digest_size);
+-			hmac_final(&hctx, U_c);
++			openssl_hmac_init(&hctx, password, password_len, hash);
++			openssl_hmac_update(&hctx, U_c, hash->digest_size);
++			openssl_hmac_final(&hctx, U_c);
+ 			for(i = 0; i < hash->digest_size; i++)
+ 				block[i] ^= U_c[i];
+ 		}
+diff -up dovecot-2.2.36/src/lib/test-hmac.c.opensslhmac dovecot-2.2.36/src/lib/test-hmac.c
+--- dovecot-2.2.36/src/lib/test-hmac.c.opensslhmac	2019-06-10 15:43:02.847003098 +0200
++++ dovecot-2.2.36/src/lib/test-hmac.c	2019-06-10 14:00:52.000000000 +0200
+@@ -0,0 +1,103 @@
++/* Copyright (c) 2016-2018 Dovecot authors, see the included COPYING file */
++
++#include "test-lib.h"
++#include "hash-method.h"
++#include "hmac.h"
++#include "sha-common.h"
++#include "buffer.h"
++
++struct test_vector {
++	const char *prf;
++	const unsigned char *key;
++	size_t key_len;
++	const unsigned char *data;
++	size_t data_len;
++	const unsigned char *res;
++	size_t res_len;
++};
++
++#define TEST_BUF(x) (const unsigned char*)x, sizeof(x)-1
++
++/* RFC 4231 test vectors */
++static const struct test_vector test_vectors[] = {
++	/* Test Case 1 */
++	{ "sha256",
++	TEST_BUF("\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b\x0b"),
++	TEST_BUF("Hi There"),
++	TEST_BUF("\xb0\x34\x4c\x61\xd8\xdb\x38\x53\x5c\xa8\xaf\xce\xaf\x0b\xf1\x2b\x88\x1d\xc2\x00\xc9\x83\x3d\xa7\x26\xe9\x37\x6c\x2e\x32\xcf\xf7")
++	},
++	/* Test Case 2 */
++	{ "sha256",
++	TEST_BUF("\x4a\x65\x66\x65"), /* "Jefe" */
++	TEST_BUF("what do ya want for nothing?"),
++	TEST_BUF("\x5b\xdc\xc1\x46\xbf\x60\x75\x4e\x6a\x04\x24\x26\x08\x95\x75\xc7\x5a\x00\x3f\x08\x9d\x27\x39\x83\x9d\xec\x58\xb9\x64\xec\x38\x43")
++	},
++	/* Test Case 3 */
++	{ "sha256",
++	TEST_BUF("\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"),
++	TEST_BUF("\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd\xdd"),
++	TEST_BUF("\x77\x3e\xa9\x1e\x36\x80\x0e\x46\x85\x4d\xb8\xeb\xd0\x91\x81\xa7\x29\x59\x09\x8b\x3e\xf8\xc1\x22\xd9\x63\x55\x14\xce\xd5\x65\xfe")
++	},
++	/* Test Case 4 */
++	{ "sha256",
++	TEST_BUF("\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19"),
++	TEST_BUF("\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd\xcd"),
++	TEST_BUF("\x82\x55\x8a\x38\x9a\x44\x3c\x0e\xa4\xcc\x81\x98\x99\xf2\x08\x3a\x85\xf0\xfa\xa3\xe5\x78\xf8\x07\x7a\x2e\x3f\xf4\x67\x29\x66\x5b")
++	},
++	/* Test Case 5 */
++	{ "sha256",
++	TEST_BUF("\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c\x0c"),
++	TEST_BUF("\x54\x65\x73\x74\x20\x57\x69\x74\x68\x20\x54\x72\x75\x6e\x63\x61\x74\x69\x6f\x6e"), /* "Test With Truncation" */
++	TEST_BUF("\xa3\xb6\x16\x74\x73\x10\x0e\xe0\x6e\x0c\x79\x6c\x29\x55\x55\x2b")
++	},
++	/* Test Case 6 */
++	{ "sha256",
++	TEST_BUF("\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"),
++	TEST_BUF("\x54\x65\x73\x74\x20\x55\x73\x69\x6e\x67\x20\x4c\x61\x72\x67\x65\x72\x20\x54\x68\x61\x6e\x20\x42\x6c\x6f\x63\x6b\x2d\x53\x69\x7a\x65\x20\x4b\x65\x79\x20\x2d\x20\x48\x61\x73\x68\x20\x4b\x65\x79\x20\x46\x69\x72\x73\x74"), /* "Test Using Larger Than Block-Size Key - Hash Key First" */
++	TEST_BUF("\x60\xe4\x31\x59\x1e\xe0\xb6\x7f\x0d\x8a\x26\xaa\xcb\xf5\xb7\x7f\x8e\x0b\xc6\x21\x37\x28\xc5\x14\x05\x46\x04\x0f\x0e\xe3\x7f\x54")
++	},
++	/* Test Case 7 */
++	{ "sha256",
++	TEST_BUF("\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa\xaa"),
++	TEST_BUF("\x54\x68\x69\x73\x20\x69\x73\x20\x61\x20\x74\x65\x73\x74\x20\x75\x73\x69\x6e\x67\x20\x61\x20\x6c\x61\x72\x67\x65\x72\x20\x74\x68\x61\x6e\x20\x62\x6c\x6f\x63\x6b\x2d\x73\x69\x7a\x65\x20\x6b\x65\x79\x20\x61\x6e\x64\x20\x61\x20\x6c\x61\x72\x67\x65\x72\x20\x74\x68\x61\x6e\x20\x62\x6c\x6f\x63\x6b\x2d\x73\x69\x7a\x65\x20\x64\x61\x74\x61\x2e\x20\x54\x68\x65\x20\x6b\x65\x79\x20\x6e\x65\x65\x64\x73\x20\x74\x6f\x20\x62\x65\x20\x68\x61\x73\x68\x65\x64\x20\x62\x65\x66\x6f\x72\x65\x20\x62\x65\x69\x6e\x67\x20\x75\x73\x65\x64\x20\x62\x79\x20\x74\x68\x65\x20\x48\x4d\x41\x43\x20\x61\x6c\x67\x6f\x72\x69\x74\x68\x6d\x2e"),
++	/* "This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm." */
++	TEST_BUF("\x9b\x09\xff\xa7\x1b\x94\x2f\xcb\x27\x63\x5f\xbc\xd5\xb0\xe9\x44\xbf\xdc\x63\x64\x4f\x07\x13\x93\x8a\x7f\x51\x53\x5c\x3a\x35\xe2")
++	}
++};
++
++static void test_hmac_rfc(void)
++{
++	test_begin("hmac sha256 rfc4231 vectors");
++	for(size_t i = 0; i < N_ELEMENTS(test_vectors); i++) {
++		const struct test_vector *vec = &(test_vectors[i]);
++		struct openssl_hmac_context ctx;
++		openssl_hmac_init(&ctx, vec->key, vec->key_len, hash_method_lookup(vec->prf));
++		openssl_hmac_update(&ctx, vec->data, vec->data_len);
++		unsigned char res[SHA256_RESULTLEN];
++		openssl_hmac_final(&ctx, res);
++		test_assert_idx(memcmp(res, vec->res, vec->res_len) == 0, i);
++	}
++	test_end();
++}
++
++static void test_hmac_buffer(void)
++{
++	const struct test_vector *vec = &(test_vectors[0]);
++	test_begin("hmac temporary buffer");
++
++	buffer_t *tmp;
++
++	tmp = openssl_t_hmac_data(hash_method_lookup(vec->prf), vec->key, vec->key_len,
++			  vec->data, vec->data_len);
++
++	test_assert(tmp->used == vec->res_len &&
++		    memcmp(tmp->data, vec->res, vec->res_len) == 0);
++
++	test_end();
++}
++
++void test_hmac(void)
++{
++	test_hmac_rfc();
++	test_hmac_buffer();
++}
+diff -up dovecot-2.2.36/src/lib/test-lib.h.opensslhmac dovecot-2.2.36/src/lib/test-lib.h
+--- dovecot-2.2.36/src/lib/test-lib.h.opensslhmac	2019-06-10 15:41:57.155268669 +0200
++++ dovecot-2.2.36/src/lib/test-lib.h	2019-06-10 15:41:57.194268512 +0200
+@@ -20,6 +20,7 @@ void test_failures(void);
+ void test_file_create_locked(void);
+ void test_guid(void);
+ void test_hash(void);
++void test_hmac(void);
+ void test_hash_format(void);
+ void test_hash_method(void);
+ void test_hex_binary(void);

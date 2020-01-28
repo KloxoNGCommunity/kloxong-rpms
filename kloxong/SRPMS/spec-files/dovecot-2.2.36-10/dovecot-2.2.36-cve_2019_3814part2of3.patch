@@ -1,0 +1,29 @@
+From 7525fece60f01b52deb13df3620976ee1d616837 Mon Sep 17 00:00:00 2001
+From: Aki Tuomi <aki.tuomi@open-xchange.com>
+Date: Mon, 21 Jan 2019 10:54:06 +0200
+Subject: [PATCH] auth: Fail authentication if certificate username was
+ unexpectedly missing
+
+---
+ src/auth/auth-request-handler.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/auth/auth-request-handler.c b/src/auth/auth-request-handler.c
+index 617dc1883d..3044e94f91 100644
+--- a/src/auth/auth-request-handler.c
++++ b/src/auth/auth-request-handler.c
+@@ -560,6 +560,14 @@ bool auth_request_handler_auth_begin(struct auth_request_handler *handler,
+ 		return TRUE;
+ 	}
+ 
++	if (request->set->ssl_require_client_cert &&
++	    request->set->ssl_username_from_cert &&
++	    !request->cert_username) {
++		 auth_request_handler_auth_fail(handler, request,
++			"SSL certificate didn't contain username");
++		return TRUE;
++	}
++
+ 	/* Empty initial response is a "=" base64 string. Completely empty
+ 	   string shouldn't really be sent, but at least Exim does it,
+ 	   so just allow it for backwards compatibility.. */

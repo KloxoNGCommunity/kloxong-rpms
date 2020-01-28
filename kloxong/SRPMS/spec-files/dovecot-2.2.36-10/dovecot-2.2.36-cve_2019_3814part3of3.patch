@@ -1,0 +1,22 @@
+From e5d428297d70e3ac8b6dfce7e0de182b86825082 Mon Sep 17 00:00:00 2001
+From: Aki Tuomi <aki.tuomi@open-xchange.com>
+Date: Wed, 16 Jan 2019 18:28:57 +0200
+Subject: [PATCH] auth: Do not import empty certificate username
+
+---
+ src/auth/auth-request.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/auth/auth-request.c b/src/auth/auth-request.c
+index dd288b6d23..1cb665ec8c 100644
+--- a/src/auth/auth-request.c
++++ b/src/auth/auth-request.c
+@@ -445,7 +445,7 @@ bool auth_request_import_auth(struct auth_request *request,
+ 	else if (strcmp(key, "valid-client-cert") == 0)
+ 		request->valid_client_cert = TRUE;
+ 	else if (strcmp(key, "cert_username") == 0) {
+-		if (request->set->ssl_username_from_cert) {
++		if (request->set->ssl_username_from_cert && *value != '\0') {
+ 			/* get username from SSL certificate. it overrides
+ 			   the username given by the auth mechanism. */
+ 			request->user = p_strdup(request->pool, value);
