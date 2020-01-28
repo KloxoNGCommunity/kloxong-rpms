@@ -1,0 +1,59 @@
+From 1806ee01060d363beac01fda28c613ab27dbc4df Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Wed, 10 Jan 2018 10:18:43 +0100
+Subject: [PATCH] repquota: Fix output when user -2 exists
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Vladimit Meshkov reported that when user -2 exists and user namespaces
+are enabled in the kernel, repquota(8) fails to output anything. He also
+analyzed this is because in such case repquota(8) tries to query info
+for user -1 which is invalid ID, gets error from the kernel, and bails
+out.
+
+Fix the problem by stopping iteration over IDs when we reach ID -1.
+
+Reported-by: Vladimir Meshkov <ubob74@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ quotaio_generic.c | 5 +++++
+ quotaio_xfs.c     | 5 +++++
+ 2 files changed, 10 insertions(+)
+
+diff --git a/quotaio_generic.c b/quotaio_generic.c
+index 025d712..5b23955 100644
+--- a/quotaio_generic.c
++++ b/quotaio_generic.c
+@@ -204,6 +204,11 @@ int vfs_scan_dquots(struct quota_handle *h,
+ 		if (ret < 0)
+ 			break;
+ 		id = kdqblk.dqb_id + 1;
++		/* id -1 is invalid and the last one... */
++		if (id == -1) {
++			errno = ENOENT;
++			break;
++		}
+ 	}
+ 	free(dquot);
+ 
+diff --git a/quotaio_xfs.c b/quotaio_xfs.c
+index 1374cf4..56daf89 100644
+--- a/quotaio_xfs.c
++++ b/quotaio_xfs.c
+@@ -219,6 +219,11 @@ static int xfs_kernel_scan_dquots(struct quota_handle *h,
+ 		if (ret < 0)
+ 			break;
+ 		id = xdqblk.d_id + 1;
++		/* id -1 is invalid and the last one... */
++		if (id == -1) {
++			errno = ENOENT;
++			break;
++		}
+ 	}
+ 	free(dquot);
+ 
+-- 
+2.13.6
+

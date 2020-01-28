@@ -1,0 +1,72 @@
+From bd36c3cf438ac4fd44b6779714ad0a44453d41b5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Mon, 16 Jul 2018 11:22:53 +0200
+Subject: [PATCH] quota(1): Distinguish between none quota limits and no
+ allocated resources
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+If a user does not occupies any space or inodes on a file system but
+quota limits are set, quota(1) tool still reports "none":
+
+  # quota -u test
+  Disk quotas for user test (uid 500): none
+
+That's because the tool skips printing details for file systems
+without any used resources but uses the shares the message with file
+system without any quota limits.
+
+This patch makes the distinction and changes "none" message into "no
+quota limits set" and "no limited resources used" respectively.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ quota.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/quota.c b/quota.c
+index 15c2a53..0303c7d 100644
+--- a/quota.c
++++ b/quota.c
+@@ -188,7 +188,7 @@ static int showquotas(int type, qid_t id, int mntcnt, char **mnt)
+ 	char timebuf[MAXTIMELEN];
+ 	char name[MAXNAMELEN];
+ 	struct quota_handle **handles;
+-	int lines = 0, bover, iover, over;
++	int lines = 0, bover, iover, over, unlimited;
+ 	time_t now;
+ 
+ 	time(&now);
+@@ -204,11 +204,16 @@ static int showquotas(int type, qid_t id, int mntcnt, char **mnt)
+ 		goto out_handles;
+ 	}
+ 	over = 0;
++	unlimited = 1;
+ 	for (q = qlist; q; q = q->dq_next) {
+ 		bover = iover = 0;
+-		if (!(flags & FL_VERBOSE) && !q->dq_dqb.dqb_isoftlimit && !q->dq_dqb.dqb_ihardlimit
+-		    && !q->dq_dqb.dqb_bsoftlimit && !q->dq_dqb.dqb_bhardlimit)
+-			continue;
++		if (!q->dq_dqb.dqb_isoftlimit && !q->dq_dqb.dqb_ihardlimit
++		    && !q->dq_dqb.dqb_bsoftlimit && !q->dq_dqb.dqb_bhardlimit) {
++			if (!(flags & FL_VERBOSE))
++				continue;
++		} else {
++			unlimited = 0;
++		}
+ 		msgi = NULL;
+ 		if (q->dq_dqb.dqb_ihardlimit && q->dq_dqb.dqb_curinodes >= q->dq_dqb.dqb_ihardlimit) {
+ 			msgi = _("File limit reached on");
+@@ -300,7 +305,7 @@ static int showquotas(int type, qid_t id, int mntcnt, char **mnt)
+ 		}
+ 	}
+ 	if (!(flags & FL_QUIET) && !lines && qlist)
+-		heading(type, id, name, _("none"));
++		heading(type, id, name, unlimited ? _("none") : _("no limited resources used"));
+ 	freeprivs(qlist);
+ out_handles:
+ 	dispose_handle_list(handles);
+-- 
+2.14.4
+

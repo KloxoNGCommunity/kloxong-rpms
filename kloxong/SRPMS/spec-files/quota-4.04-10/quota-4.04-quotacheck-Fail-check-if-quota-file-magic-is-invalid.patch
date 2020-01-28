@@ -1,0 +1,35 @@
+From b9525abadba082073e20e54ee7ad2423fc1ae6a8 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 5 Feb 2018 16:27:59 +0100
+Subject: [PATCH] quotacheck: Fail check if quota file magic is invalid
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Currently quotacheck will just continue if quotafile magic is invalid.
+Instead ask whether we should continue assuming quota format passed from
+the command line.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ quotacheck_v2.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/quotacheck_v2.c b/quotacheck_v2.c
+index 86fbf42..465765b 100644
+--- a/quotacheck_v2.c
++++ b/quotacheck_v2.c
+@@ -357,6 +357,9 @@ static int check_header(char *filename, int fd, int type, int version)
+ 	    le32toh(head.dqh_version) > known_versions[type]) {
+ 		errstr(_("WARNING - Quota file %s has corrupted headers\n"),
+ 			filename);
++		if (!(flags & FL_INTERACTIVE) ||
++		    !ask_yn(_("Continue checking assuming format from command line?"), 0))
++			return -1;
+ 	}
+ 	if (le32toh(head.dqh_version) != version) {
+ 		errstr(_("Quota file format version %d does not match the one "
+-- 
+2.13.6
+

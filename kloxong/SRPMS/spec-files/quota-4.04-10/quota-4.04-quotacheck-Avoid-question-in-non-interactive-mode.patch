@@ -1,0 +1,36 @@
+From 4179911dc38af1b6499704a7f7fb710a40c95bdb Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 5 Feb 2018 15:39:12 +0100
+Subject: [PATCH] quotacheck: Avoid question in non-interactive mode
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+A question when quota file version is incorrect is asked even if
+quotacheck is run in non-interactive mode. Avoid asking the question in
+that case and fail the check instead.
+
+Reproted-by: Christoph Biedl <debian.axhn@manchmal.in-ulm.de>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ quotacheck_v2.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/quotacheck_v2.c b/quotacheck_v2.c
+index 4cc8558..86fbf42 100644
+--- a/quotacheck_v2.c
++++ b/quotacheck_v2.c
+@@ -363,7 +363,8 @@ static int check_header(char *filename, int fd, int type, int version)
+ 			 "specified on command line (%d). Quota file header "
+ 			 "may be corrupted.\n"),
+ 		       le32toh(head.dqh_version), version);
+-		if (!ask_yn(_("Continue checking assuming version from command line?"), 1))
++		if (!(flags & FL_INTERACTIVE) ||
++		    !ask_yn(_("Continue checking assuming version from command line?"), 1))
+ 			return -1;
+ 		detected_versions[type] = version;
+ 	} else
+-- 
+2.13.6
+

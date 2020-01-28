@@ -1,0 +1,35 @@
+From d7694c952073bf2ebb852014d9f979b5e3e7c018 Mon Sep 17 00:00:00 2001
+From: Jan Kara <jack@suse.cz>
+Date: Mon, 28 May 2018 18:08:24 +0200
+Subject: [PATCH] rpc: Fix wrong limit for space usage
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Limit of maximum allowable space usage for RPC transfer was wrongly set
+to ~4GB instead of ~4TB due to overflow in constant initialization. Fix
+it.
+
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ quotaio_rpc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/quotaio_rpc.c b/quotaio_rpc.c
+index 6f25144..edc1e9f 100644
+--- a/quotaio_rpc.c
++++ b/quotaio_rpc.c
+@@ -33,7 +33,8 @@ static int rpc_init_io(struct quota_handle *h)
+ #ifdef RPC
+ 	h->qh_info.dqi_max_b_limit = ~(uint32_t)0;
+ 	h->qh_info.dqi_max_i_limit = ~(uint32_t)0;
+-	h->qh_info.dqi_max_b_usage = (~(uint32_t)0) << QUOTABLOCK_BITS;
++	h->qh_info.dqi_max_b_usage = ((uint64_t)(~(uint32_t)0))
++							 << QUOTABLOCK_BITS;
+ 	h->qh_info.dqi_max_i_usage = ~(uint32_t)0;
+ 	return 0;
+ #else
+-- 
+2.14.3
+

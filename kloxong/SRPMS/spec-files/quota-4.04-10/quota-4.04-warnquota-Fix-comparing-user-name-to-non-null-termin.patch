@@ -1,0 +1,74 @@
+From 59b280ebe22eceaf4250cb3b776674619a4d4ece Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Petr=20P=C3=ADsa=C5=99?= <ppisar@redhat.com>
+Date: Mon, 5 Feb 2018 11:07:41 +0100
+Subject: [PATCH] warnquota: Fix comparing user name to non-null-terminated
+ utmp.ut_user
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GCC 8 with GNU libc 2.27 warns:
+
+gcc -DHAVE_CONFIG_H -I.    -I/usr/include/dbus-1.0 -I/usr/lib64/dbus-1.0/include  -I/usr/include/libnl3  -g -O2 -Wall -fPIC -I/usr/include/tirpc  -c -o quota_nld-quota_nld.o `test -f 'quota_nld.c' || echo './'`quota_nld.c
+quota_nld.c: In function ‘write_console_warning’:
+quota_nld.c:273:7: warning: ‘strcmp’ argument 2 declared attribute ‘nonstring’ [-Wstringop-overflow=]
+   if (strcmp(user, uent->ut_user))
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from /usr/include/utmp.h:29,
+                 from quota_nld.c:23:
+/usr/include/bits/utmp.h:65:8: note: argument ‘ut_user’ declared here
+   char ut_user[UT_NAMESIZE]
+        ^~~~~~~
+
+This is because ut_user value misses the terminating null byte if it
+fits exactly into ut_user array, as document in utmp(5):
+
+    String fields are terminated by a null byte ('\0') if they are
+    shorter than  the size of the field.
+
+Recent GCC and glibc recevied compile-time checks and annotations
+(__attribute_nonstring_) that catches these mistakes.
+
+This patch fixes it by using strncmp(3) and by ignoring user names
+that does not fit into utmp log format. It's better not to warn than
+spamming unrelated user.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ quota_nld.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/quota_nld.c b/quota_nld.c
+index ea541e0..8559f25 100644
+--- a/quota_nld.c
++++ b/quota_nld.c
+@@ -262,6 +262,8 @@ static void write_console_warning(struct quota_warning *warn)
+ 	    warn->warntype == QUOTA_NL_BSOFTBELOW) && !(flags & FL_PRINTBELOW))
+ 		return;
+ 	uid2user(warn->caused_id, user);
++	if (strlen(user) > UT_NAMESIZE)
++		goto skip_utmp;
+ 	strcpy(dev, "/dev/");
+ 
+ 	setutent();
+@@ -270,7 +272,7 @@ static void write_console_warning(struct quota_warning *warn)
+ 		if (uent->ut_type != USER_PROCESS)
+ 			continue;
+ 		/* Entry for a different user? */
+-		if (strcmp(user, uent->ut_user))
++		if (strncmp(user, uent->ut_user, UT_NAMESIZE))
+ 			continue;
+ 		sstrncpy(dev+5, uent->ut_line, PATH_MAX-5);
+ 		if (stat(dev, &st) < 0)
+@@ -281,6 +283,7 @@ static void write_console_warning(struct quota_warning *warn)
+ 		}
+ 	}
+ 	if (!max_atime) {
++skip_utmp:
+ 		/*
+ 		 * This can happen quite easily so don't spam syslog with
+ 		 * the error
+-- 
+2.13.6
+
