@@ -1,7 +1,7 @@
 # Use netlink to monitor quota usage and warn interactive users
 %bcond_without quota_enables_netlink
 # Enable getting quotas over remotely
-%bcond_with quota_enables_rpc
+%bcond_without quota_enables_rpc
 # Allow setting quota remotely
 %bcond_without quota_enables_rpcsetquota
 # Disable TCP Wrappers guard in RPC quota daemon
