@@ -1,5 +1,5 @@
 %define	name isoqlog
-%define	pversion 2.2.1
+%define	pversion 2.1
 %define 	bversion 1.3
 %define	rpmrelease 8.kng%{?dist}
 
@@ -25,8 +25,8 @@ Release:	%{release}
 License:	BSD
 Group:		Monitoring
 URL:		http://www.enderunix.org/isoqlog/
-#Source0:	isoqlog-%{pversion}.tar.bz2
-Source0:	isoqlog-%{pversion}.tar.gz
+Source0:	isoqlog-%{pversion}.tar.bz2
+#Source0:	isoqlog-%{pversion}.tar.gz
 Source1:	isoqlog.conf.bz2	
 Source2:	cron.sh.bz2
 Source3:	toaster-templates.tar.bz2
