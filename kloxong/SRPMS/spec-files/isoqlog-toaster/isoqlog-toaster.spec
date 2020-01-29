@@ -92,7 +92,9 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-
+autoreconf
+%{__automake}
+%{__autoconf}
 ./configure \
     --prefix=%{_prefix} \
     --exec-prefix=%{_exec_prefix} \
