@@ -74,7 +74,7 @@ day, per month, and years.
 
 #Update configure.in to configure.ac
 mv configure.in configure.ac
-%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT\(\[isoqlog\, 2\.1\]\)\rAC_CONFIG_SRCDIR\(\[src\/foo\.c\]\)|g" configure.ac
+%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT([isoqlog, 2.1])\rAC_CONFIG_SRCDIR\([Data.c])|g" configure.ac
 %{__perl} -pi -e "s|AM_INIT_AUTOMAKE\(isoqlog\, 2\.1\)|AM_INIT_AUTOMAKE|g" configure.ac
 
 # CVS cleanup
