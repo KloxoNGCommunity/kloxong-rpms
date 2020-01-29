@@ -1,5 +1,5 @@
 %define	name isoqlog
-%define	pversion 2.1.1
+%define	pversion 2.1
 %define 	bversion 1.3
 %define	rpmrelease 8.kng%{?dist}
 
@@ -25,11 +25,19 @@ Release:	%{release}
 License:	BSD
 Group:		Monitoring
 URL:		http://www.enderunix.org/isoqlog/
-#Source0:	isoqlog-%{pversion}.tar.bz2
-Source0:	isoqlog-%{pversion}.tar.gz
-Source1:	isoqlog.conf.bz2	
-Source2:	cron.sh.bz2
-Source3:	toaster-templates.tar.bz2
+Source0:	isoqlog-%{pversion}.tar.bz2
+#Source0:	isoqlog-%{pversion}.tar.gz
+Source1:	isoqlog.conf	
+Source2:	cron.sh
+Source4:    index.html
+Source5:    days.html
+Source6:    domain.html
+Source7:    daily.html
+Source8:    monthly.html
+Source9:    generaldomain.html
+Source10:   generaldaily.html
+Source11:   generalmonthly.html
+Source12:   generalyearly.html
 Patch0:		isoqlog-2.1-fixes.patch.bz2
 Patch1:		isoqlog-2.1-errno.patch.bz2
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
@@ -61,8 +69,8 @@ day, per month, and years.
 
 %setup -q -n %{name}-%{pversion}
 
-#%patch0 -p0
-#%patch1 -p1
+%patch0 -p0
+%patch1 -p1
 
 # CVS cleanup
 #----------------------------------------------------------------------------
@@ -130,12 +138,30 @@ install -d %{buildroot}/%{_docdir}/%{name}
 install -d %{buildroot}/%{isoqdir}/bin
 install -d %{buildroot}/%{basedir}/include
 install -m644 isoqlog.module %{buildroot}%{basedir}/include/
-bzcat %{SOURCE1} > %{buildroot}/%{_sysconfdir}/%{name}/isoqlog.conf
-bzcat %{SOURCE2} > %{buildroot}/%{isoqdir}/bin/cron.sh
+#bzcat %{SOURCE1} > %{buildroot}/%{_sysconfdir}/%{name}/isoqlog.conf
+#bzcat %{SOURCE2} > %{buildroot}/%{isoqdir}/bin/cron.sh
+install -Dp %{SOURCE1}  %{buildroot}%{_sysconfdir}/%{name}/isoqlog.conf
+install -Dp %{SOURCE2}  %{buildroot}%{isoqdir}/bin/cron.sh
+
 mv %{buildroot}/%{basedir}/doc/isoqlog/* %{buildroot}/%{_docdir}/%{name}/
-cd %{buildroot}/%{isoqdir}/htmltemp
-tar fvxj %{SOURCE3}
-cd $THISDIR
+#cd %{buildroot}/%{isoqdir}/htmltemp
+#tar fvxj %{SOURCE3}
+#cd $THISDIR
+
+install -Dp %{SOURCE4} %{buildroot}%{_datadir}/%{name}/htmltemp/index.html
+install -p  %{SOURCE5} %{buildroot}%{_datadir}/%{name}/htmltemp/days.html
+install -p  %{SOURCE6} %{buildroot}%{_datadir}/%{name}/htmltemp/domain.html
+install -p  %{SOURCE7} %{buildroot}%{_datadir}/%{name}/htmltemp/daily.html
+install -p  %{SOURCE8} %{buildroot}%{_datadir}/%{name}/htmltemp/monthly.html
+install -p  %{SOURCE9} \
+      %{buildroot}%{_datadir}/%{name}/htmltemp/generaldomain.html
+install -p  %{SOURCE10} \
+      %{buildroot}%{_datadir}/%{name}/htmltemp/generaldaily.html
+install -p  %{SOURCE11} \
+      %{buildroot}%{_datadir}/%{name}/htmltemp/generalmonthly.html
+install -p  %{SOURCE12} \
+      %{buildroot}%{_datadir}/%{name}/htmltemp/generalyearly.html
+
 
 %{__perl} -pi -e "s|USR:GRP|%{apacheuser}:%{apachegroup}|g" %{buildroot}/%{isoqdir}/bin/cron.sh
 
