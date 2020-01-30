@@ -1,5 +1,5 @@
 %define	name isoqlog
-%define	pversion 2.1
+%define	pversion 2.1.1
 %define 	bversion 1.3
 %define	rpmrelease 8.kng%{?dist}
 
@@ -69,13 +69,13 @@ day, per month, and years.
 
 %setup -q -n %{name}-%{pversion}
 
-%patch0 -p0
-%patch1 -p1
+#%patch0 -p0
+#%patch1 -p1
 
 #Update configure.in to configure.ac
 mv configure.in configure.ac
-%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT([isoqlog], [2.1])\rAC_CONFIG_SRCDIR\([Data.c])|g" configure.ac
-%{__perl} -pi -e "s|AM_INIT_AUTOMAKE\(isoqlog\, 2\.1\)|AM_INIT_AUTOMAKE|g" configure.ac
+#%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT([isoqlog], [2.1])\rAC_CONFIG_SRCDIR\([Data.c])|g" configure.ac
+#%{__perl} -pi -e "s|AM_INIT_AUTOMAKE\(isoqlog\, 2\.1\)|AM_INIT_AUTOMAKE|g" configure.ac
 
 # CVS cleanup
 #----------------------------------------------------------------------------
