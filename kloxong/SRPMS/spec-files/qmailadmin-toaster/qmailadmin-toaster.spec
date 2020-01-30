@@ -110,7 +110,8 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 %{__aclocal}
 %{__autoconf}
 %{__automake}
-./configure \
+autoreconf --install
+%configure \
  --prefix=%{_prefix} \
  --datadir=%{_datadir}/%{name} \
  --enable-htmllibdir=%{_datadir}/%{name} \
