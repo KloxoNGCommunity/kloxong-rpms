@@ -1,3 +1,0 @@
-trdir = $(datadir)/doc/isoqlog/tr
-tr_DATA = BENIOKU DEGISIKLIKLER HABERLER KOPYALAMA KURULUM YAZARLAR
-

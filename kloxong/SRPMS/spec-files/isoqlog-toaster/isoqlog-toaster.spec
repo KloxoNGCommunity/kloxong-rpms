@@ -25,8 +25,8 @@ Release:	%{release}
 License:	BSD
 Group:		Monitoring
 URL:		http://www.enderunix.org/isoqlog/
-#Source0:	isoqlog-%{pversion}.tar.bz2
-Source0:	isoqlog-%{pversion}.tar.gz
+Source0:	isoqlog-%{pversion}.tar.bz2
+#Source0:	isoqlog-%{pversion}.tar.gz
 Source1:	isoqlog.conf	
 Source2:	cron.sh
 Source4:    index.html
