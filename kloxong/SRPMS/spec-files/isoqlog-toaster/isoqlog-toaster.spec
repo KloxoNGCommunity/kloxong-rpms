@@ -74,7 +74,7 @@ day, per month, and years.
 
 #Update configure.in to configure.ac
 mv configure.in configure.ac
-%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT([isoqlog, 2.1])\rAC_CONFIG_SRCDIR\([Data.c])|g" configure.ac
+%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT([isoqlog], [2.1])\rAC_CONFIG_SRCDIR\([Data.c])|g" configure.ac
 %{__perl} -pi -e "s|AM_INIT_AUTOMAKE\(isoqlog\, 2\.1\)|AM_INIT_AUTOMAKE|g" configure.ac
 
 # CVS cleanup
@@ -97,8 +97,9 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-#autoreconf
-#%{__automake}
+autoreconf
+%{__aclocal}
+%{__automake}
 #%{__autoconf}
 ./configure \
     --prefix=%{_prefix} \
@@ -155,19 +156,19 @@ mv %{buildroot}/%{basedir}/doc/isoqlog/* %{buildroot}/%{_docdir}/%{name}/
 #tar fvxj %{SOURCE3}
 #cd $THISDIR
 
-install -Dp %{SOURCE4} %{buildroot}%{_datadir}/%{name}/htmltemp/index.html
-install -p  %{SOURCE5} %{buildroot}%{_datadir}/%{name}/htmltemp/days.html
-install -p  %{SOURCE6} %{buildroot}%{_datadir}/%{name}/htmltemp/domain.html
-install -p  %{SOURCE7} %{buildroot}%{_datadir}/%{name}/htmltemp/daily.html
-install -p  %{SOURCE8} %{buildroot}%{_datadir}/%{name}/htmltemp/monthly.html
+install -Dp %{SOURCE4} %{buildroot}%{isoqdir}/htmltemp/index.html
+install -p  %{SOURCE5} %{buildroot}%{isoqdir}/htmltemp/days.html
+install -p  %{SOURCE6} %{buildroot}%{isoqdir}/htmltemp/domain.html
+install -p  %{SOURCE7} %{buildroot}%{isoqdir}/htmltemp/daily.html
+install -p  %{SOURCE8} %{buildroot}%{isoqdir}/htmltemp/monthly.html
 install -p  %{SOURCE9} \
-      %{buildroot}%{_datadir}/%{name}/htmltemp/generaldomain.html
+      %{buildroot}%{isoqdir}/htmltemp/generaldomain.html
 install -p  %{SOURCE10} \
-      %{buildroot}%{_datadir}/%{name}/htmltemp/generaldaily.html
+      %{buildroot}%{isoqdir}/htmltemp/generaldaily.html
 install -p  %{SOURCE11} \
-      %{buildroot}%{_datadir}/%{name}/htmltemp/generalmonthly.html
+      %{buildroot}%{isoqdir}/htmltemp/generalmonthly.html
 install -p  %{SOURCE12} \
-      %{buildroot}%{_datadir}/%{name}/htmltemp/generalyearly.html
+      %{buildroot}%{isoqdir}/htmltemp/generalyearly.html
 
 
 %{__perl} -pi -e "s|USR:GRP|%{apacheuser}:%{apachegroup}|g" %{buildroot}/%{isoqdir}/bin/cron.sh
