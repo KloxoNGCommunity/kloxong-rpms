@@ -100,9 +100,9 @@ EOF
 # We have gcc written in a temp file
 export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 
-$CC checkq.c -o checkq
+%{__cc} checkq.c -o checkq
 ./checkq
-$CC -s -O qmailmrtg7.c -o qmailmrtg
+%{__cc} -s -O qmailmrtg7.c -o qmailmrtg
 
 
 #-------------------------------------------------------------------
