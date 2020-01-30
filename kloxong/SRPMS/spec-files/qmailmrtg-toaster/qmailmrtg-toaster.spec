@@ -30,6 +30,7 @@ Group:		Networking/Other
 URL:		http://dev.prodigysolutions.com
 Source0:	qmailmrtg7-%{pversion}.tar.bz2
 Source1:	index.php.bz2
+Patch0:		qmailmrtg7-modernize-code.diff
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03
 Requires:	qmail-toaster >= 1.03, control-panel-toaster >= 0.2
@@ -50,6 +51,9 @@ Qmail MRTG Stat collector
 #-------------------------------------------------------------------
 %setup -q -n qmailmrtg7-%{pversion}
 #-------------------------------------------------------------------
+
+# We need to patch for modern compilers
+%patch0 -p1
 
 # Try detecting newest gcc (some distributions have got more then one compiler)
 # and write it on a temp file 
