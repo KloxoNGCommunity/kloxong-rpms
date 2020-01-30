@@ -1,0 +1,22 @@
+diff -Naur isoqlog-2.1/Html.c isoqlog-2.1.oden/Html.c
+--- isoqlog-2.1/Html.c	2003-01-03 08:38:08.000000000 +0100
++++ isoqlog-2.1.oden/Html.c	2003-01-14 04:28:01.000000000 +0100
+@@ -3,6 +3,7 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <sys/times.h>
++#include <errno.h>
+ 
+ #include "Html.h"
+ #include "Data.h"
+diff -Naur isoqlog-2.1/Store.c isoqlog-2.1.oden/Store.c
+--- isoqlog-2.1/Store.c	2002-06-15 03:17:28.000000000 +0200
++++ isoqlog-2.1.oden/Store.c	2003-01-14 04:28:06.000000000 +0100
+@@ -3,6 +3,7 @@
+ #include <string.h>
+ #include <unistd.h>
+ #include <stdlib.h>
++#include <errno.h>
+ 
+ 
+ #include "Store.h"
