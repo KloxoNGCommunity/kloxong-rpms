@@ -1,0 +1,72 @@
+diff -ur qmailmrtg7-4.2.orig/checkq.c qmailmrtg7-4.2/checkq.c
+--- qmailmrtg7-4.2.orig/checkq.c	2004-02-29 10:54:02.000000000 +0100
++++ qmailmrtg7-4.2/checkq.c	2013-05-29 11:21:37.191148458 +0200
+@@ -16,13 +16,14 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+  */
+ 
++#include <string.h>
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <unistd.h>
+ #include <dirent.h>
+ 
+-int main(int argc, char *argv)
++int main(int argc, char **argv)
+ {
+  FILE *fs;
+  DIR *mydir;
+diff -ur qmailmrtg7-4.2.orig/qmailmrtg7.c qmailmrtg7-4.2/qmailmrtg7.c
+--- qmailmrtg7-4.2.orig/qmailmrtg7.c	2004-11-05 17:37:11.000000000 +0100
++++ qmailmrtg7-4.2/qmailmrtg7.c	2013-05-29 11:27:03.244645270 +0200
+@@ -16,6 +16,7 @@
+  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+  */
+ 
++#include <stdlib.h>
+ #include <stdio.h>
+ #include <unistd.h>
+ #include <time.h>
+@@ -98,7 +99,6 @@
+   tconcurrency = 0;
+   tallow = 0;
+   tdeny = 0;
+-  tconcurrency;
+   ttotal = 0;
+   unsub = 0;
+   success = 0;
+@@ -225,24 +225,16 @@
+       printf("%i\n%i\n\n\n",tcached*12,tquery*12);
+       break;
+   }
++  exit(0);
+ }
+ 
+ void process_file( char *file_name)
+ {
+  FILE *fs;
+  unsigned long secs;
+- unsigned long nanosecs;
+- unsigned long u;
+- time_t now_time;
+  int tmpint;
+  char *tmpstr1;
+  char *tmpstr2;
+- char *tmp1;
+- char *tmp2;
+- char *tmp3;
+- char *tmp4;
+- int c;
+- int i;
+ 
+   if ( (fs=fopen(file_name,"r"))==NULL) return;
+ 
+@@ -386,7 +378,6 @@
+ get_size(diri)
+  char *diri;
+ {
+- DIR *mydir;
+  int i;
+  int count;
+  char tmpbuf[200];
