@@ -1,5 +1,5 @@
 %define	name qmailadmin
-%define	pversion 1.2.16
+%define	pversion 1.2.15
 %define 	bversion 1.4
 %define	rpmrelease 2.kng%{?dist}
 
@@ -28,7 +28,7 @@ Release:	%{release}
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.inter7.com/qmailadmin
-Source0:	qmailadmin-%{pversion}.tar.bz2
+Source0:	qmailadmin-%{pversion}.tar.gz
 Source1:	help.tar.bz2
 Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
 Patch2: 	qmailadmin-vpop-devel.patch
