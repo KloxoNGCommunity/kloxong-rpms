@@ -100,8 +100,8 @@ support via the users language settings on their browser.
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
-%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -pic/' )
 
 export CFLAGS="%{cflags}"
 export LDFLAGS="%{ldflags}"
