@@ -96,7 +96,7 @@ support via the users language settings on their browser.
 %patch3 -p1
 %patch4	-p1
 #%patch5	-p1
-%patch6	-p1
+#%patch6	-p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
@@ -119,7 +119,7 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -pic/' )
 
 export CFLAGS="%{cflags}"
-#export LDFLAGS="%{ldflags}"
+export LDFLAGS="%{ldflags}"
 %endif
 
 %{__aclocal}
