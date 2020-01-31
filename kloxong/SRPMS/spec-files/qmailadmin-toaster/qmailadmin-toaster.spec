@@ -114,7 +114,7 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 ##export LDFLAGS="%{ldflags}"
 
 %{__aclocal}
-%{__autoconf}
+##%{__autoconf}
 %{__automake}
 autoreconf --install
 %configure \
