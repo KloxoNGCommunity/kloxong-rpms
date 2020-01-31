@@ -34,7 +34,7 @@ These are some additional programs for spamdyke.
 #%patch1 -p1
 
 %build
-export LDFLAGS="-L%{_libdir}/mysql"
+export LDFLAGS="-g -L%{_libdir}/mysql"
 # Build spamdyke...
 cd %{name}
 %configure --with-excessive-output
