@@ -89,10 +89,10 @@ support via the users language settings on their browser.
 %setup  -q -n %{name}-%{pversion}
 
 # patch 1 and 2 need to go together to find libraries path
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4	-p0
+#%patch1 -p1
+#%patch2 -p1
+#%patch3 -p1
+#%patch4	-p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
