@@ -113,7 +113,7 @@ mv configure.in configure.ac
 
 %{__aclocal}
 %{__autoconf}
-%{__automake}
+%{__automake} --add-missing
 autoreconf --install
 %configure \
  --prefix=%{_prefix} \
