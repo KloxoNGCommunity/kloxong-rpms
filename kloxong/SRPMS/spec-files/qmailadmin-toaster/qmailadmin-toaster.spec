@@ -34,6 +34,8 @@ Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
 Patch2: 	qmailadmin-vpop-devel.patch
 Patch3: 	qmailadmin-noroot.patch
 Patch4: 	qmailadmin-bounce-fix.patch
+Patch5: 	qmailadmin-1.2.12-quota-overflow.patch
+Patch6: 	qmailadmin-1.2.15-quota-security.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03, vpopmail-toaster >= 5.4.33
 BuildRequires: libvpopmail-devel >= 5.4.17
@@ -93,6 +95,8 @@ support via the users language settings on their browser.
 %patch2 -p1
 %patch3 -p1
 %patch4	-p1
+%patch5	-p1
+%patch6	-p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
