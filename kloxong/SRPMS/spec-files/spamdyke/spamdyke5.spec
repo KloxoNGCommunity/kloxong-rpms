@@ -124,7 +124,6 @@ fi
 %attr(-, qmaild, qmail) %dir /var/qmail/spamdyke
 %attr(-, qmaild, qmail) %dir /var/qmail/spamdyke/greylist
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_senders
-%attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_senders
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_recipients
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_keywords
 %attr(0644, qmaild, qmail) %config(noreplace) /var/qmail/spamdyke/blacklist_ip
