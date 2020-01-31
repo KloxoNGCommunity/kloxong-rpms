@@ -116,14 +116,6 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-%if %{?fedora}0 > 150 || %{?rhel}0 > 70
-
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
-%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
-
-export CFLAGS="%{cflags}"
-export LDFLAGS="%{ldflags}"
-%endif
 
 %{__aclocal}
 %{__autoconf}
