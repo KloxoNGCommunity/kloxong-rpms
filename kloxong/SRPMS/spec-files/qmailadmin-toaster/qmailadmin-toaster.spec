@@ -107,11 +107,11 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
-%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
+##%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
+##%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
 
-export CFLAGS="%{cflags}"
-export LDFLAGS="%{ldflags}"
+##export CFLAGS="%{cflags}"
+##export LDFLAGS="%{ldflags}"
 
 %{__aclocal}
 %{__autoconf}
@@ -143,8 +143,8 @@ autoreconf --install
 %endif
  --enable-domain-autofill=n
 
-make %{?_smp_mflags}
-##%{__make}
+##make %{?_smp_mflags}
+%{__make}
 
 cp %{SOURCE1} $RPM_BUILD_DIR/%{name}-%{pversion}/help.tar.bz2
 tar xvfj $RPM_BUILD_DIR/%{name}-%{pversion}/help.tar.bz2
