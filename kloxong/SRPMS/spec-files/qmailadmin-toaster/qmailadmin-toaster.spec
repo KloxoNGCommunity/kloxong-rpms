@@ -104,17 +104,15 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #----------------------------------------------------------------------------
 export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 
+#Update configure.in to configure.ac
+mv configure.in configure.ac
+
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-##%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
-##%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
-
-##export CFLAGS="%{cflags}"
-##export LDFLAGS="%{ldflags}"
 
 %{__aclocal}
-##%{__autoconf}
+%{__autoconf}
 %{__automake}
 autoreconf --install
 %configure \
