@@ -12,7 +12,7 @@ Source2:	spamdyke5.conf
 Source3:	spamdyke.sql
 #Patch1:	spamdyke-4.1.0-mysql.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-root-%(id -u -n)
-BuildRequires:	mysql-devel, vpopmail-toaster >= 5.4.1
+BuildRequires:	mysql-devel, vpopmail-toaster >= 5.4.1, openssl-devel
 
 %description
 spamdyke is a filter for monitoring and intercepting incoming SMTP connections
