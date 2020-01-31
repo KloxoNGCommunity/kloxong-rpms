@@ -116,7 +116,7 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
 %define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
-#%define ldflags %(echo %{optflags} | sed -e 's/$/ -pic/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
 export CFLAGS="%{cflags}"
 export LDFLAGS="%{ldflags}"
