@@ -107,7 +107,7 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
 %define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
 
 export CFLAGS="%{cflags}"
