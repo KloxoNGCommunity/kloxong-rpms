@@ -110,6 +110,12 @@ mv configure.in configure.ac
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
+
+export CFLAGS="%{cflags}"
+export LDFLAGS="%{ldflags}"
+
 
 %{__aclocal}
 %{__autoconf}
