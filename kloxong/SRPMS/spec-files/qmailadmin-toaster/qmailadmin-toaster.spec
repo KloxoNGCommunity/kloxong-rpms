@@ -1,5 +1,5 @@
 %define	name qmailadmin
-%define	pversion 1.2.15
+%define	pversion 1.2.16
 %define 	bversion 1.4
 %define	rpmrelease 2.kng%{?dist}
 
@@ -28,7 +28,7 @@ Release:	%{release}
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.inter7.com/qmailadmin
-Source0:	qmailadmin-%{pversion}.tar.gz
+Source0:	qmailadmin-%{pversion}.tar.bz2
 Source1:	help.tar.bz2
 Patch1: 	qmailadmin-lib-kloxong-qtoaster.patch
 Patch2: 	qmailadmin-vpop-devel.patch
@@ -89,10 +89,10 @@ support via the users language settings on their browser.
 %setup  -q -n %{name}-%{pversion}
 
 # patch 1 and 2 need to go together to find libraries path
-#%patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-#%patch4	-p1
+%patch1 -p1
+%patch2 -p1
+%patch3 -p1
+%patch4	-p1
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
@@ -107,9 +107,15 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-%{__aclocal}
-%{__autoconf}
-%{__automake}
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
+
+export CFLAGS="%{cflags}"
+export LDFLAGS="%{ldflags}"
+
+##%{__aclocal}
+##%{__autoconf}
+##%{__automake}
 autoreconf --install
 %configure \
  --prefix=%{_prefix} \
@@ -137,7 +143,8 @@ autoreconf --install
 %endif
  --enable-domain-autofill=n
 
-%{__make}
+make %{?_smp_mflags}
+##%{__make}
 
 cp %{SOURCE1} $RPM_BUILD_DIR/%{name}-%{pversion}/help.tar.bz2
 tar xvfj $RPM_BUILD_DIR/%{name}-%{pversion}/help.tar.bz2
