@@ -98,24 +98,32 @@ support via the users language settings on their browser.
 #----------------------------------------------------------------------------
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
-echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
-# Export compiler flags
-#----------------------------------------------------------------------------
-export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
-
-#Update configure.in to configure.ac
-mv configure.in configure.ac
-
-#----------------------------------------------------------------------------
-%build
-#----------------------------------------------------------------------------
 %define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
 %define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
 
 export CFLAGS="%{cflags}"
 export LDFLAGS="%{ldflags}"
+%else
+echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
+# Export compiler flags
+#----------------------------------------------------------------------------
+export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
+%endif
+
+#----------------------------------------------------------------------------
+%build
+#----------------------------------------------------------------------------
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
+
+export CFLAGS="%{cflags}"
+export LDFLAGS="%{ldflags}"
+%endif
 
 %{__aclocal}
 %{__autoconf}
