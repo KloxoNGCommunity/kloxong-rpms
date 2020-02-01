@@ -19,12 +19,9 @@ Requires:	perl-Digest-SHA1, perl-HTTP-Parser, procmail, gnupg
 Requires:	perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 ## MR -- exist in 3.4.0
 
-%if %{?fedora}0 > 160 || %{?rhel}0 > 70 
-BuildRequires: perl-Net-DNS, perl-libwww-perl
-Requires: perl-Net-DNS, perl-libwww-perl
-%endif
 
-%if %{?fedora}0 = 150 || %{?rhel}0 = 60 
+
+%if %{?fedora}0 > 150 || %{?rhel}0 > 60 
 BuildRequires: perl-IO-Socket-IP
 BuildRequires: perl-HTML-Parser
 BuildRequires: perl-DB_File
@@ -40,6 +37,11 @@ BuildRequires: perl-IO-Socket-SSL
 
 Requires: perl-IO-Socket-INET6
 Requires: perl-IO-Socket-SSL
+%endif
+
+%if %{?fedora}0 > 160 || %{?rhel}0 > 70 
+BuildRequires: perl-Net-DNS, perl-libwww-perl
+Requires: perl-Net-DNS, perl-libwww-perl
 %endif
 
 %define	ccflags %{optflags}
