@@ -4,7 +4,7 @@
 %define	rpmrelease 8.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
-BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, perl-HTTP-Parser, openssl-devel, wget
+BuildRequires:	perl >= 5.8.8, perl-Digest-SHA1, openssl-devel, wget
 ## MR -- exist in 3.4.0
 BuildRequires:	perl-devel, perl-NetAddr-IP, perl-Archive-Tar, perl-Mail-SPF, perl-Time-HiRes
 BuildRequires:	perl-Geo-IP, perl-Razor-Agent, perl-IO-Socket-INET6, perl-IO-Socket-SSL
