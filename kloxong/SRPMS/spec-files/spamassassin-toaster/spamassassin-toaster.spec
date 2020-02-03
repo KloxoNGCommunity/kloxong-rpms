@@ -254,6 +254,7 @@ bunzip2 %{buildroot}%{_sysconfdir}/mail/spamassassin/v310.pre.bz2
 install -m 0644 $RPM_BUILD_DIR/%{real_name}-%{pversion}/rules/v312.pre %{buildroot}%{_sysconfdir}/mail/spamassassin/v312.pre
 install -m 0644 $RPM_BUILD_DIR/%{real_name}-%{pversion}/rules/v320.pre %{buildroot}%{_sysconfdir}/mail/spamassassin/v320.pre
 
+
 #-------------------------------------------------------------------------------
 %pre
 #-------------------------------------------------------------------------------
@@ -329,7 +330,8 @@ fi
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/mail/spamassassin/v340.pre
 ## MR -- exist in 3.4.1
 %config(noreplace) %attr(0644,root,root) %{_sysconfdir}/mail/spamassassin/v341.pre
-
+## JP -- exist in 3.4.2
+%config(noreplace) %attr(0644,root,root) %{_sysconfdir}/mail/spamassassin/v342.pre
 
 %{_datadir}/spamassassin/
 
@@ -339,6 +341,14 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Feb 3 2020 John Parnell Pierce <john@luckytanuki.com> 3.4.2-1.4.8.kng
+- upgrade to SA 3.4.2
+- add spamassassin/v342.pre to files
+
+* Sun Feb 2 2020 Dionysis Kladis <dkstiler@gmail.com> 3.4.1-1.4.8.kng
+- Fix depedencies for centos 8
+- adding handling for centos 8 
+
 * Tue Dec 17 2019 Dionysis Kladis <dkstiler@gmail.com> 3.4.1-1.4.7.kng
 - Fix depedencies for copr chroot build enviroment
 - adding handling for centos 7 and centos 6
