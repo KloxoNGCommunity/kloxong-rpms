@@ -1,10 +1,10 @@
 %define ver 2.23
 %define patchlevel 08
 
-%if 0%{?fedora} < 18
-%global db_devel  db4-devel
-%else
+%if 0%{?fedora} > 17 || %{?rhel}0 > 70
 %global db_devel  libdb-devel
+%else
+%global db_devel  db4-devel
 %endif
 
 Name: webalizer
