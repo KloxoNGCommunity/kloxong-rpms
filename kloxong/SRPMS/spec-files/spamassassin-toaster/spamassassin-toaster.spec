@@ -1,5 +1,5 @@
 %define	name spamassassin
-%define	pversion 3.4.1
+%define	pversion 3.4.2
 %define 	bversion 1.4
 %define	rpmrelease 8.kng%{?dist}
 
