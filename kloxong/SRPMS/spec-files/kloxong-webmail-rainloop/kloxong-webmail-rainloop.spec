@@ -1,7 +1,7 @@
 %define kloxo /home/kloxo/httpd/webmail
 %define productname kloxong-webmail
 %define packagename rainloop
-%define sourcename rainloop-webmail
+%define sourcename rainloop
 
 Name: %{productname}-%{packagename}
 Summary: Rainloop webmail client
