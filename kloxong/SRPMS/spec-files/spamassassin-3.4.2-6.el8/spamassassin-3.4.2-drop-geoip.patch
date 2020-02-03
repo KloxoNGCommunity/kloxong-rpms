@@ -1,0 +1,1059 @@
+From cab335f2c6b096f847402c35ee896a3f3d82958c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jaroslav=20=C5=A0karvada?= <jskarvad@redhat.com>
+Date: Mon, 23 Jul 2018 13:28:39 +0200
+Subject: [PATCH] Dropped GeoIP and optional plugins requiring it
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Namely URILocalBL and RelayCountry.
+
+Signed-off-by: Jaroslav Škarvada <jskarvad@redhat.com>
+
+diff --git a/MANIFEST b/MANIFEST
+index 2b1b291..a6bbcdb 100644
+--- a/MANIFEST
++++ b/MANIFEST
+@@ -117,7 +117,6 @@ lib/Mail/SpamAssassin/Plugin/VBounce.pm
+ lib/Mail/SpamAssassin/Plugin/WLBLEval.pm
+ lib/Mail/SpamAssassin/Plugin/WhiteListSubject.pm
+ lib/Mail/SpamAssassin/PluginHandler.pm
+-lib/Mail/SpamAssassin/Plugin/URILocalBL.pm
+ lib/Mail/SpamAssassin/RegistryBoundaries.pm
+ lib/Mail/SpamAssassin/Reporter.pm
+ lib/Mail/SpamAssassin/SQLBasedAddrList.pm
+diff --git a/lib/Mail/SpamAssassin/Plugin/RelayCountry.pm b/lib/Mail/SpamAssassin/Plugin/RelayCountry.pm
+deleted file mode 100644
+index 2e172f3..0000000
+--- a/lib/Mail/SpamAssassin/Plugin/RelayCountry.pm
++++ /dev/null
+@@ -1,280 +0,0 @@
+-# <@LICENSE>
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to you under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at:
+-# 
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-# </@LICENSE>
+-
+-=head1 NAME
+-
+-RelayCountry - add message metadata indicating the country code of each relay
+-
+-=head1 SYNOPSIS
+-
+-  loadplugin     Mail::SpamAssassin::Plugin::RelayCountry
+-
+-=head1 DESCRIPTION
+-
+-The RelayCountry plugin attempts to determine the domain country codes
+-of each relay used in the delivery path of messages and add that information
+-to the message metadata as "X-Relay-Countries", or the C<_RELAYCOUNTRY_>
+-header markup.
+-
+-=head1 REQUIREMENT
+-
+-This plugin requires the GeoIP2, Geo::IP, IP::Country::DB_File or 
+-IP::Country::Fast module from CPAN.
+-For backward compatibility IP::Country::Fast is used as fallback if no db_type
+-is specified in the config file.
+-
+-=cut
+-
+-package Mail::SpamAssassin::Plugin::RelayCountry;
+-
+-use Mail::SpamAssassin::Plugin;
+-use Mail::SpamAssassin::Logger;
+-use Mail::SpamAssassin::Constants qw(:ip);
+-use strict;
+-use warnings;
+-# use bytes;
+-use re 'taint';
+-
+-our @ISA = qw(Mail::SpamAssassin::Plugin);
+-
+-my $db;
+-my $dbv6;
+-my $db_info;  # will hold database info
+-my $db_type;  # will hold database type
+-
+-# constructor: register the eval rule
+-sub new {
+-  my $class = shift;
+-  my $mailsaobject = shift;
+-
+-  # some boilerplate...
+-  $class = ref($class) || $class;
+-  my $self = $class->SUPER::new($mailsaobject);
+-  bless ($self, $class);
+-
+-  $self->set_config($mailsaobject->{conf});
+-  return $self;
+-}
+-
+-sub set_config {
+-  my ($self, $conf) = @_;
+-  my @cmds;
+-
+-=head1 USER PREFERENCES
+-
+-The following options can be used in both site-wide (C<local.cf>) and
+-user-specific (C<user_prefs>) configuration files to customize how
+-SpamAssassin handles incoming email messages.
+-
+-=over 4
+-
+-=item country_db_type STRING
+-
+-This option tells SpamAssassin which type of Geo database to use.
+-Valid database types are GeoIP, GeoIP2, DB_File and Fast.
+-
+-=back
+-
+-=cut
+-
+-  push (@cmds, {
+-    setting => 'country_db_type',
+-    default => "GeoIP",
+-    type => $Mail::SpamAssassin::Conf::CONF_TYPE_STRING,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-      if ( $value !~ /GeoIP|GeoIP2|DB_File|Fast/) {
+-        return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      $self->{country_db_type} = $value;
+-    }
+-  });
+-
+-=over 4
+-
+-=item country_db_path STRING
+-
+-This option tells SpamAssassin where to find MaxMind GeoIP2 or IP::Country::DB_File database.
+-
+-=back
+-
+-=cut
+-
+-  push (@cmds, {
+-    setting => 'country_db_path',
+-    default => "",
+-    type => $Mail::SpamAssassin::Conf::CONF_TYPE_STRING,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-      if (!defined $value || !length $value) {
+-        return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      }
+-      if (!-f $value) {
+-        info("config: country_db_path \"$value\" is not accessible");
+-        $self->{country_db_path} = $value;
+-        return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      $self->{country_db_path} = $value;
+-    }
+-  });
+-  
+-  $conf->{parser}->register_commands(\@cmds);
+-}
+-
+-sub extract_metadata {
+-  my ($self, $opts) = @_;
+-  my $geo;
+-  my $cc;
+-
+-  my $conf_country_db_type = $self->{'main'}{'resolver'}{'conf'}->{country_db_type};
+-  my $conf_country_db_path = $self->{'main'}{'resolver'}{'conf'}->{country_db_path};
+-
+-  if ( $conf_country_db_type eq "GeoIP") {
+-    eval {
+-      require Geo::IP;
+-      $db = Geo::IP->open_type(Geo::IP->GEOIP_COUNTRY_EDITION, Geo::IP->GEOIP_STANDARD);
+-      die "GeoIP.dat not found" unless $db;
+-      # IPv6 requires version Geo::IP 1.39+ with GeoIP C API 1.4.7+
+-      if (Geo::IP->VERSION >= 1.39 && Geo::IP->api eq 'CAPI') {
+-       $dbv6 = Geo::IP->open_type(Geo::IP->GEOIP_COUNTRY_EDITION_V6, Geo::IP->GEOIP_STANDARD);
+-       if (!$dbv6) {
+-         dbg("metadata: RelayCountry: IPv6 support not enabled, GeoIPv6.dat not found");
+-       }
+-       $db_info = sub { return "Geo::IP " . ($db->database_info || '?') };
+-      } else {
+-       dbg("metadata: RelayCountry: IPv6 support not enabled, versions Geo::IP 1.39, GeoIP C API 1.4.7 required");
+-      }
+-   } or do {
+-     # Fallback to IP::Country::Fast
+-     dbg("metadata: RelayCountry: GeoIP.dat not found, IP::Country::Fast enabled as fallback");
+-     $conf_country_db_type = "Fast";
+-   }
+-  } elsif ( $conf_country_db_type eq "GeoIP2" ) {
+-     if ( -f $conf_country_db_path ) {
+-       eval {
+-         require GeoIP2::Database::Reader;
+-         $db = GeoIP2::Database::Reader->new(
+-            file => $conf_country_db_path,
+-            locales	=> [ 'en' ]
+-	   );
+-         die "${conf_country_db_path} not found" unless $db;
+-         $db_info = sub { return "GeoIP2 " . ($db->metadata()->description()->{en} || '?') };
+-         1;
+-       } or do {
+-         # Fallback to IP::Country::Fast
+-         dbg("metadata: RelayCountry: ${conf_country_db_path} not found, IP::Country::Fast enabled as fallback");
+-         $conf_country_db_type = "Fast";
+-       }
+-     } else {
+-         # Fallback to IP::Country::Fast
+-         dbg("metadata: RelayCountry: ${conf_country_db_path} not found, IP::Country::Fast enabled as fallback");
+-         $conf_country_db_type = "Fast";
+-     }
+-  } elsif ( $conf_country_db_type eq "DB_File") {
+-    if ( -f $conf_country_db_path ) {
+-      require IP::Country::DB_File;
+-      $db = IP::Country::DB_File->new($conf_country_db_path);
+-      die "Country db not found, please see build_ipcc.pl(1)" unless $db;
+-      $db_info = sub { return "IP::Country::DB_File ".localtime($db->db_time()); };
+-      1;     
+-    } else {
+-      # Fallback to IP::Country::Fast
+-      dbg("metadata: RelayCountry: ${conf_country_db_path} not found, IP::Country::Fast enabled as fallback");
+-      $conf_country_db_type = "Fast";
+-    }
+-  } 
+-  if( $conf_country_db_type eq "Fast") {
+-    my $eval_stat = $@ ne '' ? $@ : "errno=$!";  chomp $eval_stat;
+-    # Try IP::Country::Fast as backup
+-    eval {
+-      require IP::Country::Fast;
+-      $db = IP::Country::Fast->new();
+-      $db_info = sub { return "IP::Country::Fast ".localtime($db->db_time()); };
+-      1;
+-    } or do {
+-      my $eval_stat = $@ ne '' ? $@ : "errno=$!";  chomp $eval_stat;
+-      dbg("metadata: RelayCountry: failed to load 'IP::Country::Fast', skipping: $eval_stat");
+-      return 1;
+-    };
+-  };
+-
+-  return 1 unless $db;
+-
+-  dbg("metadata: RelayCountry: Using database: ".$db_info->());
+-  my $msg = $opts->{msg};
+-
+-  my $countries = '';
+-  my $IP_PRIVATE = IP_PRIVATE;
+-  my $IPV4_ADDRESS = IPV4_ADDRESS;
+-  foreach my $relay (@{$msg->{metadata}->{relays_untrusted}}) {
+-    my $ip = $relay->{ip};
+-    # Private IPs will always be returned as '**'
+-    if ( $conf_country_db_type eq "GeoIP" ) {
+-	  if ( $ip !~ /^$IPV4_ADDRESS$/o ) {
+-	    if ( defined $dbv6 ) {
+-	    	$geo = $dbv6->country_code_by_addr_v6($ip) || "XX";
+-	    } else {
+-		$geo = "XX";
+-	    }
+-	  } else {
+-	    $geo = $db->country_code_by_addr($ip) || "XX";
+-	  }
+-    } elsif ($conf_country_db_type eq "GeoIP2" ) {
+-      if ( $ip !~ /^$IP_PRIVATE$/o ) {
+-        my $country = $db->country( ip => $ip );
+-        my $country_rec = $country->country();
+-        $geo = $country_rec->iso_code() || "XX";
+-        $cc = $ip =~ /^$IP_PRIVATE$/o ? '**' : $geo;
+-      } else {
+-        $cc = '**';
+-      }
+-    } elsif ( $conf_country_db_type eq "DB_File" ) {
+-      if ( $ip !~ /^$IPV4_ADDRESS$/o ) {
+-        $geo = $db->inet6_atocc($ip) || "XX";
+-      } else {
+-        $geo = $db->inet_atocc($ip) || "XX";
+-      }		        
+-    } elsif ( $conf_country_db_type eq "Fast" ) {
+-        $geo = $db->inet_atocc($ip) || "XX";
+-    }
+-    $cc = $ip =~ /^$IP_PRIVATE$/o ? '**' : $geo;
+-    $countries .= $cc." ";
+-  }
+-
+-  chop $countries;
+-  $msg->put_metadata("X-Relay-Countries", $countries);
+-  dbg("metadata: X-Relay-Countries: $countries");
+-
+-  return 1;
+-}
+-
+-sub parsed_metadata {
+-  my ($self, $opts) = @_;
+-
+-  return 1 unless $db;
+-
+-  my $countries =
+-    $opts->{permsgstatus}->get_message->get_metadata('X-Relay-Countries');
+-  my @c_list = split(' ', $countries);
+-  $opts->{permsgstatus}->set_tag("RELAYCOUNTRY",
+-                                 @c_list == 1 ? $c_list[0] : \@c_list);
+-  return 1;
+-}
+-
+-1;
+diff --git a/lib/Mail/SpamAssassin/Plugin/URILocalBL.pm b/lib/Mail/SpamAssassin/Plugin/URILocalBL.pm
+deleted file mode 100644
+index e190fab..0000000
+--- a/lib/Mail/SpamAssassin/Plugin/URILocalBL.pm
++++ /dev/null
+@@ -1,658 +0,0 @@
+-# <@LICENSE>
+-# Licensed to the Apache Software Foundation (ASF) under one or more
+-# contributor license agreements.  See the NOTICE file distributed with
+-# this work for additional information regarding copyright ownership.
+-# The ASF licenses this file to you under the Apache License, Version 2.0
+-# (the "License"); you may not use this file except in compliance with
+-# the License.  You may obtain a copy of the License at:
+-# 
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-# 
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-# </@LICENSE>
+-
+-=head1 NAME
+-
+-URILocalBL - blacklist URIs using local information (ISP names, address lists, and country codes)
+-
+-=head1 SYNOPSIS
+-
+-This plugin creates some new rule test types, such as "uri_block_cc",
+-"uri_block_cidr", and "uri_block_isp".  These rules apply to the URIs
+-found in the HTML portion of a message, i.e. <a href=...> markup.
+-
+-  loadplugin    Mail::SpamAssassin::Plugin::URILocalBL
+-
+-Why local blacklisting? There are a few excellent, effective, and
+-well-maintained DNSBL's out there. But they have several drawbacks:
+-
+-=over 2
+-
+-=item * blacklists can cover tens of thousands of entries, and you can't select which ones you use;
+-
+-=item * verifying that it's correctly configured can be non-trivial;
+-
+-=item * new blacklisting entries may take a while to be detected and entered, so it's not instantaneous.
+-
+-=back
+-
+-Sometimes all you want is a quick, easy, and very surgical blacklisting of
+-a particular site or a particular ISP. This plugin is defined for that
+-exact usage case.
+-
+-=head1 RULE DEFINITIONS AND PRIVILEGED SETTINGS
+-
+-The format for defining a rule is as follows:
+-
+-  uri_block_cc SYMBOLIC_TEST_NAME cc1 cc2 cc3 cc4
+-
+-or:
+-
+-  uri_block_cont SYMBOLIC_TEST_NAME co1 co2 co3 co4
+-
+-or:
+-
+-  uri_block_cidr SYMBOLIC_TEST_NAME a.a.a.a b.b.b.b/cc d.d.d.d-e.e.e.e
+-
+-or:
+-
+-  uri_block_isp SYMBOLIC_TEST_NAME "DataRancid" "McCarrier" "Phishers-r-Us"
+-
+-Example rule for matching a URI in China:
+-
+-  uri_block_cc TEST1 cn
+-
+-This would block the URL http://www.baidu.com/index.htm.  Similarly, to
+-match a Spam-haven netblock:
+-
+-  uri_block_cidr TEST2 65.181.64.0/18
+-
+-would match a netblock where several phishing sites were recently hosted.
+-
+-And to block all CIDR blocks registered to an ISP, one might use:
+-
+-  uri_block_isp TEST3 "ColoCrossing"
+-
+-if one didn't trust URL's pointing to that organization's clients.  Lastly,
+-if there's a country that you want to block but there's an explicit host
+-you wish to exempt from that blacklist, you can use:
+-
+-  uri_block_exclude TEST1 www.baidu.com
+-
+-if you wish to exempt URL's referring to this host. The same syntax is
+-applicable to CIDR and ISP blocks as well.
+-
+-=head1 DEPENDENCIES
+-
+-The Country-Code based filtering requires the Geo::IP or GeoIP2 module, 
+-which uses either the fremium GeoLiteCountry database, or the commercial 
+-version of it called GeoIP from MaxMind.com.
+-
+-The ISP based filtering requires the same module, plus the GeoIPISP database.
+-There is no fremium version of this database, so commercial licensing is
+-required.
+-
+-=cut
+-
+-package Mail::SpamAssassin::Plugin::URILocalBL;
+-use Mail::SpamAssassin::Plugin;
+-use Mail::SpamAssassin::Logger;
+-use Mail::SpamAssassin::Util qw(untaint_var);
+-
+-use Net::CIDR::Lite;
+-use Socket;
+-
+-use strict;
+-use warnings;
+-# use bytes;
+-use re 'taint';
+-use version;
+-
+-our @ISA = qw(Mail::SpamAssassin::Plugin);
+-
+-use constant HAS_GEOIP => eval { require Geo::IP; };
+-use constant HAS_GEOIP2 => eval { require GeoIP2::Database::Reader; };
+-
+-# constructor
+-sub new {
+-  my $class = shift;
+-  my $mailsaobject = shift;
+-
+-  # some boilerplate...
+-  $class = ref($class) || $class;
+-  my $self = $class->SUPER::new($mailsaobject);
+-  bless ($self, $class);
+-
+-  # how to handle failure to get the database handle?
+-  # and we don't really have a valid return value...
+-  # can we defer getting this handle until we actually see
+-  # a uri_block_cc rule?
+-
+-  $self->register_eval_rule("check_uri_local_bl");
+-
+-  $self->set_config($mailsaobject->{conf});
+-
+-  return $self;
+-}
+-
+-sub set_config {
+-  my ($self, $conf) = @_;
+-  my @cmds;
+-
+-  my $pluginobj = $self;        # allow use inside the closure below
+-
+-  push (@cmds, {
+-    setting => 'uri_block_cc',
+-    is_priv => 1,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-
+-      if ($value !~ /^(\S+)\s+(.+)$/) {
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-      my $name = $1;
+-      my $def = $2;
+-      my $added_criteria = 0;
+-
+-      $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{countries} = {};
+-
+-      # this should match all country codes including satellite providers
+-      while ($def =~ m/^\s*([a-z][a-z0-9])(\s+(.*)|)$/) {
+-	my $cc = $1;
+-	my $rest = $2;
+-
+-	#dbg("config: uri_block_cc adding %s to %s\n", $cc, $name);
+-        $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{countries}->{uc($cc)} = 1;
+-	$added_criteria = 1;
+-
+-        $def = $rest;
+-      }
+-
+-      if ($added_criteria == 0) {
+-        warn "config: no arguments";
+-	return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      } elsif ($def ne '') {
+-        warn "config: failed to add invalid rule $name";
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      dbg("config: uri_block_cc added %s\n", $name);
+-
+-      $conf->{parser}->add_test($name, 'check_uri_local_bl()', $Mail::SpamAssassin::Conf::TYPE_BODY_EVALS);
+-    }
+-  });
+-
+-  push (@cmds, {
+-    setting => 'uri_block_cont',
+-    is_priv => 1,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-
+-      if ($value !~ /^(\S+)\s+(.+)$/) {
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-      my $name = $1;
+-      my $def = $2;
+-      my $added_criteria = 0;
+-
+-      $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{continents} = {};
+-
+-      # this should match all continent codes
+-      while ($def =~ m/^\s*([a-z]{2})(\s+(.*)|)$/) {
+-	my $cont = $1;
+-	my $rest = $2;
+-
+-	# dbg("config: uri_block_cont adding %s to %s\n", $cont, $name);
+-        $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{continents}->{uc($cont)} = 1;
+-	$added_criteria = 1;
+-
+-        $def = $rest;
+-      }
+-
+-      if ($added_criteria == 0) {
+-        warn "config: no arguments";
+-	return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      } elsif ($def ne '') {
+-        warn "config: failed to add invalid rule $name";
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      dbg("config: uri_block_cont added %s\n", $name);
+-
+-      $conf->{parser}->add_test($name, 'check_uri_local_bl()', $Mail::SpamAssassin::Conf::TYPE_BODY_EVALS);
+-    }
+-  });
+-  
+-  push (@cmds, {
+-    setting => 'uri_block_isp',
+-    is_priv => 1,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-
+-      if ($value !~ /^(\S+)\s+(.+)$/) {
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-      my $name = $1;
+-      my $def = $2;
+-      my $added_criteria = 0;
+-
+-      $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{isps} = {};
+-
+-      # gather up quoted strings
+-      while ($def =~ m/^\s*"([^"]*)"(\s+(.*)|)$/) {
+-	my $isp = $1;
+-	my $rest = $2;
+-
+-	dbg("config: uri_block_isp adding \"%s\" to %s\n", $isp, $name);
+-        $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{isps}->{$isp} = 1;
+-	$added_criteria = 1;
+-
+-        $def = $rest;
+-      }
+-
+-      if ($added_criteria == 0) {
+-        warn "config: no arguments";
+-	return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      } elsif ($def ne '') {
+-        warn "config: failed to add invalid rule $name";
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      $conf->{parser}->add_test($name, 'check_uri_local_bl()', $Mail::SpamAssassin::Conf::TYPE_BODY_EVALS);
+-    }
+-  });
+-
+-  push (@cmds, {
+-    setting => 'uri_block_cidr',
+-    is_priv => 1,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-
+-      if ($value !~ /^(\S+)\s+(.+)$/) {
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-      my $name = $1;
+-      my $def = $2;
+-      my $added_criteria = 0;
+-
+-      $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{cidr} = new Net::CIDR::Lite;
+-
+-      # match individual IP's, subnets, and ranges
+-      while ($def =~ m/^\s*(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(\/\d{1,2}|-\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})?)(\s+(.*)|)$/) {
+-	my $addr = $1;
+-	my $rest = $3;
+-
+-	dbg("config: uri_block_cidr adding %s to %s\n", $addr, $name);
+-
+-        eval { $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{cidr}->add_any($addr) };
+-        last if ($@);
+-
+-	$added_criteria = 1;
+-
+-        $def = $rest;
+-      }
+-
+-      if ($added_criteria == 0) {
+-        warn "config: no arguments";
+-	return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      } elsif ($def ne '') {
+-        warn "config: failed to add invalid rule $name";
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      # optimize the ranges
+-      $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{cidr}->clean();
+-
+-      $conf->{parser}->add_test($name, 'check_uri_local_bl()', $Mail::SpamAssassin::Conf::TYPE_BODY_EVALS);
+-    }
+-  });
+-
+-  push (@cmds, {
+-    setting => 'uri_block_exclude',
+-    is_priv => 1,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-
+-      if ($value !~ /^(\S+)\s+(.+)$/) {
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-      my $name = $1;
+-      my $def = $2;
+-      my $added_criteria = 0;
+-
+-      $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{exclusions} = {};
+-
+-      # match individual IP's, or domain names
+-      while ($def =~ m/^\s*((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(([a-z0-9][-a-z0-9]*[a-z0-9](\.[a-z0-9][-a-z0-9]*[a-z0-9]){1,})))(\s+(.*)|)$/) {
+-	my $addr = $1;
+-	my $rest = $6;
+-
+-	dbg("config: uri_block_exclude adding %s to %s\n", $addr, $name);
+-
+-        $conf->{parser}->{conf}->{uri_local_bl}->{$name}->{exclusions}->{$addr} = 1;
+-
+-	$added_criteria = 1;
+-
+-        $def = $rest;
+-      }
+-
+-      if ($added_criteria == 0) {
+-        warn "config: no arguments";
+-	return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      } elsif ($def ne '') {
+-        warn "config: failed to add invalid rule $name";
+-	return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      $conf->{parser}->add_test($name, 'check_uri_local_bl()', $Mail::SpamAssassin::Conf::TYPE_BODY_EVALS);
+-    }
+-  });
+-
+-=over 2  
+-
+-=item uri_country_db_path STRING
+-
+-This option tells SpamAssassin where to find the MaxMind country GeoIP2 
+-database.
+-
+-=back
+-
+-=cut
+-
+-  push (@cmds, {
+-    setting => 'uri_country_db_path',
+-    is_priv => 1,
+-    default => undef,
+-    type => $Mail::SpamAssassin::Conf::CONF_TYPE_STRING,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-      if (!defined $value || !length $value) {
+-        return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      }
+-      if (!-f $value) {
+-        info("config: uri_country_db_path \"$value\" is not accessible");
+-        $self->{uri_country_db_path} = $value;
+-        return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      $self->{uri_country_db_path} = $value;
+-    }
+-  });
+-
+-=over 2
+-
+-=item uri_country_db_isp_path STRING
+-
+-This option tells SpamAssassin where to find the MaxMind isp GeoIP2 database.
+-
+-=back
+-
+-=cut
+-
+-  push (@cmds, {
+-    setting => 'uri_country_db_isp_path',
+-    is_priv => 1,
+-    default => undef,
+-    type => $Mail::SpamAssassin::Conf::CONF_TYPE_STRING,
+-    code => sub {
+-      my ($self, $key, $value, $line) = @_;
+-      if (!defined $value || !length $value) {
+-        return $Mail::SpamAssassin::Conf::MISSING_REQUIRED_VALUE;
+-      }
+-      if (!-f $value) {
+-        info("config: uri_country_db_isp_path \"$value\" is not accessible");
+-        $self->{uri_country_db_isp_path} = $value;
+-        return $Mail::SpamAssassin::Conf::INVALID_VALUE;
+-      }
+-
+-      $self->{uri_country_db_isp_path} = $value;
+-    }
+-  });  
+- 
+-  $conf->{parser}->register_commands(\@cmds);
+-}  
+-
+-sub check_uri_local_bl {
+-  my ($self, $permsg) = @_;
+-
+-  my $cc;
+-  my $cont;
+-  my $db_info;
+-  my $isp;
+- 
+-  my $conf_country_db_path = $self->{'main'}{'resolver'}{'conf'}->{uri_country_db_path};
+-  my $conf_country_db_isp_path = $self->{'main'}{'resolver'}{'conf'}->{uri_country_db_isp_path};
+-  # If country_db_path is set I am using GeoIP2 api
+-  if ( HAS_GEOIP2 and ( ( defined $conf_country_db_path ) or ( defined $conf_country_db_isp_path ) ) ) {
+-
+-    $self->{geoip} = GeoIP2::Database::Reader->new(
+-  		file	=> $conf_country_db_path,
+-  		locales	=> [ 'en' ]
+-    ) if (( defined $conf_country_db_path ) && ( -f $conf_country_db_path));
+-    if ( defined ($conf_country_db_path) ) {
+-      $db_info = sub { return "GeoIP2 " . ($self->{geoip}->metadata()->description()->{en} || '?') };
+-      warn "$conf_country_db_path not found" unless $self->{geoip};
+-    }
+-
+-    $self->{geoisp} = GeoIP2::Database::Reader->new(
+-  		file	=> $conf_country_db_isp_path,
+-  		locales	=> [ 'en' ]
+-    ) if (( defined $conf_country_db_isp_path ) && ( -f $conf_country_db_isp_path));
+-    if ( defined ($conf_country_db_isp_path) ) {
+-      warn "$conf_country_db_isp_path not found" unless $self->{geoisp};
+-    }
+-    $self->{use_geoip2} = 1;
+-  } elsif ( HAS_GEOIP ) {
+-    BEGIN {
+-      Geo::IP->import( qw(GEOIP_MEMORY_CACHE GEOIP_CHECK_CACHE GEOIP_ISP_EDITION) );
+-    }
+-    $self->{use_geoip2} = 0;
+-    # need GeoIP C library 1.6.3 and GeoIP perl API 1.4.4 or later to avoid messages leaking - Bug 7153
+-    my $gic_wanted = version->parse('v1.6.3');
+-    my $gic_have = version->parse(Geo::IP->lib_version());
+-    my $gip_wanted = version->parse('v1.4.4');
+-    my $gip_have = version->parse($Geo::IP::VERSION);
+-
+-    # this code burps an ugly message if it fails, but that's redirected elsewhere
+-    my $flags = 0;
+-    eval '$flags = Geo::IP::GEOIP_SILENCE' if ($gip_wanted >= $gip_have);
+-
+-    if ($flags && $gic_wanted >= $gic_have) {
+-      $self->{geoip} = Geo::IP->new(GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE | $flags);
+-      $self->{geoisp} = Geo::IP->open_type(GEOIP_ISP_EDITION, GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE | $flags);
+-    } else {
+-      open(OLDERR, ">&STDERR");
+-      open(STDERR, ">", "/dev/null");
+-      $self->{geoip} = Geo::IP->new(GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE);
+-      $self->{geoisp} = Geo::IP->open_type(GEOIP_ISP_EDITION, GEOIP_MEMORY_CACHE | GEOIP_CHECK_CACHE);
+-      open(STDERR, ">&OLDERR");
+-      close(OLDERR);
+-    }
+-  $db_info = sub { return "Geo::IP " . ($self->{geoip}->database_info || '?') };
+-  } else {
+-    dbg("No GeoIP module available");
+-    return 0;
+-  }
+-
+-  my %uri_detail = %{ $permsg->get_uri_detail_list() };
+-  my $test = $permsg->{current_rule_name}; 
+-  my $rule = $permsg->{conf}->{uri_local_bl}->{$test};
+-
+-  my %hit_tests;
+-  my $got_hit = 0;
+-  
+-  if ( defined $self->{geoip} ) {
+-    dbg("check: uri_local_bl evaluating rule %s using database %s\n", $test, $db_info->());
+-  } else {
+-    dbg("check: uri_local_bl evaluating rule %s\n", $test);
+-  }
+-
+-  while (my ($raw, $info) = each %uri_detail) {
+-
+-    next unless $info->{hosts};
+-
+-    # look for W3 links only
+-    next unless (defined $info->{types}->{a});
+-
+-    while (my($host, $domain) = each %{$info->{hosts}}) {
+-
+-      # skip if the domain name was matched
+-      if (exists $rule->{exclusions} && exists $rule->{exclusions}->{$domain}) {
+-        dbg("check: uri_local_bl excludes %s as *.%s\n", $host, $domain);
+-        next;
+-      }
+-
+-      # this would be best cached from prior lookups
+-      my @addrs = gethostbyname($host);
+-
+-      # convert to string values address list
+-      @addrs = map { inet_ntoa($_); } @addrs[4..$#addrs];
+-
+-      dbg("check: uri_local_bl %s addrs %s\n", $host, join(', ', @addrs));
+-
+-      for my $ip (@addrs) {
+-        # skip if the address was matched
+-        if (exists $rule->{exclusions} && exists $rule->{exclusions}->{$ip}) {
+-          dbg("check: uri_local_bl excludes %s(%s)\n", $host, $ip);
+-          next;
+-        }
+-
+-        if (exists $rule->{countries}) {
+-          dbg("check: uri_local_bl countries %s\n", join(' ', sort keys %{$rule->{countries}}));
+-
+-          if ( $self->{use_geoip2} == 1 ) {
+-            my $country = $self->{geoip}->country( ip => $ip );
+-            my $country_rec = $country->country();
+-            $cc = $country_rec->iso_code();
+-          } else {
+-            $cc = $self->{geoip}->country_code_by_addr($ip);
+-          }
+-
+-          dbg("check: uri_local_bl host %s(%s) maps to %s\n", $host, $ip, (defined $cc ? $cc : "(undef)"));
+-
+-          # handle there being no associated country (yes, there are holes in
+-          # the database).
+-          next unless defined $cc;
+-
+-          # not in blacklist
+-          next unless (exists $rule->{countries}->{$cc});
+-
+-          dbg("check: uri_block_cc host %s(%s) matched\n", $host, $ip);
+-
+-          if (would_log('dbg', 'rules') > 1) {
+-            dbg("check: uri_block_cc criteria for $test met");
+-          }
+-      
+-          $permsg->test_log("Host: $host in $cc");
+-          $hit_tests{$test} = 1;
+-
+-          # reset hash
+-          keys %uri_detail;
+-        }
+-
+-        if (exists $rule->{continents}) {
+-          dbg("check: uri_local_bl continents %s\n", join(' ', sort keys %{$rule->{continents}}));
+-
+-          if ( $self->{use_geoip2} == 1 ) {
+-            my $country = $self->{geoip}->country( ip => $ip );
+-            my $cont_rec = $country->continent();
+-            $cont = $cont_rec->{code};
+-          } else {
+-            $cc = $self->{geoip}->country_code_by_addr($ip);
+-            $cont = $self->{geoip}->continent_code_by_country_code($cc);
+-          }
+-          
+-          dbg("check: uri_local_bl host %s(%s) maps to %s\n", $host, $ip, (defined $cont ? $cont : "(undef)"));
+-
+-          # handle there being no associated continent (yes, there are holes in
+-          # the database).
+-          next unless defined $cont;
+-
+-          # not in blacklist
+-          next unless (exists $rule->{continents}->{$cont});
+-
+-          dbg("check: uri_block_cont host %s(%s) matched\n", $host, $ip);
+-
+-          if (would_log('dbg', 'rules') > 1) {
+-            dbg("check: uri_block_cont criteria for $test met");
+-          }
+-
+-          $permsg->test_log("Host: $host in $cont");
+-          $hit_tests{$test} = 1;
+-
+-          # reset hash
+-          keys %uri_detail;
+-        }
+-
+-        if (exists $rule->{isps}) {
+-          dbg("check: uri_local_bl isps %s\n", join(' ', map { '"' . $_ . '"'; } sort keys %{$rule->{isps}}));
+-
+-          if ( $self->{use_geoip2} == 1 ) {
+-            $isp = $self->{geoisp}->isp(ip => $ip);
+-          } else {
+-            $isp = $self->{geoisp}->isp_by_name($ip);
+-          }
+-
+-          dbg("check: uri_local_bl isp %s(%s) maps to %s\n", $host, $ip, (defined $isp ? '"' . $isp . '"' : "(undef)"));
+-
+-          # handle there being no associated country
+-          next unless defined $isp;
+-
+-          # not in blacklist
+-          next unless (exists $rule->{isps}->{$isp});
+-
+-          dbg("check: uri_block_isp host %s(%s) matched\n", $host, $ip);
+-
+-          if (would_log('dbg', 'rules') > 1) {
+-            dbg("check: uri_block_isp criteria for $test met");
+-          }
+-      
+-          $permsg->test_log("Host: $host in \"$isp\"");
+-          $hit_tests{$test} = 1;
+-
+-          # reset hash
+-          keys %uri_detail;
+-        }
+-
+-        if (exists $rule->{cidr}) {
+-          dbg("check: uri_block_cidr list %s\n", join(' ', $rule->{cidr}->list_range()));
+-
+-          next unless ($rule->{cidr}->find($ip));
+-
+-          dbg("check: uri_block_cidr host %s(%s) matched\n", $host, $ip);
+-
+-          if (would_log('dbg', 'rules') > 1) {
+-            dbg("check: uri_block_cidr criteria for $test met");
+-          }
+-
+-          $permsg->test_log("Host: $host as $ip");
+-          $hit_tests{$test} = 1;
+-
+-          # reset hash
+-          keys %uri_detail;
+-        }
+-      }
+-    }
+-    # cycle through all tests hitted by the uri
+-    while((my $test_ok) = each %hit_tests) {
+-      $permsg->got_hit($test_ok);
+-      $got_hit = 1;
+-    }
+-    if($got_hit == 1) {
+-      return 1;
+-    } else {
+-      keys %hit_tests;
+-    }
+-  }
+-
+-  dbg("check: uri_local_bl %s no match\n", $test);
+-
+-  return 0;
+-}
+-
+-1;
+-
+diff --git a/lib/Mail/SpamAssassin/Util/DependencyInfo.pm b/lib/Mail/SpamAssassin/Util/DependencyInfo.pm
+index 8127595..17aacbc 100644
+--- a/lib/Mail/SpamAssassin/Util/DependencyInfo.pm
++++ b/lib/Mail/SpamAssassin/Util/DependencyInfo.pm
+@@ -124,30 +124,6 @@ our @OPTIONAL_MODULES = (
+   desc => 'Used to check DNS Sender Policy Framework (SPF) records to fight email
+   address forgery and make it easier to identify spams.',
+ },
+-{
+-  module => 'Geo::IP',
+-  version => 0,
+-  desc => 'Used by the RelayCountry plugin (not enabled by default) to determine
+-  the domain country codes of each relay in the path of an email.  Also used by 
+-  the URILocalBL plugin to provide ISP and Country code based filtering.',
+-},
+-{
+-  module => 'Net::CIDR::Lite',
+-  version => 0,
+-  desc => 'Used by the URILocalBL plugin to process IP address ranges.',
+-},
+-{
+-  module => 'Razor2::Client::Agent',
+-  alt_name => 'Razor2',
+-  version => '2.61',
+-  desc => 'Used to check message signatures against Vipul\'s Razor collaborative
+-  filtering network. Razor has a large number of dependencies on CPAN
+-  modules. Feel free to skip installing it, if this makes you nervous;
+-  SpamAssassin will still work well without it.
+-
+-  More info on installing and using Razor can be found
+-  at http://wiki.apache.org/spamassassin/InstallingRazor .',
+-},
+ #{
+ # module => 'Net::Ident',
+ # version => 0,
+diff --git a/rules/init.pre b/rules/init.pre
+index a330bad..6313a03 100644
+--- a/rules/init.pre
++++ b/rules/init.pre
+@@ -14,13 +14,6 @@
+ # added to new files, named according to the release they're added in.
+ ###########################################################################
+ 
+-# RelayCountry - add metadata for Bayes learning, marking the countries
+-# a message was relayed through
+-#
+-# Note: This requires the Geo::IP Perl module
+-#
+-# loadplugin Mail::SpamAssassin::Plugin::RelayCountry
+-
+ # URIDNSBL - look up URLs found in the message against several DNS
+ # blocklists.
+ #
+diff --git a/rules/v341.pre b/rules/v341.pre
+index 489dd4c..7ff8e84 100644
+--- a/rules/v341.pre
++++ b/rules/v341.pre
+@@ -19,10 +19,5 @@
+ # TxRep - Reputation database that replaces AWL
+ # loadplugin Mail::SpamAssassin::Plugin::TxRep
+ 
+-# URILocalBL - Provides ISP and Country code based filtering as well as
+-# quick IP based blocks without a full RBL implementation - Bug 7060
+-
+-# loadplugin Mail::SpamAssassin::Plugin::URILocalBL
+-
+ # PDFInfo - Use several methods to detect a PDF file's ham/spam traits
+ # loadplugin Mail::SpamAssassin::Plugin::PDFInfo
+diff --git a/spamassassin.raw b/spamassassin.raw
+index 9d03d4f..443e154 100755
+--- a/spamassassin.raw
++++ b/spamassassin.raw
+@@ -881,9 +881,6 @@ from the SpamAssassin distribution.
+     Mail::SpamAssassin::Plugin::Hashcash
+ 	perform hashcash verification tests
+ 
+-    Mail::SpamAssassin::Plugin::RelayCountry
+-	add message metadata indicating the country code of each relay
+-
+     Mail::SpamAssassin::Plugin::SPF
+ 	perform SPF verification tests
+ 
+-- 
+2.14.4
+

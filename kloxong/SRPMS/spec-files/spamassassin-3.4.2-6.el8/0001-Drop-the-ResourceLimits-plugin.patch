@@ -1,0 +1,44 @@
+diff --git a/MANIFEST b/MANIFEST
+index 95e2af5..d1aa471 100644
+--- a/MANIFEST
++++ b/MANIFEST
+@@ -100,7 +100,6 @@ lib/Mail/SpamAssassin/Plugin/Pyzor.pm
+ lib/Mail/SpamAssassin/Plugin/Razor2.pm
+ lib/Mail/SpamAssassin/Plugin/RelayCountry.pm
+ lib/Mail/SpamAssassin/Plugin/RelayEval.pm
+-lib/Mail/SpamAssassin/Plugin/ResourceLimits.pm
+ lib/Mail/SpamAssassin/Plugin/ReplaceTags.pm
+ lib/Mail/SpamAssassin/Plugin/Reuse.pm
+ lib/Mail/SpamAssassin/Plugin/Rule2XSBody.pm
+diff --git a/lib/Mail/SpamAssassin/Util/DependencyInfo.pm b/lib/Mail/SpamAssassin/Util/DependencyInfo.pm
+index 7467744..3d92c7d 100644
+--- a/lib/Mail/SpamAssassin/Util/DependencyInfo.pm
++++ b/lib/Mail/SpamAssassin/Util/DependencyInfo.pm
+@@ -257,12 +257,6 @@ our @OPTIONAL_MODULES = (
+   check for both Net::DNS and Net::DNS::Nameserver.  However, 
+   Net::DNS::Nameserver is only used in make test as of June 2014.',
+ },
+-{
+-  module => 'BSD::Resource',
+-  version => 0,
+-  desc => 'BSD::Resource provides BSD process resource limit and priority 
+-  functions.  It is used by the optional ResourceLimits Plugin.',
+-},
+ );
+ 
+ our @BINARIES = ();
+diff --git a/rules/v342.pre b/rules/v342.pre
+index 4ab7736..9b425fd 100644
+--- a/rules/v342.pre
++++ b/rules/v342.pre
+@@ -19,10 +19,6 @@
+ # HashBL - Use EBL email blocklist
+ # loadplugin Mail::SpamAssassin::Plugin::HashBL
+ 
+-# ResourceLimits - assure your spamd child processes
+-# do not exceed specified CPU or memory limit
+-# loadplugin Mail::SpamAssassin::Plugin::ResourceLimits
+-
+ 
+ # FromNameSpoof - help stop spam that tries to spoof other domains using 
+ # the from name

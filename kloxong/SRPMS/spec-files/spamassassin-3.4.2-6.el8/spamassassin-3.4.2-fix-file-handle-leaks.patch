@@ -1,0 +1,18 @@
+--- a/spamc/spamc.c	2018/10/02 16:54:17	1842644
++++ b/spamc/spamc.c	2018/10/02 17:40:43	1842645
+@@ -616,6 +616,7 @@
+ 	        fprintf(stderr,"Exceeded max line size (%d) in %s\n",
+                         CONFIG_MAX_LINE_SIZE-2, config_file);
+ 	    }
++	    fclose(config);
+ 	    return EX_CONFIG;
+ 	}
+ 
+@@ -629,6 +630,7 @@
+             if (*combo_argc >= COMBO_ARGV_SIZE) {
+ 	        fprintf(stderr,"Exceeded max number of arguments (%d) in %s\n",
+ 	                COMBO_ARGV_SIZE, config_file);
++		fclose(config);
+ 	        return EX_CONFIG;
+             }
+             combo_argv[*combo_argc] = strdup(tok);

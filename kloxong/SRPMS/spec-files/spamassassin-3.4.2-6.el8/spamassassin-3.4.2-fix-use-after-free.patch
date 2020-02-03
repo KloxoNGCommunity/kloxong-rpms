@@ -1,0 +1,10 @@
+--- a/spamc/getopt.c	2018/09/20 06:52:49	1841432
++++ b/spamc/getopt.c	2018/09/20 07:18:53	1841433
+@@ -274,7 +274,6 @@
+             } else if(longopts[i].has_arg == optional_argument) {
+                if(((spamc_optind < argc) && (argv[spamc_optind]) && (argv[spamc_optind][0] != '-')) || 
+                      (opt != NULL)) {
+-		  free(opt);
+                   if(opt != NULL) {
+                      spamc_optarg = opt;
+                   } else {
