@@ -1,7 +1,7 @@
 %define	name simscan
 %define	pversion 1.4.0
 %define 	bversion 1.4
-%define	rpmrelease 10.kng%{?dist}
+%define	rpmrelease 11.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
@@ -279,10 +279,15 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Tue Feb 04 2020 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.11.kng
+- Fix Compile errors with centos 8 by adding different gcc flags 
+
 * Wed Jan 8 2020 John Pierce <john@luckytanuki.com>  1.4.0-1.4.10.kng
 - Comment out folders already provided by Requires
+
 * Mon Dec 23 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
 - Comment out folders already provided by Requires
+
 * Mon Dec 16 2019 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.8.kng
 - Fix install section moving permitions to files section in accordance with copr directives
 - Adding missing depedencies for centos 6 and centos 7
