@@ -123,6 +123,17 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #-------------------------------------------------------------------------------
 %build
 #-------------------------------------------------------------------------------
+#we need to set these flags for centos 8 to compile properly
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
+
+export CFLAGS="%{cflags}"
+export LDFLAGS="%{ldflags}"
+%endif
+
+
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
