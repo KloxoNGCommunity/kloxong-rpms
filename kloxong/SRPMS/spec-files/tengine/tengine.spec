@@ -142,7 +142,7 @@ export DESTDIR=%{buildroot}
  #   --with-http_spdy_module \
  # when we change version more thatn 2.2 we dont need spdy
  #   --with-http_realip_module \
-    --with-http_addition_module \
+   # --with-http_addition_module \
     --with-http_xslt_module \
     --with-http_image_filter_module \
     --with-http_geoip_module \
