@@ -28,7 +28,10 @@ Requires:	%{name} = %{version}
 %description utils
 These are some additional programs for spamdyke.
 
+%global debug_package %{nil}
+
 %prep
+
 %setup
 # Not yet
 #%patch1 -p1
