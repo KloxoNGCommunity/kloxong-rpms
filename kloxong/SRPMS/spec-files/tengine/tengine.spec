@@ -138,7 +138,9 @@ export DESTDIR=%{buildroot}
 %endif
     --with-ipv6 \
     --with-http_ssl_module \
+ %if %Version < 2.2.0
     --with-http_spdy_module \
+ %endif   
     --with-http_realip_module \
     --with-http_addition_module \
     --with-http_xslt_module \
