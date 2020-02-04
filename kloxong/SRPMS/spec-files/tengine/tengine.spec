@@ -27,7 +27,7 @@
 %endif
 
 Name:              tengine
-Version:           2.1.2
+Version:           2.3.2
 Release:           1.kng%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
