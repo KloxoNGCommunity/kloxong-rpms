@@ -1,6 +1,6 @@
 Name:       pure-ftpd
 Version:    1.0.49
-Release:    3.kng%{?dist}
+Release:    4.kng%{?dist}
 Summary:    Lightweight, fast and secure FTP server
 
 Group:      System Environment/Daemons
@@ -265,6 +265,10 @@ fi
 
 
 %changelog
+* Tues Feb 4 2020 John Pierce <john@luckytanuki.com> -1.0.49-4.kng
+- Remove unnecessary pure-config.py files
+- Remove deps for python as not required with removal of pure-config.py
+
 * Sun Dec 29 2019 John Pierce <john@luckytanuki.com> -1.0.49-3.kng
 - Remove xinetd.d from build and use xinetd.d provided by kloxo 
 
