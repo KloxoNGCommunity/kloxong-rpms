@@ -31,8 +31,8 @@ Source1:	update-simscan
 Source4:	supervise-clamd.run
 Source5:	supervise-clamd-log.run
 
-Patch0:		simscan-1.4.0-combined.4.patch.bz2
-Patch1:		o_creat.patch.bz2
+#Patch0:		simscan-1.4.0-combined.4.patch.bz2
+#Patch1:		o_creat.patch.bz2
 
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 #BuildPreReq:		qmail-toaster >= 1.03-1.2.4, ripmime-toaster
