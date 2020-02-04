@@ -265,14 +265,14 @@ fi
 
 
 %changelog
-* Tues Feb 4 2020 John Pierce <john@luckytanuki.com> -1.0.49-4.kng
+* Tue Feb 4 2020 John Pierce <john@luckytanuki.com> - 1.0.49-4.kng
 - Remove unnecessary pure-config.py files
 - Remove deps for python as not required with removal of pure-config.py
 
-* Sun Dec 29 2019 John Pierce <john@luckytanuki.com> -1.0.49-3.kng
+* Sun Dec 29 2019 John Pierce <john@luckytanuki.com> - 1.0.49-3.kng
 - Remove xinetd.d from build and use xinetd.d provided by kloxo 
 
-* Fri Dec 27 2019 John Pierce <john@luckytanuki.com> -1.0.49-2.kng
+* Fri Dec 27 2019 John Pierce <john@luckytanuki.com> - 1.0.49-2.kng
 - Fix patches to restore pure-config.pl files
  
 * Sun Jun 15 2019 Mustafa Ramadhan <mustafa@bigraf.com> - 1.0.49-1.mr
