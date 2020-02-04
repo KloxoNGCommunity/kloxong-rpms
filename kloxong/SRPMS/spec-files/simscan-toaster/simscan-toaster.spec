@@ -33,6 +33,7 @@ Source5:	supervise-clamd-log.run
 
 Patch0:		simscan-1.4.0-combined.4.patch.bz2
 Patch1:		o_creat.patch.bz2
+Patch2: 	simscan-kloxong.patch
 
 BuildRoot:	%{_tmppath}/%{name}-%{pversion}-root
 #BuildPreReq:		qmail-toaster >= 1.03-1.2.4, ripmime-toaster
@@ -113,6 +114,7 @@ reject spam mail.
 
 #%patch0 -p1
 #%patch1 -p1
+%patch2 -p1
 
 # Cleanup for gcc
 #-------------------------------------------------------------------------------
@@ -127,7 +129,7 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #we need to set these flags for centos 8 to compile properly
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC -fno-builtin-malloc/' )
 %define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
 export CFLAGS="%{cflags}"
