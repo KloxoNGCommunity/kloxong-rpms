@@ -1,5 +1,5 @@
 %define	name simscan
-%define	pversion 1.4.1
+%define	pversion 1.4.0
 %define 	bversion 1.4
 %define	rpmrelease 11.kng%{?dist}
 
@@ -31,7 +31,7 @@ Source1:	update-simscan
 Source4:	supervise-clamd.run
 Source5:	supervise-clamd-log.run
 
-Patch0:		simscan-1.4.0-combined.4.patch.bz2
+#Patch0:		simscan-1.4.0-combined.4.patch.bz2
 Patch1:		o_creat.patch.bz2
 Patch2: 	simscan-kloxong.patch
 
@@ -113,7 +113,7 @@ reject spam mail.
 %setup -q -n %{name}-%{pversion}
 
 #%patch0 -p1
-#%patch1 -p1
+%patch1 -p1
 %patch2 -p1
 
 # Cleanup for gcc
