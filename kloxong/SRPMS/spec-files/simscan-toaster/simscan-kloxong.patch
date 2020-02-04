@@ -1,0 +1,297 @@
+Combined patch for simscan-1.4.0 - v. 2019.02.26
+It embeds
+- the jms patch from https://qmail.jms1.net/simscan/simscan-1.4.0-combined.4.patch
+- a bug fix by Bob Greco (more info here https://notes.sagredo.eu/en/qmail-notes-185/simscan-38.html#comment844)
+- a patch by Gustavo Castro to fix an issue in combination with a ripmime-problem as described
+  in http://permalink.gmane.org/gmane.mail.qmail.simscan/3880 (tx Pablo Murillo)
+
+==============================================================================================
+
+diff -ruN simscan-1.4.1-original/configure simscan-1.4.1/configure
+--- simscan-1.4.0-original/configure	2007-10-29 15:14:25.000000000 +0100
++++ simscan-1.4.0/configure	2019-02-26 18:02:04.675340590 +0100
+@@ -4686,6 +4686,14 @@
+           then
+             clamavdb=$f
+             break
++          elif test -f "$f/daily.cld"
++          then
++            clamavdb=$f
++            break
++          elif test -f "$f/daily.inc/daily.info"
++          then
++            clamavdb=$f
++            break
+           fi
+         done
+ 
+diff -ruN simscan-1.4.1-original/configure.in simscan-1.4.1/configure.in
+--- simscan-1.4.0-original/configure.in	2007-10-29 15:13:40.000000000 +0100
++++ simscan-1.4.0/configure.in	2019-02-26 18:02:04.675340590 +0100
+@@ -622,6 +622,14 @@
+           then
+             clamavdb=$f
+             break
++          elif test -f "$f/daily.cld"
++          then
++            clamavdb=$f
++            break
++          elif test -f "$f/daily.inc/daily.info"
++          then
++            clamavdb=$f
++            break
+           fi
+         done
+ 
+diff -ruN simscan-1.4.1-original/simscan.c simscan-1.4.1/simscan.c
+--- simscan-1.4.0-original/simscan.c	2007-10-29 15:15:05.000000000 +0100
++++ simscan-1.4.0/simscan.c	2019-02-26 18:06:05.930660804 +0100
+@@ -102,6 +102,7 @@
+ int str_rstr(register char *h,register char *n);
+ char *replace(char *string, char *oldpiece, char *newpiece);
+ int DebugFlag = 0;
++int DebugFiles = 0;
+ 
+ /* To/From address processing globals */
+ #define MAX_RCPT_TO 255
+@@ -168,6 +169,7 @@
+ int InClamHeaders;
+ int check_clam();
+ int is_clam(char *clambuf);
++void log_clam(char *clambuf);
+ #endif
+ 
+ /* Attachment scanning globals */
+@@ -266,6 +268,11 @@
+   if ( (tmpstr=getenv("SIMSCAN_DEBUG"))!=NULL ) {
+     DebugFlag = atoi(tmpstr);
+   }
++
++  /* Set the "leave temp files alone" flag */
++  if ( (tmpstr=getenv("SIMSCAN_DEBUG_FILES"))!=NULL ) {
++    DebugFiles = atoi(tmpstr);
++  }
+   
+ #ifdef ENABLE_ATTACH
+   init_attach();
+@@ -283,6 +290,7 @@
+   }
+ 
+   /* create the working directory, allow group access too */
++  umask ( 027 ) ;
+   if ( mkdir(workdir, 0750) == -1 ) {
+     if ( DebugFlag > 0 ) {
+       fprintf(stderr, "simscan: error making work dir, exit 400, errno: %d\n",
+@@ -811,10 +819,12 @@
+   }
+ 
+   /* remove the working files */
+-  if ( remove_files(workdir) == -1 ) {
+-    exit_clean(EXIT_400);
++  if ( DebugFiles < 2 ) {
++    if ( remove_files(workdir) == -1 ) {
++      exit_clean(EXIT_400);
++    }
+   }
+-  
++
+   /* pass qmail-queue's exit status on */
+   _exit(WEXITSTATUS(qstat));
+ 
+@@ -967,6 +977,7 @@
+   InClamHeaders = 1;
+   memset(buffer,0,sizeof(buffer));
+   while((file_count=read(0,buffer,BUFFER_SIZE))>0) {
++    if ( DebugFlag > 2 ) log_clam(buffer) ;
+     if ( InClamHeaders == 1 ) {
+       is_clam(buffer);
+     }
+@@ -993,6 +1004,35 @@
+   return(-1);
+ }
+ 
++void log_clam(char *clambuf)
++{
++	char *p ;
++	int needh = 1 ;
++
++	p = clambuf ;
++	while ( *p )
++	{
++		if ( *p != '\r' )
++		{
++			if ( needh )
++			{
++				fputs ( "simscan: clamdscan: " , stderr ) ;
++				needh = 0 ;
++			}
++
++			fputc ( *p , stderr ) ;
++
++			if ( *p == '\n' )
++				needh = 1 ;
++		}
++
++		p++ ;
++	}
++
++	if ( ! needh )
++		fputc ( '\n' , stderr ) ;
++}
++
+ int is_clam(char *clambuf)
+ {
+  int i,j,k;
+@@ -1294,7 +1334,8 @@
+     spamc_args[i++] = "-u";
+     spamc_args[i++] = spamuser;
+ #ifdef ENABLE_SPAMC_USER
+-  } else if ( MaxRcptTo==1 && i<MAX_SPAMC_ARGS-2 && strlen(spamuser) == 0) {
++  /* } else if ( MaxRcptTo==1 && i<MAX_SPAMC_ARGS-2 && strlen(spamuser) == 0) { */
++  } else if ( MaxRcptTo>0 && i<MAX_SPAMC_ARGS-2 && strlen(spamuser) == 0) {
+     spamc_args[i++] = "-u";
+     spamc_args[i++] = RcptTo[0];
+ #endif
+@@ -1608,7 +1649,8 @@
+  */
+ void exit_clean( int error_code )
+ {
+-  remove_files(workdir);
++  if ( DebugFiles < 1 )
++    remove_files(workdir);
+   if ( DebugFlag > 0 ) {
+     fprintf(stderr, "simscan: exit error code: %d\n", error_code); 
+   }
+@@ -1694,11 +1736,15 @@
+     for(i=0;i<MaxAttach;++i) {
+       if ( DebugFlag > 2 ) fprintf(stderr, "simscan: checking attachment %s against %s\n", mydirent->d_name, bk_attachments[i] );  
+       lowerit(mydirent->d_name); 
++ if ( strlen(mydirent->d_name) >= strlen(bk_attachments[i]) ) {
+       if ( str_rstr(mydirent->d_name,bk_attachments[i]) == 0 ) {
+         strncpy(AttachName, mydirent->d_name, sizeof(AttachName)-1); 
+         closedir(mydir);
+         return(1);
+       }
++ } else {
++   if ( DebugFlag > 2 ) fprintf(stderr, "simscan: attachment name '%s' (%d) is shorter than '%s' (%d). IGNORED\n", mydirent->d_name, strlen( mydirent->d_name ), bk_attachments[i], strlen( bk_attachments[i] ) );
++ }
+     }
+   }
+   closedir(mydir);
+diff -ruN simscan-1.4.1-original/simscanmk.c simscan-1.4.1/simscanmk.c
+--- simscan-1.4.0-original/simscanmk.c	2006-10-11 01:15:17.000000000 +0200
++++ simscan-1.4.0/simscanmk.c	2019-02-26 18:02:04.676340579 +0100
+@@ -123,6 +123,7 @@
+   char input[MAX_LINE];
+   char dbpath[MAX_LINE];
+   char *pos;
++  int rv;
+ #if ENABLE_SPAM==1 || ENABLE_TROPHIE==1
+   int fnd_vsvers;
+ #endif
+@@ -179,6 +180,11 @@
+           Initializing    : Pattern version 218 (pattern number 51417)
+         and we want 6.150-1001/218/51417 in the string at the end */
+ 
++      if(r == -1){
++        printf("error reading trophie pipe: %s\n", strerror(errno));
++        break;
++      }
++
+       input[r]='\0';
+       if ( (pos=strstr(input,"version ")) && (!fnd_vsvers || !fnd_patvers)){
+         if (!fnd_vsvers && !fnd_patvers){
+@@ -229,6 +235,12 @@
+           SpamAssassin version 2.63
+           and have 2.63 as version
+         */
++
++      if(r == -1){
++        printf("error reading spamassassin pipe: %s\n", strerror(errno));
++        break;
++      }
++
+       input[r]='\0';
+       if ( (pos=strstr(input,"version ")) && !fnd_vsvers ){
+         /* this line is the sa version */
+@@ -265,6 +277,12 @@
+       /* we are looking for this line:
+          Version: 27
+         */
++
++      if(r == -1){
++        printf("error reading clamdscan pipe: %s\n", strerror(errno));
++        break;
++      }
++
+       input[r]='\0';
+       if ( (pos=strstr(input,"ClamAV "))){
+         /* this line is the db version */
+@@ -276,8 +294,18 @@
+     waitpid(pid,&rmstat,0);
+     close(pin[0]); close(pin[1]);
+   }
+-  strncpy(dbpath,CLAMAVDBPATH,MAX_DATA);
+-  strcat(dbpath,"/main.cvd");
++  strncpy(dbpath,CLAMAVDBPATH,MAX_LINE);
++  strncat(dbpath,"/main.inc/main.info",(MAX_LINE-sizeof(CLAMAVDBPATH)-1));
++  rv=access(dbpath,F_OK);
++  if(rv) {
++    strncpy(dbpath,CLAMAVDBPATH,MAX_LINE);
++    strncat(dbpath,"/main.cld",(MAX_LINE-sizeof(CLAMAVDBPATH)-1));
++  }
++  rv=access(dbpath,F_OK);
++  if(rv) {
++    strncpy(dbpath,CLAMAVDBPATH,MAX_LINE);
++    strncat(dbpath,"/main.cvd",(MAX_LINE-sizeof(CLAMAVDBPATH)-1));
++  }
+   strcat(data,"m:");
+   if (pipe(pin)){
+     printf("error opening pipe for sigtool\n");
+@@ -297,6 +325,12 @@
+       /* we are looking for this line:
+          Version: 27
+         */
++
++      if(r == -1){
++        printf("error reading sigtool pipe: %s\n", strerror(errno));
++        break;
++      }
++
+       input[r]='\0';
+       if ( (pos=strstr(input,"Version: "))){
+         /* this line is the db version */
+@@ -306,8 +340,18 @@
+     }
+     waitpid(pid,&rmstat,0);
+     close(pin[0]); close(pin[1]);
+-    strncpy(dbpath,CLAMAVDBPATH,MAX_DATA);
+-    strcat(dbpath,"/daily.cvd");
++    strncpy(dbpath,CLAMAVDBPATH,MAX_LINE);
++    strncat(dbpath,"/daily.inc/daily.info",(MAX_LINE-sizeof(CLAMAVDBPATH)-1));
++    rv=access(dbpath,F_OK);
++    if(rv) {
++      strncpy(dbpath,CLAMAVDBPATH,MAX_LINE);
++      strncat(dbpath,"/daily.cld",(MAX_LINE-sizeof(CLAMAVDBPATH)-1));
++    }
++    rv=access(dbpath,F_OK);
++    if(rv) {
++      strncpy(dbpath,CLAMAVDBPATH,MAX_LINE);
++      strncat(dbpath,"/daily.cvd",(MAX_LINE-sizeof(CLAMAVDBPATH)-1));
++    }
+     if (pipe(pin)){
+      printf("error opening pipe for sigtool\n");
+     }
+@@ -326,6 +370,12 @@
+         /* we are looking for this line:
+            Version: 27
+           */
++
++        if(r == -1){
++          printf("error reading sigtool pipe: %s\n", strerror(errno));
++          break;
++        }
++
+         input[r]='\0';
+         if ( (pos=strstr(input,"Version: "))){
+           /* this line is the db version */
