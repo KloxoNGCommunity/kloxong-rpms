@@ -7,7 +7,7 @@ It embeds
 
 ==============================================================================================
 
-diff -ruN simscan-1.4.1-original/configure simscan-1.4.1/configure
+diff -ruN simscan-1.4.0-original/configure simscan-1.4.0/configure
 --- simscan-1.4.0-original/configure	2007-10-29 15:14:25.000000000 +0100
 +++ simscan-1.4.0/configure	2019-02-26 18:02:04.675340590 +0100
 @@ -4686,6 +4686,14 @@
@@ -25,7 +25,7 @@ diff -ruN simscan-1.4.1-original/configure simscan-1.4.1/configure
            fi
          done
  
-diff -ruN simscan-1.4.1-original/configure.in simscan-1.4.1/configure.in
+diff -ruN simscan-1.4.0-original/configure.in simscan-1.4.0/configure.in
 --- simscan-1.4.0-original/configure.in	2007-10-29 15:13:40.000000000 +0100
 +++ simscan-1.4.0/configure.in	2019-02-26 18:02:04.675340590 +0100
 @@ -622,6 +622,14 @@
@@ -43,7 +43,7 @@ diff -ruN simscan-1.4.1-original/configure.in simscan-1.4.1/configure.in
            fi
          done
  
-diff -ruN simscan-1.4.1-original/simscan.c simscan-1.4.1/simscan.c
+diff -ruN simscan-1.4.0-original/simscan.c simscan-1.4.0/simscan.c
 --- simscan-1.4.0-original/simscan.c	2007-10-29 15:15:05.000000000 +0100
 +++ simscan-1.4.0/simscan.c	2019-02-26 18:06:05.930660804 +0100
 @@ -102,6 +102,7 @@
@@ -178,7 +178,7 @@ diff -ruN simscan-1.4.1-original/simscan.c simscan-1.4.1/simscan.c
      }
    }
    closedir(mydir);
-diff -ruN simscan-1.4.1-original/simscanmk.c simscan-1.4.1/simscanmk.c
+diff -ruN simscan-1.4.0-original/simscanmk.c simscan-1.4.0/simscanmk.c
 --- simscan-1.4.0-original/simscanmk.c	2006-10-11 01:15:17.000000000 +0200
 +++ simscan-1.4.0/simscanmk.c	2019-02-26 18:02:04.676340579 +0100
 @@ -123,6 +123,7 @@
