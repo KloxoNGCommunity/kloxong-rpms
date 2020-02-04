@@ -159,7 +159,7 @@ autoreconf --install
 	--enable-spam-hits=40 \
 	--enable-received \
 	--enable-clamavdb-path=/usr/share/clamav \
-	--enable-custom-smtp-rejectn \
+	--enable-custom-smtp-reject=y \
 	--enable-clamdscan
 %{__make}
 
