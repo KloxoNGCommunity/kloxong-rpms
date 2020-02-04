@@ -196,8 +196,10 @@ install %{SOURCE5} %{buildroot}%{qdir}/supervise/clamd/log/down
 
 # install docs
 #-------------------------------------------------------------------------------
-for i in AUTHORS ChangeLog INSTALL README TODO ssattach.example; do
- install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{_datadir}/doc/%{name}-%{pversion}
+# in the newer source there we need to remove a folder
+#for i in AUTHORS ChangeLog INSTALL README TODO ssattach.example; do
+for i in AUTHORS ChangeLog README TODO ssattach.example; do
+install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{_datadir}/doc/%{name}-%{pversion}
 done
 
 pushd %{buildroot}%{qdir}/control
