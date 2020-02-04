@@ -5,6 +5,9 @@ Group: Utilities/System
 URL: http://cr.yp.to/djbns.html
 License: Check with djb@koobera.math.uic.edu
 
+#fix for centos 8 build
+%global debug_package %{nil}
+
 Requires: make
 
 Source0: http://cr.yp.to/djbdns/djbdns-%{version}.tar.gz
