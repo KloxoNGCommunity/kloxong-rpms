@@ -66,6 +66,7 @@ BuildRequires:     zlib-devel
 BuildRequires:     luajit-devel
 
 Requires:          nginx-filesystem
+Requires:          luajit
 Requires:          GeoIP
 Requires:          gd
 Requires:          openssl
@@ -158,7 +159,11 @@ export DESTDIR=%{buildroot}
     --with-mail_ssl_module \
     --with-pcre \
     --with-http_lua_module \
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+    --with-luajit-inc="%{_includedir}/luajit-2.1" \
+%else
     --with-luajit-inc="%{_includedir}/luajit-2.0" \
+%endif  
     --with-luajit-lib="%{_libdir}" \
 %if 0%{?with_gperftools}
     --with-google_perftools_module \
