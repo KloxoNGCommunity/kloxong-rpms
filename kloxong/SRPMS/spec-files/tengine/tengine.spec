@@ -139,8 +139,9 @@ export DESTDIR=%{buildroot}
     --with-ipv6 \
     --with-http_ssl_module \
  # when we change version more thatn 2.2 we dont need spdy
-#    --with-http_spdy_module \
-    --with-http_realip_module \
+ #   --with-http_spdy_module \
+ # when we change version more thatn 2.2 we dont need spdy
+ #   --with-http_realip_module \
     --with-http_addition_module \
     --with-http_xslt_module \
     --with-http_image_filter_module \
