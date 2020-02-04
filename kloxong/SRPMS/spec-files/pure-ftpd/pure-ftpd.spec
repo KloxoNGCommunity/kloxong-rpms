@@ -17,7 +17,7 @@ Source7:    pure-ftpd.pureftpd.te
 Patch0:     pure_kloxo.patch
 Provides:   ftpserver
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires:  pam-devel, perl, python, libcap-devel
+BuildRequires:  pam-devel, perl, libcap-devel
 BuildRequires:  openldap-devel
 BuildRequires: mysql-devel
 BuildRequires: postgresql-devel
