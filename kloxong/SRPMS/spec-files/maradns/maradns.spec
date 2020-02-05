@@ -16,6 +16,9 @@ Requires:       gawk grep findutils logrotate
 #BuildRequires:  sed rsyslog logrotate ps gawk grep coreutils findutils fdupes binutils
 BuildRequires:  sed rsyslog logrotate gawk grep coreutils findutils binutils
 BuildRoot:      /var/tmp/%{name}-buildroot
+# added for centos 8 build
+%global debug_package %{nil}
+
 
 %description
 MaraDNS is an authoritative and recursive DNS server made with 
