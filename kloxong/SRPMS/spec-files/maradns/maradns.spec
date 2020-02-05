@@ -3,7 +3,7 @@
 Name:           maradns
 Summary:        An authoritative and recursive DNS server made with security in mind
 Version:        2.0.07d
-Release:        1.kng%{?dist}
+Release:        2.kng%{?dist}
 License:        BSD (Two-clause)
 Group:          Productivity/Networking/DNS/Servers
 Url:            http://www.maradns.org/download/2.0/snap
@@ -139,6 +139,10 @@ exit 0
 exit 0
 
 %changelog
+* Wed Feb 5 2020 John Pierce <john@luckytanuki.com> - 2.0.7d-2.kng
+- add global debug_package directive to allow build under centos 8
+- update release
+
 * Thu Jan 2 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 2.0.7d-1.mr
 - update to 2.0.7d
 
