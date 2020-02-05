@@ -1,6 +1,6 @@
 Name:           execwrap
 Version:        0.5
-Release:        1.kng%{?dist}
+Release:        2.kng%{?dist}
 #
 License:        BSD
 Group:          Productivity/Networking/Web/Utilities
@@ -36,5 +36,8 @@ rm -rf %{buildroot}
 %{_sbindir}/execwrap
 
 %changelog
+* Wed Feb 05 2020 Dionysis kladis <dkstiler@gmail.com> 0.5-2
+- Added debug directive to make it build under centos 8
+
 * Sun Sep 16 2014 Mustafa Ramadhan <mustafa@bigraf.com> 0.5-1
 - first compile for Kloxo-MR
