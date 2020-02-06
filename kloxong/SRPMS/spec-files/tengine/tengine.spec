@@ -49,6 +49,8 @@ Source103:         404.html
 Source104:         50x.html
 #Source105:         dso_tool.8
 
+Patch0:            nginx-gcc7-compiler-fix.patch
+
 # Tengine is drop-in replacement for nginx
 Conflicts:         nginx
 
@@ -103,7 +105,7 @@ Tengine server.
 
 %prep
 %setup -q
-
+Patch0 -p1
 
 %build
 # tengine does not utilize a standard configure script.  It has its own
