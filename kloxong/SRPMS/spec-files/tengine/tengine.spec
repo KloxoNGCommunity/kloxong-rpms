@@ -177,7 +177,7 @@ export DESTDIR=%{buildroot}
 %endif
     --with-debug \
     --with-cc-opt="%{optflags} $(pcre-config --cflags) -Wno-error=cast-function-type" \
-    --with-ld-opt="$RPM_LD_FLAGS -Wl,-E" # so the perl module finds its symbols
+    --with-ld-opt="$RPM_LD_FLAGS" # so the perl module finds its symbols
 
 make %{?_smp_mflags}
 
