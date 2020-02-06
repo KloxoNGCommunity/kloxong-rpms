@@ -119,7 +119,8 @@ Tengine server.
 # variable.
 export DESTDIR=%{buildroot}
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
-./configure --with-cc-opt=-Wno-error \
+./configure \
+    --with-cc-opt=-Wno-error=cast-function-type \
 %else
 ./configure \
 %endif
