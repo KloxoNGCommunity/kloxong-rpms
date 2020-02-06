@@ -105,7 +105,7 @@ Tengine server.
 
 %prep
 %setup -q
-Patch0 -p1
+%patch0 -p1
 
 %build
 # tengine does not utilize a standard configure script.  It has its own
