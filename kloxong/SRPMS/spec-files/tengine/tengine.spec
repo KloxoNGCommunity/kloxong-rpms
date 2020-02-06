@@ -118,7 +118,11 @@ Tengine server.
 # to error out.  This is is also the reason for the DESTDIR environment
 # variable.
 export DESTDIR=%{buildroot}
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+./configure --with-cc-opt=-Wno-error \
+%else
 ./configure \
+%endif
     --prefix=%{nginx_datadir} \
     --includedir="%{_includedir}/nginx" \
     --dso-tool-path="%{_sbindir}" \
