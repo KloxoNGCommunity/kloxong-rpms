@@ -111,7 +111,7 @@ Tengine server.
 # to error out.  This is is also the reason for the DESTDIR environment
 # variable.
 export DESTDIR=%{buildroot}
-./configure \
+./configure --help \
     --prefix=%{nginx_datadir} \
     --includedir="%{_includedir}/nginx" \
     --dso-tool-path="%{_sbindir}" \
