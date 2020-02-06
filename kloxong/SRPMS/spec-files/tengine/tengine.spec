@@ -104,7 +104,7 @@ that you need to build Dynamic Shared Objects (DSOs) for the
 Tengine server.
 
 %prep
-%setup -q %{name}-%{version}
+%setup -q  -n %{name}-%{version}
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 %patch0 -p2
