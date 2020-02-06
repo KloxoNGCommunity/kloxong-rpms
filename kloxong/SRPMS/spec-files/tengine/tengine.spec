@@ -104,8 +104,11 @@ that you need to build Dynamic Shared Objects (DSOs) for the
 Tengine server.
 
 %prep
-%setup -q
+%setup -q %{name}-%{version}
+
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
 %patch0 -p2
+%endif
 
 %build
 # tengine does not utilize a standard configure script.  It has its own
