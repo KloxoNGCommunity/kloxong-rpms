@@ -50,6 +50,7 @@ Source104:         50x.html
 #Source105:         dso_tool.8
 
 Patch0:            nginx-gcc7-compiler-fix.patch
+Patch1:            nginx-glib-salt.patch
 
 # Tengine is drop-in replacement for nginx
 Conflicts:         nginx
@@ -108,6 +109,7 @@ Tengine server.
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 %patch0 -p1
+%patch1 -p1
 %endif
 
 %build
