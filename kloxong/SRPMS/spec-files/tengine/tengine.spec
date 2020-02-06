@@ -176,7 +176,7 @@ export DESTDIR=%{buildroot}
     --with-google_perftools_module \
 %endif
     --with-debug \
-    --with-cc-opt="%{optflags} $(pcre-config --cflags) -Wno-error=cast-function-type" \
+    --with-cc-opt="%{optflags} $(pcre-config --cflags) -Wno-error=cast-function-type -Wno-error=implicit-function-declaration" \
     --with-ld-opt="$RPM_LD_FLAGS" # so the perl module finds its symbols
 
 make %{?_smp_mflags}
