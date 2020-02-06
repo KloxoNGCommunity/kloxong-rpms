@@ -118,12 +118,8 @@ Tengine server.
 # to error out.  This is is also the reason for the DESTDIR environment
 # variable.
 export DESTDIR=%{buildroot}
-%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+
 ./configure \
-    --with-cc-opt=-Wno-error=cast-function-type \
-%else
-./configure \
-%endif
     --prefix=%{nginx_datadir} \
     --includedir="%{_includedir}/nginx" \
     --dso-tool-path="%{_sbindir}" \
@@ -180,7 +176,7 @@ export DESTDIR=%{buildroot}
     --with-google_perftools_module \
 %endif
     --with-debug \
-    --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
+    --with-cc-opt="%{optflags} $(pcre-config --cflags) -Wno-error=cast-function-type" \
     --with-ld-opt="$RPM_LD_FLAGS -Wl,-E" # so the perl module finds its symbols
 
 make %{?_smp_mflags}
