@@ -196,7 +196,7 @@ sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src
 %global _hardened_build 1
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
-export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -Wdeprecated-declarations"
+export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -Wno-deprecated-declarations"
 export LDFLAGS="-Wl,-z,now -Wl,-z,relro"     
 %else
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
