@@ -12,7 +12,7 @@
 Name:      %{real_name}-toaster
 Summary:   Secure imap and pop3 server
 Epoch:     1
-Version:   2.2.24
+Version:   2.2.36.4
 Release:   1.kng%{?dist}
 License:   MIT and LGPLv2
 #          dovecot itself is MIT,
@@ -25,7 +25,7 @@ Packager:  Eric Shubert <qmt-build@datamatters.us>
 URL:       http://www.dovecot.org/
 
 Source:    http://dovecot.org/releases/2.2/%{real_name}-%{version}.tar.gz
-Source1:   http://www.rename-it.nl/dovecot/2.2/%{real_name}-2.2-pigeonhole-0.4.2.tar.gz
+Source1:   https://pigeonhole.dovecot.org/releases/2.2/%{real_name}-2.2-pigeonhole-0.4.24.2.tar.gz
 Source2:   dovecot.pam.el5
 Source3:   dovecot.pam.el6
 Source4:   dovecot.conf.5.gz
@@ -195,13 +195,13 @@ sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src
 #required for fdpass.c line 125,190: dereferencing type-punned pointer will break strict-aliasing rules
 %global _hardened_build 1
 
-%if %{?fedora}0 > 150 || %{?rhel}0 > 70
-export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -Wno-deprecated-declarations"
-export LDFLAGS="-Wl,-z,now -Wl,-z,relro"     
-%else
+#%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+#export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -Wno-deprecated-declarations"
+#export LDFLAGS="-Wl,-z,now -Wl,-z,relro"     
+#%else
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 export LDFLAGS="-Wl,-z,now -Wl,-z,relro"
-%endif
+#%endif
 
 # these are in f19, but don't work yet in COS6
 #export CFLAGS="%{__global_cflags} -fno-strict-aliasing"
