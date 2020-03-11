@@ -194,8 +194,14 @@ sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src
 #-------------------------------------------------------------------------------
 #required for fdpass.c line 125,190: dereferencing type-punned pointer will break strict-aliasing rules
 %global _hardened_build 1
+
+%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing -Wdeprecated-declarations"
+export LDFLAGS="-Wl,-z,now -Wl,-z,relro"     
+%else
 export CFLAGS="$RPM_OPT_FLAGS -fno-strict-aliasing"
 export LDFLAGS="-Wl,-z,now -Wl,-z,relro"
+%endif
 
 # these are in f19, but don't work yet in COS6
 #export CFLAGS="%{__global_cflags} -fno-strict-aliasing"
