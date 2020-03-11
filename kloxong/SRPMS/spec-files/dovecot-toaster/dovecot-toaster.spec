@@ -6,7 +6,7 @@
 %define	_spath %{_qdir}/supervise
 
 %define 	dversion 2.2
-%global 	phversion 0.4.2
+%global 	phversion 0.4.24.2
 %define 	real_name dovecot
 
 Name:      %{real_name}-toaster
@@ -25,7 +25,7 @@ Packager:  Eric Shubert <qmt-build@datamatters.us>
 URL:       http://www.dovecot.org/
 
 Source:    http://dovecot.org/releases/2.2/%{real_name}-%{version}.tar.gz
-Source1:   https://pigeonhole.dovecot.org/releases/2.2/%{real_name}-2.2-pigeonhole-0.4.24.2.tar.gz
+Source1:   https://pigeonhole.dovecot.org/releases/2.2/%{real_name}-2.2-pigeonhole-%{phversion}.tar.gz
 Source2:   dovecot.pam.el5
 Source3:   dovecot.pam.el6
 Source4:   dovecot.conf.5.gz
