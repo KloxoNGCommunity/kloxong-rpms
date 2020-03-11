@@ -643,6 +643,12 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* wed Mar 11 2020 Dionysis Kladis <dkstiler@gmail.com> - 1:2.2.36.4-1
+- Updated source to latest stable
+- Compile for Kloxong and centos 8
+- Updated pigeonhole to latest version
+- Fixed some hardcoded values for versioning 
+
 * Tue Dec 10 2019 Dionysis Kladis <dkstiler@gmail.com> - 1:2.2.24-1
 - Handling properly systemd  to compile for centos 7
 - Compile for Kloxong 
