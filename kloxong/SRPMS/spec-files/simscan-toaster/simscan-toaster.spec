@@ -139,7 +139,7 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
 export CFLAGS="%{cflags} -Wno-misleading-indentation"
-export LDFLAGS="%{ldflags}-Wno-misleading-indentation"
+export LDFLAGS="%{ldflags} -Wno-misleading-indentation"
 %endif
 
 
