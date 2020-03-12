@@ -146,13 +146,10 @@ export LDFLAGS="%{ldflags}"
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
-#%{__aclocal}
-#%{__autoconf}
-#%{__automake} --add-missing
-autoconf
-aclocal
-automake --add-missing
-#autoreconf --install
+%{__aclocal}
+%{__autoconf}
+%{__automake} --add-missing
+%{__autoreconf} --install
 %configure \
 	--enable-user=%scanuser \
 	--enable-attach \
