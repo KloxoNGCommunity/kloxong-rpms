@@ -43,13 +43,14 @@ BuildRequires:	mysql-devel, mysql-libs, clamav, ripmime, clamd, spamassassin-toa
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd
 Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd, spamassassin-toaster 
 
-%if %{?fedora}0 > 150 || %{?rhel}0 >60
+%if %{?fedora}0 > 160 || %{?rhel}0 > 70
 BuildRequires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
 Requires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
 %else
-BuildRequires:  clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
-Requires:  clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
-
+	%if %{?fedora}0 > 150 || %{?rhel}0 > 60
+	BuildRequires:  clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+	Requires:  clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+	%endif
 %endif
 
 Obsoletes:	clamav-toaster, ripmime-toaster
