@@ -134,7 +134,7 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #we need to set these flags for centos 8 to compile properly
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' | echo "-fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch" )
 %define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
 
 echo "gcc %{optflags} -fPIE -O2" > cdb/conf-cc
@@ -143,10 +143,8 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 #%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
-#export CFLAGS="%{cflags} -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
-export CFLAGS="-fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
-
-export LDFLAGS="%{ldflags} -Wl,-z,now -Wl,-z,relro"
+export CFLAGS="%{cflags}"
+export LDFLAGS="%{ldflags}"
 %endif
 
 
