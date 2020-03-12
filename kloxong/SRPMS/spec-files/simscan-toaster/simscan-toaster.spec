@@ -46,6 +46,10 @@ Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd, spamassassin-toas
 %if %{?fedora}0 > 150 || %{?rhel}0 >60
 BuildRequires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
 Requires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+%else
+BuildRequires:  clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+Requires:  clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+
 %endif
 
 Obsoletes:	clamav-toaster, ripmime-toaster
@@ -139,7 +143,7 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
 export CFLAGS="%{cflags} -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation"
-export LDFLAGS="%{ldflags}"
+export LDFLAGS="%{ldflags} -Wl,-z,now -Wl,-z,relro"
 %endif
 
 
