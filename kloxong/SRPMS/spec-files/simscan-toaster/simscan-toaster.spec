@@ -138,8 +138,8 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 #%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
-export CFLAGS="%{cflags} -fno-strict-aliasing -Wno-deprecated-declarations -Wextra -pedantic"
-export LDFLAGS="%{ldflags} -fno-strict-aliasing -Wno-deprecated-declarations -Wextra -pedantic"
+export CFLAGS="%{cflags} -fno-strict-aliasing -Wno-deprecated-declarations -Wextra -pedantic -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result"
+export LDFLAGS="%{ldflags} -fno-strict-aliasing -Wno-deprecated-declarations -Wextra -pedantic -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result"
 %endif
 
 
