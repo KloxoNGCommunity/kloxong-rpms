@@ -149,7 +149,7 @@ export LDFLAGS="%{ldflags}"
 %{__aclocal}
 %{__autoconf}
 %{__automake} --add-missing
-%{__autoreconf} --install
+#autoreconf --install
 %configure \
 	--enable-user=%scanuser \
 	--enable-attach \
