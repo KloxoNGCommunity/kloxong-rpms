@@ -131,6 +131,11 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #-------------------------------------------------------------------------------
 %build
 #-------------------------------------------------------------------------------
+%{__aclocal}
+%{__autoconf}
+autoreconf --install
+%{__automake} --add-missing
+
 #we need to set these flags for centos 8 to compile properly
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
@@ -151,10 +156,7 @@ export LDFLAGS="%{ldflags}"
 
 # Run configure to create makefile
 #-------------------------------------------------------------------------------
-%{__aclocal}
-%{__autoconf}
-autoreconf --install
-%{__automake} --add-missing
+
 
 %configure \
 	--enable-user=%scanuser \
