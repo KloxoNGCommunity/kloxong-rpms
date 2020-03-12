@@ -1,6 +1,6 @@
 Name:           ripmime
-Version:        1.4.0.9
-Release:        2.kng%{?dist}
+Version:        1.4.0.10
+Release:        1.kng%{?dist}
 Summary:        Extract attachments out of a MIME encoded email packages
 
 Group:          Applications/Internet
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %doc CHANGELOG CONTRIBUTORS INSTALL LICENSE TODO README
 
 %changelog
+* Thu Mar 12 2020 Dionysis Kladis <dkstiler@gmail.com> - 1.4.0.10-1
+- Update source to latest ripmime stable
+- Compile for kloxong on Copr
 
 * Fri Jan 23 2009 Itamar Reis Peixoto <itamar@ispbrasil.com.br> - 1.4.0.9-2
 - Include CFLAGS in build process
