@@ -129,11 +129,11 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #we need to set these flags for centos 8 to compile properly
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
 
-%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIE/' )
-%define ldflags %(echo %{optflags} | sed -e 's/$/ -pie/' )
+%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
+%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
-echo "gcc %{optflags} -fPIE -O2" > cdb/conf-cc
-echo "gcc %{optflags} -pie -s" > cdb/conf-ld
+echo "gcc %{optflags} -fPIC -O2" > cdb/conf-cc
+echo "gcc %{optflags} -no-pie -s" > cdb/conf-ld
 
 #%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
