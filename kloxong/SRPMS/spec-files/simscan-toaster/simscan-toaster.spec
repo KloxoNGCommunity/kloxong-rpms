@@ -151,7 +151,7 @@ export LDFLAGS="%{ldflags}"
 #%{__automake} --add-missing
 autoconf
 aclocal
-automake
+automake --add-missing
 #autoreconf --install
 %configure \
 	--enable-user=%scanuser \
