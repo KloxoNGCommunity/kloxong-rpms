@@ -138,8 +138,8 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 #%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
-export CFLAGS="%{cflags} -Wno-misleading-indentation"
-export LDFLAGS="%{ldflags} -Wno-misleading-indentation"
+export CFLAGS="%{cflags} -fno-strict-aliasing -Wno-deprecated-declarations"
+export LDFLAGS="%{ldflags}"
 %endif
 
 
