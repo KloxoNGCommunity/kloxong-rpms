@@ -148,8 +148,9 @@ export LDFLAGS="%{ldflags} -fno-ident -fno-strict-aliasing -Wno-deprecated-decla
 #-------------------------------------------------------------------------------
 %{__aclocal}
 %{__autoconf}
+autoreconf --install
 %{__automake} --add-missing
-#autoreconf --install
+
 %configure \
 	--enable-user=%scanuser \
 	--enable-attach \
