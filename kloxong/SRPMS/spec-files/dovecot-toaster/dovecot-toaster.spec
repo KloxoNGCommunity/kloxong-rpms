@@ -643,9 +643,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
-* wed Mar 11 2020 Dionysis Kladis <dkstiler@gmail.com> - 1:2.2.36.4-1
+* Fri Mar 13 2020 Dionysis Kladis <dkstiler@gmail.com> - 1:2.2.36.4-1
 - Updated source to latest stable
-- Compile for Kloxong and centos 8
+- Compile for Kloxong and centos 8 on copr
 - Updated pigeonhole to latest version
 - Fixed some hardcoded values for versioning 
 
