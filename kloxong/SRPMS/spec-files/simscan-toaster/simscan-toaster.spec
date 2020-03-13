@@ -148,10 +148,12 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 #%define cflags %(echo %{optflags} | sed -e 's/$/ -fPIC/' )
 #%define ldflags %(echo %{optflags} | sed -e 's/$/ -no-pie/' )
 
-#export CFLAGS="%{cflags} -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
-#export LDFLAGS="%{ldflags}"
-export CFLAGS="-Wall -w -fsyntax-only -fPIE -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
-export LDFLAGS="Wl,-z,now -Wl,-z,relro, -pie"
+export CFLAGS="%{cflags} -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
+export LDFLAGS="%{ldflags}"
+echo %{cflags}
+echo %{ldflags}
+#export CFLAGS="-Wall -w -fsyntax-only -fPIE -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
+#export LDFLAGS="Wl,-z,now -Wl,-z,relro, -pie"
 %endif
 
 
