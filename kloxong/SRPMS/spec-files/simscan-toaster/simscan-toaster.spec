@@ -150,7 +150,7 @@ echo "gcc %{optflags} -pie -s" > cdb/conf-ld
 
 #export CFLAGS="%{cflags} -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations  -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
 #export LDFLAGS="%{ldflags}"
-export CFLAGS="-wall -w -fsyntax-only -fPIE -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
+export CFLAGS="-Wall -w -fsyntax-only -fPIE -fno-ident -fno-strict-aliasing -Wno-deprecated-declarations -Wno-implicit-function-declaration -Wno-misleading-indentation -Wno-unused-result -Wformat=2 -Wno-format-truncation -Wno-builtin-declaration-mismatch"
 export LDFLAGS="Wl,-z,now -Wl,-z,relro, -pie"
 %endif
 
