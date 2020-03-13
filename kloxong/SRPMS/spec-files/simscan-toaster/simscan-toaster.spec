@@ -308,6 +308,7 @@ fi
 #-------------------------------------------------------------------------------
 * Tue Feb 04 2020 Dionysis Kladis <dkstiler@gmail.com> 1.4.0-1.4.11.kng
 - Fix Compile errors with centos 8 by adding different gcc flags 
+- Build for centos 8 on copr with bootstrap option enabled
 
 * Wed Jan 8 2020 John Pierce <john@luckytanuki.com>  1.4.0-1.4.10.kng
 - Comment out folders already provided by Requires
