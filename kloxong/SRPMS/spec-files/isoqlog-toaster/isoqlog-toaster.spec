@@ -98,8 +98,9 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 %build
 #----------------------------------------------------------------------------
 %{__aclocal}
+%{__autoconf}
+autoreconf --install
 %{__automake} --add-missing
-#%{__autoconf}
 ./configure \
     --prefix=%{_prefix} \
     --exec-prefix=%{_exec_prefix} \
