@@ -108,8 +108,8 @@ Tengine server.
 %setup -q  -n %{name}-%{version}
 
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
-%patch0 -p1
-%patch1 -p1
+#%patch0 -p1
+#%patch1 -p1
 %endif
 
 %build
