@@ -27,7 +27,7 @@
 %endif
 
 Name:              tengine
-Version:           2.2.3
+Version:           2.3.2
 Release:           1.kng%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
@@ -121,7 +121,6 @@ export DESTDIR=%{buildroot}
 
 ./configure \
     --prefix=%{nginx_datadir} \
-    --includedir="%{_includedir}/nginx" \
     --dso-tool-path="%{_sbindir}" \
     --sbin-path=%{_sbindir}/nginx \
     --conf-path=%{nginx_confdir}/nginx.conf \
