@@ -28,12 +28,12 @@ BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
-BuildRequires:		boost-devel
+
 %endif
 
 BuildRequires:		protobuf-devel
 BuildRequires:		krb5-devel
-
+BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
 BuildRequires:		lua-devel
 BuildRequires:		openssl-devel
