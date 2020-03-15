@@ -143,10 +143,12 @@ This package contains the the PowerDNS DNS tools.
 
 %prep
 %setup -q -n pdns-4.1.13
-%patch0 -p1 -b .disable-secpoll
+
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
 %endif
+%patch0 -p1 -b .disable-secpoll
+
 
 
 %build
