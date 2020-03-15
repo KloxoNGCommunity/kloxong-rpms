@@ -156,7 +156,7 @@ This package contains the the PowerDNS DNS tools.
 %build
 
 %if 0%{?rhel} == 6
-#. /opt/rh/devtoolset-7/enable
+. /opt/rh/devtoolset-7/enable
 %endif
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
