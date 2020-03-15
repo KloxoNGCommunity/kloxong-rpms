@@ -24,9 +24,10 @@ BuildRequires:		devtoolset-7
 %if %{?fedora}0 > 150 || %{?rhel}0 >60
 BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
-%endif
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
+%endif
+
 BuildRequires:		krb5-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
