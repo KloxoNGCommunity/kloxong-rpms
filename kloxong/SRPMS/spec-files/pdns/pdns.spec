@@ -13,10 +13,18 @@ Group:			System Environment/Daemons
 URL:			http://www.powerdns.com/
 Source0:		http://downloads.powerdns.com/releases/pdns-4.1.13.tar.bz2
 Source1:		pdns.service
+
 Patch0:			pdns-4.1.1-disable-secpoll.patch
 
+Patch10:			pdns-git-init.patch
+
+%if 0%{?rhel} == 6
+BuildRequires:		devtoolset-7
+%endif
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
+%endif
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
 BuildRequires:		krb5-devel
@@ -24,12 +32,16 @@ BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
 BuildRequires:		lua-devel
 BuildRequires:		protobuf-devel
+BuildRequires:		openssl-devel
+BuildRequires:		sqlite-devel
 
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 Requires(pre):		shadow-utils
 Requires(post):		systemd-sysv
 Requires(post):		systemd-units
 Requires(preun):	systemd-units
 Requires(postun):	systemd-units
+%endif
 Provides:		powerdns = %{version}-%{release}
 
 %description
@@ -131,8 +143,16 @@ This package contains the the PowerDNS DNS tools.
 %prep
 %setup -q -n pdns-4.1.13
 %patch0 -p1 -b .disable-secpoll
+%if 0%{?rhel} == 6
+%patch10 -p1 -b .init
+%endif
+
 
 %build
+
+%if 0%{?rhel} == 6
+. /opt/rh/devtoolset-7/enable
+%endif
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
