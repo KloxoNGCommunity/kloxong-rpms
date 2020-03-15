@@ -160,7 +160,7 @@ This package contains the the PowerDNS DNS tools.
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
-    --with-lua 
+    --with-lua \
     %if %{?fedora}0 > 150 || %{?rhel}0 >60
     --with-protobuf \
     %endif
