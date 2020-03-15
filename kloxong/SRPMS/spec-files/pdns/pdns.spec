@@ -42,11 +42,10 @@ BuildRequires:  	bison
 BuildRequires:  	curl-devel
 BuildRequires:  	flex
 BuildRequires:  	gdbm-devel
-BuildRequires:  	libmysqlclient-devel
 BuildRequires:  	libsodium-devel
 BuildRequires:  	libtool
 BuildRequires:  	pkgconfig
-BuildRequires:  	postgresql-devel
+
 
 
 
