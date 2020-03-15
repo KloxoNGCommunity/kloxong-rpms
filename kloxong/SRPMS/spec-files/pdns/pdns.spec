@@ -20,15 +20,16 @@ Patch10:			pdns-git-init.patch
 
 %if 0%{?rhel} == 6
 BuildRequires:		devtoolset-7
+BuildRequires:		boost-program-options
 %endif
 %if %{?fedora}0 > 150 || %{?rhel}0 >60
 BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
-BuildRequires:		protobuf-devel
 %endif
 
+BuildRequires:		protobuf-devel
 BuildRequires:		krb5-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
