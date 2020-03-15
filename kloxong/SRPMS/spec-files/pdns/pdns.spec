@@ -29,14 +29,26 @@ BuildRequires:		gcc-c++
 BuildRequires:		protobuf-devel
 %endif
 
-BuildRequires:		gcc
-BuildRequires:		gcc-c++
 BuildRequires:		krb5-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
 BuildRequires:		lua-devel
 BuildRequires:		openssl-devel
 BuildRequires:		sqlite-devel
+
+BuildRequires:  	autoconf
+BuildRequires:  	automake
+BuildRequires:  	bison
+BuildRequires:  	curl-devel
+BuildRequires:  	flex
+BuildRequires:  	gdbm-devel
+BuildRequires:  	libmysqlclient-devel
+BuildRequires:  	libsodium-devel
+BuildRequires:  	libtool
+BuildRequires:  	pkgconfig
+BuildRequires:  	postgresql-devel
+
+
 
 Requires(pre):		shadow-utils
 %if %{?fedora}0 > 150 || %{?rhel}0 >60
