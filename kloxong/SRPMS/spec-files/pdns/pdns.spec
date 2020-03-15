@@ -26,13 +26,13 @@ BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
+BuildRequires:		protobuf-devel
 %endif
 
 BuildRequires:		krb5-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
 BuildRequires:		lua-devel
-BuildRequires:		protobuf-devel
 BuildRequires:		openssl-devel
 BuildRequires:		sqlite-devel
 
@@ -194,6 +194,7 @@ chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_unitdir}/pdns.service
 %else
 %if 0%{?rhel} == 6
+# install sysv scripts
 install -d %{buildroot}%{_initrddir}
 install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
 %endif
