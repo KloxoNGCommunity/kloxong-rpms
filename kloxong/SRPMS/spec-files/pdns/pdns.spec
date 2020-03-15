@@ -27,11 +27,12 @@ BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
+BuildRequires:		boost-devel
 %endif
 
 BuildRequires:		protobuf-devel
 BuildRequires:		krb5-devel
-BuildRequires:		boost-devel
+
 BuildRequires:		sqlite-devel
 BuildRequires:		lua-devel
 BuildRequires:		openssl-devel
@@ -174,9 +175,7 @@ This package contains the the PowerDNS DNS tools.
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
     --with-lua \
-    %if %{?fedora}0 > 150 || %{?rhel}0 >60
     --with-protobuf \
-    %endif
     --with-modules="" \
     --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
     --disable-static \
