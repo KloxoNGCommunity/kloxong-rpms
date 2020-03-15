@@ -35,8 +35,8 @@ BuildRequires:		protobuf-devel
 BuildRequires:		openssl-devel
 BuildRequires:		sqlite-devel
 
-%if %{?fedora}0 > 150 || %{?rhel}0 >60
 Requires(pre):		shadow-utils
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 Requires(post):		systemd-sysv
 Requires(post):		systemd-units
 Requires(preun):	systemd-units
