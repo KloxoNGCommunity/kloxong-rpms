@@ -16,7 +16,8 @@ Source1:		pdns.service
 
 Patch0:			pdns-4.1.1-disable-secpoll.patch
 
-Patch10:			pdns-git-init.patch
+Patch10:		pdns-git-init.patch
+Patch11:		pdns-el6-boost.patch
 
 %if 0%{?rhel} == 6
 BuildRequires:		devtoolset-7
@@ -161,6 +162,7 @@ This package contains the the PowerDNS DNS tools.
 
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
+%patch11 -p1 -b .init
 %endif
 %patch0 -p1 -b .disable-secpoll
 
