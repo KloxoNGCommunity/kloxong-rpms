@@ -162,7 +162,7 @@ This package contains the the PowerDNS DNS tools.
 
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
-%patch11 -p1 -b .init
+%patch11 -p0 -b .init
 %endif
 %patch0 -p1 -b .disable-secpoll
 
