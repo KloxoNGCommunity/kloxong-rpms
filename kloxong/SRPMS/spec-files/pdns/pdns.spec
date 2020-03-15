@@ -26,9 +26,9 @@ BuildRequires:		systemd-units
 BuildRequires:		systemd-devel
 BuildRequires:		gcc
 BuildRequires:		gcc-c++
-BuildRequires:		protobuf-devel
 %endif
 
+BuildRequires:		protobuf-devel
 BuildRequires:		krb5-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
