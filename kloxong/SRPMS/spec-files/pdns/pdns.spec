@@ -186,10 +186,17 @@ EOF
 
 chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
 
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 # install our systemd service file
 %{__rm} -f %{buildroot}%{_unitdir}/pdns.service
 %{__rm} -f %{buildroot}%{_unitdir}/pdns@.service
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_unitdir}/pdns.service
+%else
+%if 0%{?rhel} == 6
+install -d %{buildroot}%{_initrddir}
+install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
+%endif
+%endif
 
 %pre
 
