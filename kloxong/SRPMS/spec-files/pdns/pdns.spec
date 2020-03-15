@@ -163,8 +163,10 @@ This package contains the the PowerDNS DNS tools.
     --disable-static \
     --enable-tools
 
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+%endif
 
 %{__make} %{?_smp_mflags}
 
@@ -190,6 +192,7 @@ chmod 600 %{buildroot}%{_sysconfdir}/%{name}/pdns.conf
 install -p -D -m 644 %{SOURCE1} %{buildroot}%{_unitdir}/pdns.service
 
 %pre
+
 getent group pdns >/dev/null || groupadd -r pdns
 getent passwd pdns >/dev/null || \
 	useradd -r -g pdns -d / -s /sbin/nologin \
@@ -197,13 +200,40 @@ getent passwd pdns >/dev/null || \
 exit 0
 
 %post
+
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 %systemd_post pdns.service
+%else
+%if 0%{?rhel} == 6
+/sbin/chkconfig --add pdns
+%endif
+%endif
 
 %preun
+
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 %systemd_preun pdns.service
+%else
+%if 0%{?rhel} == 6
+if [ $1 -eq 0 ]; then
+    /sbin/service pdns stop >/dev/null 2>&1 || :
+    /sbin/chkconfig --del pdns
+fi
+%endif
+%endif
 
 %postun
+
+%if %{?fedora}0 > 150 || %{?rhel}0 >60
 %systemd_postun_with_restart pdns.service
+%else
+%if 0%{?rhel} == 6
+if [ $1 -ge 1 ]; then
+    /sbin/service pdns condrestart >/dev/null 2>&1
+fi
+%endif
+%endif
+
 
 %files
 %doc COPYING INSTALL NOTICE README
