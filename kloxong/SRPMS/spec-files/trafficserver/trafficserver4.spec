@@ -19,6 +19,9 @@ BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 BuildRequires:	autoconf, automake, libtool, openssl-devel, tcl-devel, expat-devel
 BuildRequires:	pcre-devel, zlib-devel, xz-devel, gcc-c++, perl-ExtUtils-MakeMaker
 BuildRequires:	redhat-rpm-config
+%if %{rhelver} > 6
+BuildRequires:	boost-devel, openssl-devel, openssl
+%endif
 ExclusiveArch:	%{ix86} x86_64 ia64 %{arm}
 Requires: initscripts
 %if %{rhelver} > 6
