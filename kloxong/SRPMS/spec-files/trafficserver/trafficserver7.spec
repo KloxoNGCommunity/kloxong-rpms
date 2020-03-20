@@ -237,9 +237,33 @@ fi
 %files perl
 %defattr(-,root,root,-)
 %{_prefix}/share/man/man3/*
-%{_prefix}/lib/perl5/Apache/TS.pm.in
-%{_prefix}/lib/perl5/Apache/TS.pm
-%{_prefix}/lib/perl5/Apache/TS/*
+#%{_prefix}/lib/perl5/Apache/TS.pm.in
+#%{_prefix}/lib/perl5/Apache/TS.pm
+#%{_prefix}/lib/perl5/Apache/TS/*
+
+%if %{rhelver} >= 6
+%{_libdir}/perl5/auto/Apache/TS/.packlist
+%{_libdir}/perl5/perllocal.pod
+%{_libdir}/trafficserver/plugins/cacheurl.la
+%{_libdir}/trafficserver/plugins/gzip.la
+%{_libdir}/trafficserver/plugins/libloader.la
+/usr/share/perl5/Apache/TS.pm
+/usr/share/perl5/Apache/TS/AdminClient.pm
+/usr/share/perl5/Apache/TS/Config.pm
+/usr/share/perl5/Apache/TS/Config/Records.pm
+%else
+%{_libdir}/perl5/site_perl/5.8.8/Apache/TS.pm
+%{_libdir}/perl5/site_perl/5.8.8/Apache/TS/AdminClient.pm
+%{_libdir}/perl5/site_perl/5.8.8/Apache/TS/Config.pm
+%{_libdir}/perl5/site_perl/5.8.8/Apache/TS/Config/Records.pm
+%{_libdir}/trafficserver/plugins/cacheurl.la
+%{_libdir}/trafficserver/plugins/gzip.la
+%{_libdir}/trafficserver/plugins/header_rewrite.la
+%{_libdir}/trafficserver/plugins/libloader.la
+%{_libdir}/perl5/5.8.8/%{rhelarch}-linux-thread-multi/perllocal.pod
+%{_libdir}/perl5/site_perl/5.8.8/%{rhelarch}-linux-thread-multi/auto/Apache/TS/.packlist
+%endif
+
 
 %files devel
 %defattr(-,root,root,-)
