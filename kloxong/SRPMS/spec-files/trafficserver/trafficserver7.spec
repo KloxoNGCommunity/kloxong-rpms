@@ -98,6 +98,9 @@ NOCONFIGURE=1 autoreconf -vif
   --enable-luajit \
   --with-user=ats --with-group=ats \
   --disable-silent-rules \
+%if 0%{?rhel} == 6
+  --enable-static \
+%endif
   --enable-experimental-plugins
 
 make %{?_smp_mflags} V=1
