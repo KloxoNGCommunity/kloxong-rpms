@@ -110,7 +110,7 @@ make %{?_smp_mflags} V=1
 
 %install
 rm -rf %{buildroot}
-make DESTDIR=%{buildroot} install
+%{__make} DESTDIR=%{buildroot} install
 
 # Remove duplicate man-pages:
 rm -rf %{buildroot}%{_docdir}/trafficserver
