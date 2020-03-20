@@ -243,7 +243,7 @@ fi
 %{_libdir}/pkgconfig/trafficserver.pc
 
 %changelog
-* Fri Mar 2 2020 Dionysis Kladis <dkstiler@gmail.com> - 7.1.0-1.kng
+* Fri Mar 20 2020 Dionysis Kladis <dkstiler@gmail.com> - 7.1.0-1.kng
 - Compile for kloxong at copr 
 
 * Wed Jul 26 2017 Bryan Seitz <seitz@ghettoforge.org> - 7.1.0-1
