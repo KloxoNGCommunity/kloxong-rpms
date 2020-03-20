@@ -87,9 +87,13 @@ The trafficserver-perl package contains perl bindings.
 %build
 %if 0%{?rhel} == 6
 . /opt/rh/devtoolset-7/enable
-ldconfig
-%endif
+%{__aclocal}
+%{__autoconf}
+autoreconf -vif
+%{__automake} --add-missing
+%else
 NOCONFIGURE=1 autoreconf -vif
+%endif
 %configure \
   --enable-layout=opt \
   --sysconfdir=%{_prefix}%{_sysconfdir} \
