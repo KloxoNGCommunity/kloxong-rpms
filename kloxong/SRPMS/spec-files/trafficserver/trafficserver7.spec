@@ -41,6 +41,7 @@ BuildRequires:	autoconf automake libtool
 
 %if 0%{?rhel} == 6
 BuildRequires:		devtoolset-7
+BuildRequires: 		devtoolset-7-libasan-devel
 %endif
 
 Requires: initscripts
@@ -100,6 +101,8 @@ NOCONFIGURE=1 autoreconf -vif
   --disable-silent-rules \
 %if 0%{?rhel} == 6
   --enable-static \
+  --enable-wccp \
+  --disable-hwloc \
 %endif
   --enable-experimental-plugins
 
