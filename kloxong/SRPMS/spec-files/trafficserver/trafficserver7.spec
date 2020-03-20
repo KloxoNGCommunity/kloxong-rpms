@@ -237,9 +237,9 @@ fi
 %files perl
 %defattr(-,root,root,-)
 %{_prefix}/share/man/man3/*
-#%{buildroot}%{_prefix}%/lib/perl5/Apache/TS.pm.in
-#%{buildroot}%{_prefix}%/lib/perl5/Apache/TS.pm
-#%{buildroot}%{_prefix}%/lib/perl5/Apache/TS/*
+#%{_prefix}%/lib/perl5/Apache/TS.pm.in
+%{_prefix}%/lib/perl5/Apache/TS.pm
+%{_prefix}%/lib/perl5/Apache/TS/*
 
 
 %files devel
