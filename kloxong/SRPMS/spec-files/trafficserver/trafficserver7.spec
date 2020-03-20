@@ -40,6 +40,7 @@ BuildRequires:	xz-devel
 BuildRequires:	autoconf automake libtool
 
 %if 0%{?rhel} == 6
+BuildRequires:		libasan4
 BuildRequires:		devtoolset-7
 BuildRequires: 		devtoolset-7-libasan-devel
 %endif
