@@ -88,7 +88,6 @@ The trafficserver-perl package contains perl bindings.
 %if 0%{?rhel} == 6
 . /opt/rh/devtoolset-7/enable
 %{__aclocal}
-%{__autoconf}
 autoreconf -vif
 %{__automake} --add-missing
 %else
