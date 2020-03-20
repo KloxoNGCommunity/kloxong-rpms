@@ -5,13 +5,13 @@
 
 Summary:	Fast, scalable and extensible HTTP/1.1 compliant caching proxy server
 Name:		trafficserver
-Version:	7.1.0
+Version:	7.1.9
 Release:	1.kng%{?dist}
 License:	ASL 2.0
 Group:		System Environment/Daemons
 URL:		http://trafficserver.apache.org/index.html
 
-Source0:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.bz2
+Source0:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.gz
 Source1:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.bz2.asc
 Source2:	trafficserver.keyring
 Source3:	trafficserver.sysconf
