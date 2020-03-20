@@ -40,7 +40,7 @@ BuildRequires:	xz-devel
 BuildRequires:	autoconf automake libtool
 
 %if 0%{?rhel} == 6
-BuildRequires:		devtoolset-7/*
+BuildRequires:		devtoolset-7
 %endif
 
 Requires: initscripts
