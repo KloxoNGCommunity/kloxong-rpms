@@ -241,7 +241,7 @@ fi
 #%{_prefix}/lib/perl5/Apache/TS.pm
 #%{_prefix}/lib/perl5/Apache/TS/*
 
-%if %{rhelver} >= 6
+%if %{?fedora}0 > 140 || %{?rhel}0 > 50
 %{_libdir}/perl5/auto/Apache/TS/.packlist
 %{_libdir}/perl5/perllocal.pod
 %{_libdir}/trafficserver/plugins/cacheurl.la
