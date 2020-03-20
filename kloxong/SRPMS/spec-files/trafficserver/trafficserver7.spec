@@ -12,7 +12,7 @@ Group:		System Environment/Daemons
 URL:		http://trafficserver.apache.org/index.html
 
 Source0:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.gz
-Source1:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.bz2.asc
+#Source1:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.bz2.asc
 Source2:	trafficserver.keyring
 Source3:	trafficserver.sysconf
 Source4:	trafficserver.service
