@@ -12,7 +12,7 @@ Group:		System Environment/Daemons
 URL:		http://trafficserver.apache.org/index.html
 
 Source0:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.gz
-#Source1:	http://archive.apache.org/dist/%{name}/%{name}-%{version}.tar.bz2.asc
+
 Source2:	trafficserver.keyring
 Source3:	trafficserver.sysconf
 Source4:	trafficserver.service
@@ -38,6 +38,10 @@ BuildRequires:	tcl-devel
 BuildRequires:	zlib-devel
 BuildRequires:	xz-devel
 BuildRequires:	autoconf automake libtool
+
+%if 0%{?rhel} == 6
+BuildRequires:		devtoolset-7
+%endif
 
 Requires: initscripts
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
@@ -81,6 +85,9 @@ The trafficserver-perl package contains perl bindings.
 %patch101 -p1
 
 %build
+%if 0%{?rhel} == 6
+. /opt/rh/devtoolset-7/enable
+%endif
 NOCONFIGURE=1 autoreconf -vif
 %configure \
   --enable-layout=opt \
@@ -245,6 +252,7 @@ fi
 %changelog
 * Fri Mar 20 2020 Dionysis Kladis <dkstiler@gmail.com> - 7.1.0-1.kng
 - Compile for kloxong at copr 
+- Changed source to version 7.1.9 for centos 8 and centos 7
 
 * Wed Jul 26 2017 Bryan Seitz <seitz@ghettoforge.org> - 7.1.0-1
 - New upstream release
