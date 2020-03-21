@@ -121,7 +121,6 @@ export DESTDIR=%{buildroot}
 
 ./configure \
     --prefix=%{nginx_datadir} \
-    --dso-tool-path="%{_sbindir}" \
     --sbin-path=%{_sbindir}/nginx \
     --conf-path=%{nginx_confdir}/nginx.conf \
     --error-log-path=%{nginx_logdir}/error.log \
