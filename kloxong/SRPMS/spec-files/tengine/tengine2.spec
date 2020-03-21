@@ -165,7 +165,7 @@ export DESTDIR=%{buildroot}
     --with-pcre \
     --with-http_lua_module \
 %if %{?fedora}0 > 150 || %{?rhel}0 > 70
-    --with-luajit-inc=%{_includedir} \
+    --with-luajit-inc=%{_includedir}/luajit* \
     --with-openssl=/usr/share/openssl \
     --with-openssl-opt=enable-tls1_3 \
 %else
