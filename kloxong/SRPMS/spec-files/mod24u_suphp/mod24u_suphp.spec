@@ -24,7 +24,7 @@ Patch0: suphp-0.7.2_accept-httpd-2.4.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: httpd-devel >= 2.4, gcc-c++, automake, autoconf, libtool
-%if %{?fedora}0 > 150 || %{?rhel}0 > 70
+%if %{?fedora}0 > 150 || %{?rhel}0 > 60
 BuildRequires:	apr-devel
 %else
 BuildRequires:	apr15u-devel
