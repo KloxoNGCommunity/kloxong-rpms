@@ -67,9 +67,11 @@ BuildRequires:     perl-devel
 BuildRequires:     perl(ExtUtils::Embed)
 BuildRequires:     zlib-devel
 BuildRequires:     luajit-devel
+BuildRequires:     libffi-devel
 
 Requires:          nginx-filesystem
 Requires:          luajit
+Requires:          libffi
 Requires:          GeoIP
 Requires:          gd
 Requires:          openssl
