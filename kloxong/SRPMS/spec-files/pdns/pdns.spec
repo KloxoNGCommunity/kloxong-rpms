@@ -246,15 +246,13 @@ This package contains the ixfrdist program.
 
 
 %prep
-%autosetup -q -n pdns-%{version}
+%autosetup -p1 -n pdns-%{version}
 
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
 %endif
 %patch0 -p1 -b .disable-secpoll
 
-# we may need this in case fails to find proper modules we can switch it with 
-#    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
 
 %build
 export CPPFLAGS="-DLDAP_DEPRECATED"
@@ -480,6 +478,7 @@ fi
 - Update to version 4.2.1 
 - Added new features support with newer source
 - Fixed errors for documents and missing files
+- Get in sync with the spec file from the source repository https://github.com/PowerDNS/pdns/blob/master/builder-support/specs/pdns.spec
 
 * Mon Dec 23 2019 John Pierce <john@luckytanuki.com> 4.1.13-2
 - Build for Kloxo NG
