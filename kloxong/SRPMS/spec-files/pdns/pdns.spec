@@ -162,6 +162,15 @@ BuildRequires: openldap-devel
 %description backend-ldap
 This package contains the LDAP backend for %{name}
 
+%package		backend-mydns
+Summary:		MyDNS backend for %{name}
+Group:			System Environment/Daemons
+Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+BuildRequires:		mysql-devel
+
+%description		backend-mydns
+This package contains the MyDNS backend for the PowerDNS nameserver.
+
 %package backend-lua
 Summary: Lua backend for %{name}
 Group: System Environment/Daemons
