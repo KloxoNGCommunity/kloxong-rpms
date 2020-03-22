@@ -412,8 +412,7 @@ fi
 %doc %{_defaultdocdir}/%{name}/schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
-%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.0.0_schema.pgsql.sql
-%doc %{_defaultdocdir}/%{name}/4.0.0_to_4.2.0_schema.mysql.sql
+
 
 %files backend-ldap
 %{_libdir}/%{name}/libldapbackend.so
