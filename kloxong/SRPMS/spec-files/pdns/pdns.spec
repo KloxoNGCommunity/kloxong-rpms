@@ -266,8 +266,8 @@ This package contains the ixfrdist program.
     --with-protobuf \
     --disable-static \
     --with-modules="" \
-    --with-lua="lua" \
-    --with-luajit="juajit" \
+    --with-lua=lua \
+    --with-luajit=juajit \
     --with-libsodium \
     --with-dynmodules='%{backends} random' \
     --enable-tools \
@@ -277,7 +277,7 @@ This package contains the ixfrdist program.
    --enable-experimental-pkcs11 \
    --enable-systemd \
    --enable-ixfrdist
-%else
+   %else
    --disable-lua-records \
    --without-protobuf \
    --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
