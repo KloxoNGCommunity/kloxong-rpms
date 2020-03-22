@@ -12,7 +12,7 @@ Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons
 URL:			http://www.powerdns.com/
-Source0:		http://downloads.powerdns.com/releases/pdns-%{Version}.tar.bz2
+Source0:		http://downloads.powerdns.com/releases/pdns-%{version}.tar.bz2
 Source1:		pdns.service
 
 Patch0:			pdns-4.1.1-disable-secpoll.patch
@@ -246,7 +246,7 @@ This package contains the ixfrdist program.
 
 
 %prep
-%setup -q -n pdns-%{Version}
+%setup -q -n pdns-%{version}
 
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
@@ -258,9 +258,7 @@ This package contains the ixfrdist program.
 
 %build
 
-%if 0%{?rhel} == 6
-. /opt/rh/devtoolset-7/enable
-%endif
+
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --enable-option-checking=fatal \
