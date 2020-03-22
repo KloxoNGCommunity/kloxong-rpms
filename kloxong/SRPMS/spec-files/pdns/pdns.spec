@@ -271,7 +271,11 @@ This package contains the ixfrdist program.
     --with-lua \
     --with-protobuf \
     --with-modules="" \
+%ifarch aarch64 
     --with-lua=%{lua_implementation} \
+%else
+    --with-luajit=%{lua_implementation} \
+%endif    
     --enable-tools \
     --with-libsodium \
     --enable-unit-tests \
