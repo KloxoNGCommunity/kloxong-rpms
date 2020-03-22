@@ -172,7 +172,7 @@ This package contains the MyDNS backend for the PowerDNS nameserver.
 Summary: Lua backend for %{name}
 Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
-BuildRequires:		lua-devel
+BuildRequires: lua-devel
 %global backends %{backends} lua
 
 %description backend-lua
@@ -269,7 +269,6 @@ This package contains the ixfrdist program.
     --disable-static \
     --disable-silent-rules \
     --with-modules="" \
-    --with-lua=lua \
     --with-luajit=juajit \
     --enable-libsodium \
     --with-dynmodules='%{backends} random' \
