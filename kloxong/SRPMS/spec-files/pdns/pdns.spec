@@ -168,14 +168,15 @@ BuildRequires:		mysql-devel
 %description		backend-mydns
 This package contains the MyDNS backend for the PowerDNS nameserver.
 
-%package backend-lua2
+%package backend-lua
 Summary: Lua backend for %{name}
 Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
-%global backends %{backends} lua2
+BuildRequires:		lua-devel
+%global backends %{backends} lua
 
-%description backend-lua2
-This package contains the lua2 backend for %{name}
+%description backend-lua
+This package contains the lua backend for %{name}
 
 %package backend-sqlite
 Summary: SQLite backend for %{name}
@@ -262,9 +263,11 @@ This package contains the ixfrdist program.
 %endif
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
+    --enable-option-checking=fatal \
     --with-sqlite3 \
     --with-protobuf \
     --disable-static \
+    --disable-silent-rules \
     --with-modules="" \
     --with-lua=lua \
     --with-luajit=juajit \
@@ -407,8 +410,8 @@ fi
 %doc %{_defaultdocdir}/%{name}/dnsdomain2.schema
 %doc %{_defaultdocdir}/%{name}/pdns-domaininfo.schema
 
-%files backend-lua2
-%{_libdir}/%{name}/liblua2backend.so
+%files backend-lua
+%{_libdir}/%{name}/libluabackend.so
 %doc modules/luabackend/README
 
 %files backend-mydns
