@@ -385,6 +385,7 @@ fi
 %{_mandir}/man1/pdns_control.1.gz
 %{_mandir}/man1/pdns_server.1.gz
 %{_mandir}/man1/pdnsutil.1.gz
+%{_libdir}/%{name}/librandombackend.so
 
 %files backend-bind
 %{_libdir}/%{name}/libbindbackend.so
@@ -411,7 +412,9 @@ fi
 %doc %{_defaultdocdir}/%{name}/schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
-
+%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.0.0_schema.sqlite3.sql
+%doc %{_defaultdocdir}/%{name}/4.0.0_to_4.2.0_schema.sqlite3.sql
+%doc %{_defaultdocdir}/%{name}/4.2.0_to_4.3.0_schema.sqlite3.sql
 
 %files backend-ldap
 %{_libdir}/%{name}/libldapbackend.so
@@ -454,6 +457,7 @@ fi
  %{_bindir}/saxfr
  %{_bindir}/sdig
  %{_bindir}/stubquery
+ %{_bindir}/dnspcap2calidns
 %{_mandir}/man1/zone2json.1.gz
 %{_mandir}/man1/pdns-zone2ldap.1.gz
 %{_mandir}/man1/zone2sql.1.gz
@@ -471,13 +475,14 @@ fi
  %{_mandir}/man1/nsec3dig.1.gz
  %{_mandir}/man1/pdns_notify.1.gz
  %{_mandir}/man1/dnspcap2protobuf.1.gz
+ %{_mandir}/man1/dnspcap2calidns.1.gz
  %{_mandir}/man1/saxfr.1.gz
  %{_mandir}/man1/sdig.1.gz
  
  %if 0%{?rhel} >= 7
 %files backend-odbc
-%doc modules/godbcbackend/schema.mssql.sql
-%doc modules/godbcbackend/4.0.0_to_4.2.0_schema.mssql.sql
+%doc %{_defaultdocdir}/%{name}/schema.mssql.sql
+%doc %{_defaultdocdir}/%{name}/4.0.0_to_4.2.0_schema.mssql.sql
 %{_libdir}/%{name}/libgodbcbackend.so
 
 %files backend-geoip
