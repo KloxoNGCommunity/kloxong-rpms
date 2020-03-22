@@ -2,6 +2,7 @@
 # PowerDNS server el7 spec file
 #
 %global _hardened_build 1
+%global backends %{nil}
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
