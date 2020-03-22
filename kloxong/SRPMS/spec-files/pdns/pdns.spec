@@ -405,7 +405,7 @@ fi
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.pgsql.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.pgsql.sql
 %doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.pgsql.sql
-%doc %{_defaultdocdir}/%{name}/4.1.0_to_4.2.0_schema.mysql.sql
+%doc %{_defaultdocdir}/%{name}/4.1.0_to_4.2.0_schema.pgsql.sql
 
 %files backend-sqlite
 %{_libdir}/%{name}/libgsqlite3backend.so
