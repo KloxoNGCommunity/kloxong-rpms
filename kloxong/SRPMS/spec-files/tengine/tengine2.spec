@@ -121,7 +121,7 @@ Tengine server.
 # variable.
 export DESTDIR=%{buildroot}
 
-./configure \
+./configure --help\
     --prefix=%{nginx_datadir} \
     --sbin-path=%{_sbindir}/nginx \
     --conf-path=%{nginx_confdir}/nginx.conf \
