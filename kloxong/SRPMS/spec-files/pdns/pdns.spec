@@ -96,6 +96,17 @@ authoritative-only nameserver. It is written from scratch and conforms
 to all relevant DNS standards documents.
 Furthermore, PowerDNS interfaces with almost any database.
 
+%package		backend-bind
+Summary:		Bind backend for %{name}
+Group:			System Environment/Daemons
+Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+
+%description		backend-bind
+The BindBackend parses a Bind-style named.conf and extracts information about
+zones from it. It makes no attempt to honour other configuration flags,
+which you should configure (when available) using the PDNS native configuration.
+%global backends %{backends} bind
+
 %package tools
 Summary: Extra tools for %{name}
 Group: System Environment/Daemons
