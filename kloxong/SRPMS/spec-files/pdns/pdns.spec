@@ -271,15 +271,13 @@ This package contains the ixfrdist program.
     --with-modules="" \
     --with-lua=lua \
     --with-luajit=juajit \
-    --with-libsodium \
+    --enable-libsodium \
     --with-dynmodules='%{backends} random' \
     --enable-tools \
     --enable-unit-tests \
 %if 0%{?rhel} >= 7
-   --enable-lua-records \
    --enable-experimental-pkcs11 \
-   --enable-systemd \
-   --enable-ixfrdist
+   --enable-systemd 
    %else
    --disable-lua-records \
    --without-protobuf \
