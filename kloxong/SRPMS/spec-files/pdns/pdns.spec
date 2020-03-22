@@ -267,7 +267,6 @@ This package contains the ixfrdist program.
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
-    --with-lua \
     --with-protobuf \
     --with-modules="" \
 %ifarch aarch64 
