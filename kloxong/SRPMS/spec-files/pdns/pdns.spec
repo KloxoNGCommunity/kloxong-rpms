@@ -265,7 +265,7 @@ This package contains the ixfrdist program.
 %if 0%{?rhel} == 6
 . /opt/rh/devtoolset-7/enable
 %endif
-%configure --help \
+%configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
     --with-lua \
