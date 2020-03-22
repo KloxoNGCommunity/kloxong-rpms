@@ -246,7 +246,7 @@ This package contains the ixfrdist program.
 
 
 %prep
-%setup -q -n pdns-%{version}
+%autosetup -q -n pdns-%{version}
 
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
@@ -257,7 +257,7 @@ This package contains the ixfrdist program.
 #    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
 
 %build
-
+export CPPFLAGS="-DLDAP_DEPRECATED"
 
 %configure \
     --sysconfdir=%{_sysconfdir}/%{name} \
@@ -320,6 +320,15 @@ install -m755 pdns/pdns.init %{buildroot}%{_initrddir}/pdns
 %endif
 %endif
 
+%if 0%{?rhel} >= 7
+# rename zone2ldap to pdns-zone2ldap (#1193116)
+%{__mv} %{buildroot}/%{_bindir}/zone2ldap %{buildroot}/%{_bindir}/pdns-zone2ldap
+%{__mv} %{buildroot}/%{_mandir}/man1/zone2ldap.1 %{buildroot}/%{_mandir}/man1/pdns-zone2ldap.1
+%endif
+
+%check
+PDNS_TEST_NO_IPV6=1 make %{?_smp_mflags} -C pdns check || (cat pdns/test-suite.log && false)
+
 %pre
 
 getent group pdns >/dev/null || groupadd -r pdns
@@ -328,39 +337,40 @@ getent passwd pdns >/dev/null || \
 	-c "PowerDNS authoritative server user" pdns
 exit 0
 
-%post
+%if 0%{?rhel} >= 7
+if [ "`stat -c '%U:%G' %{_sysconfdir}/%{name}`" = "root:root" ]; then
+  chown -R root:pdns /etc/powerdns
+  # Make sure that pdns can read it; the default used to be 0600
+  chmod g+r /etc/powerdns/pdns.conf
+fi
+chown -R pdns:pdns /var/lib/powerdns || :
+%endif
 
-%if %{?fedora}0 > 150 || %{?rhel}0 >60
+%post
+%if 0%{?rhel} >= 7
+systemctl daemon-reload ||:
 %systemd_post pdns.service
 %else
-%if 0%{?rhel} == 6
 /sbin/chkconfig --add pdns
-%endif
 %endif
 
 %preun
-
-%if %{?fedora}0 > 150 || %{?rhel}0 >60
+%if 0%{?rhel} >= 7
 %systemd_preun pdns.service
 %else
-%if 0%{?rhel} == 6
 if [ $1 -eq 0 ]; then
-    /sbin/service pdns stop >/dev/null 2>&1 || :
-    /sbin/chkconfig --del pdns
+  /sbin/service pdns stop >/dev/null 2>&1 || :
+  /sbin/chkconfig --del pdns
 fi
-%endif
 %endif
 
 %postun
-
-%if %{?fedora}0 > 150 || %{?rhel}0 >60
+%if 0%{?rhel} >= 7
 %systemd_postun_with_restart pdns.service
 %else
-%if 0%{?rhel} == 6
 if [ $1 -ge 1 ]; then
-    /sbin/service pdns condrestart >/dev/null 2>&1
+  /sbin/service pdns condrestart >/dev/null 2>&1 || :
 fi
-%endif
 %endif
 
 
