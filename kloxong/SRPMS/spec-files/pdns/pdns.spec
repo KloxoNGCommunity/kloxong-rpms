@@ -66,14 +66,10 @@ BuildRequires:  	gdbm-devel
 BuildRequires:  	libsodium-devel
 BuildRequires:  	libtool
 BuildRequires:  	pkgconfig
+BuildRequires: 		lua-devel
+BuildRequires: 		luajit-devel
 
-%ifarch aarch64
-BuildRequires: lua-devel
-%define lua_implementation lua
-%else
-BuildRequires: luajit-devel
-%define lua_implementation luajit
-%endif
+
 
 
 
@@ -269,11 +265,8 @@ This package contains the ixfrdist program.
     --with-sqlite3 \
     --with-protobuf \
     --with-modules="" \
-%ifarch aarch64 
-    --with-lua=%{lua_implementation} \
-%else
-    --with-luajit=%{lua_implementation} \
-%endif    
+    --with-lua="lua" \
+    --with-luajit="juajit" \  
     --enable-tools \
     --with-libsodium \
     --enable-unit-tests \
