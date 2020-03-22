@@ -54,7 +54,6 @@ BuildRequires:		protobuf-devel
 BuildRequires:		krb5-devel
 BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
-BuildRequires:		lua-devel
 BuildRequires:		openssl-devel
 BuildRequires:		sqlite-devel
 
