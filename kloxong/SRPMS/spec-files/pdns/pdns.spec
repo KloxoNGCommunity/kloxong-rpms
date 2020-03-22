@@ -434,10 +434,11 @@ fi
 
 %files tools
 %{_bindir}/zone2json
-%{_bindir}/zone2ldap
+%{_bindir}/pdns-zone2ldap
 %{_bindir}/zone2sql
  %{_bindir}/calidns
  %{_bindir}/dnsbulktest
+ %{_bindir}/pdns_control
  %{_bindir}/dnsgram
  %{_bindir}/dnsreplay
  %{_bindir}/dnsscan
@@ -454,7 +455,7 @@ fi
  %{_bindir}/sdig
  %{_bindir}/stubquery
 %{_mandir}/man1/zone2json.1.gz
-%{_mandir}/man1/zone2ldap.1.gz
+%{_mandir}/man1/pdns-zone2ldap.1.gz
 %{_mandir}/man1/zone2sql.1.gz
  %{_mandir}/man1/calidns.1.gz
  %{_mandir}/man1/dnsbulktest.1.gz
@@ -472,6 +473,30 @@ fi
  %{_mandir}/man1/dnspcap2protobuf.1.gz
  %{_mandir}/man1/saxfr.1.gz
  %{_mandir}/man1/sdig.1.gz
+ 
+ %if 0%{?rhel} >= 7
+%files backend-odbc
+%doc modules/godbcbackend/schema.mssql.sql
+%doc modules/godbcbackend/4.0.0_to_4.2.0_schema.mssql.sql
+%{_libdir}/%{name}/libgodbcbackend.so
+
+%files backend-geoip
+%{_libdir}/%{name}/libgeoipbackend.so
+
+%files backend-lmdb
+%{_libdir}/%{name}/liblmdbbackend.so
+
+%files backend-tinydns
+%{_libdir}/%{name}/libtinydnsbackend.so
+
+%files ixfrdist
+%{_bindir}/ixfrdist
+%{_mandir}/man1/ixfrdist.1.gz
+%{_mandir}/man5/ixfrdist.yml.5.gz
+%{_sysconfdir}/%{name}/ixfrdist.example.yml
+%{_unitdir}/ixfrdist.service
+%{_unitdir}/ixfrdist@.service
+%endif
 
 
 %changelog
