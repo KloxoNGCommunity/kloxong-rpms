@@ -387,6 +387,7 @@ fi
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.mysql.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.mysql.sql
 %doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.mysql.sql
+%doc %{_defaultdocdir}/%{name}/4.1.0_to_4.2.0_schema.mysql.sql
 
 %files backend-postgresql
 %{_libdir}/%{name}/libgpgsqlbackend.so
@@ -394,13 +395,15 @@ fi
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.pgsql.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.pgsql.sql
 %doc %{_defaultdocdir}/%{name}/3.4.0_to_4.1.0_schema.pgsql.sql
-%doc %{_defaultdocdir}/%{name}/4.1.10_to_4.1.11.schema.pgsql.sql
+%doc %{_defaultdocdir}/%{name}/4.1.0_to_4.2.0_schema.mysql.sql
 
 %files backend-sqlite
 %{_libdir}/%{name}/libgsqlite3backend.so
 %doc %{_defaultdocdir}/%{name}/schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/nodnssec-3.x_to_3.4.0_schema.sqlite3.sql
 %doc %{_defaultdocdir}/%{name}/dnssec-3.x_to_3.4.0_schema.sqlite3.sql
+%doc %{_defaultdocdir}/%{name}/3.4.0_to_4.0.0_schema.pgsql.sql
+%doc %{_defaultdocdir}/%{name}/4.0.0_to_4.2.0_schema.mysql.sql
 
 %files backend-ldap
 %{_libdir}/%{name}/libldapbackend.so
@@ -464,6 +467,11 @@ fi
 
 
 %changelog
+* Sun Mar 22 2020 Dionysis Kladis <dkstiler@gmail.com> 4.2.1-1.kng
+- Update to version 4.2.1 
+- Added new features support with newer source
+- Fixed errors for documents and missing files
+
 * Mon Dec 23 2019 John Pierce <john@luckytanuki.com> 4.1.13-2
 - Build for Kloxo NG
 
