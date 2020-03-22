@@ -267,7 +267,7 @@ This package contains the ixfrdist program.
     --disable-static \
     --disable-silent-rules \
     --with-modules="" \
-    --with-luajit=juajit \
+    --with-lua=juajit \
     --with-libsodium \
     --with-dynmodules='%{backends} random' \
     --enable-tools \
