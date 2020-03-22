@@ -6,13 +6,13 @@
 
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
-Version:		4.1.13
-Release:		2.kng%{dist}
+Version:		4.2.1
+Release:		1.kng%{dist}
 Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons
 URL:			http://www.powerdns.com/
-Source0:		http://downloads.powerdns.com/releases/pdns-4.1.13.tar.bz2
+Source0:		http://downloads.powerdns.com/releases/pdns-%{Version}.tar.bz2
 Source1:		pdns.service
 
 Patch0:			pdns-4.1.1-disable-secpoll.patch
@@ -168,15 +168,15 @@ BuildRequires:		mysql-devel
 %description		backend-mydns
 This package contains the MyDNS backend for the PowerDNS nameserver.
 
-%package backend-lua
-Summary: Lua backend for %{name}
+%package backend-lua2
+Summary: Lua2 backend for %{name}
 Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
 BuildRequires: lua-devel
-%global backends %{backends} lua
+%global backends %{backends} lua2
 
-%description backend-lua
-This package contains the lua backend for %{name}
+%description backend-lua2
+This package contains the lua2 backend for %{name}
 
 %package backend-sqlite
 Summary: SQLite backend for %{name}
@@ -246,7 +246,7 @@ This package contains the ixfrdist program.
 
 
 %prep
-%setup -q -n pdns-4.1.13
+%setup -q -n pdns-%{Version}
 
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
@@ -270,12 +270,14 @@ This package contains the ixfrdist program.
     --disable-silent-rules \
     --with-modules="" \
     --with-luajit=juajit \
-    --enable-libsodium \
+    --with-libsodium \
     --with-dynmodules='%{backends} random' \
     --enable-tools \
     --enable-unit-tests \
 %if 0%{?rhel} >= 7
    --enable-experimental-pkcs11 \
+   --enable-lua-records \
+   --enable-ixfrdist \
    --enable-systemd 
    %else
    --disable-lua-records \
@@ -407,8 +409,8 @@ fi
 %doc %{_defaultdocdir}/%{name}/dnsdomain2.schema
 %doc %{_defaultdocdir}/%{name}/pdns-domaininfo.schema
 
-%files backend-lua
-%{_libdir}/%{name}/libluabackend.so
+%files backend-lua2
+%{_libdir}/%{name}/liblua2backend.so
 %doc modules/luabackend/README
 
 %files backend-mydns
