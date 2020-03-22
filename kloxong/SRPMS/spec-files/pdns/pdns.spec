@@ -168,14 +168,14 @@ BuildRequires:		mysql-devel
 %description		backend-mydns
 This package contains the MyDNS backend for the PowerDNS nameserver.
 
-%package backend-lua
+%package backend-lua2
 Summary: Lua backend for %{name}
 Group: System Environment/Daemons
 Requires: %{name}%{?_isa} = %{version}-%{release}
-%global backends %{backends} lua
+%global backends %{backends} lua2
 
-%description backend-lua
-This package contains the lua backend for %{name}
+%description backend-lua2
+This package contains the lua2 backend for %{name}
 
 %package backend-sqlite
 Summary: SQLite backend for %{name}
@@ -407,8 +407,8 @@ fi
 %doc %{_defaultdocdir}/%{name}/dnsdomain2.schema
 %doc %{_defaultdocdir}/%{name}/pdns-domaininfo.schema
 
-%files backend-lua
-%{_libdir}/%{name}/libluabackend.so
+%files backend-lua2
+%{_libdir}/%{name}/liblua2backend.so
 %doc modules/luabackend/README
 
 %files backend-mydns
