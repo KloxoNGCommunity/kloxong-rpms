@@ -30,6 +30,24 @@ BuildRequires:		gcc
 BuildRequires:		gcc-c++
 
 %endif
+%if 0%{?rhel} >= 7
+Requires(post): systemd-sysv
+Requires(post): systemd-units
+Requires(preun): systemd-units
+Requires(postun): systemd-units
+BuildRequires: systemd
+BuildRequires: systemd-units
+BuildRequires: systemd-devel
+
+BuildRequires: protobuf-devel
+BuildRequires: protobuf-compiler
+BuildRequires: p11-kit-devel
+BuildRequires: libcurl-devel
+BuildRequires: boost-devel
+%else
+BuildRequires: boost148-devel
+BuildRequires: boost148-program-options
+%endif
 
 BuildRequires:		protobuf-devel
 BuildRequires:		krb5-devel
@@ -48,7 +66,14 @@ BuildRequires:  	gdbm-devel
 BuildRequires:  	libsodium-devel
 BuildRequires:  	libtool
 BuildRequires:  	pkgconfig
-BuildRequires: 		boost*
+
+%ifarch aarch64
+BuildRequires: lua-devel
+%define lua_implementation lua
+%else
+BuildRequires: luajit-devel
+%define lua_implementation luajit
+%endif
 
 
 
@@ -59,103 +84,147 @@ Requires(post):		systemd-units
 Requires(preun):	systemd-units
 Requires(postun):	systemd-units
 %endif
-Provides:		powerdns = %{version}-%{release}
+
+
+Provides: powerdns = %{version}-%{release}
+%global backends %{backends} bind
 
 %description
-PowerDNS is a versatile nameserver which supports a large number
-of different backends ranging from simple zonefiles to relational
-databases and load balancing/failover algorithms.
+The PowerDNS Nameserver is a modern, advanced and high performance
+authoritative-only nameserver. It is written from scratch and conforms
+to all relevant DNS standards documents.
+Furthermore, PowerDNS interfaces with almost any database.
 
-%package		backend-bind
-Summary:		Bind backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+%package tools
+Summary: Extra tools for %{name}
+Group: System Environment/Daemons
 
-%description		backend-bind
-The BindBackend parses a Bind-style named.conf and extracts information about
-zones from it. It makes no attempt to honour other configuration flags,
-which you should configure (when available) using the PDNS native configuration.
+%description tools
+This package contains the extra tools for %{name}
 
-%package		backend-mysql
-Summary:		MySQL backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		mysql-devel
+%package backend-mysql
+Summary: MySQL backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: mysql-devel
+%global backends %{backends} gmysql
 
-%description		backend-mysql
-This package contains the MySQL backend for the PowerDNS nameserver.
+%description backend-mysql
+This package contains the gmysql backend for %{name}
 
-%package		backend-postgresql
-Summary:		postgesql backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		postgresql-devel
+%package backend-postgresql
+Summary: PostgreSQL backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: postgresql-devel
+%global backends %{backends} gpgsql
 
-%description		backend-postgresql
-This package contains the postgesql backend for the PowerDNS nameserver.
+%description backend-postgresql
+This package contains the gpgsql backend for %{name}
 
-%package		backend-sqlite
-Summary:		sqlite3 backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+%package backend-pipe
+Summary: Pipe backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%global backends %{backends} pipe
 
-%description		backend-sqlite
-This package contains the sqlite3 backend for the PowerDNS nameserver.
+%description backend-pipe
+This package contains the pipe backend for %{name}
 
-%package		backend-ldap
-Summary:		LDAP backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		openldap-devel
+%package backend-remote
+Summary: Remote backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%global backends %{backends} remote
 
-%description		backend-ldap
-This package contains the LDAP backend for the PowerDNS nameserver.
+%description backend-remote
+This package contains the remote backend for %{name}
 
-%package		backend-lua
-Summary:		Lua backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{version}-%{release}
-BuildRequires:		lua-devel
+%package backend-ldap
+Summary: LDAP backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: openldap-devel
+%global backends %{backends} ldap
 
-%description		backend-lua
-This package contains the Lua backent for the PowerDNS nameserver.
+%description backend-ldap
+This package contains the LDAP backend for %{name}
 
-%package		backend-mydns
-Summary:		MyDNS backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
-BuildRequires:		mysql-devel
+%package backend-lua2
+Summary: Lua backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+%global backends %{backends} lua2
 
-%description		backend-mydns
-This package contains the MyDNS backend for the PowerDNS nameserver.
+%description backend-lua2
+This package contains the lua2 backend for %{name}
 
-%package		backend-pipe
-Summary:		Pipe/coprocess backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+%package backend-sqlite
+Summary: SQLite backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: sqlite-devel
+%global backends %{backends} gsqlite3
 
-%description		backend-pipe
-This package contains the pipe backend for the PowerDNS nameserver. This
-allows PowerDNS to retrieve domain info from a process that accepts
-questions on stdin and returns answers on stdout.
+%description backend-sqlite
+This package contains the SQLite backend for %{name}
 
-%package		backend-remote
-Summary:		Experimental remotere backend for %{name}
-Group:			System Environment/Daemons
-Requires:		%{name}%{?_isa} = %{epoch}:%{version}-%{release}
+%if 0%{?rhel} >= 7
+%package backend-odbc
+Summary: UnixODBC backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: unixODBC-devel
+%global backends %{backends} godbc
 
-%description		backend-remote
-This package contains the remote backend for the PowerDNS nameserver. This
-backend provides json based unix socket / pipe / http remoting for powerdns.
+%description backend-odbc
+This package contains the godbc backend for %{name}
 
-%package		tools
-Summary:		PowerDNS DNS tools
-Group:			Applications/System
-Conflicts:		%{name} < %{epoch}:%{version}-%{release}
-Conflicts:		%{name} > %{epoch}:%{version}-%{release}
+%package backend-geoip
+Summary: Geo backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: yaml-cpp-devel
+%if 0%{?rhel} <= 7
+BuildRequires: geoip-devel
+%endif
+BuildRequires: libmaxminddb-devel
+%global backends %{backends} geoip
 
-%description		tools
-This package contains the the PowerDNS DNS tools.
+%description backend-geoip
+This package contains the geoip backend for %{name}
+It allows different answers to DNS queries coming from different
+IP address ranges or based on the geoipgraphic location
+
+%package backend-lmdb
+Summary: LMDB backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: lmdb-devel
+%global backends %{backends} lmdb
+
+%description backend-lmdb
+This package contains the lmdb backend for %{name}
+
+%package backend-tinydns
+Summary: TinyDNS backend for %{name}
+Group: System Environment/Daemons
+Requires: %{name}%{?_isa} = %{version}-%{release}
+BuildRequires: tinycdb-devel
+%global backends %{backends} tinydns
+
+%description backend-tinydns
+This package contains the TinyDNS backend for %{name}
+
+%package ixfrdist
+BuildRequires: yaml-cpp-devel
+Summary: A progrm to redistribute zones over AXFR and IXFR
+Group: System Environment/Daemons
+
+%description ixfrdist
+This package contains the ixfrdist program.
+%endif
+
 
 %prep
 %setup -q -n pdns-4.1.13
@@ -165,7 +234,8 @@ This package contains the the PowerDNS DNS tools.
 %endif
 %patch0 -p1 -b .disable-secpoll
 
-
+# we may need this in case fails to find proper modules we can switch it with 
+#    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
 
 %build
 
@@ -178,9 +248,23 @@ This package contains the the PowerDNS DNS tools.
     --with-lua \
     --with-protobuf \
     --with-modules="" \
-    --with-dynmodules="bind gmysql gpgsql gsqlite3 ldap lua mydns pipe remote" \
+    --with-lua=%{lua_implementation} \
+    --enable-tools \
+    --with-libsodium \
+    --enable-unit-tests \
+    --with-dynmodules='%{backends} random' \
     --disable-static \
-    --enable-tools
+%if 0%{?rhel} >= 7
+   --enable-lua-records \
+   --enable-experimental-pkcs11 \
+   --enable-systemd \
+   --enable-ixfrdist
+%else
+   --disable-lua-records \
+   --without-protobuf \
+   --with-boost=/usr/include/boost148/ LDFLAGS=-L/usr/lib64/boost148 \
+   CXXFLAGS=-std=gnu++11
+%endif
 
 %if %{?fedora}0 > 150 || %{?rhel}0 >60
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
