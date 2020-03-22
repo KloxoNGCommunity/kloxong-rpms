@@ -264,14 +264,14 @@ This package contains the ixfrdist program.
     --sysconfdir=%{_sysconfdir}/%{name} \
     --with-sqlite3 \
     --with-protobuf \
+    --disable-static \
     --with-modules="" \
     --with-lua="lua" \
     --with-luajit="juajit" \  
-    --enable-tools \
     --with-libsodium \
-    --enable-unit-tests \
     --with-dynmodules='%{backends} random' \
-    --disable-static \
+    --enable-tools \
+    --enable-unit-tests \
 %if 0%{?rhel} >= 7
    --enable-lua-records \
    --enable-experimental-pkcs11 \
