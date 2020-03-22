@@ -251,7 +251,8 @@ This package contains the ixfrdist program.
 %if 0%{?rhel} == 6
 %patch10 -p1 -b .init
 %endif
-%patch0 -p1 -b .disable-secpoll
+# we will need secpoll in the future
+#%patch0 -p1 -b .disable-secpoll
 
 
 %build
