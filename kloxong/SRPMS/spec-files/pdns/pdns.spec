@@ -6,7 +6,7 @@
 Summary:		PowerDNS is a Versatile Database Driven Nameserver
 Name:			pdns
 Version:		4.1.13
-Release:		2.kng%{dist}
+Release:		3.kng%{dist}
 Epoch:			0
 License:		GPLv2
 Group:			System Environment/Daemons
@@ -286,7 +286,10 @@ exit 0
 
 
 %changelog
-* Mon Dec 23 2019 John Pierce <john@luckytanuki.com> 4.1.13-2
+* Fri Mar 27 2020 Dionysis Kladis <dkstiler@gmail.com> 4.1.13-3.kng
+- Added  openssl for secure dns comminication
+
+* Mon Dec 23 2019 John Pierce <john@luckytanuki.com> 4.1.13-2.kng
 - Build for Kloxo NG
 
 * Thu Aug 08 2019 Kees Monshouwer <mind04@monshouwer.org> 4.1.13-1
