@@ -24,6 +24,7 @@ BuildRequires:		boost-devel
 BuildRequires:		sqlite-devel
 BuildRequires:		lua-devel
 BuildRequires:		protobuf-devel
+BuildRequires:		openssl-devel
 
 Requires(pre):		shadow-utils
 Requires(post):		systemd-sysv
