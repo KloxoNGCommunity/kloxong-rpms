@@ -145,7 +145,7 @@ exclude=postfix* exim* ssmtp* pdns*
 # for varnish
 [kloxong-varnish]
 name=KloxoNG - Varnish for EL \$releasever
-baseurl=https://packagecloud.io/varnishcache/varnish5/el/$releasever/$basearch
+baseurl=https://packagecloud.io/varnishcache/varnish5/el/\$releasever/\$basearch
 repo_gpgcheck=1
 gpgcheck=0
 enabled=1
