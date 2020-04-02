@@ -1,2 +1,0 @@
-http://repos.kloxong.org/repo/kloxong/testing/centos6/i386/
-esting/centos6/i386/

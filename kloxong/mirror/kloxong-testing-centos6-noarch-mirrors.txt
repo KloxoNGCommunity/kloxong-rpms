@@ -1,2 +1,0 @@
-http://repos.kloxong.org/repo/kloxong/testing/centos6/noarch/
-esting/centos6/noarch/

@@ -1,2 +1,0 @@
-http://repos.kloxong.org/repo/kloxong/testing/centos7/x86_64/
-esting/centos7/x86_64/

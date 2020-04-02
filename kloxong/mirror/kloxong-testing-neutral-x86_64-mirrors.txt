@@ -1,2 +1,0 @@
-http://repos.kloxong.org/repo/kloxong/testing/neutral/x86_64/
-esting/neutral/x86_64/
