@@ -24,7 +24,7 @@ Kloxo Next Generation rpm release. This package contains yum configuration for t
 
 cat > kloxong.repo << _EOF_
 [kloxong-copr]
-name=Copr repo for kloxong
+name=kloxong master Copr repo 
 baseurl=https://copr-be.cloud.fedoraproject.org/results/kloxong/kloxong/epel-\$releasever-\$basearch/
 type=rpm-md
 skip_if_unavailable=True
@@ -35,7 +35,7 @@ enabled=1
 enabled_metadata=1
 
 [kloxong-copr-httpd24]
-name=Copr repo for kloxong
+name=kloxong httpd24 Copr repo 
 baseurl=https://copr-be.cloud.fedoraproject.org/results/kloxong/httpd24/epel-\$releasever-\$basearch/
 type=rpm-md
 skip_if_unavailable=True
@@ -45,60 +45,22 @@ repo_gpgcheck=0
 enabled=1
 enabled_metadata=1
 
-[kloxong-release-neutral-noarch]
-name=KloxoNG - release-neutral-noarch
-baseurl=https://%{repohost}/kloxong/release/neutral/noarch/
-#mirrorlist=https://%{mirrorhost}/kloxong-release-neutral-noarch-mirrors.txt
-enabled=1
-gpgcheck=0
-
-[kloxong-release-neutral-arch]
-name=KloxoNG - release-neutral-arch
-baseurl=https://%{repohost}/kloxong/release/neutral/\$basearch/
-#mirrorlist=https://%{mirrorhost}/kloxong-release-neutral-\$basearch-mirrors.txt
+[kloxong-copr-testing]
+name=kloxong testing Copr repo 
+baseurl=https://copr-be.cloud.fedoraproject.org/results/kloxong/httpd24/epel-\$releasever-\$basearch/
+type=rpm-md
+skip_if_unavailable=True
+gpgcheck=1
+gpgkey=https://copr-be.cloud.fedoraproject.org/results/kloxong/httpd24/pubkey.gpg
+repo_gpgcheck=0
 enabled=0
-gpgcheck=0
-
-[kloxong-release-version-noarch]
-name=KloxoNG - release-version-noarch
-baseurl=https://%{repohost}/kloxong/release/centos\$releasever/noarch/
-#mirrorlist=https://%{mirrorhost}/kloxong-release-centos\$releasever-noarch-mirrors.txt
-enabled=0
-gpgcheck=0
+enabled_metadata=0
 
 [kloxong-release-version-arch]
 name=KloxoNG - release-version-arch
 baseurl=https://%{repohost}/kloxong/release/centos\$releasever/\$basearch/
 #mirrorlist=https://%{mirrorhost}/kloxong-release-centos\$releasever-\$basearch-mirrors.txt
 enabled=1
-gpgcheck=0
-
-[kloxong-testing-neutral-noarch]
-name=KloxoNG - testing-neutral-noarch
-baseurl=https://%{repohost}/kloxong/testing/neutral/noarch/
-#mirrorlist=https://%{mirrorhost}/kloxong-testing-neutral-noarch-mirrors.txt
-enabled=0
-gpgcheck=0
-
-[kloxong-testing-neutral-arch]
-name=KloxoNG - testing-neutral-arch
-baseurl=https://%{repohost}/kloxong/testing/neutral/\$basearch/
-#mirrorlist=https://%{mirrorhost}/kloxong-testing-neutral-\$basearch-mirrors.txt
-enabled=0
-gpgcheck=0
-
-[kloxong-testing-version-noarch]
-name=KloxoNG - testing-version-noarch
-baseurl=https://%{repohost}/kloxong/testing/centos\$releasever/noarch/
-#mirrorlist=https://%{mirrorhost}/kloxong-testing-centos\$releasever-noarch-mirrors.txt
-enabled=0
-gpgcheck=0
-
-[kloxong-testing-version-arch]
-name=KloxoNG - testing-version-arch
-baseurl=https://%{repohost}/kloxong/testing/centos\$releasever/\$basearch/
-#mirrorlist=https://%{mirrorhost}/kloxong-testing-centos\$releasever-\$basearch-mirrors.txt
-enabled=0
 gpgcheck=0
 
 [kloxong-srpms]
@@ -157,7 +119,6 @@ mirrorlist=http://mirror.webtatic.com/yum/el\$releasever-testing/\$basearch/mirr
 enabled=1
 gpgcheck=0
 exclude=mysql* nginx*
-
 
 # ==================================
 
@@ -363,6 +324,15 @@ install -m 755 kloxong.repo %{buildroot}%{_sysconfdir}/yum.repos.d/kloxong.repo
 %{_sysconfdir}/yum.repos.d/kloxong.repo
 
 %changelog
+* Thu Apr 2 2020  John Parnell Pierce <john@luckytanuki.com> - 0.1.1-1
+- updated changelog for changes over 12 months
+- merge updates from Kloxo-MR
+- add kloxong repo to release spec
+- clean up spec file
+- add gpg key for varnish repo (Thanks DK)
+- update test repos
+- remove old kloxong neutral and no arch repos
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - rebrand to Kloxo Next Generation
 - change product name to kloxong
