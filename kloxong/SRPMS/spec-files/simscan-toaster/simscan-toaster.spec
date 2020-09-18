@@ -85,7 +85,7 @@ reject spam mail.
      control directory     = /var/qmail/control
      qmail queue program   = /var/qmail/bin/qmail-queue
      clamdscan program     = /usr/bin/clamdscan
-     clamav scan           = ON
+     clamav scan           = OFF
      trophie scanning      = OFF
      attachement scan      = ON
      ripmime program       = /usr/bin/ripmime
@@ -105,7 +105,7 @@ reject spam mail.
 
                 Current simcontrol config
      ----------------------------------------------------------
-     :clam=yes,spam=yes,spam_hits=12,attach=.mp3:.src:.bat:.pif
+     :clam=no,spam=yes,spam_hits=12,attach=.mp3:.src:.bat:.pif
      
      
 #-------------------------------------------------------------------------------
@@ -187,13 +187,14 @@ for i in AUTHORS ChangeLog INSTALL README TODO ssattach.example; do
 done
 
 pushd %{buildroot}%{qdir}/control
-  echo ":clam=yes,spam=yes,spam_hits=12,attach=.mp3:.src:.bat:.pif" > simcontrol
+  echo ":clam=no,spam=yes,spam_hits=12,attach=.mp3:.src:.bat:.pif" > simcontrol
 popd
 
 #-------------------------------------------------------------------------------
 %post
 #-------------------------------------------------------------------------------
 
+# updates simscan's database of virus scanner versions
 ./%{qdir}/bin/update-%{name}
 
 # We should not overwrite an exisiting tcp.smtp file in case it has custom items in it
