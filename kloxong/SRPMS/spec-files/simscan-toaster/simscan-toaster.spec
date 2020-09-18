@@ -1,7 +1,7 @@
 %define	name simscan
 %define	pversion 1.4.0
 %define 	bversion 1.4
-%define	rpmrelease 10.kng%{?dist}
+%define	rpmrelease 11.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 BuildRequires:	automake, autoconf
@@ -12,7 +12,7 @@ BuildRequires:	automake, autoconf
 
 %define	debug_package %{nil}
 %define	vtoaster %{pversion}
-%define	builddate Fri Jun 12 2009
+%define	builddate Fri Sep 18 2020
 
 
 
@@ -40,11 +40,13 @@ BuildRequires:	qmail-toaster >= 1.03-1.2.4, ripmime
 BuildRequires:	mysql-devel, mysql-libs, clamav, ripmime, clamd, spamassassin-toaster 
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav-toaster, ripmime-toaster
 #Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd
-Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd, spamassassin-toaster 
+#Requires:	qmail-toaster >= 1.03-1.2.4, clamav, ripmime, clamd, spamassassin-toaster 
+Requires:	qmail-toaster >= 1.03-1.2.4
 
 %if %{?fedora}0 > 150 || %{?rhel}0 >60
 BuildRequires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
-Requires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+#Requires: clamav-server, clamav-data, clamav-update, clamav-filesystem, clamav, clamav-scanner-systemd, clamav-devel, clamav-lib, clamav-server-systemd
+
 %endif
 
 Obsoletes:	clamav-toaster, ripmime-toaster
@@ -268,6 +270,8 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Fri Sep 18 2020 John Pierce <john@luckytanuki.com>  1.4.0-1.4.11.kng
+- set no 'requires' for clamav, clamd and ripmime (need manual install)
 * Wed Jan 8 2020 John Pierce <john@luckytanuki.com>  1.4.0-1.4.10.kng
 - Comment out folders already provided by Requires
 * Mon Dec 23 2019 John Pierce <john@luckytanuki.com>  1.4.0-1.4.9.kng
