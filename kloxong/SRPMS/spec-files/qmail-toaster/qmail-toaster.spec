@@ -898,7 +898,7 @@ fi
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
 #%attr(-,root,qmail) %{qdir}/bin/qmail-queue
-%attr(-,root,qmail) %{qdir}/control/domainkeys
+
 
 # supervise
 #-------------------------------------------------------------------------------
