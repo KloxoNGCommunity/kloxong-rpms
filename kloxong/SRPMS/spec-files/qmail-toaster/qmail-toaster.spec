@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 58.kng%{?dist}
+%define 	rpmrelease 59.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -1094,6 +1094,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Dec 28 2020 John Pierce <john@luckytanuki.com> 1.03-1.3.59.kng
+- Remove duplicate directive setting control/domainkeys attributes
+
 * Sun Dec 22 2019 John Pierce <john@luckytanuki.com> 1.03-1.3.58.kng
 - Fix directive for /queue that was changing ownership of mutex file
 
