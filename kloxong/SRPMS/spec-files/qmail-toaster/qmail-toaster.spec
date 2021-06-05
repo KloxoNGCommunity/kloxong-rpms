@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 59.kng%{?dist}
+%define 	rpmrelease 60.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -318,7 +318,7 @@ install -d %{buildroot}%{qdir}/alias
 install -d %{buildroot}%{qdir}/control
 install -d %{buildroot}%{qdir}/owners
 install -d %{buildroot}%{qdir}/users
-install -d %{buildroot}%{qdir}/control/domainkeys
+install -d -m755 %{buildroot}%{qdir}/control/domainkeys
 #install -d %{buildroot}%{qdir}/control/tlshosts
 #install -d %{buildroot}%{qdir}/control/tlshosts/exhaustivelist
 install -d %{buildroot}%{qdir}/bin
@@ -476,6 +476,7 @@ pushd %{buildroot}%{qdir}/control
   echo "Welcome to Qmail Toaster Ver. %{bversion} SMTP Server" > smtpgreeting
   echo "-r zen.spamhaus.org" > blacklists
   chmod 644 *
+  chmod 755 domainkeys 
 popd
 
 # Make users dir and files
@@ -1088,6 +1089,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Sat Jun 5 2021 John Pierce <john@luckytanuki.com> 1.03-1.3.60.kng
+- Restore permissions to domainkeys folder after wildcard permission change to control folder
+
 * Mon Dec 28 2020 John Pierce <john@luckytanuki.com> 1.03-1.3.59.kng
 - Remove duplicate directive setting control/domainkeys attributes
 
