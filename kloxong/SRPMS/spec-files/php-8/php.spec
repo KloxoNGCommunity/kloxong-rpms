@@ -59,8 +59,8 @@
 %endif
 
 Summary: PHP scripting language for creating dynamic web sites
-Name: php
-Version: %{upver}
+Name: php80
+Version: 8.0.6
 Release: 3%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -166,7 +166,10 @@ The php package contains the module (often referred to as mod_php)
 which adds support for the PHP language to Apache HTTP Server when
 running in prefork mode. This module is deprecated.
 %endif
-
+%package -n mod_%{name}
+Summary: PHP module for the Apache HTTP Server
+# ensure we build with stock httpd, not httpd24u
+BuildRequires: httpd-devel < 2.4.10
 %if %{with_modphp}
 Requires: httpd-mmn = %{_httpd_mmn}
 
