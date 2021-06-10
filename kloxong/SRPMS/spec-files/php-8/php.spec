@@ -58,6 +58,13 @@
 %global with_libpcre  0
 %endif
 
+# httpd 2.4.10 with httpd-filesystem and sethandler support
+%if 0%{?fedora} >= 21 || 0%{?rhel} >= 8
+%global with_httpd2410 1
+%else
+%global with_httpd2410 0
+%endif
+
 Summary: PHP scripting language for creating dynamic web sites
 Name: php80
 Version: 8.0.6
@@ -126,8 +133,10 @@ BuildRequires: bzip2-devel
 BuildRequires: pkgconfig(libcurl)  >= 7.29.0
 BuildRequires: httpd-devel >= 2.0.46-1
 BuildRequires: pam-devel
+%if %{with_httpd2410}
 # to ensure we are using httpd with filesystem feature (see #1081453)
 BuildRequires: httpd-filesystem
+%endif
 # to ensure we are using nginx with filesystem feature (see #1142298)
 BuildRequires: nginx-filesystem
 BuildRequires: libstdc++-devel
@@ -243,48 +252,26 @@ BuildRequires: pkgconfig(libsystemd) >= 209
 Requires: php-common%{?_isa} = %{version}-%{release}
 Requires(pre): /usr/sbin/useradd
 %{?systemd_requires}
+%if %{with_httpd2410}
 # To ensure correct /var/lib/php/session ownership:
 Requires(pre): httpd-filesystem
 # For php.conf in /etc/httpd/conf.d
 # and version 2.4.10 for proxy support in SetHandler
 Requires: httpd-filesystem >= 2.4.10
+%endif
 # php engine for Apache httpd webserver
 Provides: php(httpd)
 # safe replacement
 Provides:  php-fpm = %{version}-%{release}
 Provides:  php-fpm%{?_isa} = %{version}-%{release}
 Conflicts: php-fpm < %{version}-%{release}
-# for /etc/nginx ownership
-Requires: nginx-filesystem
+
 
 %description fpm
 PHP-FPM (FastCGI Process Manager) is an alternative PHP FastCGI
 implementation with some additional features useful for sites of
 any size, especially busier sites.
 
-%package fpm-nginx
-Summary: Nginx configuration for PHP-FPM
-BuildArch: noarch
-Requires: %{name}-fpm = %{version}-%{release}
-Requires: nginx
-# safe replacement
-Provides:  php-fpm-nginx = %{version}-%{release}
-Conflicts: php-fpm-nginx < %{version}-%{release}
-
-%description fpm-nginx
-Nginx configuration files for the PHP FastCGI Process Manager.
-
-%package fpm-httpd
-Summary: Apache HTTP Server configuration for PHP-FPM
-BuildArch: noarch
-Requires: %{name}-fpm = %{version}-%{release}
-Requires: httpd >= 2.4
-# safe replacement
-Provides:  php-fpm-httpd = %{version}-%{release}
-Conflicts: php-fpm-httpd < %{version}-%{release}
-
-%description fpm-httpd
-Apache HTTP Server configuration file for the PHP FastCGI Process Manager.
 %package common
 Summary: Common files for PHP
 # All files licensed under PHP version 3.01, except
