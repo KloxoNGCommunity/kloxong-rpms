@@ -35,6 +35,9 @@
 # needed at srpm build time, when httpd-devel not yet installed
 %{!?_httpd_mmn:        %{expand: %%global _httpd_mmn        %%(cat %{_includedir}/httpd/.mmn 2>/dev/null || echo 0-0)}}
 
+%global upver        8.0.6
+#global rcver        RC1
+
 # subpackages
 %global with_firebird 1
 %global with_imap     1
@@ -48,13 +51,19 @@
 %global with_zts      1
 %global with_lmdb     1
 %global with_libgd    1
-%global with_libpcre  1
+
 %else
-%global upver        8.0.6
-#global rcver        RC1
+
 %global with_zts      0
 %global with_lmdb     0
 %global with_libgd    0
+%endif
+
+%if 0%{?fedora} >= 27 || 0%{?rhel} >= 8
+# switch to bundled library using --without libpcre
+%global with_libpcre  1
+%else
+# switch to system library using --with libpcre
 %global with_libpcre  0
 %endif
 
