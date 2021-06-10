@@ -146,7 +146,11 @@ BuildRequires: pkgconfig(sqlite3) >= 3.7.4
 BuildRequires: pkgconfig(zlib) >= 1.2.0.4
 BuildRequires: smtpdaemon
 BuildRequires: pkgconfig(libedit)
+%if %{with_libpcre}
 BuildRequires: pkgconfig(libpcre2-8) >= 10.30
+%else
+Provides:      bundled(pcre2) = 10.32
+%endif
 BuildRequires: bzip2
 BuildRequires: perl-interpreter
 BuildRequires: autoconf
@@ -467,7 +471,7 @@ Provides: php_database
 Provides: php-pdo_pgsql, php-pdo_pgsql%{?_isa}
 BuildRequires: krb5-devel
 BuildRequires: openssl-devel >= 1.0.1
-BuildRequires: libpq-devel
+BuildRequires: postgresql-devel
 # safe replacement
 Provides:  php-pgsql = %{version}-%{release}
 Provides:  php-pgsql%{?_isa} = %{version}-%{release}
@@ -621,9 +625,28 @@ support for multi-byte string handling to PHP.
 %package gd
 Summary: A module for PHP applications for using the gd graphics library
 # All files licensed under PHP version 3.01
+%if %{with_libgd}
 License: PHP
+%else
+# bundled libgd is licensed under BSD
+License: PHP and BSD
+%endif
 Requires: php-common%{?_isa} = %{version}-%{release}
+%if %{with_libgd}
 BuildRequires: pkgconfig(gdlib) >= 2.1.1
+%else
+# Required to build the bundled GD library
+BuildRequires: libjpeg-devel
+BuildRequires: libpng-devel
+BuildRequires: freetype-devel
+BuildRequires: libXpm-devel
+BuildRequires: libwebp-devel
+Provides: bundled(gd) = 2.0.35
+%endif
+# safe replacement
+Provides:  php-gd = %{version}-%{release}
+Provides:  php-gd%{?_isa} = %{version}-%{release}
+Conflicts: php-gd < %{version}-%{release}
 
 %description gd
 The php-gd package contains a dynamic shared object that will add
@@ -770,7 +793,7 @@ Summary: Enchant spelling extension for PHP applications
 # All files licensed under PHP version 3.0
 License: PHP
 Requires: php-common%{?_isa} = %{version}-%{release}
-BuildRequires: pkgconfig(enchant-2)
+BuildRequires: pkgconfig(enchant)
 # safe replacement
 Provides:  php-enchant = %{version}-%{release}
 Provides:  php-enchant%{?_isa} = %{version}-%{release}
