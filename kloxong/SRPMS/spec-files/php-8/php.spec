@@ -250,7 +250,7 @@ Requires(pre): httpd-filesystem
 Requires: httpd-filesystem >= 2.4.10
 # php engine for Apache httpd webserver
 Provides: php(httpd)
- safe replacement
+# safe replacement
 Provides:  php-fpm = %{version}-%{release}
 Provides:  php-fpm%{?_isa} = %{version}-%{release}
 Conflicts: php-fpm < %{version}-%{release}
@@ -482,6 +482,10 @@ Provides: php-pdo_pgsql, php-pdo_pgsql%{?_isa}
 BuildRequires: krb5-devel
 BuildRequires: openssl-devel >= 1.0.1
 BuildRequires: libpq-devel
+# safe replacement
+Provides:  php-pgsql = %{version}-%{release}
+Provides:  php-pgsql%{?_isa} = %{version}-%{release}
+Conflicts: php-pgsql < %{version}-%{release}
 
 %description pgsql
 The php-pgsql package add PostgreSQL database support to PHP.
