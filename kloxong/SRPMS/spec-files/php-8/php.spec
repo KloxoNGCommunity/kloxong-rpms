@@ -1028,7 +1028,9 @@ ln -sf ../configure
     --without-gdbm \
     --with-openssl \
     --with-system-ciphers \
+%if %{with_libpcre}
     --with-external-pcre \
+%endif
 %ifarch s390 s390x sparc64 sparcv9 riscv64
     --without-pcre-jit \
 %endif
