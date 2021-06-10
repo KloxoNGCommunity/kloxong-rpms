@@ -42,6 +42,7 @@
 %global with_sodium   1
 %global with_pspell   1
 %global with_tidy     1
+%global with_modphp   1
 
 %if 0%{?fedora}
 %global with_zts      1
@@ -59,7 +60,7 @@
 
 Summary: PHP scripting language for creating dynamic web sites
 Name: php
-Version: %{upver}%{?rcver:~%{rcver}}
+Version: %{upver}
 Release: 3%{?dist}
 # All files licensed under PHP version 3.01, except
 # Zend is licensed under Zend
@@ -151,21 +152,6 @@ BuildRequires: systemtap-sdt-devel
 BuildRequires: %{_bindir}/ps
 
 
-
-
-# For backwards-compatibility, pull the "php" command
-#Recommends: php-cli%{?_isa}      = %{version}-%{release}
-# httpd have threaded MPM by default
-#Recommends: php-fpm%{?_isa}      = %{version}-%{release}
-# as "php" is now mostly a meta-package, commonly used extensions
-# reduce diff with "dnf module install php"
-#Recommends: php-mbstring%{?_isa} = %{version}-%{release}
-#Recommends: php-opcache%{?_isa}  = %{version}-%{release}
-#Recommends: php-pdo%{?_isa}      = %{version}-%{release}
-#%if %{with_sodium}
-#Recommends: php-sodium%{?_isa}   = %{version}-%{release}
-#%endif
-#Recommends: php-xml%{?_isa}      = %{version}-%{release}
 
 
 %description
