@@ -355,7 +355,6 @@ Requires: zlib-devel%{?_isa}
 Provides: php-zts-devel = %{version}-%{release}
 Provides: php-zts-devel%{?_isa} = %{version}-%{release}
 %endif
-Recommends: php-nikic-php-parser4 >= 4.3.0
 
 # safe replacement
 Provides:  php-devel = %{version}-%{release}
