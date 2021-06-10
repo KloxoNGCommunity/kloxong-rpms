@@ -1065,7 +1065,14 @@ build --libdir=%{_libdir}/php \
       --enable-mbstring=shared \
       --enable-mbregex \
       --enable-gd=shared \
+%if %{with_libgd}
       --with-external-gd \
+%else
+      --with-freetype \
+      --with-webp \
+      --with-jpeg \
+      --with-xpm \
+%endif
       --with-gmp=shared \
       --enable-calendar=shared \
       --enable-bcmath=shared \
@@ -1198,7 +1205,14 @@ build --includedir=%{_includedir}/php-zts \
       --enable-mbstring=shared \
       --enable-mbregex \
       --enable-gd=shared \
+%if %{with_libgd}
       --with-external-gd \
+%else
+      --with-freetype \
+      --with-webp \
+      --with-jpeg \
+      --with-xpm \
+%endif
       --with-gmp=shared \
       --enable-calendar=shared \
       --enable-bcmath=shared \
