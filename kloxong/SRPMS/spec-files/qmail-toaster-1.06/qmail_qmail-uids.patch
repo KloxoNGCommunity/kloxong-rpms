@@ -81,7 +81,7 @@ diff -u qmail-1.03-orig/auto-uid.c qmail-1.03/auto-uid.c
 diff -u qmail-1.03-orig/conf-groups qmail-1.03/conf-groups
 --- qmail-1.03-orig/conf-groups	1998-06-15 06:53:16.000000000 -0400
 +++ qmail-1.03/conf-groups	2013-11-11 07:46:41.133263863 -0500
-@@ -1,5 +1,5 @@
+@@ -1,5 +1,6 @@
 -qmail
 -nofiles
 +qmail 2108
