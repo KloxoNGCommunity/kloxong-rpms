@@ -79,8 +79,8 @@ diff -u qmail-1.03-orig/auto-uid.c qmail-1.03/auto-uid.c
    if (substdio_flush(&ss1) == -1) _exit(111);
    _exit(0);
 diff -u qmail-1.03-orig/conf-groups qmail-1.03/conf-groups
---- ./netqmail-1.06-orig/conf-groups	2021-06-24 14:40:04.880837745 +1000
-+++ ./netqmail-1.06/conf-groups	2021-06-24 14:28:18.000000000 +1000
+--- ../netqmail-1.06-orig/conf-groups	2021-06-24 14:40:04.880837745 +1000
++++ netqmail-1.06/conf-groups	2021-06-24 14:28:18.000000000 +1000
 @@ -1,5 +1,5 @@
 -qmail
 -nofiles
@@ -91,8 +91,8 @@ diff -u qmail-1.03-orig/conf-groups qmail-1.03/conf-groups
  These are the qmail groups. The second group should not have access to
 
 diff -u qmail-1.03-orig/conf-users qmail-1.03/conf-users
---- ./netqmail-1.06-orig/conf-users	2021-06-24 14:40:04.880837745 +1000
-+++ ./netqmail-1.06/conf-users	2021-06-24 14:28:18.000000000 +1000
+--- ../netqmail-1.06-orig/conf-users	2021-06-24 14:40:04.880837745 +1000
++++ netqmail-1.06/conf-users	2021-06-24 14:28:18.000000000 +1000
 @@ -1,11 +1,11 @@
 -alias
 -qmaild
