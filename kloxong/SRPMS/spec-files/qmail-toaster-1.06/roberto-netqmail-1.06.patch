@@ -1,3 +1,10 @@
+v. 2021.06.19
+
+Combined patch for netqmail-1.06 by Roberto Puzzanghera [roberto dot puzzanghera at sagredo dot eu]
+More info at https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html and README.PATCH file.
+
+==========================================================================================================
+
 diff -ruN ../netqmail-1.06-original/CHANNELS netqmail-1.06/CHANNELS
 --- ../netqmail-1.06-original/CHANNELS	1970-01-01 01:00:00.000000000 +0100
 +++ netqmail-1.06/CHANNELS	2019-06-26 16:39:31.572826981 +0200
@@ -1073,7 +1080,7 @@ diff -ruN ../netqmail-1.06-original/MakeArgs.c netqmail-1.06/MakeArgs.c
 +}
 diff -ruN ../netqmail-1.06-original/Makefile netqmail-1.06/Makefile
 --- ../netqmail-1.06-original/Makefile	2007-11-30 21:22:54.000000000 +0100
-+++ netqmail-1.06/Makefile	2019-06-26 16:48:00.745225709 +0200
++++ netqmail-1.06/Makefile	2021-06-11 23:04:18.911491354 +0200
 @@ -1,5 +1,14 @@
  # Don't edit Makefile! Use conf-* for configuration.
  
@@ -2204,7 +2211,7 @@ diff -ruN ../netqmail-1.06-original/Makefile netqmail-1.06/Makefile
 +update_tmprsadh: \
 +conf-qmail conf-users conf-groups update_tmprsadh.sh
 +	@cat update_tmprsadh.sh\
-+	| sed s}UGQMAILD}"`head -2 conf-users|tail -1`:`head -1 conf-groups`"}g \
++	| sed s}UGQMAILD}"`head -9 conf-users|tail -1`:`head -3 conf-groups|tail -1`"}g \
 +	| sed s}QMAIL}"`head -1 conf-qmail`"}g \
 +	> $@
 +	chmod 755 update_tmprsadh 
@@ -2218,7 +2225,7 @@ diff -ruN ../netqmail-1.06-original/Makefile netqmail-1.06/Makefile
 +	./compile policy.c `head -1 conf-policy`
 diff -ruN ../netqmail-1.06-original/Makefile-cert.mk netqmail-1.06/Makefile-cert.mk
 --- ../netqmail-1.06-original/Makefile-cert.mk	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/Makefile-cert.mk	2019-02-27 20:57:13.379025191 +0100
++++ netqmail-1.06/Makefile-cert.mk	2021-06-12 17:45:31.867565636 +0200
 @@ -0,0 +1,21 @@
 +cert-req: req.pem
 +cert cert-req: QMAIL/control/clientcert.pem
@@ -2229,47 +2236,51 @@ diff -ruN ../netqmail-1.06-original/Makefile-cert.mk netqmail-1.06/Makefile-cert
 +
 +QMAIL/control/servercert.pem:
 +	PATH=$$PATH:/usr/local/ssl/bin \
-+		openssl req -new -x509 -nodes -days 366 -out $@ -keyout $@
++		openssl req -new -newkey rsa:4096 -x509 -nodes -days 366 -out $@ -keyout $@
 +	chmod 640 $@
-+	chown `head -2 conf-users | tail -1`:`head -1 conf-groups` $@
++	chown `head -9 conf-users | tail -1`:`head -3 conf-groups | tail -1` $@
 +
 +req.pem:
 +	PATH=$$PATH:/usr/local/ssl/bin openssl req \
-+		-new -nodes -out $@ -keyout QMAIL/control/servercert.pem
++		-new -newkey rsa:4096 -nodes -out $@ -keyout QMAIL/control/servercert.pem
 +	chmod 640 QMAIL/control/servercert.pem
-+	chown `head -2 conf-users | tail -1`:`head -1 conf-groups` QMAIL/control/servercert.pem
++	chown `head -9 conf-users | tail -1`:`head -3 conf-groups | tail -1` QMAIL/control/servercert.pem
 +	@echo
 +	@echo "Send req.pem to your CA to obtain signed_req.pem, and do:"
 +	@echo "cat signed_req.pem >> QMAIL/control/servercert.pem"
 diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 --- ../netqmail-1.06-original/README.PATCH	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/README.PATCH	2019-12-08 09:44:10.947578845 +0100
-@@ -0,0 +1,518 @@
-+v. 2019.12.08
++++ netqmail-1.06/README.PATCH	2021-06-19 19:24:16.871969574 +0200
+@@ -0,0 +1,583 @@
++v. 2021.06.19
 +Combined patch for netqmail-1.06 by Roberto Puzzanghera [roberto dot puzzanghera at sagredo dot eu]
 +More info at https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html
 +==========================================================================================================
 +
 += This patch puts together
-+* Erwin Hoffmann's qmail-authentication patch v. 0.8.3 (23.08.2015), which updates the patches provided by
-+  Krysztof Dabrowski and Bjoern Kalkbrenner.
++* Erwin Hoffmann's qmail-authentication patch v. 0.8.3, which updates the patches provided
++  by Krysztof Dabrowski and Bjoern Kalkbrenner.
 +  It provides cram-md5, login, plain authentication support for qmail-smtpd and qmail-remote.
 +  http://www.fehcom.de/qmail/smtpauth.html##PATCHES
-+* Frederik Vermeulen's qmail-tls patch v. 20190517
++* Frederik Vermeulen's qmail-tls patch v. 20200107
 +  implements SSL or TLS encrypted and authenticated SMTP.
++  The key is now 4096 bit long and the cert will be owned by vpopmail:vchkpw
 +  http://inoa.net/qmail-tls/
 +  The file update_tmprsadh was modified to chown all .pem files to vpopmail.
 +* Marcel Telka's force-tls patch v. 2016.05.15
 +  optionally gets qmail to require TLS before authentication to improve security.
 +  You have to declare FORCETLS=0 if you want to allow the auth without TLS
-+  https://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/roberto-netqmail-1.06_force-tls.patch-2012.10.28
++  https://notes.sagredo.eu/files/qmail/patches/roberto-netqmail-1.06_force-tls/force-tls_marcel.patch
 +* Antonio Nati's chkuser patch v. 2.0.9
 +  performs, among the other things, a check for the existence of recipients during the SMTP conversation,
 +  bouncing emails of fake senders.
-+  http://www.interazioni.it/opensource/chkuser/
++  http://opensource.interazioni.it/qmail/chkuser.html
++  Small adjustments and a bug fix by Luca Franceschini here https://notes.sagredo.eu/files/qmail/patches/dmind/20190807/:
++  Now CHKUSER_DISABLE_VARIABLE, CHKUSER_SENDER_NOCHECK_VARIABLE, CHKUSER_SENDER_FORMAT_NOCHECK,
++  CHKUSER_RCPT_FORMAT_NOCHECK and CHKUSER_RCPT_MX_NOCHECK can be defined at runtime level as well.
 +* Flavio Curti's qmail-queue-custom-error patch
 +  enables simscan and qmail-dkim to return the appropriate message for each e-mail it refuses to deliver.
-+  https://no-way.org/uploads/qmail-error/
++  https://notes.sagredo.eu/files/qmail/patches/qmail-queue-custom-error-v2.netqmail-1.05.patch
 +* Christophe Saout's qmail-SPF rc5 patch
 +  Modified by Manvendra Bhangui to make it IPv4-mapped IPv6 addresses compliant.
 +  checks incoming mails inside the SMTP daemon, add Received-SPF lines and optionally block undesired transfers.
@@ -2279,13 +2290,13 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  http://www.mco2.com.br/opensource/qmail/srs/
 +* Christopher K. Davis' oversize dns patch
 +  enables qmail to handle large DNS packets.
-+  http://www.ckdhr.com/ckd/qmail-103.patch
++  https://notes.sagredo.eu/files/qmail/patches/qmail-bigdns-103.patch
 +* Jul's reread-concurrency v.2 patch
 +  rereads control/concurrencylocal and control/concurrencyremote files when qmail-send receives a HUP signal.
 +  http://js.hu/package/qmail/index.html
 +* Johannes Erdfelt's Big Concurrency patch
 +  sets the spawn limit above 255
-+  http://qmail.org/big-concurrency.patch
++  https://notes.sagredo.eu/files/qmail/patches/big-concurrency.patch
 +* Mihai Secasiu's Big Concurrency fix v.1.0 patch
 +  fixes a compiler error if you set concurrency higher than 509 in conf-spawn.
 +  http://patchlog.com/linux/qmail-big-concurrency/
@@ -2302,7 +2313,7 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  adds a user-definable delay after SMTP clients have initiated SMTP sessions, prior to qmail-smtpd responding
 +  with "220 ESMTP". It can reject connections from clients which tried to send commands before greeting.
 +  https://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/qmail-greetdelay.patch
-+* Manvendra Bhangui's DKIM and SURBL filter v.1.26 patch
++* Manvendra Bhangui's DKIM and SURBL filter v.1.28 patch
 +  adds DKIM signing & verification and SURBL filtering support to qmail.
 +  qmail-dk is based on Russ Nelson's patch: http//:www.qmail.org/qmail-1.03-dk-0.54.patch
 +  qmail-dkim uses hacked libdkim libraries from libdkim project at http://libdkim.sourceforge.net/
@@ -2313,10 +2324,11 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/ANNOUNCE.surblfilter
 +* Claudio Jeker and Andre Oppermann's EXTTODO patch (release 5. Jan. 2003)
 +  addresses a problem known as the silly qmail (queue)  problem
-+  http://www.nrg4u.com/qmail/ext_todo-20030105.patch
++  https://notes.sagredo.eu/files/qmail/patches/exttodo.README
++  https://notes.sagredo.eu/files/qmail/patches/ext_todo-20030105.patch
 +* Russell Nelson's big-todo patch
 +  makes qmail use a hashing mechanism in the todo folder similar to that used in the rest of the queue
-+  http://www.qmail.org/big-todo.103.patch
++  https://notes.sagredo.eu/files/qmail/patches/big-todo.103.patch
 +* Stephane Cottin's qmail-inject-null-sender patch (let's call it in this way)
 +  prevents qmail-inject from rewriting the null sender, fixing an issue with sieve vacation/reject messages.
 +  More info here: http://www.dovecot.org/list/dovecot/2009-June/040811.html
@@ -2325,25 +2337,27 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  version by Russel Nelson
 +  prevents double bounces from hitting your queue a second time provided that you delete the first line
 +  from /var/qmail/control/doublebounceto
-+  http://qmail.org/doublebounce-trim.patch
++  https://notes.sagredo.eu/files/qmail/patches/doublebounce-trim.patch
 +* Will Harris' esmtp-size patch
 +  enables qmail-smtpd to reject messages if they're larger than the maximum number of bytes allowed
 +  according to the /var/qmail/control/databytes control file.
-+  http://will.harris.ch/qmail-smtpd.c.diff
++  https://notes.sagredo.eu/files/qmail/patches/esmtp-size.diff
 +* Inter7's qmail-taps-extended patch
 +  http://notes.sagredo.eu/files/qmail/patches/qmail-tap.diff
 +  Extended by Michai Secasiu (http://patchlog.com/patches/qmail-taps-extended/)
 +  Provides the ability to archive each email that flows through the system.
 +  Archiving only messages from or to certain email addresses is possible as well.
++  https://notes.sagredo.eu/files/qmail/patches/qmail-taps-extended-full.patch
 +* Rolf Eike Beer's qmail-remote CRLF patch
 +  enables qmail-remote to handle CR properly, always sending the line breaks as CRLF and avoiding to
 +  double the CR (like qmail-remote normally does)
 +  http://opensource.sf-tec.de/qmail/
++  http://opensource.sf-tec.de/qmail/qmail-remote-CRLF.diff
 +* Andy Repton's outgoingip patch (adjusted by Sergio Gelato)
 +  by default all outgoing emails are sent through the first IP address on the interface. In case of a multiple
 +  IP server this patch makes qmail send outgoing emails with the IP eventually stored in control/outgoingip.
 +  The ehlo domain is NOT modified by this patch.
-+  http://www.qmail.org/outgoingip.patch
++  https://notes.sagredo.eu/files/qmail/patches/outgoingip.patch
 +  Robbie Walker provided a patch to correct qmail-qmqpc.c's call to timeoutconn(), because the function
 +  signature was modified by the original outgoingip patch
 +  https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html#comment373
@@ -2353,13 +2367,9 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  The pid allows you to match the message up with a given tcpserver process and the qp lets you find a
 +  particular delivery.
 +  http://iain.cx/qmail/patches.html#smtpd_pidqp
-+* Jonathan de Boyne Pollard's any-to-cname patch
-+  avoids qmail getting large amounts of DNS data we have no interest in and that may overflow our response
-+  buffer.
-+  http://www.memoryhole.net/qmail/#any-to-cname
 +* Matthias Andree's qmail-rfc2821 patch
 +  makes qmail rfc2821 compliant
-+  http://www-dt.e-technik.uni-dortmund.de/~ma/qmail/patch-qmail-1.03-rfc2821.diff
++  https://notes.sagredo.eu/files/qmail/patches/qmail-1.03-rfc2821.diff
 +* Jonathan de Boyne Pollard's smtpd-502-to-500 patch
 +  makes qmail rfc2821 compliant
 +  https://notes.sagredo.eu/files/qmail/patches/smtpd-502-to-500.patch
@@ -2371,8 +2381,8 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +* Scott Gifford's qmail-moreipme patch v. 0.6
 +  prevents a problem caused by an MX or other mail routing directive instructing qmail to connect to
 +  itself without realizing it's connecting to itself, saving CPU time.
-+  http://www.suspectclass.com/sgifford/qmail/qmail-1.03-moreipme.README
-+  http://www.suspectclass.com/sgifford/qmail/qmail-1.03-moreipme-0.6.patch
++  https://notes.sagredo.eu/files/qmail/patches/moreipme.README
++  https://notes.sagredo.eu/files/qmail/patches/qmail-1.03-moreipme-0.6.patch
 +* Alex Nee's qmail-hide-ip-headers patch
 +  It will hide your Private or Public IP in the email Headers when you are sending Mail as a Relay Client.
 +  https://notes.sagredo.eu/files/qmail/patches/qmail-hide-ip-headers.patch
@@ -2387,31 +2397,33 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  allows you to set a limit on how many recipients are specified for any one email message by setting
 +  control/maxrcpt. RFC 2821 section 4.5.3.1 says that an MTA MUST allow at least 100 recipients for each
 +  message, since this is one of the favourite tricks of the spammer.
-+  http://copilotco.com/mail-archives/qmail.1997/msg03066.html
++  https://notes.sagredo.eu/files/qmail/patches/maxrcpt.patch
 +* Inter7's qmail-eMPF patch
-+  More info: http://www.qmailwiki.org/EMPF
++  More info: https://notes.sagredo.eu/files/qmail/patches/empf.README
 +  eMPF follows a set of administrator-defined rules describing who can message whom.  With this,
 +  companies can segregate various parts of their organizations email activities, as well as provide a
 +  variety of security-enhancing services.
++  https://notes.sagredo.eu/files/qmail/patches/qmail-empf.patch
 +* qregex (by  Andrew St. Jean http://www.arda.homeunix.net/downloads-qmail/, contributors: Jeremy Kitchen,
 +  Alex Pleiner,
 +  Thanos Massias. Original patch by Evan Borgstrom)
 +  adds the ability to match address evelopes via Regular Expressions (REs) in the qmail-smtpd process.
 +  Added new control file 'badhelonorelay', control/badmailto renamed control/badrcptto (Tx Luca Franceschini).
 +* brtlimit
-+  Luca Franceschini derived this patch from http://netdevice.com/qmail/patch/goodrcptto-12.patch
++  Luca Franceschini derived this patch from https://notes.sagredo.eu/files/qmail/patches/goodrcptto-12.patch
 +  added control/brtlimit and BRTLIMIT variable to limit max invalid recipient errors before closing
 +  the connection (man qmail-control)
 +* validrcptto
 +  https://notes.sagredo.eu/files/qmail/patches/validrcptto.README
 +  Luca Franceschini grabbed the code from several patches with additional features:
 +  http://qmail.jms1.net/patches/validrcptto cdb.shtml,
-+  http://netdevice.com/qmail/patch/goodrcptto-ms-12.patch, http://patch.be/qmail/badrcptto.html
++  https://notes.sagredo.eu/files/qmail/patches/goodrcptto-ms-12.patch,
++  http://patch.be/qmail/badrcptto.html
 +  It works in conjunction with chkuser with both cdb and mysql accounts.
 +* reject-relay-test by Russell Nelson
-+  http://qmail.org/qmail-smtpd-relay-reject
 +  It gets qmail to reject relay probes generated by so-called anti-spammers. These relay probes have
 +  '!', '%' and '@' in the local (username) part of the address.
++  https://notes.sagredo.eu/files/qmail//patches/qmail-smtpd-relay-reject.patch
 +* Luca Franceschini
 +  added DISABLETLS environment variable, useful if you want to disable TLS on a desired port
 +  added FORCEAUTHMAILFROM environment variable to REQUIRE that authenticated user and 'mail from' are identical
@@ -2426,10 +2438,15 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  useful in special cases if you temporarily need to reject the null sender (although breaks RFC compatibility).
 +  You just need to put 1 (actually any number different from 0) in your control/rejectnullsenders to reject
 +  the null sender with 421 error message.
-+* dnscname patch
-+  Removes CNAME check in order to avoid getting large amounts of data of no interest in and that may
-+  overflow the response buffer.
-+  https://lists.gt.net/qmail/users/138190
++* Luca Franceschini's remove-cname-check patch
++  Removed dns_cname call in qmail-remote.c instead of changing the funcion in dns.c,in case another
++  patch requires dns_cname().
++  https://notes.sagredo.eu/files/qmail/patches/remove-cname-check.patch
++  More info here https://lists.gt.net/qmail/users/138190
++* Jonathan de Boyne Pollard's any-to-cname patch
++  avoids qmail getting large amounts of DNS data we have no interest in and that may overflow our response
++  buffer.
++  https://notes.sagredo.eu/files/qmail/patches/any-to-cname.patch
 +* Luca Franceschini's rcptcheck patch
 +  (based on original patch from Jay Soffian (http://www.soffian.org/downloads/qmail/qmail-smtpd-doc.html)
 +  Originally designed for the purpose of receipt validation, it can also be used to limit the numbr of
@@ -2448,6 +2465,12 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +  Edit conf-channels before compiling: Total number of channels (queues) available for delivery. Must be at
 +  least 2, and anything above 2 are considered supplemental channels.
 +  http://www.thesmbexchange.com/eng/qmail-channels_patch.html
++* Endersys R&D team's qmail-remote-logging patch
++  gets qmail-remote to log sender, recipient and IP adddress all together in the "Delivery success/failure" line
++  https://web.archive.org/web/20120530051612/http://blog.endersys.com/2009/12/qmail-canonicalised-recipient-logging-and-more-patch/
++* notqmail.org's cve-2005-1513 patch
++  addresses a vulnerability issue spotted by Georgi Guninski in 2005
++  https://www.qualys.com/2020/05/19/cve-2005-1513/remote-code-execution-qmail.txt
 +
 += Disclaimer
 +This patch comes with the usual warranty: it works for me, it may not work for you,
@@ -2499,17 +2522,67 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 += Changelog
 +
-+2019-12-08
-+-qmail-smtpd.c: now TLS is defined before chkuser.h call, to avoid errors on closing the db connection
++2021.06.19
++-chkuser: defined extra allowed characters in sender/rcpt addresses and added the slash to the list (tx Thomas).
++ diff here https://notes.sagredo.eu/files/qmail/patches/roberto-netqmail-1.06/2021.06.19_patch.diff
++
++2021.06.12
++-RSA key and DH parameters are created 4096 bit long also in Makefile-cert. qmail-smtpd.c and qmail-remote.c
++ updated accordingly (tx Eric Broch).
++-Makefile-cert: the certs will be owned by vpopmail:vchkpw
++
++2021.03.21
++-update_tmprsadh.sh: RSA key and DH parameters increased to 4096 bits
++
++2020.12.04
++-received.c: some adjustment to compile with gcc-10
++ diff here https://notes.sagredo.eu/files/hacks/qmail/patches/roberto-netqmail-1.06/2020.12.04_gcc-10-compat.diff
++
++2020.07.29
++-dk-filter: corrected a bug where dk-filter was using DKIMDOMAIN unconditionally. Now it uses DKIMDOMAIN
++ only if _SENDER is null (tx Manvendra Bhangui).
++
++2020.07.27
++-added cve-2005-1513 patch
++
++2020.04.25
++-qmail-smtpd.c: added rcptcount = 0; in smtp_rset function to prevent the maxrcpto error if control/maxrcpt limit
++ has been exceeded in multiple messages sent sequentially rather than in a single mail (tx Alexandre Fonceca).
++ More info here: https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html#comment1594
++
++2020.04.16
++-qmail-remote-logging patch added
++
++2020.04.10
++-DKIM patch updated to v. 1.28
++ * outgoing messages from null sender ("<>") will be signed as well with the domain in env variable DKIMDOMAIN
++ * declaring NODK env variable disables old domainkeys signature, while defining NODKIM disables DKIM.
++
++2020.01.11
++-qmail-tls patch updated to v. 20200107
++ * working client cert authentication with TLSv1.3 (Rolf Eike Beer)
++
++2019.12.08
++-BUG qmail-smtpd.c: now TLS is defined before chkuser.h call, to avoid errors on closing the db connection
 + (tx ChangHo.Na https://notes.sagredo.eu/en/qmail-notes-185/patching-qmail-82.html#comment1469)
 +
-+2019-07-12
++2019.08.07
++-a couple of adjustments to chkuser (tx Luca Franceschini)
++ more info here https://notes.sagredo.eu/files/qmail/patches/dmind/20190807/
++ * BUG - since any other definition of starting_string ends up as "DOMAIN", if starting_string is otherwise
++   defined, chkuser will be turned off.
++ * CHKUSER_ENABLE_ALIAS_DEFAULT, CHKUSER_VAUTH_OPEN_CALL and CHKUSER_DISABLE_VARIABLE are now defined in
++   chkuser_settings.h
++ * Now CHKUSER_DISABLE_VARIABLE, CHKUSER_SENDER_NOCHECK_VARIABLE, CHKUSER_SENDER_FORMAT_NOCHECK,
++   CHKUSER_RCPT_FORMAT_NOCHECK and CHKUSER_RCPT_MX_NOCHECK can be defined at runtime level as well.
++
++2019.07.12
 +-qmail-channels patch added
 + more info here http://www.thesmbexchange.com/eng/qmail-channels_patch.html
 +-improved verbosity of die_read function in qmail-smtpd.c (qmail-smtpd: read failure)
 + more info here https://notes.sagredo.eu/files/qmail/patches/roberto-netqmail-1.06/die_read.patch
 +
-+2019-.06.19
++2019.06.19
 +-DKIM patch updated to v. 1.26
 + * BUG - honor body length tag in verification
 +
@@ -2533,6 +2606,7 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +2019.03.22
 +-fixed a bug causing crashes with qmail-remote when using openssl-1.1 (tx Luca Franceschini)
 +(https://notes.sagredo.eu/files/qmail//patches//roberto-netqmail-1.06/2019.03.22-fix.patch)
++
 +2019.02.13
 +-Port to openssl-1.1
 +-DKIM patch updated to v. 1.24
@@ -2594,7 +2668,7 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 + -added DISABLETLS environment variable, useful if you want to disable TLS on a desired port
 + -added FORCEAUTHMAILFROM environment variable to REQUIRE that authenticated user and 'mail from' are identical
 + -fixed little bug in 'mail from' address handling (patch by Andre Opperman at http://qmail.cr.yp.narkive.com/kBry
-+6GJl/bug-in-qmail-smtpd-c-addrparse-function)
++  6GJl/bug-in-qmail-smtpd-c-addrparse-function)
 + -added SMTPAUTHMETHOD, SMTPAUTHUSER and SMTP_AUTH_USER env variables for external plugins
 + -qlog patch
 + -reject null senders patch
@@ -2603,8 +2677,8 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2016-12-02
 +-fixed BUG in qmail-remote.c: in case of remote server who doesn't allow EHLO the response for an alternative
-+HELO was checked twice, making the connection to die. (Thanks to Luca Franceschini)
-+Patch applied: http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/fix_sagredo_remotehelo.patch
++ HELO was checked twice, making the connection to die. (Thanks to Luca Franceschini)
++ Patch applied: http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/fix_sagredo_remotehelo.patch
 +
 +2016-09-19
 +-qmail-tls patch updated to v. 20160918
@@ -2669,11 +2743,10 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2013-12-10
 +-the original greetdelay by e.h. has been replaced with the improved patch by John Simpson. Now
-+communications trying to send commands before the greeting will be closed. Premature disconnections will be
-+logged as well.
++ communications trying to send commands before the greeting will be closed. Premature disconnections will be
++ logged as well.
 +-CHKUSER_SENDER_FORMAT enabled to reject fake senders without any domain declared (like <foo>)
-+-chkuser logging: I slightly modified the log line adding the variables' name just to facilitate its interpretatio
-+n
++-chkuser logging: I slightly modified the log line adding the variables' name just to facilitate its interpretation
 +-added qmail-moreipme patch
 +
 +2013-12-07
@@ -2687,7 +2760,7 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2013-09-27
 +-DKIM patch upgraded to v. 1.17. Defined -DHAVE_SHA_256 while compiling dkimverify.cpp in the Makefile.
-+This solved an issue while verifying signatures using sha256.
++ This solved an issue while verifying signatures using sha256.
 +
 +2013-09-16
 +-Minor fixes to the DKIM patch.
@@ -2712,10 +2785,9 @@ diff -ruN ../netqmail-1.06-original/README.PATCH netqmail-1.06/README.PATCH
 +
 +2013-08-08
 +-qmail-SPF modified by Manvendra Bhangui to make it IPv6-mapped IPv4 addresses compliant. In order to have it
-+working with such addresses you have to patch tcpserver.c accordingly. You can use a patch fot ucspi-tcp6-0.98
-+by Manvendra Bhangui at http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/tcpserver-ipv6mapped_ip
-+v4.patch
-+or wait for v. 0.99 relase of ucspi-tcp6
++ working with such addresses you have to patch tcpserver.c accordingly. You can use a patch fot ucspi-tcp6-0.98
++ by Manvendra Bhangui at http://notes.sagredo.eu/sites/notes.sagredo.eu/files/qmail/patches/tcpserver-ipv6mapped_ip
++ v4.patch or wait for v. 0.99 relase of ucspi-tcp6
 +-added outgoingip patch
 +-added qmail-bounce patch
 +
@@ -3861,9 +3933,9 @@ diff -ruN ../netqmail-1.06-original/README.tap netqmail-1.06/README.tap
 +F:.*@domain.com:joe@example.com
 diff -ruN ../netqmail-1.06-original/README.tls netqmail-1.06/README.tls
 --- ../netqmail-1.06-original/README.tls	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/README.tls	2019-04-09 20:42:08.230641152 +0200
++++ netqmail-1.06/README.tls	2020-01-10 21:46:22.909448586 +0100
 @@ -0,0 +1,98 @@
-+Frederik Vermeulen <qmail-tls akrul inoa.net> 20190408
++Frederik Vermeulen <qmail-tls akrul inoa.net> 20200107
 +http://inoa.net/qmail-tls/
 +
 +This patch implements RFC 3207 in qmail. 
@@ -3874,7 +3946,7 @@ diff -ruN ../netqmail-1.06-original/README.tls netqmail-1.06/README.tls
 +
 +Usage: - install OpenSSL-1.1.0 http://www.openssl.org/ or later
 +         (any version since 0.9.8 is presumed to work)
-+       - apply patch to netqmail-1.06 http://qmail.org/netqmail
++       - apply patch to netqmail-1.06 http://www.usenix.org.uk/mirrors/qmail/netqmail
 +         The patches to qmail-remote.c and qmail-smtpd.c can be applied 
 +         separately.
 +       - provide a server certificate in /var/qmail/control/servercert.pem.
@@ -4135,8 +4207,9 @@ diff -ruN ../netqmail-1.06-original/TARGETS netqmail-1.06/TARGETS
 +
 diff -ruN ../netqmail-1.06-original/alloc.c netqmail-1.06/alloc.c
 --- ../netqmail-1.06-original/alloc.c	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/alloc.c	2019-02-27 20:57:13.381025169 +0100
-@@ -1,6 +1,6 @@
++++ netqmail-1.06/alloc.c	2020-07-27 13:06:47.995674192 +0200
+@@ -1,6 +1,7 @@
++#include <limits.h>
  #include "alloc.h"
  #include "error.h"
 -extern char *malloc();
@@ -4144,6 +4217,17 @@ diff -ruN ../netqmail-1.06-original/alloc.c netqmail-1.06/alloc.c
  extern void free();
  
  #define ALIGNMENT 16 /* XXX: assuming that this alignment is enough */
+@@ -15,6 +16,10 @@
+ unsigned int n;
+ {
+   char *x;
++  if (n >= (INT_MAX >> 3)) {
++    errno = error_nomem;
++    return 0;
++  }
+   n = ALIGNMENT + n - (n & (ALIGNMENT - 1)); /* XXX: could overflow */
+   if (n <= avail) { avail -= n; return space + avail; }
+   x = malloc(n);
 diff -ruN ../netqmail-1.06-original/base64.c netqmail-1.06/base64.c
 --- ../netqmail-1.06-original/base64.c	1970-01-01 01:00:00.000000000 +0100
 +++ netqmail-1.06/base64.c	2019-02-27 20:57:13.381025169 +0100
@@ -4274,19 +4358,14 @@ diff -ruN ../netqmail-1.06-original/base64.c netqmail-1.06/base64.c
 +}
 diff -ruN ../netqmail-1.06-original/base64.h netqmail-1.06/base64.h
 --- ../netqmail-1.06-original/base64.h	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/base64.h	2019-02-27 20:57:13.381025169 +0100
-@@ -0,0 +1,13 @@
++++ netqmail-1.06/base64.h	2021-04-18 09:39:42.456604719 +0200
+@@ -0,0 +1,8 @@
 +#ifndef BASE64_H
 +#define BASE64_H
 +
-+/* DKIM-1.10 */
 +#include "stralloc.h"
 +extern int b64decode(const unsigned char *, int, stralloc *);
 +extern int b64encode(stralloc *, stralloc *);
-+/* end DKIM-1.10 */
-+
-+extern int b64decode();
-+extern int b64encode();
 +
 +#endif
 diff -ruN ../netqmail-1.06-original/base64sub.c netqmail-1.06/base64sub.c
@@ -4646,8 +4725,8 @@ diff -ruN ../netqmail-1.06-original/chkspawn.c netqmail-1.06/chkspawn.c
    }
 diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 --- ../netqmail-1.06-original/chkuser.c	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/chkuser.c	2019-08-05 19:11:16.583873852 +0200
-@@ -0,0 +1,1266 @@
++++ netqmail-1.06/chkuser.c	2021-06-19 19:08:40.454965154 +0200
+@@ -0,0 +1,1303 @@
 +
 +/*
 + *
@@ -4791,6 +4870,10 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +  static int maxrcpt_limit_reached = 0;
 +#endif
 +
++#if defined CHKUSER_DISABLE_VARIABLE
++  static char *chkuser_disable_variable = 0;
++#endif
++
 +#if defined CHKUSER_WRONGRCPT_LIMIT_VARIABLE
 +  static char *maxwrongrcpt_string = 0;
 +  static int maxwrongrcpt_limit = 0;
@@ -4803,6 +4886,7 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +#endif
 +
 +  static unsigned int sender_nocheck = 0;
++  static char *sender_nocheck_variable = 0;
 +
 +#if defined CHKUSER_SENDER_FORMAT || defined CHKUSER_SENDER_MX
 +static stralloc sender_user = {0};
@@ -4926,6 +5010,12 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +#if defined CHKUSER_ALLOW_SENDER_CHAR_10
 +                && (user->s[x] != CHKUSER_ALLOW_SENDER_CHAR_10)
 +#endif
++#if defined CHKUSER_ALLOW_SENDER_CHAR_11
++                && (user->s[x] != CHKUSER_ALLOW_SENDER_CHAR_11)
++#endif
++#if defined CHKUSER_ALLOW_SENDER_CHAR_12
++                && (user->s[x] != CHKUSER_ALLOW_SENDER_CHAR_12)
++#endif
 +		&& (user->s[x] != '_') && (user->s[x] != '-') && (user->s[x] != '.') && (user->s[x] != '=')) {
 +                        return 0;
 +                }
@@ -5026,6 +5116,12 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +#endif
 +#if defined CHKUSER_ALLOW_RCPT_CHAR_10
 +                && (user->s[x] != CHKUSER_ALLOW_RCPT_CHAR_10)
++#endif
++#if defined CHKUSER_ALLOW_RCPT_CHAR_11
++                && (user->s[x] != CHKUSER_ALLOW_RCPT_CHAR_11)
++#endif
++#if defined CHKUSER_ALLOW_RCPT_CHAR_12
++                && (user->s[x] != CHKUSER_ALLOW_RCPT_CHAR_12)
 +#endif
 +		&& (user->s[x] != '_') && (user->s[x] != '-') && (user->s[x] != '.') && (user->s[x] != '=')) {
 +                        return 0;
@@ -5145,10 +5241,16 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +#endif
 +
 +#if defined CHKUSER_DISABLE_VARIABLE 
-+	if (env_get (CHKUSER_DISABLE_VARIABLE)) { 
++        chkuser_disable_variable = env_get("CHKUSER_DISABLE_VARIABLE");
++        if (chkuser_disable_variable) {
++          if (env_get (chkuser_disable_variable)) {
++            starting_value = -1;
++          }
++        }
++	else if (env_get (CHKUSER_DISABLE_VARIABLE)) { 
 +		starting_value = -1; 
 +	} 
-+#endif 
++#endif
 +
 +#if defined CHKUSER_EXTRA_MUSTAUTH_VARIABLE
 +        if (env_get (CHKUSER_EXTRA_MUSTAUTH_VARIABLE)) {
@@ -5198,11 +5300,20 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +#endif
 +
 +#if defined CHKUSER_SENDER_NOCHECK_VARIABLE
-+
-+        if (env_get (CHKUSER_SENDER_NOCHECK_VARIABLE)) {
-+		sender_nocheck = 1;
++        sender_nocheck_variable = env_get("CHKUSER_SENDER_NOCHECK_VARIABLE");
++        if (sender_nocheck_variable) {
++          if (env_get (sender_nocheck_variable)) {
++            sender_nocheck = 1;
++          }
++          else {
++            sender_nocheck = 0;
++          }
 +        } else {
-+		sender_nocheck = 0;
++          if (env_get (CHKUSER_SENDER_NOCHECK_VARIABLE)) {
++  		sender_nocheck = 1;
++          } else {
++  		sender_nocheck = 0;
++          }
 +        }
 +#endif
 +
@@ -5354,10 +5465,12 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +	case 2:
 +
 +#if defined CHKUSER_RCPT_FORMAT
++              if (!env_get ("CHKUSER_RCPT_FORMAT_NOCHECK")) {
 +                if (check_rcpt_address_format (&user, &domain) == 0) {
 +                        retstat = CHKUSER_ERR_RCPT_FORMAT;
 +                        break;
 +                }
++              }
 +#endif
 +
 +	case 3:
@@ -5365,6 +5478,7 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +                if (!addrallowed()) {
 +
 +#if defined CHKUSER_RCPT_MX
++                      if  (!env_get ("CHKUSER_RCPT_MX_NOCHECK")) {
 +			switch (chkuser_mx_lookup(&domain)) {
 +
 +				case DNS_HARD:
@@ -5379,6 +5493,7 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +			if (retstat != CHKUSER_KO) {
 +				break;
 +			}
++                      }
 +#endif
 +  			if (relayclient) {
 +				retstat = CHKUSER_RELAYING;
@@ -5874,17 +5989,18 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +        if (!stralloc_0 (&sender_domain)) DIE_NOMEM();
 +
 +#if defined CHKUSER_SENDER_FORMAT
++      if (!env_get ("CHKUSER_SENDER_FORMAT_NOCHECK")) {
 +        if (check_sender_address_format (&sender_user, &sender_domain) == 0) {
 +                chkuser_commonlog (sender->s, "", "rejected sender", "invalid sender address format");
 +		CHKUSER_SENDER_DELAY_ANY();
 +		out(CHKUSER_SENDERFORMAT_STRING);
 +	        return CHKUSER_ERR_SENDER_FORMAT;
 +        }
-+
++      }
 +#endif
 +
 +#if defined CHKUSER_SENDER_MX
-+
++      if (!env_get ("CHKUSER_SENDER_MX_NOCHECK")) {
 +	switch (chkuser_mx_lookup(&sender_domain)) {
 +
 +		case DNS_HARD:
@@ -5901,7 +6017,7 @@ diff -ruN ../netqmail-1.06-original/chkuser.c netqmail-1.06/chkuser.c
 +			return CHKUSER_ERR_SENDER_MX_TMP;
 +			break;
 +	}
-+
++     }
 +#endif
 +#endif
 +
@@ -5975,8 +6091,8 @@ diff -ruN ../netqmail-1.06-original/chkuser.h netqmail-1.06/chkuser.h
 +#endif
 diff -ruN ../netqmail-1.06-original/chkuser_settings.h netqmail-1.06/chkuser_settings.h
 --- ../netqmail-1.06-original/chkuser_settings.h	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/chkuser_settings.h	2019-08-05 17:52:56.050566117 +0200
-@@ -0,0 +1,468 @@
++++ netqmail-1.06/chkuser_settings.h	2021-06-19 12:53:57.838075220 +0200
+@@ -0,0 +1,471 @@
 +/*
 + *
 + * 'chkuser_settings.h' v.2.0.9
@@ -6403,17 +6519,18 @@ diff -ruN ../netqmail-1.06-original/chkuser_settings.h netqmail-1.06/chkuser_set
 + * Remember: '#' and '+' are accepted by CHKUSER_ALLOW_SENDER_SRS
 + *
 + */
-+#define CHKUSER_ALLOW_SENDER_CHAR_1 "'"
-+#define CHKUSER_ALLOW_SENDER_CHAR_2 '='
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_2 '%' */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_3 '£' */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_4 '?' */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_5 '*' */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_6 '^' */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_7 '~' */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_8 '&' */	/* available for other characters */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_9 '#' */ 	/* available for other characters */
-+/* #define CHKUSER_ALLOW_SENDER_CHAR_10 '=' */ 	/* available for other characters */
++#define CHKUSER_ALLOW_SENDER_CHAR_1 '$'
++#define CHKUSER_ALLOW_SENDER_CHAR_2 '%'
++#define CHKUSER_ALLOW_SENDER_CHAR_3 'Â£'
++#define CHKUSER_ALLOW_SENDER_CHAR_4 '?'
++#define CHKUSER_ALLOW_SENDER_CHAR_5 '*'
++#define CHKUSER_ALLOW_SENDER_CHAR_6 '^'
++#define CHKUSER_ALLOW_SENDER_CHAR_7 '~'
++#define CHKUSER_ALLOW_SENDER_CHAR_8 '&'	  /* available for other characters */
++#define CHKUSER_ALLOW_SENDER_CHAR_9 '#'   /* available for other characters */
++#define CHKUSER_ALLOW_SENDER_CHAR_10 '='  /* available for other characters */
++#define CHKUSER_ALLOW_SENDER_CHAR_11 '/'  /* available for other characters */
++#define CHKUSER_ALLOW_SENDER_CHAR_12 '\''  /* available for other characters */
 +
 +
 +/*
@@ -6425,16 +6542,18 @@ diff -ruN ../netqmail-1.06-original/chkuser_settings.h netqmail-1.06/chkuser_set
 + * Remember: '#' and '+' are accepted by CHKUSER_ALLOW_RCPT_SRS
 + *
 + */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_1 '$' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_2 '%' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_3 '£' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_4 '?' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_5 '*' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_6 '^' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_7 '~' */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_8 '&' */ 	/* available for other characters */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_9 '#' */ 	/* available for other characters */
-+/* #define CHKUSER_ALLOW_RCPT_CHAR_10 '=' */ 	/* available for other characters */
++#define CHKUSER_ALLOW_RCPT_CHAR_1 '$'
++#define CHKUSER_ALLOW_RCPT_CHAR_2 '%'
++#define CHKUSER_ALLOW_RCPT_CHAR_3 'Â£'
++#define CHKUSER_ALLOW_RCPT_CHAR_4 '?'
++#define CHKUSER_ALLOW_RCPT_CHAR_5 '*'
++#define CHKUSER_ALLOW_RCPT_CHAR_6 '^'
++#define CHKUSER_ALLOW_RCPT_CHAR_7 '~'
++#define CHKUSER_ALLOW_RCPT_CHAR_8 '&'  	/* available for other characters */
++#define CHKUSER_ALLOW_RCPT_CHAR_9 '#' 	/* available for other characters */
++#define CHKUSER_ALLOW_RCPT_CHAR_10 '=' 	/* available for other characters */
++#define CHKUSER_ALLOW_RCPT_CHAR_11 '/'  /* available for other characters */
++#define CHKUSER_ALLOW_RCPT_CHAR_12 '\''  /* available for other characters */
 +
 +
 +/*
@@ -6476,10 +6595,10 @@ diff -ruN ../netqmail-1.06-original/condredirect.c netqmail-1.06/condredirect.c
    qmail_puts(&qqt,dtline);
 diff -ruN ../netqmail-1.06-original/conf-cc netqmail-1.06/conf-cc
 --- ../netqmail-1.06-original/conf-cc	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/conf-cc	2019-05-24 14:26:25.300939812 +0200
++++ netqmail-1.06/conf-cc	2020-01-10 21:52:13.080721081 +0100
 @@ -1,3 +1,3 @@
 -cc -O2
-+cc -O2 -g -DEXTERNAL_TODO -DTLS=20190517 -I/usr/local/ssl/include -I/home/vpopmail/include
++cc -O2 -g -DEXTERNAL_TODO -DTLS=20200107 -I/usr/local/ssl/include -I/home/vpopmail/include
  
  This will be used to compile .c files.
 diff -ruN ../netqmail-1.06-original/conf-channels netqmail-1.06/conf-channels
@@ -6495,6 +6614,16 @@ diff -ruN ../netqmail-1.06-original/conf-domainkeys netqmail-1.06/conf-domainkey
 +++ netqmail-1.06/conf-domainkeys	2019-02-27 20:57:13.384025136 +0100
 @@ -0,0 +1 @@
 +-DDOMAIN_KEYS
+diff -ruN ../netqmail-1.06-original/conf-groups netqmail-1.06/conf-groups
+--- ../netqmail-1.06-original/conf-groups	1998-06-15 12:53:16.000000000 +0200
++++ netqmail-1.06/conf-groups	2021-06-11 21:57:58.930345342 +0200
+@@ -1,5 +1,6 @@
+ qmail
+ nofiles
++vchkpw
+ 
+ These are the qmail groups. The second group should not have access to
+ any files, but it must be usable for processes; this requirement
 diff -ruN ../netqmail-1.06-original/conf-ld netqmail-1.06/conf-ld
 --- ../netqmail-1.06-original/conf-ld	1998-06-15 12:53:16.000000000 +0200
 +++ netqmail-1.06/conf-ld	2019-02-27 20:57:13.384025136 +0100
@@ -6533,6 +6662,17 @@ diff -ruN ../netqmail-1.06-original/conf-spawn netqmail-1.06/conf-spawn
  
  This is a silent concurrency limit. You can't set it above 255. On some
  systems you can't set it above 125. qmail will refuse to compile if the
+diff -ruN ../netqmail-1.06-original/conf-users netqmail-1.06/conf-users
+--- ../netqmail-1.06-original/conf-users	1998-06-15 12:53:16.000000000 +0200
++++ netqmail-1.06/conf-users	2021-06-11 21:08:16.270022268 +0200
+@@ -6,6 +6,7 @@
+ qmailq
+ qmailr
+ qmails
++vpopmail
+ 
+ The qmail system is heavily partitioned for security; it does almost
+ nothing as root.
 diff -ruN ../netqmail-1.06-original/config.h netqmail-1.06/config.h
 --- ../netqmail-1.06-original/config.h	1970-01-01 01:00:00.000000000 +0100
 +++ netqmail-1.06/config.h	2019-02-27 20:57:13.384025136 +0100
@@ -6716,8 +6856,8 @@ diff -ruN ../netqmail-1.06-original/date822fmt.c netqmail-1.06/date822fmt.c
  }
 diff -ruN ../netqmail-1.06-original/dk-filter.9 netqmail-1.06/dk-filter.9
 --- ../netqmail-1.06-original/dk-filter.9	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/dk-filter.9	2019-02-27 20:57:13.385025125 +0100
-@@ -0,0 +1,102 @@
++++ netqmail-1.06/dk-filter.9	2020-04-10 11:08:43.313802048 +0200
+@@ -0,0 +1,98 @@
 +.TH dk-filter 8
 +.SH NAME
 +dk-filter \- sign/verify using DK/DKIM (SSP/ADSP optionally) and deliver a mail message for delivery
@@ -6739,9 +6879,9 @@ diff -ruN ../netqmail-1.06-original/dk-filter.9 netqmail-1.06/dk-filter.9
 +.B Author Domain Signing Practice.
 +It uses the libdkim and OpenSSL libraries.  To sign a message, set the
 +.B DKIMSIGN
-+or
-+.B DKSIGIN
-+environment variables to the pathname of the private key that will be
++environment variable (for DKIM signing) or
++.B DKSIGN
++environment variable (for DK signing) to the pathname of the private key that will be
 +used to sign the message. If there is a % character in the environment
 +variable, it is removed and replaced by the domain name in the From: header.
 +If, after substituting the %, that file does not exist, QMAILHOME/control/domainkeys/%/default
@@ -6749,6 +6889,9 @@ diff -ruN ../netqmail-1.06-original/dk-filter.9 netqmail-1.06/dk-filter.9
 +QMAILHOME/control/domainkeys/default will be used as the key.
 +After all substitutions, if the key file does not exist, the message will not be signed.
 +If there is no % and the file does not exist, the message will be rejected with error 35.
++The default private key QMAILHOME/control/domainkeys/default can be overriden by the
++\fBDKIM_DEFAULT_KEY\fR environment variable.
++
 +The selector (s=) will be taken from the basename of the file.
 +The private key should be created by 
 +.BR dknewkey(8) .
@@ -6786,31 +6929,24 @@ diff -ruN ../netqmail-1.06-original/dk-filter.9 netqmail-1.06/dk-filter.9
 + sets allman standard, with relaxed canonicalization and include query method tag
 +.EE
 +
-+.B dk-filter
-+uses the domain found in the Sender: header to set the domain tag. If not it uses the From: header. You can override this by
-+setting 
-+.B DKIMDOMAIN
-+environment variable.
-+.B DKIMDOMAIN
-+can be set to an email address or a domain (without the at sign).
-+To verify a message, set the
-+.B DKIMVERIFY
-+or
-+.B DKVERIFY
-+environment variables
-+.B dk-filter
-+always inserts the 
-+.B DKIM-Status
-+or
-+.B DomainKey-Status
-+header, so that messages can be
-+rejected later at delivery time, or in the mail reader. In that case you may set
-+.B DKIMVERIFY
-+or
-+.B DKVERIFY
-+to an empty string.
-+.B dk-filter
-+does not use any signing practice byd default. You can override this by setting the SIGN_PRACTICE to ssp or adsp (lowercase).
++when signing \fBdk-filter\fR uses the domain found in the Return-Path, Sender, From headers to set
++the domain tag. If not it uses the value of \fBDKIMDOMAIN\fR environment
++variable. \fBDKIMDOMAIN\fR can be set to an email address or a domain (without the at sign).
++
++To verify a message, set the \fBDKIMVERIFY\fR or \fBDKVERIFY\fR environment variables.
++\fBdk-filter\fR always inserts the \fBDKIM-Status\fR or \fBDomainKey-Status\fR header, so
++that messages can be rejected later at delivery time, or in the mail reader. In that case
++you may set \fBDKIMVERIFY\fR or \fBDKVERIFY\fR to an empty string. The exit code of \fBdk-filter\fR
++can be fine tuned by setting \fBDKIMVERIFY\fR environment variable. See \fBdkim(8)\fR for a detailed
++description on setting the \fBDKIMVERIFY\fR environment variable.
++
++\fBdk-filter\fR does not use any signing practice by default. You can override this by setting
++the \fBSIGN_PRACTICE\fR to ssp or adsp (lowercase).
++
++If neither of these environment variables (\fBDKIMSIGN\fR, \fBDKSIGN\fR, \fBDKIMVERIFY\fR, \fBDKVERIFY\fR) are defined, \fBdk-filter\fR
++will do signing by default.
++
++You can set environment variable \fBNODK\fR to disable domainkeys and \fBNODKIM\fR to disable \fBDKIM\fR.
 +
 +.SH "EXIT CODES"
 +0 for success, non-zero failure
@@ -6822,10 +6958,34 @@ diff -ruN ../netqmail-1.06-original/dk-filter.9 netqmail-1.06/dk-filter.9
 +spawn-filter(8)
 diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 --- ../netqmail-1.06-original/dk-filter.sh	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/dk-filter.sh	2019-02-27 20:57:13.385025125 +0100
-@@ -0,0 +1,315 @@
++++ netqmail-1.06/dk-filter.sh	2020-07-29 15:59:13.351023490 +0200
+@@ -0,0 +1,367 @@
 +#
 +# $Log: dk-filter.sh,v $
++# Revision 1.22  2019-06-24 23:19:57+05:30  Cprogrammer
++# added code for -d option in DKIMSIGNOPTIONS
++#
++# Revision 1.21  2019-01-14 00:10:00+05:30  Cprogrammer
++# added -S, -f option to verify signatures with unsigned subject, unsigned from
++#
++# Revision 1.20  2017-03-09 16:38:15+05:30  Cprogrammer
++# FHS changes
++#
++# Revision 1.19  2016-05-17 23:11:42+05:30  Cprogrammer
++# fix for configurable control directory
++#
++# Revision 1.18  2014-03-12 08:50:48+05:30  Cprogrammer
++# bug - fixed signing when env variables DKSIGN or DKIMSIGN were set
++#
++# Revision 1.17  2013-09-03 23:04:30+05:30  Cprogrammer
++# set signing as default if both DKSIGN and DKIMSIGN are not defined
++#
++# Revision 1.16  2013-08-17 15:59:21+05:30  Cprogrammer
++# do not treat duplicate DomainKey-Signature as an error
++#
++# Revision 1.15  2013-08-17 15:02:06+05:30  Cprogrammer
++# fixed syntax errors and private key lookup
++#
 +# Revision 1.14  2011-02-10 22:47:01+05:30  Cprogrammer
 +# fixed exit code of dk-filter when doing verification
 +#
@@ -6871,7 +7031,7 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +# Revision 1.1  2009-04-02 14:52:27+05:30  Cprogrammer
 +# Initial revision
 +#
-+# $Id: dk-filter.sh,v 1.14 2011-02-10 22:47:01+05:30 Cprogrammer Stab mbhangui $
++# $Id: dk-filter.sh,v 1.22 2019-06-24 23:19:57+05:30 Cprogrammer Exp mbhangui $
 +#
 +if [ -z "$QMAILREMOTE" -a -z "$QMAILLOCAL" ]; then
 +	echo "dk-filter should be run by spawn-filter" 1>&2
@@ -6881,15 +7041,28 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +dkimsign=0
 +dkverify=0
 +dkimverify=0
-+if [ -z "$DKSIGN" -a -z "$DKVERIFY" ] ; then
-+	DKSIGN=QMAILHOME/control/domainkeys/%/default
-+	dksign=2
++if [ -z "$DEFAULT_DKIM_KEY" ] ; then
++	default_key=QMAILHOME/control/domainkeys/default
++else
++	default_key=$DEFAULT_DKIM_KEY
 +fi
-+if [ -z "$DKIMSIGN" -a -z "$DKIMVERIFY" ] ; then
-+	DKIMSIGN=QMAILHOME/control/domainkeys/%/default
-+	dkimsign=2
++if [ -z "$NODK" -a -x QMAILHOME/bin/dktest -a -z "$DKVERIFY" ] ; then
++	if [ -z "$DKSIGN" ] ; then
++		DKSIGN=QMAILHOME/control/domainkeys/%/default
++		dksign=2
++	elif [ " $DKSIGN" = " QMAILHOME/control/domainkeys/%/default" ] ; then
++		dksign=2
++	fi
 +fi
-+if [ ! -z "$DKSIGN" ] ; then
++if [ -z "$NODKIM" -a -x QMAILHOME/bin/dkim -a -z "$DKIMVERIFY" ] ; then
++	if [ -z "$DKIMSIGN" ] ; then
++		DKIMSIGN=QMAILHOME/control/domainkeys/%/default
++		dkimsign=2
++	elif [ " $DKIMSIGN" = " QMAILHOME/control/domainkeys/%/default" ] ; then
++		dkimsign=2
++	fi
++fi
++if [ -z "$NODK" -a -n "$DKSIGN" ] ; then
 +	if [ ! -f QMAILHOME/bin/dktest ] ; then
 +		echo "QMAILHOME/bin/dktest: No such file or directory" 1>&2
 +		exit 1
@@ -6899,7 +7072,9 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +	if [ $? -eq 0 ] ; then
 +		percent_found=1
 +	fi
-+	if [ ! " $_SENDER" = " " ] ; then
++	if [ -n "$DKIMDOMAIN" ] && [ -z "$_SENDER" ] ; then
++		dkkeyfn=`echo $DKSIGN | sed s{%{$DKIMDOMAIN{g`
++	elif [ ! " $_SENDER" = " " ] ; then
 +		# replace '%' in filename with domain
 +		domain=`echo $_SENDER | cut -d@ -f2`
 +		dkkeyfn=`echo $DKSIGN | sed s{%{$domain{g`
@@ -6907,7 +7082,7 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +		dkkeyfn=$DKSIGN
 +	fi
 +	if [ $dksign -eq 2 -a ! -f $dkkeyfn ] ; then
-+		dkkeyfn=QMAILHOME/control/domainkeys/default
++		dkkeyfn=$default_key
 +	fi
 +	if [ -f $dkkeyfn ] ; then
 +		dksign=1
@@ -6919,7 +7094,7 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +	fi
 +	dkselector=`basename $dkkeyfn`
 +fi
-+if [ ! -z "$DKIMSIGN" ] ; then
++if [ -z "$NODKIM" -a -n "$DKIMSIGN" ] ; then
 +	if [ ! -f QMAILHOME/bin/dkim ] ; then
 +		echo "QMAILHOME/bin/dkim: No such file or directory" 1>&2
 +		exit 1
@@ -6929,7 +7104,9 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +	if [ $? -eq 0 ] ; then
 +		percent_found=1
 +	fi
-+	if [ ! " $_SENDER" = " " ] ; then
++	if [ -n "$DKIMDOMAIN" ] && [ -z "$_SENDER" ] ; then
++		dkimkeyfn=`echo $DKIMSIGN | sed s{%{$DKIMDOMAIN{g`
++	elif [ ! " $_SENDER" = " " ] ; then
 +		# replace '%' in filename with domain
 +		domain=`echo $_SENDER | cut -d@ -f2`
 +		dkimkeyfn=`echo $DKIMSIGN | sed s{%{$domain{g`
@@ -6937,7 +7114,7 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +		dkimkeyfn=$DKIMSIGN
 +	fi
 +	if [ $dkimsign -eq 2 -a ! -f $dkimkeyfn ] ; then
-+		dkimkeyfn=QMAILHOME/control/domainkeys/default
++		dkimkeyfn=$default_key
 +	fi
 +	if [ -f $dkimkeyfn ] ; then
 +		dkimsign=1
@@ -6945,18 +7122,18 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +		dkimsign=0
 +	fi
 +	if [ $dkimsign -eq 0 -a $percent_found -ne 1 ] ; then
-+		exit 32
++		exit 32 # private key does not exist
 +	fi
 +	dkimselector=`basename $dkimkeyfn`
 +fi
-+if [ ! -z "$DKVERIFY" ] ; then
++if [ -z "$NODK" -a -n "$DKVERIFY" ] ; then
 +	if [ ! -f QMAILHOME/bin/dktest ] ; then
 +		echo "QMAILHOME/bin/dktest: No such file or directory" 1>&2
 +		exit 1
 +	fi
 +	dkverify=1
 +fi
-+if [ ! -z "$DKIMVERIFY" ] ; then
++if [ -z "$NODKIM" -a -n "$DKIMVERIFY" ] ; then
 +	if [ ! -f QMAILHOME/bin/dkim ] ; then
 +		echo "QMAILHOME/bin/dkim: No such file or directory" 1>&2
 +		exit 1
@@ -6997,6 +7174,11 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +
 +		-c)
 +		dkimopts="$dkimopts -c $2"
++		shift
++		;;
++
++		-d)
++		dkimopts="$dkimopts -d $2"
 +		shift
 +		;;
 +
@@ -7091,11 +7273,10 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +		dkopts="$dkopts -s $dkkeyfn"
 +	fi
 +	exec 0</tmp/dk.$$
-+	#QMAILHOME/bin/dktest -h -s $dkkeyfn
 +	eval $dkopts
 +	exit_val=$?
 +	# allow error due to duplicate DomainKey-Header
-+	if [ $exit_val -ne 0 -a $exit_val -ne 6 ] ; then
++	if [ $exit_val -ne 0 -a $exit_val -ne 12 ] ; then
 +		/bin/rm -f /tmp/dk.$$
 +		exit $exit_val
 +	fi
@@ -7110,7 +7291,14 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +		practice=2
 +	fi
 +	exec 0</tmp/dk.$$
-+	QMAILHOME/bin/dkim -p $practice -v
++	dkimvargs="-p $practice"
++	if [ -n "$UNSIGNED_SUBJECT" ] ; then
++		dkimvargs="$dkimvargs -S"
++	fi
++	if [ -n "$UNSIGNED_FROM" ] ; then
++		dkimvargs="$dkimvargs -f"
++	fi
++	QMAILHOME/bin/dkim $dkimvargs -v
 +	ret=$?
 +	case $ret in
 +		14)
@@ -7141,8 +7329,8 @@ diff -ruN ../netqmail-1.06-original/dk-filter.sh netqmail-1.06/dk-filter.sh
 +exit $?
 diff -ruN ../netqmail-1.06-original/dkim.9 netqmail-1.06/dkim.9
 --- ../netqmail-1.06-original/dkim.9	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/dkim.9	2019-06-19 09:45:56.082517764 +0200
-@@ -0,0 +1,101 @@
++++ netqmail-1.06/dkim.9	2020-04-09 19:43:56.494473495 +0200
+@@ -0,0 +1,108 @@
 +.TH dkim 8
 +.SH NAME
 +dkim \- exercise the domainkeys library
@@ -7159,7 +7347,7 @@ diff -ruN ../netqmail-1.06-original/dkim.9 netqmail-1.06/dkim.9
 +They do not keep a copy of the input file. You will need to do something like this:
 +
 +.EX
-+ (./dkim -s QMAILHOME/control/domainkeys/dog </tmp/testmsg; cat /tmp/testmsg)\
++ (./dkim -s INDIMAIL/control/domainkeys/dog </tmp/testmsg; cat /tmp/testmsg)\
 + | ./dkim -v
 +.EE
 +
@@ -7191,7 +7379,7 @@ diff -ruN ../netqmail-1.06-original/dkim.9 netqmail-1.06/dkim.9
 +
 +.TP
 +-l
-+include body length tag for signing. Honor body length tag for verification
++include body length tag when signing. Honor body length tag when verifying
 +.TP
 +-q
 +include query method tag
@@ -7216,8 +7404,10 @@ diff -ruN ../netqmail-1.06-original/dkim.9 netqmail-1.06/dkim.9
 +.TP
 +-c \fIcanonicalization\fR
 +r for relaxed [DEFAULT], s - simple, t relaxed/simple, u - simple/relaxed
++
++.TP
 +-d \fIdomain\fR
-+the domain tag, if not provided, determined from the sender/from header
++the domain tag, if not provided, determined from the return-path/sender/from header
 +.TP
 +-i \fIidentity\fR
 +the identity, if not provided it will not be included
@@ -7236,6 +7426,11 @@ diff -ruN ../netqmail-1.06-original/dkim.9 netqmail-1.06/dkim.9
 +.TP
 +-H
 +this help
++
++.SH Return Value
++When signing, \fBdkim\fR returns 0 on success and non-zero on any failure. For verification, you can set the
++environment varable \fBDKIMVERIFY\fR. Refer to qmail-dkim(8) for a full description of  the \fBDKIMVERIFY\fR
++environment variable
 +
 +.SH "SEE ALSO"
 +dktest(8),
@@ -9368,10 +9563,22 @@ diff -ruN ../netqmail-1.06-original/dkimfuncs.cpp netqmail-1.06/dkimfuncs.cpp
 +}
 diff -ruN ../netqmail-1.06-original/dkimsign.cpp netqmail-1.06/dkimsign.cpp
 --- ../netqmail-1.06-original/dkimsign.cpp	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/dkimsign.cpp	2019-02-27 20:57:13.387025103 +0100
-@@ -0,0 +1,1008 @@
++++ netqmail-1.06/dkimsign.cpp	2020-04-10 18:20:19.279077900 +0200
+@@ -0,0 +1,1029 @@
 +/*
 + * $Log: dkimsign.cpp,v $
++ * Revision 1.17  2020-04-10 21:36:20+05:30  Cprogrammer
++ * fixed BUG with domain assignment
++ *
++ * Revision 1.16  2020-04-09 21:21:04+05:30  Cprogrammer
++ * check for null domain after DKIMDOMAIN replacement
++ *
++ * Revision 1.15  2019-06-26 19:08:18+05:30  Cprogrammer
++ * added sBouncedAddr variable for X-Bounced-Address header added by qmail-send for bounces
++ *
++ * Revision 1.14  2019-06-24 22:22:15+05:30  Cprogrammer
++ * use DKIMDOMAIN only if Return-Path, From, Sender header are empty
++ *
 + * Revision 1.13  2018-08-25 18:01:59+05:30  Cprogrammer
 + * fixed dkim signing for From address containing company name
 + *
@@ -9645,6 +9852,9 @@ diff -ruN ../netqmail-1.06-original/dkimsign.cpp netqmail-1.06/dkimsign.cpp
 +void
 +CDKIMSign::GetHeaderParams(const string & sHdr)
 +{
++	if (_strnicmp(sHdr.c_str(), "X-Bounced-Address:", 18) == 0)
++		sBouncedAddr.assign(sHdr.c_str() + 21);
++	else
 +	if (_strnicmp(sHdr.c_str(), "X", 1) == 0)
 +		return;
 +	if (_strnicmp(sHdr.c_str(), "From:", 5) == 0)
@@ -9698,7 +9908,7 @@ diff -ruN ../netqmail-1.06-original/dkimsign.cpp netqmail-1.06/dkimsign.cpp
 +				bFromHeaderFound = true;
 +				nSignThisTag = 1;
 +				IsRequiredHeader(sTag);	// remove from required header list
-+			} 
++			}
 +			// is this in the list of headers that must be signed?
 +			else
 +			if (IsRequiredHeader(sTag))
@@ -9845,34 +10055,40 @@ diff -ruN ../netqmail-1.06-original/dkimsign.cpp netqmail-1.06/dkimsign.cpp
 +	else
 +	if (!sFrom.empty())
 +		sAddress.assign(sFrom);
++	else /* use indimail's X-Bounced-Address header to find the domain that injected the bounce */
++	if (!sBouncedAddr.empty())
++		sAddress.assign(sBouncedAddr);
 +	else
 +		return false;
-+	// simple for now, beef it up later
-+	// remove '<' and anything before it
++	/*-
++	 * simple for now, beef it up later
++	 * remove '<' and anything before it
++	 */
 +	pos = sAddress.find('<');
 +	if (pos != string::npos)
-+		sAddress.erase(0, pos);
-+	// remove '>' and anything after it
++		sAddress.erase(0, pos + 1);
++
++	/* remove '>' and anything after it */
 +	pos = sAddress.find('>');
 +	if (pos != string::npos)
 +		sAddress.erase(pos, string::npos);
-+	// look for '@' symbol
-+	pos = sAddress.find('@');
-+	if (pos == string::npos)
-+		return false;
++	/* look for '@' symbol */
 +	if (sDomain.empty()) {
-+		p = getenv("DKIMDOMAIN");
-+		if (p && *p)
-+		{
-+			if (!(at = strchr(p, '@')))
-+				at = p;
-+			else
-+				at++;
-+			sDomain.assign(at);
-+		} else
++		pos = sAddress.find('@');
++		if (pos != string::npos)
 +			sDomain.assign(sAddress.c_str() + pos + 1);
-+		RemoveSWSP(sDomain);
++		if (sDomain.empty()) {
++			p = getenv("DKIMDOMAIN");
++			if (p && *p) {
++				if (!(at = strchr(p, '@')))
++					at = p;
++				else
++					at++;
++				sDomain.assign(at);
++			}
++		}
 +	}
++	RemoveSWSP(sDomain);
 +	return true;
 +}
 +
@@ -10374,16 +10590,19 @@ diff -ruN ../netqmail-1.06-original/dkimsign.cpp netqmail-1.06/dkimsign.cpp
 +void
 +getversion_dkimsign_cpp()
 +{
-+	static char    *x = (char *) "$Id: dkimsign.cpp,v 1.13 2018-08-25 18:01:59+05:30 Cprogrammer Exp mbhangui $";
++	static char    *x = (char *) "$Id: dkimsign.cpp,v 1.17 2020-04-10 21:36:20+05:30 Cprogrammer Exp mbhangui $";
 +
 +	x++;
 +}
 diff -ruN ../netqmail-1.06-original/dkimsign.h netqmail-1.06/dkimsign.h
 --- ../netqmail-1.06-original/dkimsign.h	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/dkimsign.h	2019-02-27 20:57:13.388025092 +0100
-@@ -0,0 +1,111 @@
++++ netqmail-1.06/dkimsign.h	2020-04-10 18:39:39.483427628 +0200
+@@ -0,0 +1,115 @@
 +/*
 + * $Log: dkimsign.h,v $
++ * Revision 1.5  2019-06-26 19:09:07+05:30  Cprogrammer
++ * added sBouncedAddr variable for X-Bounced-Address header added by qmail-send for bounces
++ *
 + * Revision 1.4  2017-09-05 10:59:20+05:30  Cprogrammer
 + * removed compiler warnings
 + *
@@ -10472,6 +10691,7 @@ diff -ruN ../netqmail-1.06-original/dkimsign.h netqmail-1.06/dkimsign.h
 +	string          sSender;
 +	string          sSelector;
 +	string          sReturnPath;
++	string          sBouncedAddr; /*- used for bounces */
 +	string          sDomain;
 +	string          sIdentity;	// for i= tag, if empty tag will not be included in sig
 +	string          sRequiredHeaders;
@@ -12077,8 +12297,8 @@ diff -ruN ../netqmail-1.06-original/dktest.9 netqmail-1.06/dktest.9
 +rfc-4871(5)
 diff -ruN ../netqmail-1.06-original/dktest.c netqmail-1.06/dktest.c
 --- ../netqmail-1.06-original/dktest.c	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/dktest.c	2019-02-27 20:57:13.389025081 +0100
-@@ -0,0 +1,431 @@
++++ netqmail-1.06/dktest.c	2020-04-09 19:44:51.053935329 +0200
+@@ -0,0 +1,434 @@
 +/*
 + * $Log: dktest.c,v $
 + * Revision 1.16  2013-08-17 16:01:08+05:30  Cprogrammer
@@ -12480,6 +12700,9 @@ diff -ruN ../netqmail-1.06-original/dktest.c netqmail-1.06/dktest.c
 +		case DK_STAT_GRANULARITY:
 +			status = "bad sender (g=)";
 +			break;
++		case DK_STAT_DUPLICATE:
++			status = "duplicate signature";
++			break;
 +		}
 +#if 0
 +		printf("Comment: DomainKeys? See http://antispam.yahoo.com/domainkeys\n");
@@ -12823,7 +13046,7 @@ diff -ruN ../netqmail-1.06-original/dktrace.h netqmail-1.06/dktrace.h
 +#endif
 diff -ruN ../netqmail-1.06-original/dns.c netqmail-1.06/dns.c
 --- ../netqmail-1.06-original/dns.c	2007-11-30 21:22:54.000000000 +0100
-+++ netqmail-1.06/dns.c	2019-04-09 20:53:51.981528338 +0200
++++ netqmail-1.06/dns.c	2021-03-31 15:54:08.271706474 +0200
 @@ -1,4 +1,3 @@
 -#include <stdio.h>
  #include <netdb.h>
@@ -13248,8 +13471,8 @@ diff -ruN ../netqmail-1.06-original/dnstxt.c netqmail-1.06/dnstxt.c
 +}
 diff -ruN ../netqmail-1.06-original/domainkeys.h netqmail-1.06/domainkeys.h
 --- ../netqmail-1.06-original/domainkeys.h	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/domainkeys.h	2019-02-27 20:57:13.391025058 +0100
-@@ -0,0 +1,378 @@
++++ netqmail-1.06/domainkeys.h	2020-04-09 19:45:10.589742433 +0200
+@@ -0,0 +1,379 @@
 +/* This file is automatically created from the corresponding .c file */
 +/* Do not change this file; change the .c file instead. */
 +/* This is libdomainkeys.  It's Copyright (c) 2004 Yahoo, Inc.
@@ -13317,6 +13540,7 @@ diff -ruN ../netqmail-1.06-original/domainkeys.h netqmail-1.06/domainkeys.h
 +  DK_STAT_REVOKED,    /* Key has been revoked. */
 +  DK_STAT_INTERNAL, /* cannot call this routine in this context.  Internal error. */
 +  DK_STAT_GRANULARITY, /* Granularity mismatch: sender doesn't match g= option. */
++  DK_STAT_DUPLICATE, /* Duplicate Domainkey-Header */
 +} DK_STAT;
 +
 +typedef enum
@@ -17417,7 +17641,7 @@ diff -ruN ../netqmail-1.06-original/qmail-clean.c netqmail-1.06/qmail-clean.c
     else
 diff -ruN ../netqmail-1.06-original/qmail-control.9 netqmail-1.06/qmail-control.9
 --- ../netqmail-1.06-original/qmail-control.9	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/qmail-control.9	2019-02-27 20:57:13.395025014 +0100
++++ netqmail-1.06/qmail-control.9	2021-06-11 18:50:50.593218114 +0200
 @@ -20,7 +20,11 @@
  
  Comments are allowed
@@ -17452,7 +17676,7 @@ diff -ruN ../netqmail-1.06-original/qmail-control.9 netqmail-1.06/qmail-control.
  .I defaulthost	\fIme	\fRqmail-inject
  .I databytes	\fR0	\fRqmail-smtpd
 +.I dnsbllist	\fR(none)	\fRqmail-smtpd
-+.I dh2048.pem	\fR(none)	\fRqmail-smtpd
++.I dh4096.pem	\fR(none)	\fRqmail-smtpd
  .I doublebouncehost	\fIme	\fRqmail-send
  .I doublebounceto	\fRpostmaster	\fRqmail-send
  .I envnoathost	\fIme	\fRqmail-send
@@ -17466,7 +17690,7 @@ diff -ruN ../netqmail-1.06-original/qmail-control.9 netqmail-1.06/qmail-control.
  .I qmqpservers	\fR(none)	\fRqmail-qmqpc
  .I queuelifetime	\fR604800	\fRqmail-send
  .I rcpthosts	\fR(none)	\fRqmail-smtpd
-+.I rsa2048.pem	\fR(none)	\fRqmail-smtpd
++.I rsa4096.pem	\fR(none)	\fRqmail-smtpd
 +.I servercert.pem	\fR(none)	\fRqmail-smtpd
  .I smtpgreeting	\fIme	\fRqmail-smtpd
  .I smtproutes	\fR(none)	\fRqmail-remote
@@ -18532,8 +18756,8 @@ diff -ruN ../netqmail-1.06-original/qmail-dk.c netqmail-1.06/qmail-dk.c
 +}
 diff -ruN ../netqmail-1.06-original/qmail-dkim.9 netqmail-1.06/qmail-dkim.9
 --- ../netqmail-1.06-original/qmail-dkim.9	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/qmail-dkim.9	2019-06-19 09:47:56.361178564 +0200
-@@ -0,0 +1,325 @@
++++ netqmail-1.06/qmail-dkim.9	2020-04-09 19:45:28.421566373 +0200
+@@ -0,0 +1,322 @@
 +.TH qmail-dkim 8
 +.SH NAME
 +qmail-dkim \- sign/verify using DKIM (SSP/ADSP optionally) and queue a mail message for delivery
@@ -18610,11 +18834,8 @@ diff -ruN ../netqmail-1.06-original/qmail-dkim.9 netqmail-1.06/qmail-dkim.9
 +takes precedence over -x option specifed in
 +.BR DKIMSIGNOPTIONS.
 +.B qmail-dkim
-+uses the domain found in the Sender: header to set the domain tag. If not it uses the
-+From: header. You can override this by setting 
-+.B DKIMDOMAIN
-+environment variable.
-+.B DKIMDOMAIN
++uses the domain found in the Return-Path, Sender, From headers to set the domain tag.
++If not it uses the \fBDKIMDOMAIN\fR environment variable. \fBDKIMDOMAIN\fR
 +can be set to an email address or a domain (without the at sign).
 +
 +To verify a message, set the
@@ -21179,7 +21400,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.8 netqmail-1.06/qmail-remote.8
  envelopes(5),
 diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
 --- ../netqmail-1.06-original/qmail-remote.c	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/qmail-remote.c	2019-04-07 14:55:37.451093660 +0200
++++ netqmail-1.06/qmail-remote.c	2020-04-16 11:23:31.333050380 +0200
 @@ -28,6 +28,7 @@
  #include "timeoutconn.h"
  #include "timeoutread.h"
@@ -21414,7 +21635,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
        substdio_put(&smtpto,&ch,1);
        r = substdio_get(&ssin,&ch,1);
        if (r == 0) perm_partialline();
-@@ -214,30 +363,432 @@
+@@ -214,30 +363,436 @@
    substdio_flush(&smtpto);
  }
  
@@ -21521,6 +21742,10 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
 +  if (SSL_CTX_use_certificate_chain_file(ctx, CLIENTCERT))
 +    SSL_CTX_use_RSAPrivateKey_file(ctx, CLIENTCERT, SSL_FILETYPE_PEM);
 +# undef CLIENTCERT
++
++#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++  SSL_CTX_set_post_handshake_auth(ctx, 1);
++#endif
 +
 +  myssl = SSL_new(ctx);
 +  SSL_CTX_free(ctx);
@@ -21860,7 +22085,34 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
    flagbother = 0;
    for (i = 0;i < reciplist.len;++i) {
      substdio_puts(&smtpto,"RCPT TO:<");
-@@ -297,19 +848,14 @@
+@@ -246,15 +801,23 @@
+     substdio_flush(&smtpto);
+     code = smtpcode();
+     if (code >= 500) {
+-      out("h"); outhost(); out(" does not like recipient.\n");
++      /* added by Endersys R&D Team */
++      out("h<From:"); outsafe(&sender); out(" To:"); outsafe(&reciplist.sa[i]); out("> ");  outhost(); out(" does not like recipient.\n");
+       outsmtptext(); zero();
+     }
+     else if (code >= 400) {
+-      out("s"); outhost(); out(" does not like recipient.\n");
++      /* added by Endersys R&D Team */
++      out("s<From:"); outsafe(&sender); out(" To:"); outsafe(&reciplist.sa[i]);  out("> ");  outhost(); out(" does not like recipient.\n");
+       outsmtptext(); zero();
+     }
+     else {
+-      out("r"); zero();
++       /*
++       * James Raftery <james@now.ie>
++       * Log _real_ envelope recipient, post canonicalisation.
++       * and modified by Endersys R&D Team
++       */
++
++      out("r<From:"); outsafe(&sender); out(" To:"); outsafe(&reciplist.sa[i]); out("> "); zero();
+       flagbother = 1;
+     }
+   }
+@@ -297,19 +860,14 @@
    if (!stralloc_cats(saout,"@")) temp_nomem();
   
    if (!stralloc_copys(&canonhost,s + j + 1)) temp_nomem();
@@ -21882,7 +22134,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
    if (control_init() == -1) temp_control();
    if (control_readint(&timeout,"control/timeoutremote") == -1) temp_control();
    if (control_readint(&timeoutconnect,"control/timeoutconnect") == -1)
-@@ -324,48 +870,108 @@
+@@ -324,48 +882,108 @@
      case 1:
        if (!constmap_init(&maproutes,routes.s,routes.len,1)) temp_nomem(); break;
    }
@@ -22010,7 +22262,7 @@ diff -ruN ../netqmail-1.06-original/qmail-remote.c netqmail-1.06/qmail-remote.c
    if (!saa_readyplus(&reciplist,0)) temp_nomem();
    if (ipme_init() != 1) temp_oserr();
   
-@@ -414,10 +1020,13 @@
+@@ -414,10 +1032,13 @@
      smtpfd = socket(AF_INET,SOCK_STREAM,0);
      if (smtpfd == -1) temp_oserr();
   
@@ -23043,7 +23295,7 @@ diff -ruN ../netqmail-1.06-original/qmail-showctl.c netqmail-1.06/qmail-showctl.
      if (str_equal(d->d_name,"timeoutsmtpd")) continue;
 diff -ruN ../netqmail-1.06-original/qmail-smtpd.8 netqmail-1.06/qmail-smtpd.8
 --- ../netqmail-1.06-original/qmail-smtpd.8	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/qmail-smtpd.8	2019-02-27 20:57:13.402024937 +0100
++++ netqmail-1.06/qmail-smtpd.8	2021-06-11 18:53:00.896013885 +0200
 @@ -14,6 +14,15 @@
  see
  .BR tcp-environ(5) .
@@ -23196,8 +23448,8 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.8 netqmail-1.06/qmail-smtpd.8
  .IR databytes .
 +
 +.TP 5
-+.I dh2048.pem
-+If these 2048 bit DH parameters are provided,
++.I dh4096.pem
++If these 4096 bit DH parameters are provided,
 +.B qmail-smtpd
 +will use them for TLS sessions instead of generating one on-the-fly 
 +(which is very timeconsuming).
@@ -23231,8 +23483,8 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.8 netqmail-1.06/qmail-smtpd.8
  always allowed through.
 +
 +.TP 5
-+.I rsa2048.pem
-+If this 2048 bit RSA key is provided,
++.I rsa4096.pem
++If this 4096 bit RSA key is provided,
 +.B qmail-smtpd
 +will use it for TLS sessions instead of generating one on-the-fly.
 +
@@ -23367,7 +23619,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.8 netqmail-1.06/qmail-smtpd.8
  tcp-environ(5),
 diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
 --- ../netqmail-1.06-original/qmail-smtpd.c	2007-11-30 21:22:54.000000000 +0100
-+++ netqmail-1.06/qmail-smtpd.c	2019-12-08 09:26:53.258219034 +0100
++++ netqmail-1.06/qmail-smtpd.c	2021-06-11 17:48:14.033909906 +0200
 @@ -12,6 +12,9 @@
  #include "ip.h"
  #include "qmail.h"
@@ -23378,13 +23630,14 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  #include "fmt.h"
  #include "scan.h"
  #include "byte.h"
-@@ -23,44 +26,179 @@
+@@ -23,44 +26,180 @@
  #include "timeoutread.h"
  #include "timeoutwrite.h"
  #include "commands.h"
 +#include "dns.h"
 +#include "wait.h"
 +
++/* chkuser.h will check if TLS_H is defined, so this has to come before chkuser.h */
 +#ifdef TLS
 +#include <sys/stat.h>
 +#include "tls.h"
@@ -23567,7 +23820,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  void smtp_greet(code) char *code;
  {
-@@ -76,11 +214,33 @@
+@@ -76,11 +215,33 @@
    smtp_greet("221 "); out("\r\n"); flush(); _exit(0);
  }
  
@@ -23601,7 +23854,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  stralloc helohost = {0};
  char *fakehelo; /* pointer into helohost, or 0 */
-@@ -91,11 +251,101 @@
+@@ -91,11 +252,101 @@
    fakehelo = case_diffs(remotehost,helohost.s) ? helohost.s : 0;
  }
  
@@ -23704,7 +23957,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  void setup()
  {
-@@ -109,21 +359,110 @@
+@@ -109,21 +360,110 @@
    if (liphostok == -1) die_control();
    if (control_readint(&timeout,"control/timeoutsmtpd") == -1) die_control();
    if (timeout <= 0) timeout = 1;
@@ -23816,7 +24069,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    local = env_get("TCPLOCALHOST");
    if (!local) local = env_get("TCPLOCALIP");
    if (!local) local = "unknown";
-@@ -131,10 +470,67 @@
+@@ -131,10 +471,67 @@
    if (!remotehost) remotehost = "unknown";
    remoteinfo = env_get("TCPREMOTEINFO");
    relayclient = env_get("RELAYCLIENT");
@@ -23885,7 +24138,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  stralloc addr = {0}; /* will be 0-terminated, if addrparse returns 1 */
  
  int addrparse(arg)
-@@ -155,6 +551,7 @@
+@@ -155,6 +552,7 @@
      terminator = ' ';
      arg += str_chr(arg,':');
      if (*arg == ':') ++arg;
@@ -23893,7 +24146,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
      while (*arg == ' ') ++arg;
    }
  
-@@ -197,6 +594,8 @@
+@@ -197,6 +595,8 @@
    return 1;
  }
  
@@ -23902,7 +24155,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  int bmfcheck()
  {
    int j;
-@@ -207,76 +606,1104 @@
+@@ -207,76 +607,1108 @@
      if (constmap(&mapbmf,addr.s + j,addr.len - j - 1)) return 1;
    return 0;
  }
@@ -24486,13 +24739,13 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    seenmail = 0; dohelo(arg);
 +  if (bhelook) flagbarfbhelo = bmcheck(BMCHECK_BHELO);
 +  if ((!flagbarfbhelo) && (bhelonrok) && (!relayclient)) flagbarfbhelo = bmcheck(BMCHECK_BHELONR);
- }
++}
 +char size_buf[FMT_ULONG];
 +void smtp_size()
 +{
 +  size_buf[fmt_ulong(size_buf,(unsigned long) databytes)] = 0;
 +  out("250 SIZE "); out(size_buf); out("\r\n");
-+}
+ }
 +
 +/* ESMTP extensions are published here */
  void smtp_ehlo(arg) char *arg;
@@ -24529,6 +24782,10 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
 -  seenmail = 0;
 +  seenmail = 0; /* seenauth = 0; RFC 5321: retain authentication */
 +  mailfrom.len = 0; rcptto.len = 0;
++  /* prevents the maxrcpto error if control/maxrcpt limit has been exceeded in the same email, but not in multiple messages sequentially */
++  rcptcount = 0;
++  envelopepos = 1;
++  /* end rcptcount adjustment */
    out("250 flushed\r\n");
  }
 +
@@ -25001,7 +25258,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    r = timeoutread(timeout,fd,buf,len);
    if (r == -1) if (errno == error_timeout) die_alarm();
 -  if (r <= 0) die_read();
-+  if (r <= 0) die_read("timeoutread");
++  if (r <= 0) die_read("hang up before quit cmd");
    return r;
  }
  
@@ -25013,7 +25270,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
  
  struct qmail qqt;
  unsigned int bytestooverflow = 0;
-@@ -300,7 +1727,7 @@
+@@ -300,7 +1732,7 @@
    int flagmaybex; /* 1 if this line might match RECEIVED, if fih */
    int flagmaybey; /* 1 if this line might match \r\n, if fih */
    int flagmaybez; /* 1 if this line might match DELIVERED, if fih */
@@ -25022,7 +25279,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    state = 1;
    *hops = 0;
    flaginheader = 1;
-@@ -322,17 +1749,16 @@
+@@ -322,17 +1754,16 @@
      }
      switch(state) {
        case 0:
@@ -25043,7 +25300,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
          if (ch == '\r') { state = 3; continue; }
          state = 0;
          break;
-@@ -351,10 +1777,73 @@
+@@ -351,10 +1782,73 @@
    }
  }
  
@@ -25117,7 +25374,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    when = now();
    out("250 ok ");
    accept_buf[fmt_ulong(accept_buf,(unsigned long) when)] = 0;
-@@ -363,22 +1852,32 @@
+@@ -363,22 +1857,32 @@
    accept_buf[fmt_ulong(accept_buf,qp)] = 0;
    out(accept_buf);
    out("\r\n");
@@ -25152,7 +25409,7 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
    blast(&hops);
    hops = (hops >= MAXHOPS);
    if (hops) qmail_fail(&qqt);
-@@ -386,36 +1885,662 @@
+@@ -386,36 +1890,670 @@
    qmail_put(&qqt,rcptto.s,rcptto.len);
   
    qqx = qmail_close(&qqt);
@@ -25408,9 +25665,9 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
 +{
 +  RSA *rsa;
 +
-+  if (!export) keylen = 2048;
++  if (!export) keylen = 4096;
 +  if (keylen == 2048) {
-+    FILE *in = fopen("control/rsa2048.pem", "r");
++    FILE *in = fopen("control/rsa4096.pem", "r");
 +    if (in) {
 +      rsa = PEM_read_RSAPrivateKey(in, NULL, NULL, NULL);
 +      fclose(in);
@@ -25433,11 +25690,19 @@ diff -ruN ../netqmail-1.06-original/qmail-smtpd.c netqmail-1.06/qmail-smtpd.c
 +{
 +  DH *dh;
 +
-+  if (!export) keylen = 2048;
++  if (!export) keylen = 4096;
++  if (keylen == 4096) {
++    FILE *in = fopen("control/dh4096.pem", "r");
++    if (in) {
++      dh = PEM_read_DHparams(in, NULL, NULL, NULL);
++      fclose(in);
++      if (dh) return dh;
++    }
++  }
 +  if (keylen == 2048) {
 +    FILE *in = fopen("control/dh2048.pem", "r");
 +    if (in) {
-+      dh = PEM_read_DHparams(in, NULL, NULL, NULL);
++      DH *dh = PEM_read_DHparams(in, NULL, NULL, NULL);
 +      fclose(in);
 +      if (dh) return dh;
 +    }
@@ -27209,13 +27474,13 @@ diff -ruN ../netqmail-1.06-original/readwrite.h netqmail-1.06/readwrite.h
  #endif
 diff -ruN ../netqmail-1.06-original/received.c netqmail-1.06/received.c
 --- ../netqmail-1.06-original/received.c	1998-06-15 12:53:16.000000000 +0200
-+++ netqmail-1.06/received.c	2019-02-27 20:57:13.405024904 +0100
++++ netqmail-1.06/received.c	2020-12-04 19:21:36.804804198 +0100
 @@ -21,6 +21,9 @@
    return 0;
  }
  
-+char *relayclient;
-+int relayclientlen;
++extern char *relayclient;
++extern int relayclientlen;
 +
  void safeput(qqt,s)
  struct qmail *qqt;
@@ -27227,7 +27492,7 @@ diff -ruN ../netqmail-1.06-original/received.c netqmail-1.06/received.c
 -    qmail_puts(qqt,"@");
    }
 -  safeput(qqt,remoteip);
-+  relayclient = env_get("RELAYCLIENT");
++  char relayclient = env_get("RELAYCLIENT");
 +  if (!relayclient) {
 +    if (remoteinfo) { qmail_puts(qqt,"@"); }
 +     safeput(qqt,remoteip);
@@ -27577,8 +27842,8 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.9 netqmail-1.06/spawn-filter.9
 +should be forwarded to "Manvendra Bhangui" <mbhangui@gmail.com>
 diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 --- ../netqmail-1.06-original/spawn-filter.c	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/spawn-filter.c	2019-02-27 20:57:13.406024893 +0100
-@@ -0,0 +1,546 @@
++++ netqmail-1.06/spawn-filter.c	2020-04-09 19:45:45.390398843 +0200
+@@ -0,0 +1,506 @@
 +/*
 + * netqmail-version without spam filter
 + *
@@ -27744,32 +28009,10 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 +char           *getDomainToken(char *, stralloc *);
 +static int      run_mailfilter(char *, char *, char **);
 +int             wildmat_internal(char *, char *);
-+static int      check_size(char *);
 +
 +static int      remotE;
 +stralloc        sender = { 0 };
 +stralloc        recipient = { 0 };
-+
-+static int
-+check_size(char *size)
-+{
-+	char           *x;
-+	unsigned long   databytes = -1, msgsize;
-+
-+	if (!(x = env_get("DATABYTES")))
-+	{
-+		if (control_readulong(&databytes, "databytes") == -1)
-+			report(111, "spawn-filter: Unable to read databytes: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
-+	} else
-+		scan_ulong(x, &databytes);
-+	if (databytes == -1)
-+		return (0);
-+	scan_ulong(size, &msgsize);
-+	if (msgsize > databytes)
-+		return(1);
-+	else
-+		return(0);
-+}
 +
 +static void
 +report(int errCode, char *s1, char *s2, char *s3, char *s4, char *s5, char *s6)
@@ -28035,9 +28278,7 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 +int
 +main(int argc, char **argv)
 +{
-+	char           *ptr, *mailprog, *domain, *errStr = 0, *size = "0", *qqeh, *ext;
-+	char            sizebuf[FMT_ULONG];
-+	struct stat     statbuf;
++	char           *ptr, *mailprog, *domain, *ext;
 +	int             len;
 +
 +	len = str_len(argv[0]);
@@ -28048,33 +28289,23 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 +	if (*ptr == 'l') /*- qmail-local Filter */
 +	{
 +		mailprog = "bin/qmail-local";
-+		domain = argv[7];
 +		ext = argv[6];
-+		qqeh = argv[10];
++		domain = argv[7];
 +		remotE = 0;
 +		if (!env_unset("QMAILREMOTE"))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
-+		if (!fstat(0, &statbuf)) 
-+		{
-+			sizebuf[fmt_ulong(sizebuf, statbuf.st_size)] = 0;
-+			size = sizebuf;
-+		} else
-+			size = "0";
 +		/*- sender */
 +		if (!stralloc_copys(&sender, argv[8]))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		if (!stralloc_0(&sender))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
-+		if (!env_unset("QMAILREMOTE"))
-+			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		/*- recipient */
-+		if (*ext) /*- EXT */
-+		{
++		if (*ext) { /*- EXT */
 +			if (!stralloc_copys(&recipient, ext))
 +				report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		} else /*- user */
-+			if (!stralloc_copys(&recipient, argv[2]))
-+				report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
++		if (!stralloc_copys(&recipient, argv[2]))
++			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		if (!stralloc_cats(&recipient, "@"))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		if (!stralloc_cats(&recipient, domain))
@@ -28086,9 +28317,6 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 +	{
 +		mailprog = "bin/qmail-remote";
 +		domain = argv[1];
-+		ext = argv[5];
-+		qqeh = argv[3];
-+		size = argv[4];
 +		remotE = 1;
 +		if (!env_unset("QMAILLOCAL"))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
@@ -28098,7 +28326,7 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 +		if (!stralloc_0(&sender))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		/*- recipient */
-+		if (!stralloc_copys(&recipient, argv[5]))
++		if (!stralloc_copys(&recipient, argv[3]))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
 +		if (!stralloc_0(&recipient))
 +			report(111, "spawn-filter: out of mem: ", error_str(errno), ". (#4.3.0)", 0, 0, 0);
@@ -28109,9 +28337,6 @@ diff -ruN ../netqmail-1.06-original/spawn-filter.c netqmail-1.06/spawn-filter.c
 +	}
 +	if (chdir(auto_qmail) == -1)
 +		report(111, "spawn-filter: Unable to switch to ", auto_qmail, ": ", error_str(errno), ". (#4.3.0)", 0);
-+	/*- DATABYTES Check */
-+	if (check_size(size))
-+		report(100, "sorry, that message size exceeds my databytes limit (#5.3.4)", 0, 0, 0, 0, 0);
 +	run_mailfilter(domain, mailprog, argv);
 +	report(111, "spawn-filter: could not exec ", mailprog, ": ", error_str(errno), ". (#4.3.0)", 0);
 +	/*- Not reached */
@@ -29523,8 +29748,8 @@ diff -ruN ../netqmail-1.06-original/srsfilter.c netqmail-1.06/srsfilter.c
 +
 diff -ruN ../netqmail-1.06-original/ssl_timeoutio.c netqmail-1.06/ssl_timeoutio.c
 --- ../netqmail-1.06-original/ssl_timeoutio.c	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/ssl_timeoutio.c	2019-04-09 21:12:06.445883062 +0200
-@@ -0,0 +1,114 @@
++++ netqmail-1.06/ssl_timeoutio.c	2020-01-10 21:51:32.057157279 +0100
+@@ -0,0 +1,126 @@
 +#ifdef TLS
 +#include "select.h"
 +#include "error.h"
@@ -29600,7 +29825,16 @@ diff -ruN ../netqmail-1.06-original/ssl_timeoutio.c netqmail-1.06/ssl_timeoutio.
 +{
 +  int r=0;
 +
-+  SSL_renegotiate(ssl);
++#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++  if (SSL_version(ssl) >= TLS1_3_VERSION){
++    if(SSL_verify_client_post_handshake(ssl) != 1)
++      return -EPROTO;
++  } else
++#endif
++  {
++    r =  SSL_renegotiate(ssl);
++    if (r<=0) return r;
++  }
 +
 +#if OPENSSL_VERSION_NUMBER >= 0x10001000L
 +  char buf[1]; /* dummy read buffer */
@@ -29608,6 +29842,9 @@ diff -ruN ../netqmail-1.06-original/ssl_timeoutio.c netqmail-1.06/ssl_timeoutio.
 +  fd_set fds;
 +  r = ssl_timeoutio(SSL_do_handshake, t, rfd, wfd, ssl, NULL, 0);
 +  if (r <=0) return r;
++#if OPENSSL_VERSION_NUMBER >= 0x10101000L
++  if (SSL_version(ssl) >= TLS1_3_VERSION) return r;
++#endif
 +
 +  tv.tv_sec = (time_t)t; tv.tv_usec = 0;
 +  FD_ZERO(&fds);  FD_SET(rfd, &fds);
@@ -29967,7 +30204,7 @@ diff -ruN ../netqmail-1.06-original/surblfilter.9 netqmail-1.06/surblfilter.9
 +qmail-qfilter(1)
 diff -ruN ../netqmail-1.06-original/surblfilter.c netqmail-1.06/surblfilter.c
 --- ../netqmail-1.06-original/surblfilter.c	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/surblfilter.c	2019-06-19 09:49:12.360332332 +0200
++++ netqmail-1.06/surblfilter.c	2020-04-09 19:46:02.374231173 +0200
 @@ -0,0 +1,882 @@
 +/*
 + * $Log: surblfilter.c,v $
@@ -30330,7 +30567,7 @@ diff -ruN ../netqmail-1.06-original/surblfilter.c netqmail-1.06/surblfilter.c
 +		errno = EINVAL;
 +		return (-1);
 +	}
-+	if (!stralloc_copys(&cachefile, "control/cache", 13))
++	if (!stralloc_copyb(&cachefile, "control/cache", 13))
 +		die_nomem();
 +	if (!stralloc_0(&cachefile))
 +		die_nomem();
@@ -31152,7 +31389,7 @@ diff -ruN ../netqmail-1.06-original/uint64.h2 netqmail-1.06/uint64.h2
 +#endif
 diff -ruN ../netqmail-1.06-original/update_tmprsadh.sh netqmail-1.06/update_tmprsadh.sh
 --- ../netqmail-1.06-original/update_tmprsadh.sh	1970-01-01 01:00:00.000000000 +0100
-+++ netqmail-1.06/update_tmprsadh.sh	2019-02-27 20:57:13.410024849 +0100
++++ netqmail-1.06/update_tmprsadh.sh	2021-03-21 21:12:08.818884037 +0100
 @@ -0,0 +1,22 @@
 +#!/bin/sh
 +
@@ -31166,15 +31403,15 @@ diff -ruN ../netqmail-1.06-original/update_tmprsadh.sh netqmail-1.06/update_tmpr
 +
 +export PATH="$PATH:/usr/local/bin/ssl:/usr/sbin"
 +
-+openssl genrsa -out QMAIL/control/rsa2048.new 2048 &&
-+chmod 600 QMAIL/control/rsa2048.new &&
-+chown vpopmail:vchkpw QMAIL/control/rsa2048.new &&
-+mv -f QMAIL/control/rsa2048.new QMAIL/control/rsa2048.pem
++openssl genrsa -out QMAIL/control/rsa4096.new 4096 &&
++chmod 600 QMAIL/control/rsa4096.new &&
++chown vpopmail:vchkpw QMAIL/control/rsa4096.new &&
++mv -f QMAIL/control/rsa4096.new QMAIL/control/rsa4096.pem
 +
-+openssl dhparam -2 -out QMAIL/control/dh2048.new 2048 &&
-+chmod 600 QMAIL/control/dh2048.new &&
-+chown vpopmail:vchkpw QMAIL/control/dh2048.new &&
-+mv -f QMAIL/control/dh2048.new QMAIL/control/dh2048.pem
++openssl dhparam -2 -out QMAIL/control/dh4096.new 4096 &&
++chmod 600 QMAIL/control/dh4096.new &&
++chown vpopmail:vchkpw QMAIL/control/dh4096.new &&
++mv -f QMAIL/control/dh4096.new QMAIL/control/dh4096.pem
 +
 diff -ruN ../netqmail-1.06-original/wildmat.c netqmail-1.06/wildmat.c
 --- ../netqmail-1.06-original/wildmat.c	1970-01-01 01:00:00.000000000 +0100
