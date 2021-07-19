@@ -1,4 +1,3 @@
-%define defaultbuildroot /
 AutoProv: no
 %undefine __find_provides
 AutoReq: no
@@ -18,7 +17,7 @@ AutoReq: no
 BuildArch:     x86_64
 Name:          lxjailshell
 Version:       3.2
-Release:       34
+Release:       34.kng%{?dist}
 License:       GPL 
 Group:         Shell
 Summary:       A shell to jail a user to his home directory
@@ -51,8 +50,8 @@ Requires:      zlib
 Jailshell is meant to restrict a user to his home directory.
 
 %install
-install -d $RPM_BUILD_ROOT/usr
-install -d $RPM_BUILD_ROOT/usr/bin
+install -d ${RPM_BUILD_ROOT}/usr
+install -d ${RPM_BUILD_ROOT}/usr/bin
 install -m755 %{SOURCE0} $RPM_BUILD_ROOT/usr/bin/lxjailshell
 
 %files
