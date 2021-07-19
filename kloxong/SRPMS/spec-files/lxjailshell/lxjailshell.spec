@@ -14,7 +14,6 @@ AutoReq: no
 #dummy
 #dummy
 
-BuildArch:     x86_64
 Name:          lxjailshell
 Version:       3.2
 Release:       34.kng%{?dist}
