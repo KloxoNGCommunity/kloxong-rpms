@@ -51,6 +51,8 @@ Requires:      zlib
 Jailshell is meant to restrict a user to his home directory.
 
 %install
+install -d $RPM_BUILD_ROOT/usr
+install -d $RPM_BUILD_ROOT/usr/bin
 install -m755 %{SOURCE0} $RPM_BUILD_ROOT/usr/bin/lxjailshell
 
 %files
