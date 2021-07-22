@@ -1,5 +1,0 @@
-#!/bin/sh
-
-PATH="/usr/bin:/bin"
-
-exec /usr/sbin/dovecot -F 2>&1
