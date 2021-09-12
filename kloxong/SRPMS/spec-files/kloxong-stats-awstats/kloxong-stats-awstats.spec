@@ -58,7 +58,7 @@ with all web hosting providers which allow Perl, CGI and log access.
 - change product name to kloxong
 - add obsolete for kloxomr 
 
-* Sun May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 7.6-1.mr
+* Mon May 01 2017 Mustafa Ramadhan <mustafa@bigraf.com> - 7.6-1.mr
 - update to 7.6
 
 * Thu Sep 22 2016 Mustafa Ramadhan <mustafa@bigraf.com> - 7.5-1.mr
