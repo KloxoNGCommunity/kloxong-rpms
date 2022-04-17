@@ -574,7 +574,7 @@ echo $defaultHostname > %{qdir}/control/plusdomain
 echo $defaultHostname >> %{qdir}/control/rcpthosts
 echo $defaultHostname >> %{qdir}/control/locals
 echo "$defaultHostname - Welcome to Qmail Toaster Ver. %{bversion} SMTP Server" > %{qdir}/control/smtpgreeting
-echo $defaultHostname > doublebouncehost
+echo $defaultHostname > %{qdir}/control/doublebouncehost
 
 
 # Make postmaster the default address for aliases
