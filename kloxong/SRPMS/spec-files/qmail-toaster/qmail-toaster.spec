@@ -92,7 +92,7 @@ Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
 Requires: libdomainkeys-toaster >= 0.68
-Requires: mysql
+Requires: (mariadb or mysql)
 Requires: mysql-libs
 
 
@@ -904,7 +904,7 @@ fi
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
 #%attr(-,root,qmail) %{qdir}/bin/qmail-queue
-%attr(-,root,qmail) %{qdir}/control/domainkeys
+#%attr(-,root,qmail) %{qdir}/control/domainkeys
 
 # supervise
 #-------------------------------------------------------------------------------
