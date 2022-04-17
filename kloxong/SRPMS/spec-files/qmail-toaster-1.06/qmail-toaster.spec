@@ -80,7 +80,7 @@ Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
 Requires: libdomainkeys-toaster >= 0.68
-Requires: mysql
+Requires: {mariadb or mysql)
 Requires: mysql-libs
 
 
@@ -356,6 +356,12 @@ pushd %{buildroot}%{qdir}/control
   echo "3" > spfbehavior
   echo "Welcome to Qmail Toaster Ver. %{bversion} SMTP Server" > smtpgreeting
   echo "-r zen.spamhaus.org" > blacklists
+  echo "postmaster" > bouncefrom
+  echo "postmaster" > doublebounceto
+  echo "30000000" > softlimit
+  echo "100" > maxrcpt
+  echo "2" > brtlimit
+  
   chmod 644 *
 popd
 
@@ -568,6 +574,8 @@ echo $defaultHostname > %{qdir}/control/plusdomain
 echo $defaultHostname >> %{qdir}/control/rcpthosts
 echo $defaultHostname >> %{qdir}/control/locals
 echo "$defaultHostname - Welcome to Qmail Toaster Ver. %{bversion} SMTP Server" > %{qdir}/control/smtpgreeting
+echo $defaultHostname > doublebouncehost
+
 
 # Make postmaster the default address for aliases
 #-------------------------------------------------------------------------------
@@ -750,27 +758,36 @@ fi
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/badmailfrom
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/badmailto
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/blacklists
+%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/bouncefrom
+%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/brtlimit
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/concurrencyincoming
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/concurrencyremote
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/databytes
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/defaultdelivery
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/defaultdomain
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/defaulthost
+%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/doublebouncehost
+%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/doublebounceto
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/locals
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/logcount
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/logsize
+%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/maxrcpt
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/plusdomain
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/queuelifetime
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/rcpthosts
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/servercert.pem
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/smtpgreeting
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/smtproutes
+%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/softlimit
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/spfbehavior
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/me
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/policy
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/users/assign
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/users/cdb
 %attr(0755,root,qmail) %{qdir}/rc
+
+
+
 
 # symlinks (sendmail & domainkeys)
 #-------------------------------------------------------------------------------
@@ -779,7 +796,7 @@ fi
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
 #%attr(-,root,qmail) %{qdir}/bin/qmail-queue
-%attr(-,root,qmail) %{qdir}/control/domainkeys
+#%attr(-,root,qmail) %{qdir}/control/domainkeys
 
 # supervise
 #-------------------------------------------------------------------------------
