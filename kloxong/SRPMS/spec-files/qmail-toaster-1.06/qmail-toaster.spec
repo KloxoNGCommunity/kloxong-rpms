@@ -358,6 +358,7 @@ pushd %{buildroot}%{qdir}/control
   echo "-r zen.spamhaus.org" > blacklists
   echo "postmaster" > bouncefrom
   echo "postmaster" > doublebounceto
+  echo "localhost" > doublebouncehost
   echo "30000000" > softlimit
   echo "100" > maxrcpt
   echo "2" > brtlimit
@@ -570,11 +571,11 @@ echo $defaultHostname > %{qdir}/control/me
 echo $defaultHostname > %{qdir}/control/defaultdomain
 echo $defaultHostname > %{qdir}/control/defaulthost
 echo $defaultHostname > %{qdir}/control/plusdomain
-
+echo $defaultHostname > %{qdir}/control/doublebouncehost
 echo $defaultHostname >> %{qdir}/control/rcpthosts
 echo $defaultHostname >> %{qdir}/control/locals
 echo "$defaultHostname - Welcome to Qmail Toaster Ver. %{bversion} SMTP Server" > %{qdir}/control/smtpgreeting
-echo $defaultHostname > %{qdir}/control/doublebouncehost
+
 
 
 # Make postmaster the default address for aliases
