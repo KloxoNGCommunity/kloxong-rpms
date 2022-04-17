@@ -80,7 +80,7 @@ Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
 Requires: libdomainkeys-toaster >= 0.68
-Requires: {mariadb or mysql)
+Requires: (mariadb or mysql)
 Requires: mysql-libs
 
 
