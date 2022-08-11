@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 60.kng%{?dist}
+%define 	rpmrelease 61.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -1089,6 +1089,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Fri Aug 12 2022 John Pierce <john@luckytanuki.com> 1.03-1.3.61.kng
+- Disable changing of helohost by outgoingips as temporary work around for Spamhaus listing. This will need to be recoded.
+
 * Sat Jun 5 2021 John Pierce <john@luckytanuki.com> 1.03-1.3.60.kng
 - Restore permissions to domainkeys folder after wildcard permission change to control folder
 

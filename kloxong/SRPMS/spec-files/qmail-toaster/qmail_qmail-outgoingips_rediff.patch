@@ -106,7 +106,7 @@ diff -Naur qmail-1.03/qmail-remote.c qmail-1.03_mod/qmail-remote.c
 +
 +  if (localip) {
 +    if (!ip_scan(localip,&outgoingip)) temp_noip();
-+    if (!stralloc_copy(&helohost,&outdomain)) temp_nomem(); /* could be in control file */
++  //if (!stralloc_copy(&helohost,&outdomain)) temp_nomem(); /* could be in control file */
 +  }
 +  else
 +    outgoingip.d[0] = outgoingip.d[1] = outgoingip.d[2] = outgoingip.d[3] = (unsigned long) 0;
