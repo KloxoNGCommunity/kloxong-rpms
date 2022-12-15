@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 61.kng%{?dist}
+%define 	rpmrelease 62.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -243,6 +243,10 @@ sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 [ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
 
 echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
+
+# fix C error ‘NULL undeclared’ in qmail-dk.c
+#-------------------------------------------------------------------------------
+%{__perl} -pi -e "s|\#include \<sys/types\.h\>|\#include \<sys/types\.h\>\n\#include \<stddef\.h\>|g" qmail-dk.c
 
 
 #-------------------------------------------------------------------------------
@@ -1089,6 +1093,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Thu Dec 15 2022 John Pierce <john@luckytanuki.com> 1.03-1.3.62.kng
+- fix C error ‘NULL undeclared’ in qmail-dk.c
+
 * Fri Aug 12 2022 John Pierce <john@luckytanuki.com> 1.03-1.3.61.kng
 - Disable changing of helohost by outgoingips as temporary work around for Spamhaus listing. This will need to be recoded.
 
