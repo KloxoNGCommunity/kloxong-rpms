@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 1.03
 %define 	bversion 1.3
-%define 	rpmrelease 62.kng%{?dist}
+%define 	rpmrelease 63.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -246,7 +246,7 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 
 # fix C error ‘NULL undeclared’ in qmail-dk.c
 #-------------------------------------------------------------------------------
-%{__perl} -pi -e "s|\#include \<sys/types\.h\>|\#include \<sys/types\.h\>\n\#include \<stddef\.h\>|g" qmail-dk.c
+%{__perl} -pi -e "s|\#include <sys/types\.h>|\#include <sys/types\.h>\n\#include <stddef\.h>\n\#include <stdio\.h>|g" qmail-dk.c
 
 
 #-------------------------------------------------------------------------------
@@ -1093,6 +1093,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Thu Dec 15 2022 John Pierce <john@luckytanuki.com> 1.03-1.3.63.kng
+- fix C error ‘stderr undeclared’ in qmail-dk.c
+
 * Thu Dec 15 2022 John Pierce <john@luckytanuki.com> 1.03-1.3.62.kng
 - fix C error ‘NULL undeclared’ in qmail-dk.c
 
