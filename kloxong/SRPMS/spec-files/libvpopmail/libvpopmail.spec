@@ -92,9 +92,9 @@ one domain per SQL table = --disable-many-domains
 #-------------------------------------------------------------------------------
 %build
 #-------------------------------------------------------------------------------
-autoreconf
-%{__automake}
-%{__autoconf}
+autoreconf -f -i
+#%%{__automake}
+#%%{__autoconf}
 ./configure --prefix=%{vdir} \
 	--enable-vpopuser=vpopmail \
 	--enable-vpopgroup=vchkpw \
