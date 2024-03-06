@@ -16,7 +16,7 @@ Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
 # we may not find the old library path in the new one if
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
-#%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
+#%%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
 %define	ldflags %{optflags}
 
 
@@ -824,8 +824,8 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/boot
 %attr(0755,root,qmail) %dir %{qdir}/control
 %attr(0755,root,qmail) %dir %{qdir}/control/domainkeys
-#%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
-#%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
+#%attr(0755,root,qmail) %dir %%{qdir}/control/tlshosts
+#%attr(0755,root,qmail) %dir %%{qdir}/control/tlshosts/exhaustivelist
 %attr(0755,root,qmail) %dir %{qdir}/doc
 %attr(0755,root,qmail) %dir %{qdir}/man
 %attr(0755,root,qmail) %dir %{qdir}/man/cat1
@@ -902,7 +902,7 @@ fi
 %attr(-,root,qmail) %{_sbindir}/sendmail
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
-#%attr(-,root,qmail) %{qdir}/bin/qmail-queue
+#%%attr(-,root,qmail) %%{qdir}/bin/qmail-queue
 
 
 # supervise
