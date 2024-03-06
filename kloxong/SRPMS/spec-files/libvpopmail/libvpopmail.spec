@@ -33,6 +33,9 @@ Provides:		%{name}-static
 Obsoletes:		vpopmail-toaster-doc
 Conflicts:      	set-toaster, checkpassword
 BuildRequires:	automake
+BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires:  gcc-c++
 BuildRequires:	mysql-devel >= 5.0.22
 #Requires:		mysql >= 5.0.22
 
