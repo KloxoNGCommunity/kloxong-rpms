@@ -11,7 +11,7 @@
 BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
 Requires:		openssl >= 0.9.8, sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools
-BuildRequires:	perl, gcc, gcc++, make
+BuildRequires:	perl, gcc, gcc-c++, make
 Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
 # we may not find the old library path in the new one if
