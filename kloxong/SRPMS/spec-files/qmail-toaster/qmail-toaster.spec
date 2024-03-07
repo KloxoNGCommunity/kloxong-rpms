@@ -276,7 +276,7 @@ for i in qmail-lspawn qmail-newmrh qmail-newu qmail-start; do
   install -m700 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-dk qmail-queue; do
+for i in qmail-queue; do
   install -m4711 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
@@ -311,7 +311,7 @@ for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread splogge
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
 done
 
-install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
+#install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
 
 # install boot
 #-------------------------------------------------------------------------------
@@ -876,7 +876,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
-%attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dk
+#%%attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dk
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
 %attr(0755,root,qmail) %{qdir}/bin/qmail-inject
 %attr(0711,root,qmail) %{qdir}/bin/qmail-local
@@ -941,7 +941,7 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
+#%%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*
