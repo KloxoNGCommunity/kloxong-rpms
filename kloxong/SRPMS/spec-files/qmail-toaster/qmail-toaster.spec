@@ -66,6 +66,7 @@ Source300:	qmail_sendmail-wrapper
 
 Patch0:	outgoingip_to_outgoingips.patch
 Patch1:	fix-build-errors.patch
+Patch2:	qmail-uids.patch
 
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
@@ -126,13 +127,14 @@ this package.
 #-------------------------------------------------------------------------------
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %define name qmail
 
 # Remove CRAM-MD5 because qmail-remote-auth doesn't like it
 #-------------------------------------------------------------------------------
-#%{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
-#%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
+#%%{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
+#%%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
 # Adding proper path of library depedencies
 #-------------------------------------------------------------------------------
@@ -719,8 +721,8 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/boot
 %attr(0755,root,qmail) %dir %{qdir}/control
 %attr(0755,root,qmail) %dir %{qdir}/control/domainkeys
-#%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
-#%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
+#%%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
+#%%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
 %attr(0755,root,qmail) %dir %{qdir}/doc
 %attr(0755,root,qmail) %dir %{qdir}/man
 %attr(0755,root,qmail) %dir %{qdir}/man/cat1
@@ -797,8 +799,8 @@ fi
 %attr(-,root,qmail) %{_sbindir}/sendmail
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
-#%attr(-,root,qmail) %{qdir}/bin/qmail-queue
-#%attr(-,root,qmail) %{qdir}/control/domainkeys
+#%%attr(-,root,qmail) %{qdir}/bin/qmail-queue
+#%%attr(-,root,qmail) %{qdir}/control/domainkeys
 
 # supervise
 #-------------------------------------------------------------------------------
