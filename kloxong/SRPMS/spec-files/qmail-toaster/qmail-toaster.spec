@@ -290,7 +290,9 @@ done
 # install docs
 #-------------------------------------------------------------------------------
 for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES FILES.warlord HISTORY.warlord INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INSTALL.warlord INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.domainkeys README.qregex README.remote-auth README.starttls README.tap README.warlord REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION ChangeLog.empf README.empf; do
+ if [ -e "$RPM_BUILD_DIR/%{name}-%{pversion}/$i" ]; then
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/doc
+ fi
 done
 
 for i in qreceipt condredirect mailsubj except maildirmake preline tcp-env bouncesaying maildir2mbox qbiff forward maildirwatch; do
