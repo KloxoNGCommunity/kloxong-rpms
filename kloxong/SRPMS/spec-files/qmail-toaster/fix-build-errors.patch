@@ -18,3 +18,15 @@ diff -Naur qmail-kng/Makefile qmail-kng-mod/Makefile
  	( ( ./compile tryshsgr.c \
  	&& ./load tryshsgr && ./tryshsgr ) >/dev/null 2>&1 \
  	&& echo \#define HASSHORTSETGROUPS 1 || exit 0 ) > \
+diff -Naur qmail-kng/srs.c qmail-kng-mod/srs.c
+--- qmail-kng/srs.c	2024-03-06 13:18:03.000000000 +1100
++++ qmail-kng-mod/srs.c	2024-03-07 14:46:40.482145109 +1100
+@@ -1,7 +1,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-#include </usr/local/include/srs2.h>
++#include </usr/include/srs2.h>
+ #include "auto_qmail.h"
+ #include "stralloc.h"
+ #include "srs.h"
