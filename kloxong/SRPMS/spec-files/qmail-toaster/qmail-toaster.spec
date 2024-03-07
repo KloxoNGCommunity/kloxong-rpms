@@ -1,5 +1,5 @@
 %define 	name qmail
-%define 	pversion 1.03
+%define 	pversion 2024.03.01
 %define 	bversion 1.3
 %define 	rpmrelease 59.kng%{?dist}
 
@@ -11,7 +11,7 @@
 BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
 Requires:		openssl >= 0.9.8, sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools
-BuildRequires:	perl
+BuildRequires:	perl, gcc, gcc++, make
 Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
 # we may not find the old library path in the new one if
@@ -23,7 +23,7 @@ Obsoletes:	qmail-toaster-doc
 ############### RPM ################################
 
 %define		debug_package %{nil}
-%define		vtoaster %{pversion}
+%define		vtoaster 1.03
 %define		qdir /var/qmail
 %define		builddate Thu Feb 24 2011
 
@@ -33,9 +33,9 @@ Version:	%{vtoaster}
 Release:	%{release}
 License:	GNU
 Group:		System/Servers
-URL:		http://www.qmail.org/
+URL:		https://github.com/sagredo-dev/qmail
 
-Source:	qmail-%{pversion}.tar.bz2
+Source:	    qmail-%{pversion}.tar.gz
 Source1:	qmail_qmail-aliases
 Source3:	qmail_qmail.rc
 Source4:	qmail_qmail.init
@@ -64,34 +64,13 @@ Source201:	qmail_qmail-remote.new
 
 Source300:	qmail_sendmail-wrapper
 
-Patch0:	qmail_qmailtoaster-1.3.2.patch
-Patch1:	qmail_qmailtoaster-chkuser.patch
-Patch2:	qmail_qmail-require_auth.patch
-Patch3:	qmail_qmail-dk-0.6.beta.2.patch
-Patch4:	qmail_qmail-smtpd-spf-qq-reject-logging.patch
-Patch5:	qmail_qmail-srs-qt-0.5.patch
-Patch6:	qmail_qmailtoaster-big-dns.patch
-Patch7:	qmail_qmail-smtpd-linefeed.patch
-Patch8:	qmail_qmail-empf.patch
-
-Patch9:	qmail_qmail-vpopmail-devel.patch
-Patch10: qmail_qmail-uids.patch
-
-Patch11: qmail_qmail-nocram.patch
-Patch12: qmail_splogger-nostamp.patch
-
-Patch20: qmail_qmail-outgoingip_rediff.patch
-Patch21: qmail_qmail-outgoingips_rediff.patch
-
-Patch30: qmail_qmailtoaster-any-to-cname.patch
-
-Patch40: qmail-toaster-centos-7-chroot.patch
-Patch41: qmail-toaster-OpenSSL-1-1-0-kng.patch
+Patch0:	outgoingip_to_outgoingips.patch
+Patch1:	fix-build-errors.patch
 
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
-Requires: libdomainkeys-toaster >= 0.68
+#Requires: libdomainkeys-toaster >= 0.68
 Requires: (mariadb or mysql)
 Requires: mysql-libs
 
@@ -99,7 +78,7 @@ Requires: mysql-libs
 BuildRequires: libvpopmail-devel >= 5.4.17
 BuildRequires: mysql-devel
 BuildRequires: libsrs2-toaster >= 1.0.18
-BuildRequires: libdomainkeys-toaster >= 0.68
+#BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: vpopmail-toaster >= 5.4.17
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
@@ -120,65 +99,9 @@ qmailtoaster-1.3.2.patch            Thu Feb 24, 2011
 
 ~~~~~~~~~~~~~ Patches Applied ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-qmail-1.03 patched to netqmail-1.05
+qmail-1.03 patched to netqmail-1.06
 -----------------------------------
-QMAILQUEUE patch
-qmail-local patch
-local IP 0.0.0.0 patch
-sendmail -f patch
 
-Andrew St. Jean - qregex-starttls-2way-auth-20060305
-http://www.arda.homeunix.net/store/qmail/
-
-Frederik Vermeulen - qmail-tls 20060104
-http://inoa.net/qmail-tls/
-
-Erwin Hoffman - SMTP-AUTH Version 0.57
-http://www.fehcom.de/qmail/
-
-Robert Sander - qmail-remote-auth
-http://www.ornl.gov/lists/mailing-lists/qmail/2002/03/msg00091.html
-
-Antonio Nati - chkuser-2.0.9
-http://www.interazioni.it/opensource/chkuser/
-
-Chris christophe@saout.de - qmail-spf.rc5 
-http://www.saout.de/misc/spf/
-
-Russ Nelson - qmail-1.03-dk-0.54 domainkeys patch
-http://www.qmail.org/qmail-1.03-dk-0.54.patch
-
-Jeremy Kister - qmail-dk-0.54-auth patch
-http://jeremy.kister.net/code/qmail-dk-0.54-auth.patch
-
-Erwin Hoffmann - warlord-1.3.11  
-http://www.fehcom.de/qmail/
-
-Bill Shupp - netqmail-maildir++.patch
-http://shupp.org/patches/netqmail-maildir++.patch
-
-Bill Shupp - custom-smtp-reject
-http://www.shupp.org/patches/custom.patch
-
-Johannes Erdfelt - big-concurrency patch
-http://qmail.org/big-concurrency.patch
-
-Inter7 - qmailtap-1.1 tap
-http://www.inter7.com/qmailtap/qmail-tap-1.1.diff
-
-Alexey Loukianov - Log Enhancement Patch
-
-Jean-Paul van de Plasse - REQUIRE_AUTH Patch
-
-Marcelo Coelho - qmail-srs-0.4.patch
-http://opensource.mco2.net/qmail/srs/
-
-SMTP Linefeed Patch
-
-Big DNS Patch
-
-Inter7 - eMPF 1.0
-http://www.inter7.com/?page=empf-install
 
 %package -n qmail-pop3d-toaster
 Summary:	POP3 daemon for qmail
@@ -203,41 +126,12 @@ this package.
 #-------------------------------------------------------------------------------
 %patch0 -p1
 %patch1 -p1
-%patch2 -p1
-%patch3 -p1
-%patch4 -p0
-%patch5 -p1
-%patch6 -p0
-%patch7 -p0
-%patch8 -p1
-# I am really courious what happens if i enable that patch fails to compile with libdomainkeys error
-%patch9 -p1
-%patch10 -p1
-
-%patch11 -p1
-%patch12 -p1
-
-#%patch20 -p1
-%patch21 -p1
-
-%patch30 -p1
-# fixing compile error in qmail and centos 7 needs a check that cant be done in a chroot enviroment
-%if %{?fedora}0 > 140 || %{?rhel}0 > 60
-%patch40 -p1
-%endif
-#we need to address openssl compile issues on centos 8 with openssl-1.1 patch
-%if %{?fedora}0 > 150 || %{?rhel}0 > 70
-%patch41 -p0
-%endif
-
-
-echo
 
 %define name qmail
 
 # Remove CRAM-MD5 because qmail-remote-auth doesn't like it
 #-------------------------------------------------------------------------------
-%{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
+#%{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
 #%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
 # Adding proper path of library depedencies
