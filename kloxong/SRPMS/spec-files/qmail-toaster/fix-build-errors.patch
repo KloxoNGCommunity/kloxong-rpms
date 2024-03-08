@@ -1,13 +1,6 @@
 diff -Naur qmail-kng/Makefile qmail-kng-mod/Makefile
 --- qmail-kng/Makefile	2024-03-06 13:17:35.000000000 +1100
 +++ qmail-kng-mod/Makefile	2024-03-07 13:00:20.724135006 +1100
-@@ -1,6 +1,6 @@
- # Don't edit Makefile! Use conf-* for configuration.
- 
--VPOPMAIL_LIBS=`head -1 $(shell /bin/sh vpopmail-dir.sh)/etc/lib_deps` `cat dns.lib`
-+VPOPMAIL_LIBS=`head -1 /home/vpopmail/etc/lib_deps`
- 
- SMTPD_CHKUSER_OBJ=chkuser.o dns.o
  
 @@ -728,7 +728,7 @@
  
