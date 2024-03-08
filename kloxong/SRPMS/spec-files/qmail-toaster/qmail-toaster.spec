@@ -281,9 +281,7 @@ for i in qmail-queue; do
 done
 
 for i in qmail-badmimetypes qmail-badloadertypes qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter; do
- if [ -e "$RPM_BUILD_DIR/%{name}-%{pversion}/$i" ]; then
-	install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
- fi	
+  install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
 
@@ -311,10 +309,8 @@ for i in qmail-limits forgeries qmail; do
 done
 
 for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
- if [ -e "$RPM_BUILD_DIR/%{name}-%{pversion}/$i.8" ]; then
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.8 %{buildroot}%{qdir}/man/man8
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
- fi 
 done
 
 #install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
