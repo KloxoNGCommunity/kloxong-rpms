@@ -5,7 +5,7 @@ diff -Naur qmail-kng/Makefile qmail-kng-mod/Makefile
  # Don't edit Makefile! Use conf-* for configuration.
  
 -VPOPMAIL_LIBS=`head -1 $(shell /bin/sh vpopmail-dir.sh)/etc/lib_deps` `cat dns.lib`
-+VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`
++VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps` `cat dns.lib`
  
  SMTPD_CHKUSER_OBJ=chkuser.o dns.o
  
