@@ -16,7 +16,7 @@ Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
 # we may not find the old library path in the new one if
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
-#%%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
+#%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
 %define	ldflags %{optflags}
 
 
@@ -290,9 +290,7 @@ done
 # install docs
 #-------------------------------------------------------------------------------
 for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES FILES.warlord HISTORY.warlord INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INSTALL.warlord INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.domainkeys README.qregex README.remote-auth README.starttls README.tap README.warlord REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION ChangeLog.empf README.empf; do
- if [ -e "$RPM_BUILD_DIR/%{name}-%{pversion}/$i" ]; then
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/doc
- fi
 done
 
 for i in qreceipt condredirect mailsubj except maildirmake preline tcp-env bouncesaying maildir2mbox qbiff forward maildirwatch; do
@@ -727,8 +725,8 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/boot
 %attr(0755,root,qmail) %dir %{qdir}/control
 %attr(0755,root,qmail) %dir %{qdir}/control/domainkeys
-#%%attr(0755,root,qmail) %dir %%{qdir}/control/tlshosts
-#%%attr(0755,root,qmail) %dir %%{qdir}/control/tlshosts/exhaustivelist
+#%%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
+#%%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
 %attr(0755,root,qmail) %dir %{qdir}/doc
 %attr(0755,root,qmail) %dir %{qdir}/man
 %attr(0755,root,qmail) %dir %{qdir}/man/cat1
@@ -805,8 +803,8 @@ fi
 %attr(-,root,qmail) %{_sbindir}/sendmail
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
-#%%attr(-,root,qmail) %%{qdir}/bin/qmail-queue
-#%%attr(-,root,qmail) %%{qdir}/control/domainkeys
+#%%attr(-,root,qmail) %{qdir}/bin/qmail-queue
+#%%attr(-,root,qmail) %{qdir}/control/domainkeys
 
 # supervise
 #-------------------------------------------------------------------------------
@@ -882,7 +880,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
-#%%attr(04711,qmailq,qmail) %%{qdir}/bin/qmail-dk
+#%%attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dk
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
 %attr(0755,root,qmail) %{qdir}/bin/qmail-inject
 %attr(0711,root,qmail) %{qdir}/bin/qmail-local
@@ -947,7 +945,7 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
-#%%attr(0644,root,qmail) %%{qdir}/man/man8/qmail-dk.8*
+#%%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*
