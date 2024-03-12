@@ -148,7 +148,7 @@ this package.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
-%if 0%{?rhel} = 7
+%if 0%{?rhel} < 8
 %patch3 -p1
 %endif
 
