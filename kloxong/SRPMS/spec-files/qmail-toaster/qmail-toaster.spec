@@ -8,12 +8,38 @@
 %define	crontab /etc/crontab
 %define	rcpath /etc
 %define	_initpath /etc/rc.d/init.d
-BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
-Requires:		openssl >= 0.9.8, sh-utils
+ >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
+Requires: sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools
 BuildRequires:	perl, gcc, gcc-c++, make
+%{?el9: BuildRequires: openssl-devel >= 1.1.1}
+%{?el9: Requires: openssl >= 1.1.1}
+%{?el8: BuildRequires: openssl-devel >= 1.1.1}
+%{?el8: Requires: openssl >= 1.1.1}
+%{?el7: BuildRequires:openssl11-devel}
+%{?el7: Requires: openssl11}
+
+
 Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
+
+Requires: ucspi-tcp-toaster >= 0.88
+Requires: vpopmail-toaster >= 5.4.17
+Requires: libsrs2-toaster >= 1.0.18
+#Requires: libdomainkeys-toaster >= 0.68
+#Requires: (mariadb or mysql)
+Requires: mysql-libs
+
+
+BuildRequires: libvpopmail-devel >= 5.4.17
+BuildRequires: mysql-devel
+BuildRequires: libsrs2-toaster >= 1.0.18
+#BuildRequires: libdomainkeys-toaster >= 0.68
+BuildRequires: vpopmail-toaster >= 5.4.17
+
+
+
+
 # we may not find the old library path in the new one if
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
 #%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
@@ -68,28 +94,11 @@ Patch0:	outgoingip_to_outgoingips.patch
 Patch1:	fix-build-errors.patch
 Patch2:	qmail-uids.patch
 
-Requires: ucspi-tcp-toaster >= 0.88
-Requires: vpopmail-toaster >= 5.4.17
-Requires: libsrs2-toaster >= 1.0.18
-#Requires: libdomainkeys-toaster >= 0.68
-#Requires: (mariadb or mysql)
-Requires: mysql-libs
-
-
-BuildRequires: libvpopmail-devel >= 5.4.17
-BuildRequires: mysql-devel
-BuildRequires: libsrs2-toaster >= 1.0.18
-#BuildRequires: libdomainkeys-toaster >= 0.68
-BuildRequires: vpopmail-toaster >= 5.4.17
-
-%if %{?rhel}0 > 70 && %{?rhel}0 < 80
-Requires: openssl11
-%endif
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 #Conflicts:	sendmail, exim, smail, postfix, qmail
-Obsoletes:	sendmail, sendmail-cf, sendmail-doc, sendmail-devel
-Obsoletes:	exim, smail, postfix, qmail, ssmtp
+Obsoletes:	sendmail >= 8 , sendmail-cf >= 8, sendmail-doc >=8, sendmail-devel >=8
+Obsoletes:	exim >= 1, smail  >= 1, postfix >= 1, qmail >= 1, ssmtp >= 1
 Obsoletes:	set-toaster, checkpassword, vpopmail
 
 Packager:	Jake Vickers <jake@qmailtoaster.com>
@@ -731,8 +740,8 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/boot
 %attr(0755,root,qmail) %dir %{qdir}/control
 %attr(0755,root,qmail) %dir %{qdir}/control/domainkeys
-#%%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts
-#%%attr(0755,root,qmail) %dir %{qdir}/control/tlshosts/exhaustivelist
+#%%attr(0755,root,qmail) %dir %%{qdir}/control/tlshosts
+#%%attr(0755,root,qmail) %dir %%{qdir}/control/tlshosts/exhaustivelist
 %attr(0755,root,qmail) %dir %{qdir}/doc
 %attr(0755,root,qmail) %dir %{qdir}/man
 %attr(0755,root,qmail) %dir %{qdir}/man/cat1
@@ -809,8 +818,8 @@ fi
 %attr(-,root,qmail) %{_sbindir}/sendmail
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
-#%%attr(-,root,qmail) %{qdir}/bin/qmail-queue
-#%%attr(-,root,qmail) %{qdir}/control/domainkeys
+#%%attr(-,root,qmail) %%{qdir}/bin/qmail-queue
+#%%attr(-,root,qmail) %%{qdir}/control/domainkeys
 
 # supervise
 #-------------------------------------------------------------------------------
@@ -886,7 +895,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
-#%%attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dk
+#%%attr(04711,qmailq,qmail) %%{qdir}/bin/qmail-dk
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
 %attr(0755,root,qmail) %{qdir}/bin/qmail-inject
 %attr(0711,root,qmail) %{qdir}/bin/qmail-local
@@ -951,7 +960,7 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
-#%%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
+#%%attr(0644,root,qmail) %%{qdir}/man/man8/qmail-dk.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*
