@@ -8,9 +8,9 @@
 %define	crontab /etc/crontab
 %define	rcpath /etc
 %define	_initpath /etc/rc.d/init.d
- >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
+
 Requires: sh-utils
-BuildRequires:	shadow-utils, bzip2, net-tools
+BuildRequires:	shadow-utils, bzip2, net-tools, krb5-devel >= 1.5
 BuildRequires:	perl, gcc, gcc-c++, make
 %{?el9: BuildRequires: openssl-devel >= 1.1.1}
 %{?el9: Requires: openssl >= 1.1.1}
