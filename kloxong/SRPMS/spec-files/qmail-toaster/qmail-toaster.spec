@@ -45,7 +45,7 @@ BuildRequires: vpopmail-toaster >= 5.4.17
 %if 0%{?rhel} >= 8
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
 %else
-%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include -I/usr/include/openssl11
+%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include -I/usr/include/openssl11 -l:libssl.so.1.1 -l:libcrypto.so.1.1
 %endif
 
 
