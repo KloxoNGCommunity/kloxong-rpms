@@ -41,7 +41,15 @@ BuildRequires: vpopmail-toaster >= 5.4.17
 
 
 # we may not find the old library path in the new one if
+
+%if 0%{?rhel} >= 8
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
+%else
+%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include -I/usr/include/openssl11
+%endif
+
+
+#%%define	ccflags %%{optflags} -DTLS=20060104 -I/home/vpopmail/include
 #%%define	ccflags %%{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
 %define	ldflags %{optflags}
 
@@ -149,7 +157,7 @@ this package.
 %patch1 -p1
 %patch2 -p1
 %if 0%{?rhel} < 8
-%patch3 -p1
+#%%patch3 -p1
 %endif
 
 %define name qmail
