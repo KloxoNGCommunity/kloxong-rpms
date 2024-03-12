@@ -12,13 +12,13 @@
 Requires: sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools, krb5-devel >= 1.5
 BuildRequires:	perl, gcc, gcc-c++, make
-%{?el9: BuildRequires: openssl-devel >= 1.1.1}
-%{?el9: Requires: openssl >= 1.1.1}
-%{?el8: BuildRequires: openssl-devel >= 1.1.1}
-%{?el8: Requires: openssl >= 1.1.1}
-%{?el7: BuildRequires: openssl11-devel}
-%{?el7: Requires: openssl11}
-
+%if 0%{?rhel} >= 8
+BuildRequires: openssl-devel >= 1.1.1
+Requires: openssl >= 1.1.1
+%else
+BuildRequires: openssl11-devel
+Requires: openssl11
+%endif
 
 Provides:	smtpdaemon, MTA
 Obsoletes:	qmail-toaster-doc
