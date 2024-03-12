@@ -42,7 +42,7 @@ BuildRequires: vpopmail-toaster >= 5.4.17
 
 # we may not find the old library path in the new one if
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
-#%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
+#%define	ccflags %%{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
 %define	ldflags %{optflags}
 
 
@@ -96,8 +96,8 @@ Patch2:	qmail-uids.patch
 
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
-#Conflicts:	sendmail, exim, smail, postfix, qmail
-Obsoletes:	sendmail >= 8 , sendmail-cf >= 8, sendmail-doc >=8, sendmail-devel >=8
+
+Obsoletes:	sendmail >= 8, sendmail-cf >= 8, sendmail-doc >=8, sendmail-devel >=8
 Obsoletes:	exim >= 1, smail  >= 1, postfix >= 1, qmail >= 1, ssmtp >= 1
 Obsoletes:	set-toaster, checkpassword, vpopmail
 
