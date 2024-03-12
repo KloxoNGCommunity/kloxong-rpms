@@ -93,9 +93,7 @@ Source300:	qmail_sendmail-wrapper
 Patch0:	outgoingip_to_outgoingips.patch
 Patch1:	fix-build-errors.patch
 Patch2:	qmail-uids.patch
-%if 0%{?rhel} = 7
 Patch3:	el7openssl11.patch
-%endif
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 
@@ -150,7 +148,9 @@ this package.
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%if 0%{?rhel} = 7
 %patch3 -p1
+%endif
 
 %define name qmail
 
