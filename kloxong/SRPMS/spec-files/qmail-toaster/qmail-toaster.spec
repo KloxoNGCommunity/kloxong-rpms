@@ -97,15 +97,15 @@ Patch2:	qmail-uids.patch
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 
-Obsoletes:	sendmail >= 8
-Obsoletes:	sendmail-cf >= 8
-Obsoletes:	sendmail-doc >=8
-Obsoletes:	sendmail-devel >=8
-Obsoletes:	exim >= 1
-Obsoletes:	smail >= 1
-Obsoletes:	postfix >= 1
-Obsoletes:	qmail >= 1
-Obsoletes:	ssmtp >= 1
+Obsoletes:	sendmail < 9
+Obsoletes:	sendmail-cf < 9
+Obsoletes:	sendmail-doc  < 9
+Obsoletes:	sendmail-devel  < 9
+Obsoletes:	exim  < 9
+Obsoletes:	smail  < 9
+Obsoletes:	postfix  < 9
+Obsoletes:	qmail  < 1.7
+Obsoletes:	ssmtp  < 9
 Obsoletes:	set-toaster, checkpassword, vpopmail
 
 Packager:	John Pierce <info@kloxong.com>
