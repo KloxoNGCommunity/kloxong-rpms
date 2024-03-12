@@ -82,6 +82,10 @@ BuildRequires: libsrs2-toaster >= 1.0.18
 #BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: vpopmail-toaster >= 5.4.17
 
+%if %{?rhel}0 > 70 && %{?rhel}0 < 80
+Requires: openssl11
+%endif
+
 Buildroot:	%{_tmppath}/%{name}-%{version}
 #Conflicts:	sendmail, exim, smail, postfix, qmail
 Obsoletes:	sendmail, sendmail-cf, sendmail-doc, sendmail-devel
