@@ -16,7 +16,7 @@ BuildRequires:	perl, gcc, gcc-c++, make
 BuildRequires: openssl-devel >= 1.1.1
 Requires: openssl >= 1.1.1
 %else
-BuildRequires: openssl11-devel
+BuildRequires: openssl11, openssl11-devel
 Requires: openssl11
 %endif
 
