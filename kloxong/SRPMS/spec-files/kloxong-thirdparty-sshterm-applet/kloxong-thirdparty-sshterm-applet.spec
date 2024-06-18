@@ -1,11 +1,11 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/thirdparty
-%define productname kloxong-thirdparty
+%define productname kloxo-thirdparty
 %define packagename sshterm-applet
 
 Name: %{productname}-%{packagename}
 Summary: SSHTerm SSH access for webpages
 Version: 0.2.2
-Release: 4.kng%{?dist}
+Release: 5.kng%{?dist}
 License: GPL
 URL: http://lxcenter.org/
 Group: Applications/Internet
@@ -15,7 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: lxphp
 Provides: sshterm
-Obsoletes: kloxo-sshterm-applet, kloxomr7-thirdparty-sshterm-applet
+Obsoletes: kloxong-sshterm-applet, kloxomr7-thirdparty-sshterm-applet
 
 %description
 SSHTerm provides web based SSH access console (java applet)
@@ -38,6 +38,9 @@ SSHTerm provides web based SSH access console (java applet)
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com> - 1.3.2-4.kng
+- Change product name back to Kloxo
+
 * Tue Jan 22 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 0.2.2-3.mr
 - change email from mustafa.ramadhan@lxcenter.org to mustafa@bigraf.com
 

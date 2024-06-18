@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxong-webmail
+%define productname kloxo-webmail
 %define packagename t-dah
 
 Name: %{productname}-%{packagename}
@@ -20,7 +20,7 @@ BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
 Provides: webmail
-Obsoletes: kloxo-t-dah, kloxomr-webmail-t-dah
+Obsoletes: kloxong-t-dah, kloxomr-webmail-t-dah
 
 %description
 T-dah is an Open Sourced Universal Webmail origially developed by Aldoir Ventura 
@@ -54,6 +54,9 @@ install -D -m 755 $RPM_SOURCE_DIR/t-dah_config.mail.php $RPM_BUILD_ROOT/home/klo
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com> - 1.3.2-4.kng
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 

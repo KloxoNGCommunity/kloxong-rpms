@@ -1,11 +1,11 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxong-webmail
+%define productname kloxo-webmail
 %define packagename telaen
 
 Name: %{productname}-%{packagename}
 Summary: Telaen webmail
 Version: 1.3.2
-Release: 3.kng%{?dist}
+Release: 4.kng%{?dist}
 License: GPL
 URL: https://github.com/jimjag/telaen
 Group: Applications/Internet
@@ -20,7 +20,7 @@ BuildArch: noarch
 #Requires: webserver, php >= 4.0.4, php-mbstring
 #Requires: /usr/sbin/sendmail
 Provides: webmail
-Obsoletes: kloxo-telaen, kloxomr-webmail-telaen
+Obsoletes: kloxong-telaen, kloxomr-webmail-telaen
 
 %description
 T-dah is an Open Sourced Universal Webmail origially developed by Aldoir Ventura 
@@ -57,6 +57,9 @@ fi
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com> - 1.3.2-4.kng
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 

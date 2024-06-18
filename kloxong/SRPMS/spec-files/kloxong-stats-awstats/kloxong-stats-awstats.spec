@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd
-%define productname kloxong-stats
+%define productname kloxo-stats
 %define packagename awstats
 
 Name: %{productname}-%{packagename}
@@ -15,7 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 #Requires: webserver, php >= 5.2.17, php-mbstring
 Provides: awstats
-Obsoletes: kloxo-awstats, kloxomr-stats-awstats
+Obsoletes: kloxong-awstats, kloxomr-stats-awstats
 
 %description
 AWStats is a free powerful and featureful tool that generates advanced 
@@ -54,6 +54,9 @@ with all web hosting providers which allow Perl, CGI and log access.
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com>
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 

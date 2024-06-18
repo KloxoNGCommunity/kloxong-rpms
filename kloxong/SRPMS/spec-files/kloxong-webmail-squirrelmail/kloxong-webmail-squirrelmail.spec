@@ -1,11 +1,11 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxong-webmail
+%define productname kloxo-webmail
 %define packagename squirrelmail
 
 Name: %{productname}-%{packagename}
 Summary: SquirrelMail webmail client
 Version: 1.4.22
-Release: 7.kng%{?dist}
+Release: 8.kng%{?dist}
 License: GPL
 URL: http://www.squirrelmail.org/
 Group: Applications/Internet
@@ -21,7 +21,7 @@ BuildRequires: gettext
 #Requires: webserver, php >= 4.0.4, php-mbstring, perl, tmpwatch >= 2.8, aspell
 #Requires: /usr/sbin/sendmail
 Provides: squirrelmail-i18n
-Obsoletes: kloxo-squirrelmail, kloxomr-webmail-squirrelmail
+Obsoletes: kloxong-squirrelmail, kloxomr-webmail-squirrelmail
 
 %description
 SquirrelMail is a standards-based webmail package written in PHP4. It
@@ -148,6 +148,9 @@ rm -rf $RPM_BUILD_ROOT
 #%{_sysconfdir}/cron.daily/squirrelmail.cron
 
 %changelog
+
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com> - 1.4.22-8.kng
+- Change product name back to Kloxo
 
 * Mon Dec 23 2019 John Parnell Pierce <john@luckytanuki.com> - 1.4.22-7.kng
 - Remove dups from files

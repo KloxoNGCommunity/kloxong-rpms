@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/thirdparty
-%define productname kloxong-thirdparty
+%define productname kloxo-thirdparty
 %define packagename phpMyAdmin
 %define packagename2 phpmyadmin
 
@@ -94,6 +94,9 @@ rm -rf %{kloxo}/%{packagename}/config.inc.php.*
 
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com> - 1.3.2-4.kng
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com>  - 4.0.10.20-2.kng
 - change product name to kloxong
 - add obsolete for kloxomr 

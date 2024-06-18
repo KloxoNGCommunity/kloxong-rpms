@@ -1,5 +1,5 @@
 %define kloxo /usr/local/lxlabs/kloxo/httpdocs/thirdparty
-%define productname kloxong-thirdparty
+%define productname kloxo-thirdparty
 %define packagename phpMyAdmin
 %define packagename2 phpmyadmin
 
@@ -34,7 +34,7 @@ BuildRequires: unzip
 #Requires: php-gd >= 5.2.0
 #Requires: php-mcrypt >= 5.2.0
 Provides: phpmyadmin = %{version}-%{release}
-Obsoletes: kloxo-phpMyAdmin, kloxomr-thirdparty-phpmyadmin, kloxomr7-thirdparty-phpmyadmin
+Obsoletes: kloxong-phpMyAdmin, kloxomr-thirdparty-phpmyadmin, kloxomr7-thirdparty-phpmyadmin
 Conflicts: kloxomr-thirdparty-phpmyadmin < 4.1
 
 %description
@@ -97,6 +97,9 @@ rm -rf %{kloxo}/%{packagename}/config.inc.php.*
 
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com> - 1.3.2-4.kng
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 

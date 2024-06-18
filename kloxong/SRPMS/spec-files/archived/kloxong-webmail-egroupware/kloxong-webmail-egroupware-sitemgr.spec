@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxong-webmail
+%define productname kloxo-webmail
 %define packagename egroupware
 %define portionname sitemgr
 
@@ -16,8 +16,8 @@ Source0: ftp://ftp.horde.org/pub/horde-webmail/%{packagename}-%{portionname}-%{v
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Provides: webmail
-Obsoletes: kloxo-egroupware-sitemgr, kloxomr-webmail-egroupware-sitemgr
-Requires: kloxong-webmail-egroupware
+Obsoletes: kloxong-egroupware-sitemgr, kloxomr-webmail-egroupware-sitemgr
+Requires: kloxo-webmail-egroupware
 
 %description
 EGroupware is a multi-user, web-based groupware suite.
@@ -47,6 +47,9 @@ project management, tracker, timesheet, knowledge base, CalDAV/CardDAV
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com>
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 

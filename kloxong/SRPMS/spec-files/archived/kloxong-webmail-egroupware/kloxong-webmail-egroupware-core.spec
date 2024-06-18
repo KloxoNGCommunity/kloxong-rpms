@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxong-webmail
+%define productname kloxo-webmail
 %define packagename egroupware
 
 Name: %{productname}-%{packagename}
@@ -15,14 +15,14 @@ Source0: ftp://ftp.horde.org/pub/horde-webmail/%{packagename}-core-%{version}.ta
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 Provides: webmail
-Requires: kloxong-webmail-egroupware-addressbook, kloxong-webmail-egroupware-admin
-Requires: kloxong-webmail-egroupware-calendar, kloxong-webmail-egroupware-egw-pear
-Requires: kloxong-webmail-egroupware-filemanager, kloxong-webmail-egroupware-gallery
-Requires: kloxong-webmail-egroupware-infolog, kloxong-webmail-egroupware-phpfreechat
-Requires: kloxong-webmail-egroupware-polls, kloxong-webmail-egroupware-projectmanager
-Requires: kloxong-webmail-egroupware-sitemgr, kloxong-webmail-egroupware-timesheet
-Requires: kloxong-webmail-egroupware-tracker, kloxong-webmail-egroupware-wiki
-Obsoletes: kloxo-egroupware, kloxomr-webmail-egroupware-core
+Requires: kloxo-webmail-egroupware-addressbook, kloxo-webmail-egroupware-admin
+Requires: kloxo-webmail-egroupware-calendar, kloxo-webmail-egroupware-egw-pear
+Requires: kloxo-webmail-egroupware-filemanager, kloxo-webmail-egroupware-gallery
+Requires: kloxo-webmail-egroupware-infolog, kloxo-webmail-egroupware-phpfreechat
+Requires: kloxo-webmail-egroupware-polls, kloxo-webmail-egroupware-projectmanager
+Requires: kloxo-webmail-egroupware-sitemgr, kloxo-webmail-egroupware-timesheet
+Requires: kloxo-webmail-egroupware-tracker, kloxo-webmail-egroupware-wiki
+Obsoletes: kloxong-egroupware, kloxomr-webmail-egroupware-core
 
 %description
 EGroupware is a multi-user, web-based groupware suite.
@@ -52,6 +52,9 @@ project management, tracker, timesheet, knowledge base, CalDAV/CardDAV
 %{kloxo}/%{packagename}
 
 %changelog
+* Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com>
+- Change product name back to Kloxo
+
 * Mon Jan 29 2018 John Parnell Pierce <john@luckytanuki.com> 
 - change product name to kloxong
 - add obsolete for kloxomr 
