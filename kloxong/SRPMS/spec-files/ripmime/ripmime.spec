@@ -8,7 +8,10 @@ License:        BSD
 URL:            http://www.pldaniels.com/ripmime/
 Source0:        http://www.pldaniels.com/%{name}/%{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
 BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires: 	gcc-c++
 
 %description
 ripMIME extract attachments out of a MIME encoded email packages.
