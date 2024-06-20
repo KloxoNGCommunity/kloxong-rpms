@@ -2,7 +2,6 @@
 
 Name: mod_ruid2
 Version: 0.9.8
-#Release: 1%{?dist}
 Release: 3.kng%{?dist}
 Summary: Suexec module for apache
 
@@ -11,9 +10,10 @@ License: ASL 2.0
 URL: http://space.dl.sourceforge.net/project/mod-ruid/
 Source0: http://space.dl.sourceforge.net/project/mod-ruid/mod_ruid2//%{name}-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
-BuildRequires: libcap-devel, httpd-devel
+BuildRequires: libcap-devel
+BuildRequires: httpd-devel
 Requires: httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
-Requires: httpd >= 2.0
+Requires: httpd >= 2.4
 Obsoletes: mod_ruid
 
 
@@ -31,7 +31,7 @@ user's right, this module is useful.
 
 
 %build
-%{_sbindir}/apxs -a -l cap -c mod_ruid2.c
+%{_bindir}/apxs -a -l cap -c mod_ruid2.c
 
 
 %install
@@ -66,5 +66,3 @@ rm -rf %{buildroot}
 * Thu Sep 08 2011 Denis Frolov <d.frolov81@mail.ru> 0.9.4-1
 - update to mod_ruid2 0.9.4
 
-* Thu Sep 22 2008 Denis Frolov <d.frolov81@mail.ru> 0.6-1
-- Initial RPM release.
