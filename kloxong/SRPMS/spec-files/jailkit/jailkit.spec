@@ -31,9 +31,6 @@ and also on general servers with accounts where the shell accounts
 are in a chroot.
 
 %prep
-%setup
-
-%prep
 %setup -q
 %patch1 -p0 -b .makefile
 %patch2 -p0
