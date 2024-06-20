@@ -12,6 +12,11 @@ Source1:        mod_evasive.conf
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 BuildRequires:  httpd-devel
+%if 0%{?fedora} > 29 || 0%{?rhel} > 8
+BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires: gcc-c++
+%endif
 Requires:       httpd
 Requires:       httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
 
@@ -28,7 +33,7 @@ reports abuses via email and syslog facilities.
 
 
 %build
-%{_sbindir}/apxs -Wc,"%{optflags}" -c mod_evasive20.c
+%{_bindir}/apxs -Wc,"%{optflags}" -c mod_evasive20.c
 
 
 %install
