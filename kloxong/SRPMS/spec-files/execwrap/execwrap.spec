@@ -7,6 +7,11 @@ Group:          Productivity/Networking/Web/Utilities
 #
 BuildRoot:      %{_tmppath}/%{name}-%{version}-build
 #
+BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires:	perl
+BuildRequires: gcc-c++
+
 Url:            http://cyanite.org/execwrap/
 Source:         http://cyanite.org/execwrap/execwrap-%{version}.tar.gz
 #
@@ -17,6 +22,7 @@ be used in any environment as long as arguments can be passed from the server
 to its children via the environment.
 
 %global debug_package %{nil}
+
 
 %prep
 %setup -q
