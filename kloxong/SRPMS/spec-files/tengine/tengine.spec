@@ -19,7 +19,11 @@
 %ifnarch aarch64
 %global  with_aio   1
 %endif
-
+#%ifarch aarch64
+%bcond_with lua
+#%else
+#%bcond_without lua
+#%endif
 %if 0%{?fedora} >= 16 || 0%{?rhel} >= 7
 %global with_systemd 1
 %else
@@ -27,7 +31,7 @@
 %endif
 
 Name:              tengine
-Version:           2.2.3
+Version:           2.4.1
 Release:           1.kng%{?dist}
 
 Summary:           A high performance web server and reverse proxy server
@@ -66,10 +70,17 @@ BuildRequires:     pcre-devel
 BuildRequires:     perl-devel
 BuildRequires:     perl(ExtUtils::Embed)
 BuildRequires:     zlib-devel
-BuildRequires:     luajit-devel
+BuildRequires:     jemalloc-devel
+%if %{with lua}
+BuildRequires:     luajit-devel lua-devel
+%endif
+
 
 Requires:          nginx-filesystem
-Requires:          luajit
+Requires:          jemalloc
+%if %{with lua}
+Requires:          luajit lua
+%endif
 Requires:          GeoIP
 Requires:          gd
 Requires:          openssl
@@ -88,7 +99,9 @@ Requires(post):    chkconfig
 Requires(preun):   chkconfig, initscripts
 Requires(postun):  initscripts
 %endif
-
+%if %{with lua}
+%define lua_inc_path $(ls /usr/include | grep luajit)
+%endif
 %description
 Tengine is a web-server and a reverse proxy server based on Nginx project
 supporting many advanced features which can be used as drop-in Nginx
@@ -165,13 +178,14 @@ export DESTDIR=%{buildroot}
     --with-mail \
     --with-mail_ssl_module \
     --with-pcre \
+    
+%if %{with lua}
     --with-http_lua_module \
-%if %{?fedora}0 > 150 || %{?rhel}0 > 70
-    --with-luajit-inc="%{_includedir}/luajit-2.1" \
-%else
-    --with-luajit-inc="%{_includedir}/luajit-2.0" \
-%endif  
+%endif
+%if %{with lua}
+    --with-luajit-inc="%{_includedir}/%{lua_inc_path}" \
     --with-luajit-lib="%{_libdir}" \
+%endif
 %if 0%{?with_gperftools}
     --with-google_perftools_module \
 %endif
