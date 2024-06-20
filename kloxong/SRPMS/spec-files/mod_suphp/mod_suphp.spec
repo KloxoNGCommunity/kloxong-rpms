@@ -116,10 +116,22 @@ AddHandler x-httpd-php .php .php4 .php3 .phtml
 EOF
 
 %build
-libtoolize --force --copy
 aclocal
-autoconf
-automake
+libtoolize --force --copy
+#autoconf
+automake --add-missing
+set -x
+mkdir -p m4
+autoreconf -fi
+
+%if 0%{?rhel} >= 9
+export CXXFLAGS="$CXXFLAGS -std=c++14 -fPIE"
+
+# Broad in scope, could be isolated to a specific hardening element.
+# https://src.fedoraproject.org/rpms/redhat-rpm-config/blob/rawhide/f/buildflags.md#hardened-builds
+%undefine _hardened_build
+
+%endif
 
 %configure \
 	--prefix=/usr \
