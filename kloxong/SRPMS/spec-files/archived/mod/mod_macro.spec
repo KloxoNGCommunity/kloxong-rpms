@@ -1,6 +1,6 @@
 %define modn   macro
 %define modv   1.1.11
-#%define httpv  %(rpm -q httpd-devel --qf '%{VERSION}')
+
 
 
 Summary:       A module for using macros within Apache configs
@@ -15,9 +15,14 @@ Buildroot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 Vendor:        Fabien Coelho <mod.macro@coelho.net>
 Provides:      httpd-mod(%{modn}) = %{modv}
 Provides:      %{name} = %{modv}
-#Requires:      httpd = %{httpv}
-BuildRequires: httpd-devel >= 2.2 %{_sbindir}/apxs
+
+BuildRequires: httpd-devel >= 2.2 %{_bindir}/apxs
 BuildRequires: libtool
+%if 0%{?fedora} > 29 || 0%{?rhel} > 8
+BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires: gcc-c++
+%endif
 
 
 %description
@@ -32,7 +37,7 @@ html-like configuration style.
 
 
 %build
-%{_sbindir}/apxs -c %{name}.c
+%{_bindir}/apxs -c %{name}.c
 
 %{__cat} <<EOF >macro.conf
 # This is the Apache server configuration file for mod_macro.
