@@ -41,7 +41,7 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -pm 755 \
     $RPM_BUILD_ROOT%{_libdir}/httpd/modules \
     $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
-install -pm 755 .libs/mod_evasive20.so $RPM_BUILD_ROOT%{_libdir}/httpd/modules/
+install -pm 755 .libs/mod_evasive24.so $RPM_BUILD_ROOT%{_libdir}/httpd/modules/
 install -pm 644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/
 
 
