@@ -1,7 +1,7 @@
 Name:           mod_evasive
-Version:        1.10.1
-#Release:        6.jason.2
-Release:        8.kng%{?dist}
+Version:        1.10.2
+
+Release:        1.kng%{?dist}
 Summary:        Denial of Service evasion module for Apache
 
 Group:          System Environment/Daemons
@@ -33,7 +33,7 @@ reports abuses via email and syslog facilities.
 
 
 %build
-%{_bindir}/apxs -Wc,"%{optflags}" -c mod_evasive20.c
+%{_bindir}/apxs -Wc,"%{optflags}" -c mod_evasive24.c
 
 
 %install
@@ -57,6 +57,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jun 20 2024 John Pierce <john@luckytanuki.com>
+- Source files for apache 2.4 added
+
 * Tue Jan 22 2013 Mustafa Ramadhan <mustafa@bigraf.com> - 1.10.1-8.mr
 - change mustafa.ramadhan@lxcenter.org to mustafa@bigraf.com
 
