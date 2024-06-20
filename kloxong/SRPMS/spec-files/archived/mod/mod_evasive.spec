@@ -28,7 +28,7 @@ reports abuses via email and syslog facilities.
 
 
 %build
-%{_sbindir}/apxs -Wc,"%{optflags}" -c mod_evasive20.c
+%{_bindir}/apxs -Wc,"%{optflags}" -c mod_evasive20.c
 
 
 %install

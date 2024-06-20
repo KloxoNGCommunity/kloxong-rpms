@@ -670,7 +670,7 @@ without_shared="--without-mysql --without-gd \
 
 # Build Apache module, and the CLI SAPI, /usr/bin/php
 pushd build-apache
-build --with-apxs2=%{_sbindir}/apxs ${without_shared}
+build --with-apxs2=%{_bindir}/apxs ${without_shared}
 popd
 
 # Build for inclusion as embedded script language into applications,
@@ -682,7 +682,7 @@ popd
 # Build a special thread-safe Apache SAPI
 pushd build-zts
 EXTENSION_DIR=%{_libdir}/php/modules-zts
-build --with-apxs2=%{_sbindir}/apxs ${without_shared} \
+build --with-apxs2=%{_bindir}/apxs ${without_shared} \
       --enable-maintainer-zts \
       --with-config-file-scan-dir=%{_sysconfdir}/php-zts.d
 popd

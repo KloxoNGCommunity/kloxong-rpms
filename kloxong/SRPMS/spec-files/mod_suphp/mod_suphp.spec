@@ -126,7 +126,7 @@ automake
 	--disable-checkpath \
 	--with-apache-user=apache \
 	--with-apr=%{_bindir}/apr-1-config \
-	--with-apxs=%{_sbindir}/apxs \
+	--with-apxs=%{_bindir}/apxs \
 	--with-logfile=%{_localstatedir}/log/httpd/suphp_log \
 	--with-min-uid=500 \
 	--with-min-gid=500 \

@@ -32,7 +32,7 @@ html-like configuration style.
 
 
 %build
-%{_sbindir}/apxs -c %{name}.c
+%{_bindir}/apxs -c %{name}.c
 
 %{__cat} <<EOF >macro.conf
 # This is the Apache server configuration file for mod_macro.

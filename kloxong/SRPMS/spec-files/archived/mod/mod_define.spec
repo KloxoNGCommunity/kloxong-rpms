@@ -22,7 +22,7 @@ one to build configurations which are easier to understand and maintain.
 %setup -q
 
 %build
-%{_sbindir}/apxs -c %{name}.c
+%{_bindir}/apxs -c %{name}.c
 
 %{__cat} <<EOF >define.conf
 # This is the Apache server configuration file for mod_define.
@@ -34,7 +34,7 @@ EOF
 %install
 rm -rf $%{buildroot}
 mkdir -p %{buildroot}/%{modulesdir}
-%{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
+%{_bindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
 %{__install} -Dp -m 0644 define.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/define.conf
 
 %clean

@@ -20,7 +20,7 @@ and mod_suexec(performance).
 %setup -q
 
 %build
-%{_sbindir}/apxs -i -c -l cap %{name}.c
+%{_bindir}/apxs -i -c -l cap %{name}.c
 
 %{__cat} <<EOF >process_security.conf
 # This is the Apache server configuration file for mod_process_security.
@@ -45,7 +45,7 @@ EOF
 %install
 rm -rf $%{buildroot}
 mkdir -p %{buildroot}/%{modulesdir}
-%{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
+%{_bindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
 %{__install} -Dp -m 0644 process_security.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/process_security.conf
 
 %clean

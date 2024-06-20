@@ -31,7 +31,7 @@ user's right, this module is useful.
 
 
 %build
-%{_sbindir}/apxs -a -l cap -c mod_ruid2.c
+%{_bindir}/apxs -a -l cap -c mod_ruid2.c
 
 
 %install

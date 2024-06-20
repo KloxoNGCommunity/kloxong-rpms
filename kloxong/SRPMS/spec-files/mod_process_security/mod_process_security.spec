@@ -1,4 +1,4 @@
-%{!?_httpd_apxs:       %{expand: %%global _httpd_apxs       %%{_sbindir}/apxs}}
+%{!?_httpd_apxs:       %{expand: %%global _httpd_apxs       %%{_bindir}/apxs}}
 %{!?_httpd_confdir:    %{expand: %%global _httpd_confdir    %%{_sysconfdir}/httpd/conf.d}}
 # /etc/httpd/conf.d with httpd < 2.4 and defined as /etc/httpd/conf.modules.d with httpd >= 2.4
 %{!?_httpd_modconfdir: %{expand: %%global _httpd_modconfdir %%{_sysconfdir}/httpd/conf.d}}
@@ -34,7 +34,7 @@ and mod_suexec(performance).
 
 %build
 
-#%{_sbindir}/apxs -i -c -l cap %{name}.c
+#%{_bindir}/apxs -i -c -l cap %{name}.c
 %{_httpd_apxs} -c -Wc,"%{optflags} -Wall -pedantic -std=c99" -l cap %{name}.c
 
 
@@ -48,7 +48,7 @@ install -D -p -m 0755 .libs/mod_process_security.so \
 install -D -p -m 0644 %{SOURCE1} \
     %{buildroot}%{_httpd_confdir}/mod_process_security.conf
     
-#%{_sbindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
+#%{_bindir}/apxs -i -S LIBEXECDIR=%{buildroot}/%{modulesdir} -n %{name} %{name}.la
 #%{__install} -Dp -m 0644 process_security.conf %{buildroot}%{_sysconfdir}/httpd/conf.d/process_security.conf
 
 %clean
