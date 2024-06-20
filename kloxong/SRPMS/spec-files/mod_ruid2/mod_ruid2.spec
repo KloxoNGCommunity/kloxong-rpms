@@ -12,6 +12,8 @@ Source0: http://space.dl.sourceforge.net/project/mod-ruid/mod_ruid2//%{name}-%{v
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: libcap-devel
 BuildRequires: httpd-devel
+BuildRequires:	gcc
+BuildRequires: gcc-c++
 Requires: httpd-mmn = %([ -a %{_includedir}/httpd/.mmn ] && cat %{_includedir}/httpd/.mmn || echo missing)
 Requires: httpd >= 2.4
 Obsoletes: mod_ruid
