@@ -52,7 +52,16 @@ Source11:	fastcgi-2.5.te
 Source12:	fastcgi.fc
 Patch0:		mod_fcgid-2.3.4-fixconf-shellbang.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(id -nu)
+
+
 BuildRequires:	httpd-devel >= 2.0, pkgconfig
+%if 0%{?fedora} > 29 || 0%{?rhel} > 8
+BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires:	perl
+BuildRequires: gcc-c++
+%endif
+
 %if 0%{?fedora} > 17 || 0%{?rhel} > 6
 Requires:	httpd-mmn = 20051115
 %else
