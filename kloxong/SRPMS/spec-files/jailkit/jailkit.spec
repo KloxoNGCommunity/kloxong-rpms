@@ -14,7 +14,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: binutils, gcc, make, autoconf, automake
 BuildRequires: glibc-devel
 BuildRequires: libcap-devel
-BuildRequires: python3, python3-devel
+BuildRequires: python36, python36-devel
 
 %undefine __brp_mangle_shebangs
 
