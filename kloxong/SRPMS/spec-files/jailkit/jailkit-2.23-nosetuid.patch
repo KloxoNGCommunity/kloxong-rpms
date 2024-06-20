@@ -1,0 +1,13 @@
+--- jailkit-2.23.orig/src/Makefile.in	2023-02-19 04:22:20.718312260 +0000
++++ jailkit-2.23/src/Makefile.in	2023-02-19 04:24:09.825062822 +0000
+@@ -99,8 +99,8 @@
+ 	${INSTALL} -m 0755 jk_socketd ${DESTDIR}${prefix}/sbin/
+ 	${INSTALL} -m 0755 jk_chrootlaunch ${DESTDIR}${prefix}/sbin/
+ 	${INSTALL} -m 0755 jk_lsh ${DESTDIR}${prefix}/sbin/
+-	${INSTALL} -m 4755 jk_chrootsh ${DESTDIR}${prefix}/sbin/
+-	${INSTALL} -m 4755 jk_uchroot ${DESTDIR}${prefix}/bin/
++	${INSTALL} -m 0755 jk_chrootsh ${DESTDIR}${prefix}/sbin/
++	${INSTALL} -m 0755 jk_uchroot ${DESTDIR}${prefix}/bin/
+ 	if [ -z "@HAVEPROCMAIL_TRUE@" ]; then \
+ 		${INSTALL} -m 4755 jk_procmailwrapper ${DESTDIR}${prefix}/sbin/ ;\
+ 	fi

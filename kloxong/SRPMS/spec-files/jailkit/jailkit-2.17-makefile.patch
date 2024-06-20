@@ -1,0 +1,29 @@
+Index: Makefile.in
+===================================================================
+--- Makefile.in
++++ Makefile.in
+@@ -67,14 +67,18 @@ install:
+ 	@cd src/ && $(MAKE) install
+ 	@cd py/ && $(MAKE) install
+ 	@cd man/ && $(MAKE) install
++	###
++	# don't modify /etc/shell during install
++	# this will be done on %post / %postun
++	###
+ 	# test if the jk_chrootsh is already in /etc/shells
+ 	# this previously had @echo but that fails on FreeBSD
+-	if test -w /etc/shells; then \
+-		if ! grep ${prefix}/sbin/jk_chrootsh /etc/shells ; then \
+-			echo "appending ${prefix}/sbin/jk_chroots to /etc/shells";\
+-			echo ${prefix}/sbin/jk_chrootsh >> /etc/shells ;\
+-		fi \
+-	fi
++	#if test -w /etc/shells; then \
++	#	if ! grep ${prefix}/sbin/jk_chrootsh /etc/shells ; then \
++	#		echo "appending ${prefix}/sbin/jk_chroots to /etc/shells";\
++	#		echo ${prefix}/sbin/jk_chrootsh >> /etc/shells ;\
++	#	fi \
++	#fi
+ 
+ 
+ uninstall:

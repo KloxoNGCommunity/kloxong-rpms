@@ -1,20 +1,22 @@
-# $Id$
-# Authority: dag
-
 Summary: Utilities to limit user accounts to specific files using chroot()
 Name: jailkit
-Version: 2.17
+Version: 2.23
 Release: 1.kng%{?dist}
 License: Open Source
 Group: System Environment/Base
 URL: http://olivier.sessink.nl/jailkit/
 
 Source: http://olivier.sessink.nl/jailkit/jailkit-%{version}.tar.bz2
+Patch1: jailkit-2.17-makefile.patch
+Patch2: jailkit-jk_init-php.patch
+Patch3: jailkit-2.23-nosetuid.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: binutils, gcc, make
+BuildRequires: binutils, gcc, make, autoconf, automake
 BuildRequires: glibc-devel
-BuildRequires: python
-Requires: python-hashlib
+BuildRequires: libcap-devel
+BuildRequires: python3, python3-devel
+
+%undefine __brp_mangle_shebangs
 
 %description
 Jailkit is a set of utilities to limit user accounts to specific files
@@ -31,13 +33,14 @@ are in a chroot.
 %prep
 %setup
 
-# apparently not needed anymore
-### Disable broken Makefile :(
-#%{__perl} -pi.orig -e 's|>>||g' Makefile.in
+%prep
+%setup -q
+%patch1 -p0 -b .makefile
+%patch2 -p0
+%patch3 -p1 
 
 %build
-export LIBS="-pthread"
-%configure
+%configure PYTHONINTERPRETER=/usr/bin/python3
 %{__make} %{?_smp_mflags}
 
 %install
@@ -62,11 +65,23 @@ export LIBS="-pthread"
 %doc %{_mandir}/man?/*
 %config(noreplace) %{_sysconfdir}/jailkit/
 %config %{_initrddir}/jailkit
-%{_sbindir}/jk_*
-%{_bindir}/jk_uchroot
+%caps(cap_sys_chroot=ep) %{_sbindir}/jk_chrootsh
+%{_sbindir}/jk_jailuser
+%{_sbindir}/jk_socketd
+%{_sbindir}/jk_check
+%{_sbindir}/jk_cp
+%{_sbindir}/jk_list
+%{_sbindir}/jk_update
+%{_sbindir}/jk_chrootlaunch
+%{_sbindir}/jk_init
+%{_sbindir}/jk_lsh
+%caps(cap_sys_chroot=ep) %{_bindir}/jk_uchroot
 %{_datadir}/jailkit/
 
 %changelog
+* Thu Jun 20 2024 John Pierce <john@luckytanuki.com>
+- upgrade to 2.23
+
 * Sun Feb 2 2014 Mustafa Ramadhan <mustafa@bigraf.com> - 2.17-1
 - recompile for Kloxo-MR and update to 2.17
 - add Requeries to python-hashlib
