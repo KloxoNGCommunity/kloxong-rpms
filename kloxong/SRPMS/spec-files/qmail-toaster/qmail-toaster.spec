@@ -910,8 +910,8 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/preline
 %attr(0755,root,qmail) %{qdir}/bin/qail
 %attr(0755,root,qmail) %{qdir}/bin/qbiff
-%attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
-%attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
+#%attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
+#%attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
 #%%attr(04711,qmailq,qmail) %%{qdir}/bin/qmail-dk
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
@@ -976,8 +976,8 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail-limits.7*
 %attr(0644,root,qmail) %{qdir}/man/man7/forgeries.7*
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
+#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
 #%%attr(0644,root,qmail) %%{qdir}/man/man8/qmail-dk.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
