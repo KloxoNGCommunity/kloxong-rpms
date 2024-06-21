@@ -93,15 +93,17 @@ stateOrProvinceName             = "2. State or Province Name   (full name)    "
 localityName                    = "3. Locality Name            (eg, city)     "
 #localityName_default            = "Minot"
 0.organizationName              = "4. Organization Name        (eg, company)  "
-0.organizationName_default      = "Qmail Toaster Server"
+0.organizationName_default      = "Kloxo Next Generation"
 organizationalUnitName          = "5. Organizational Unit Name (eg, section)  "
 organizationalUnitName_default  = "For testing purposes only"
 commonName                      = "6. Common Name              (eg, CA name)  "
 commonName_max                  = 64
-commonName_default              = "www.qmailtoaster.com"
+commonName_default              = "www.kloxong.org"
 emailAddress                    = "7. Email Address            (eg, name@FQDN)"
 emailAddress_max                = 40
 #emailAddress_default            = "nick@ndhsoft.com"
+[ ca_ext ]
+basicConstraints            = critical, CA:TRUE
 EOT
     $openssl req -config .cfg -new -key ca.key -out ca.csr
     if [ $? -ne 0 ]; then
@@ -118,6 +120,8 @@ EOT
 #basicConstraints = CA:true,pathlen:0
 #nsComment        = "CCA generated custom CA certificate"
 #nsCertType       = sslCA
+[ ca_ext ]
+basicConstraints            = critical, CA:TRUE
 EOT
     $openssl x509 -extfile .cfg -req -days 365 -signkey ca.key -in ca.csr -out ca.crt
     if [ $? -ne 0 ]; then
