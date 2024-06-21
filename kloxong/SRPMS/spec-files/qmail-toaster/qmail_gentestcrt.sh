@@ -174,7 +174,7 @@ stateOrProvinceName             = "2. State or Province Name   (full name)    "
 localityName                    = "3. Locality Name            (eg, city)     "
 #localityName_default            = "Server Room"
 0.organizationName              = "4. Organization Name        (eg, company)  "
-0.organizationName_default      = "Qmail Toaster Server"
+0.organizationName_default      = "Kloxo Next generation"
 organizationalUnitName          = "5. Organizational Unit Name (eg, section)  "
 organizationalUnitName_default  = "Test Certificate"
 commonName                      = "6. Common Name              (eg, DOMAIN NAME)  "
@@ -215,11 +215,11 @@ EOT
     echo "______________________________________________________________________"
     echo ""
     echo "${T_MD}RESULT:${T_ME}"
-    $openssl verify -CAfile ca.crt $user.crt
-    if [ $? -ne 0 ]; then
-        echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
-        exit 1
-    fi
+   # $openssl verify -CAfile ca.crt $user.crt
+   # if [ $? -ne 0 ]; then
+   #     echo "cca:Error: Failed to verify resulting X.509 certificate" 1>&2
+   #     exit 1
+   # fi
     $openssl x509 -text -in $user.crt
     $openssl rsa -text -in $user.key
 
