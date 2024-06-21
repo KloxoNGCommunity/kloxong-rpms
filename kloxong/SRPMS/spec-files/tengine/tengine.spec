@@ -133,17 +133,17 @@ Tengine server.
 export DESTDIR=%{buildroot}
 
 ./configure \
-    --prefix=%{nginx_datadir} \
-#    --includedir="%{_includedir}/nginx" \
-#    --dso-tool-path="%{_bindir}" \
-    --sbin-path=%{_sbindir}/nginx \
-    --conf-path=%{nginx_confdir}/nginx.conf \
-    --error-log-path=%{nginx_logdir}/error.log \
-    --http-log-path=%{nginx_logdir}/access.log \
-    --http-client-body-temp-path=%{nginx_home_tmp}/client_body \
-    --http-proxy-temp-path=%{nginx_home_tmp}/proxy \
-    --http-fastcgi-temp-path=%{nginx_home_tmp}/fastcgi \
-    --http-uwsgi-temp-path=%{nginx_home_tmp}/uwsgi \
+    --prefix=%{_datadir}/%{name} \
+    --sbin-path=%{_sbindir}/%{name} \
+    --modules-path=%{_libdir}/%{name}/modules \
+    --conf-path=%{_sysconfdir}/%{name}/nginx.conf \
+    --error-log-path=%{_localstatedir}/log/%{name}/error.log \
+    --http-log-path=%{_localstatedir}/log/%{name}/access.log \
+    --http-client-body-temp-path=%{_localstatedir}/lib/%{name}/tmp/client_body \
+    --http-proxy-temp-path=%{_localstatedir}/lib/%{name}/tmp/proxy \
+    --http-fastcgi-temp-path=%{_localstatedir}/lib/%{name}/tmp/fastcgi \
+    --http-uwsgi-temp-path=%{_localstatedir}/lib/%{name}/tmp/uwsgi \
+    --http-scgi-temp-path=%{_localstatedir}/lib/%{name}/tmp/scgi \
     --http-scgi-temp-path=%{nginx_home_tmp}/scgi \
 %if 0%{?with_systemd}
     --pid-path=/run/nginx.pid \
