@@ -135,7 +135,7 @@ export DESTDIR=%{buildroot}
 ./configure \
     --prefix=%{nginx_datadir} \
 #    --includedir="%{_includedir}/nginx" \
-    --dso-tool-path="%{_bindir}" \
+#    --dso-tool-path="%{_bindir}" \
     --sbin-path=%{_sbindir}/nginx \
     --conf-path=%{nginx_confdir}/nginx.conf \
     --error-log-path=%{nginx_logdir}/error.log \
@@ -238,7 +238,7 @@ install -p -D -m 0644 %{_builddir}/tengine-%{version}/man/nginx.8 \
 #    %{buildroot}%{_mandir}/man8/dso_tool.8
 ln -s %{_mandir}/man8/nginx.8 %{buildroot}%{_mandir}/man8/tengine.8
 
-chmod +x %{buildroot}%{_sbindir}/dso_tool
+#chmod +x %{buildroot}%{_sbindir}/dso_tool
 # Make sure these directories are not world readable, because otherwise,
 # unprivileged users could read documents served by tengine and also
 # read tengine logs.
