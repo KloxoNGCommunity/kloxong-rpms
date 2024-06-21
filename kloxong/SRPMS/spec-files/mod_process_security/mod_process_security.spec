@@ -18,6 +18,11 @@ Source1: mod_process_security.conf
 BuildRequires: httpd-devel
 BuildRequires: pkgconfig
 BuildRequires: libcap-devel
+%if 0%{?fedora} > 29 || 0%{?rhel} > 8
+BuildRequires:  make
+BuildRequires:	gcc
+BuildRequires: gcc-c++
+%endif
 
 
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
