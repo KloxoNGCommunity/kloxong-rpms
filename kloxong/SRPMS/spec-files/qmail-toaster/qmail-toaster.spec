@@ -9,7 +9,7 @@
 %define	rcpath /etc
 %define	_initpath /etc/rc.d/init.d
 
-Requires: sh-utils
+#Requires: sh-utils
 BuildRequires:	shadow-utils, bzip2, net-tools, krb5-devel >= 1.5
 BuildRequires:	perl, gcc, gcc-c++, make
 %if 0%{?rhel} >= 8
@@ -27,8 +27,7 @@ Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
 #Requires: libdomainkeys-toaster >= 0.68
-#Requires: (mariadb or mysql)
-Requires: MariaDB-shared
+
 
 
 BuildRequires: libvpopmail-devel >= 5.4.17
