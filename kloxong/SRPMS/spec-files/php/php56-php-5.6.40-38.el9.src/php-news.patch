@@ -1,0 +1,40 @@
+From 1176f7d0378dba89f58dac7e81c45d2e1254f57e Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Thu, 7 Mar 2019 16:18:00 +0100
+Subject: [PATCH] Update NEWS
+
+---
+ NEWS | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/NEWS b/NEWS
+index b8d480cacc..16da63bbb2 100644
+--- a/NEWS
++++ b/NEWS
+@@ -1,5 +1,26 @@
+ PHP                                                                        NEWS
+ |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
++
++Backported from 7.1.27
++
++- Core:
++  . Fixed bug #77630 (rename() across the device may allow unwanted access during
++    processing). (Stas)
++
++- EXIF:
++  . Fixed bug #77509 (Uninitialized read in exif_process_IFD_in_TIFF). (Stas)
++  . Fixed bug #77540 (Invalid Read on exif_process_SOFn). (Stas)
++  . Fixed bug #77563 (Uninitialized read in exif_process_IFD_in_MAKERNOTE). (Stas)
++  . Fixed bug #77659 (Uninitialized read in exif_process_IFD_in_MAKERNOTE). (Stas)
++
++- PHAR:
++  . Fixed bug #77396 (Null Pointer Dereference in phar_create_or_parse_filename).
++    (bishop)
++  . Fixed bug #77586 (phar_tar_writeheaders_int() buffer overflow). (bishop)
++
++- SPL:
++  . Fixed bug #77431 (openFile() silently truncates after a null byte). (cmb)
++
+ 10 Jan 2019, PHP 5.6.40
+ 
+ - GD:

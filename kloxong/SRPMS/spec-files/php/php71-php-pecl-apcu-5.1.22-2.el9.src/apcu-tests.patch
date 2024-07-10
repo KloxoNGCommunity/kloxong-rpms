@@ -1,0 +1,49 @@
+From 22a39fe4cb2db46aaf660ef2f724b4cd813d2481 Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@remirepo.net>
+Date: Tue, 6 Jun 2023 11:08:10 +0200
+Subject: [PATCH] use TEST_PHP_ARGS if set
+
+---
+ tests/server_test.inc | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+
+diff --git a/tests/server_test.inc b/tests/server_test.inc
+index 88c7045..5e60f47 100644
+--- a/tests/server_test.inc
++++ b/tests/server_test.inc
+@@ -16,6 +16,7 @@ function server_start_one($host, $port, $code = 'echo "Hello world";', $php_opts
+ 	global $doc_root, $router, $handles, $ports;
+ 
+ 	$php_executable = getenv('TEST_PHP_EXECUTABLE');
++	$php_args = getenv('TEST_PHP_ARGS');
+ 
+ 	$descriptorspec = array(
+ 		0 => STDIN,
+@@ -23,16 +24,18 @@ function server_start_one($host, $port, $code = 'echo "Hello world";', $php_opts
+ 		2 => STDERR,
+ 	);
+ 
+-	$ext = (substr(PHP_OS, 0, 3) == 'WIN') ? 'php_apcu.dll' : 'apcu.so';
+-	if (substr(PHP_OS, 0, 3) == 'WIN') {
+-		$part0 = 8 == PHP_INT_SIZE ? "x64" : "";
+-		$part1 = ZEND_DEBUG_BUILD ? "Debug" : "Release";
+-		$part1 = PHP_ZTS ? ($part1 . "_TS") : $part1;
+-		$php_args = "-d extension_dir=$doc_root/../$part0/$part1";
+-	} else {
+-		$php_args = "-d extension_dir=$doc_root/../modules";
++	if (!$php_args) {
++		$ext = (substr(PHP_OS, 0, 3) == 'WIN') ? 'php_apcu.dll' : 'apcu.so';
++		if (substr(PHP_OS, 0, 3) == 'WIN') {
++			$part0 = 8 == PHP_INT_SIZE ? "x64" : "";
++			$part1 = ZEND_DEBUG_BUILD ? "Debug" : "Release";
++			$part1 = PHP_ZTS ? ($part1 . "_TS") : $part1;
++			$php_args = "-d extension_dir=$doc_root/../$part0/$part1";
++		} else {
++			$php_args = "-d extension_dir=$doc_root/../modules";
++		}
++		$php_args = "$php_args -d extension=$ext";
+ 	}
+-	$php_args = "$php_args -d extension=$ext";
+ 
+ 	if ($php_opts) {
+ 		$php_args = "$php_args -d " . implode(' -d ', $php_opts);;

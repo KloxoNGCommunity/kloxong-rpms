@@ -1,0 +1,15 @@
+diff --git a/tests/typed_prop.phpt b/tests/typed_prop.phpt
+index 80f0d3c..04e87c9 100644
+--- a/tests/typed_prop.phpt
++++ b/tests/typed_prop.phpt
+@@ -28,8 +28,8 @@ try {
+ var_dump($test->array);
+ 
+ ?>
+---EXPECT--
++--EXPECTF--
+ bool(true)
+-Cannot assign bool to reference held by property Test::$array of type array
++Cannot assign %s to reference held by property Test::$array of type array
+ array(0) {
+ }

@@ -1,0 +1,13 @@
+diff -up ./ext/intl/collator/collator_sort.c.old ./ext/intl/collator/collator_sort.c
+diff -up ./ext/intl/config.m4.old ./ext/intl/config.m4
+--- ./ext/intl/config.m4.old	2021-09-07 07:38:38.698104692 +0200
++++ ./ext/intl/config.m4	2021-09-07 07:38:42.909098288 +0200
+@@ -9,7 +9,7 @@ if test "$PHP_INTL" != "no"; then
+   PHP_SETUP_ICU(INTL_SHARED_LIBADD)
+   PHP_SUBST(INTL_SHARED_LIBADD)
+   PHP_REQUIRE_CXX()
+-  INTL_COMMON_FLAGS="$ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"
++  INTL_COMMON_FLAGS="$ICU_INCS -Wno-write-strings -DU_DEFINE_FALSE_AND_TRUE=1 -D__STDC_LIMIT_MACROS -DZEND_ENABLE_STATIC_TSRMLS_CACHE=1"
+   if test "$icu_version" -ge "4002"; then
+     icu_spoof_src=" spoofchecker/spoofchecker_class.c \
+     spoofchecker/spoofchecker.c\

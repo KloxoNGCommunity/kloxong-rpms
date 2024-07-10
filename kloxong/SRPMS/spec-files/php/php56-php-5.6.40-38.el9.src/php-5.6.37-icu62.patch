@@ -1,0 +1,589 @@
+Backported from 7.1 for 5.6 by Remi
+
+
+From 710284cbc4a54cac0a9ec4ea29a7486e0d99a33b Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Wed, 28 Mar 2018 18:00:28 +0200
+Subject: [PATCH] Fixed bug #76153 Intl compilation fails with icu4c 61.1
+
+Additionally, ICU >= 59.1 requires C++11, so add the flags. Some
+refactoring is needed to comply with the latest recommended build
+options, such as automatic icu namespace addition.
+---
+ acinclude.m4        | 3 +++
+ ext/intl/config.m4  | 2 +-
+ ext/intl/config.w32 | 2 +-
+ 3 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 0e6fb5de855c..3881b2da93d6 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -2244,6 +2244,9 @@ AC_DEFUN([PHP_SETUP_ICU],[
+     ICU_LIBS=`$ICU_CONFIG --ldflags --ldflags-icuio`
+     PHP_EVAL_INCLINE($ICU_INCS)
+     PHP_EVAL_LIBLINE($ICU_LIBS, $1)
++
++    ICU_EXTRA_FLAGS=`$ICU_CONFIG --cxxflags`
++    ICU_EXTRA_FLAGS="$ICU_EXTRA_FLAGS -DU_USING_ICU_NAMESPACE=1"
+   fi
+ ])
+ 
+diff --git a/ext/intl/config.m4 b/ext/intl/config.m4
+index ca2cd822f483..a496d8d70c3f 100644
+--- a/ext/intl/config.m4
++++ b/ext/intl/config.m4
+@@ -85,7 +85,7 @@ if test "$PHP_INTL" != "no"; then
+     breakiterator/codepointiterator_internal.cpp \
+     breakiterator/codepointiterator_methods.cpp \
+     idn/idn.c \
+-    $icu_spoof_src, $ext_shared,,$ICU_INCS -Wno-write-strings)
++    $icu_spoof_src, $ext_shared,,$ICU_INCS -Wno-write-strings $ICU_EXTRA_FLAGS,cxx)
+   PHP_ADD_BUILD_DIR($ext_builddir/collator)
+   PHP_ADD_BUILD_DIR($ext_builddir/converter)
+   PHP_ADD_BUILD_DIR($ext_builddir/common)
+From 398f56dbc85464c95671cbe491c951eccc1f665a Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Thu, 29 Mar 2018 14:12:19 +0200
+Subject: [PATCH] Adjust tests for ICU 61.1 compatibility
+
+---
+ ext/intl/tests/formatter_format6.phpt         |   3 +-
+ ext/intl/tests/formatter_format7.phpt         | 130 ++++++++++++++++++
+ .../tests/rbbiter_getBinaryRules_basic.phpt   |   3 +-
+ .../tests/rbbiter_getBinaryRules_basic2.phpt  |  57 ++++++++
+ .../tests/rbbiter_getRuleStatusVec_basic.phpt |   4 +-
+ ext/intl/tests/rbbiter_getRules_basic.phpt    |   7 +-
+ ext/intl/tests/rbbiter_getRules_basic2.phpt   |  40 ++++++
+ 7 files changed, 236 insertions(+), 8 deletions(-)
+ create mode 100644 ext/intl/tests/formatter_format7.phpt
+ create mode 100644 ext/intl/tests/rbbiter_getBinaryRules_basic2.phpt
+ create mode 100644 ext/intl/tests/rbbiter_getRules_basic2.phpt
+
+diff --git a/ext/intl/tests/formatter_format6.phpt b/ext/intl/tests/formatter_format6.phpt
+index 80894c332ba4..70703785c140 100644
+--- a/ext/intl/tests/formatter_format6.phpt
++++ b/ext/intl/tests/formatter_format6.phpt
+@@ -1,7 +1,8 @@
+ --TEST--
+-numfmt_format() icu >= 56.1
++numfmt_format() icu >= 56.1 && icu < 61.1
+ --SKIPIF--
+ <?php if( !extension_loaded( 'intl' ) ) print 'skip'; ?>
++<?php if (version_compare(INTL_ICU_VERSION, '61.1') >= 0) die('skip for ICU < 61.1'); ?>
+ <?php if (version_compare(INTL_ICU_VERSION, '56.1') < 0) die('skip for ICU >= 56.1'); ?>
+ --FILE--
+ <?php
+diff --git a/ext/intl/tests/formatter_format7.phpt b/ext/intl/tests/formatter_format7.phpt
+new file mode 100644
+index 000000000000..088c526c7022
+--- /dev/null
++++ b/ext/intl/tests/formatter_format7.phpt
+@@ -0,0 +1,130 @@
++--TEST--
++numfmt_format() icu >= 61.1
++--SKIPIF--
++<?php if( !extension_loaded( 'intl' ) ) print 'skip'; ?>
++<?php if (version_compare(INTL_ICU_VERSION, '61.1') < 0) die('skip for ICU >= 61.1'); ?>
++--FILE--
++<?php
++
++/*
++ * Format a number using misc locales/patterns.
++ */
++
++/*
++ * TODO: doesn't pass on ICU 3.6 because 'ru' and 'de' locales changed
++ * currency and percent formatting.
++ */
++
++function ut_main()
++{
++    $styles = array(
++        NumberFormatter::PATTERN_DECIMAL => '##.#####################',
++        NumberFormatter::DECIMAL => '',
++        NumberFormatter::CURRENCY => '',
++        NumberFormatter::PERCENT => '',
++        NumberFormatter::SCIENTIFIC => '',
++        NumberFormatter::SPELLOUT => '@@@@@@@',
++        NumberFormatter::ORDINAL => '',
++        NumberFormatter::DURATION => '',
++        NumberFormatter::PATTERN_RULEBASED => '#####.###',
++        1234999, // bad one
++    );
++
++   $integer = array(
++        NumberFormatter::ORDINAL => '',
++        NumberFormatter::DURATION => '',
++   );
++    $locales = array(
++        'en_US',
++        'ru_UA',
++        'de',
++        'fr',
++        'en_UK'
++    );
++
++    $str_res = '';
++    $number = 1234567.891234567890000;
++
++    foreach( $locales as $locale )
++    {
++        $str_res .= "\nLocale is: $locale\n";
++        foreach( $styles as $style => $pattern )
++        {
++            $fmt = ut_nfmt_create( $locale, $style, $pattern );
++
++			if(!$fmt) {
++				$str_res .= "Bad formatter!\n";
++				continue;
++			}
++            $str_res .= dump( isset($integer[$style])?ut_nfmt_format( $fmt, $number, NumberFormatter::TYPE_INT32):ut_nfmt_format( $fmt, $number ) ) . "\n";
++        }
++    }
++    return $str_res;
++}
++
++include_once( 'ut_common.inc' );
++
++// Run the test
++ut_run();
++
++?>
++--EXPECTREGEX--
++Locale is: en_US
++'1234567.8912345\d+'
++'1,234,567.891'
++'\$1,234,567.89'
++'123,456,789%'
++'1.2345678912345\d+E6'
++'one million,? two hundred (and )?thirty-four thousand,? five hundred (and )?sixty-seven point eight nine one two three four five( six)? seven( nine)?'
++'1,234,567(th|ᵗʰ)'
++'342:56:07'
++'#####.###'
++'USD1,234,567.89'
++
++Locale is: ru_UA
++'1234567.8912345\d+'
++'1 234 567,891'
++'1 234 567,89 ?(грн\.|₴)'
++'123 456 789 ?%'
++'1.2345678912345\d+E6'
++'один миллион двести тридцать четыре тысячи пятьсот шестьдесят семь целых восемьдесят девять миллионов сто двадцать три тысячи четыреста пятьдесят семь стомиллионных'
++'1 234 567.?'
++'1 234 567'
++'#####.###'
++'1 234 567,89 UAH'
++
++Locale is: de
++'1234567.8912345\d+'
++'1.234.567,891'
++'(¤ )?1.234.567,89( ¤)?'
++'123\.456\.789 %'
++'1.2345678912345\d+E6'
++'eine Million zwei­hundert­vier­und­dreißig­tausend­fünf­hundert­sieben­und­sechzig Komma acht neun eins zwei drei vier fünf( sechs)? sieben( neun)?'
++'1.234.567.?'
++'1.234.567'
++'#####.###'
++'1.234.567,89 ¤¤'
++
++Locale is: fr
++'1234567.8912345\d+'
++'1 234 567,891'
++'1 234 567,89 ¤'
++'123 456 789 ?%'
++'1.2345678912345\d+E6'
++'un million deux cent trente-quatre mille cinq cent soixante-sept virgule huit neuf un deux trois quatre cinq( six)? sept( neuf)?'
++'1 234 567e'
++'1 234 567'
++'#####.###'
++'1 234 567,89 ¤¤'
++
++Locale is: en_UK
++'1234567.8912345\d+'
++'1,234,567.891'
++'¤1,234,567.89'
++'123,456,789%'
++'1.2345678912345\d+E6'
++'one million,? two hundred (and )?thirty-four thousand,? five hundred (and )?sixty-seven point eight nine one two three four five( six)? seven( nine)?'
++'1,234,567(th|ᵗʰ)'
++'342:56:07'
++'#####.###'
++'¤¤1,234,567.89'
+diff --git a/ext/intl/tests/rbbiter_getBinaryRules_basic.phpt b/ext/intl/tests/rbbiter_getBinaryRules_basic.phpt
+index dce0714d4dd4..95ea31108804 100644
+--- a/ext/intl/tests/rbbiter_getBinaryRules_basic.phpt
++++ b/ext/intl/tests/rbbiter_getBinaryRules_basic.phpt
+@@ -2,6 +2,7 @@
+ IntlRuleBasedBreakIterator::getBinaryRules(): basic test
+ --SKIPIF--
+ <?php if( !extension_loaded( 'intl' ) ) print 'skip'; ?>
++<?php if (version_compare(INTL_ICU_VERSION, '61.1') >=  0) die('skip for ICU < 61.1'); ?>
+ <?php if(version_compare(INTL_ICU_VERSION, '4.8') < 0) print 'skip ICU >= 4.8 only'; ?>
+ --FILE--
+ <?php
+@@ -22,7 +23,7 @@ $rules = <<<RULES
+ !!safe_reverse;
+ RULES;
+ $rbbi = new IntlRuleBasedBreakIterator($rules);
+-$rbbi->setText('sdfkjsdf88á.... ,;');;
++$rbbi->setText('sdfkjsdf88á.... ,;');
+ 
+ $br = $rbbi->getBinaryRules();
+ 
+diff --git a/ext/intl/tests/rbbiter_getBinaryRules_basic2.phpt b/ext/intl/tests/rbbiter_getBinaryRules_basic2.phpt
+new file mode 100644
+index 000000000000..f3b6c6cb34c0
+--- /dev/null
++++ b/ext/intl/tests/rbbiter_getBinaryRules_basic2.phpt
+@@ -0,0 +1,57 @@
++--TEST--
++IntlRuleBasedBreakIterator::getBinaryRules(): basic test
++--SKIPIF--
++<?php if( !extension_loaded( 'intl' ) ) print 'skip'; ?>
++<?php if(version_compare(INTL_ICU_VERSION, '61.1') < 0) print 'skip ICU >= 61.1 only'; ?>
++--FILE--
++<?php
++ini_set("intl.error_level", E_WARNING);
++ini_set("intl.default_locale", "pt_PT");
++
++$rules = <<<RULES
++\$LN = [[:letter:] [:number:]];
++\$S = [.;,:];
++
++!!forward;
++\$LN+ {1};
++\$S+ {42};
++!!reverse;
++\$LN+ {1};
++\$S+ {42};
++!!safe_forward;
++!!safe_reverse;
++RULES;
++$rbbi = new IntlRuleBasedBreakIterator($rules);
++$rbbi->setText('sdfkjsdf88á.... ,;');
++
++$br = $rbbi->getBinaryRules();
++
++$rbbi2 = new IntlRuleBasedBreakIterator($br, true);
++
++var_dump($rbbi->getRules(), $rbbi2->getRules());
++var_dump($rbbi->getRules() == $rbbi2->getRules());
++?>
++==DONE==
++--EXPECT--
++string(137) "$LN = [[:letter:] [:number:]];
++$S = [.;,:];
++!!forward;
++$LN+ {1};
++$S+ {42};
++!!reverse;
++$LN+ {1};
++$S+ {42};
++!!safe_forward;
++!!safe_reverse;"
++string(137) "$LN = [[:letter:] [:number:]];
++$S = [.;,:];
++!!forward;
++$LN+ {1};
++$S+ {42};
++!!reverse;
++$LN+ {1};
++$S+ {42};
++!!safe_forward;
++!!safe_reverse;"
++bool(true)
++==DONE==
+diff --git a/ext/intl/tests/rbbiter_getRuleStatusVec_basic.phpt b/ext/intl/tests/rbbiter_getRuleStatusVec_basic.phpt
+index a56f6bc48867..4a654508cc13 100644
+--- a/ext/intl/tests/rbbiter_getRuleStatusVec_basic.phpt
++++ b/ext/intl/tests/rbbiter_getRuleStatusVec_basic.phpt
+@@ -25,7 +25,7 @@ $rules = <<<RULES
+ !!safe_reverse;
+ RULES;
+ $rbbi = new IntlRuleBasedBreakIterator($rules);
+-$rbbi->setText('sdfkjsdf88á.... ,;');;
++$rbbi->setText('sdfkjsdf88á.... ,;');
+ 
+ do {
+ 	var_dump($rbbi->current(), $rbbi->getRuleStatusVec());
+@@ -56,4 +56,4 @@ array(1) {
+   [0]=>
+   int(4)
+ }
+-==DONE==
+\ No newline at end of file
++==DONE==
+diff --git a/ext/intl/tests/rbbiter_getRules_basic.phpt b/ext/intl/tests/rbbiter_getRules_basic.phpt
+index 2f7a40eb716b..3ad1a9231151 100644
+--- a/ext/intl/tests/rbbiter_getRules_basic.phpt
++++ b/ext/intl/tests/rbbiter_getRules_basic.phpt
+@@ -1,9 +1,8 @@
+ --TEST--
+ IntlRuleBasedBreakIterator::getRules(): basic test
+ --SKIPIF--
+-<?php
+-if (!extension_loaded('intl'))
+-	die('skip intl extension not enabled');
++<?php if (!extension_loaded('intl')) die('skip intl extension not enabled'); ?>
++<?php if (version_compare(INTL_ICU_VERSION, '61.1') >=  0) die('skip for ICU < 61.1'); ?>
+ --FILE--
+ <?php
+ ini_set("intl.error_level", E_WARNING);
+@@ -29,4 +28,4 @@ var_dump($rbbi->getRules());
+ ==DONE==
+ --EXPECT--
+ string(128) "$LN = [[:letter:] [:number:]];$S = [.;,:];!!forward;$LN+ {1};$S+ {42};!!reverse;$LN+ {1};$S+ {42};!!safe_forward;!!safe_reverse;"
+-==DONE==
+\ No newline at end of file
++==DONE==
+diff --git a/ext/intl/tests/rbbiter_getRules_basic2.phpt b/ext/intl/tests/rbbiter_getRules_basic2.phpt
+new file mode 100644
+index 000000000000..67b3831aa2f3
+--- /dev/null
++++ b/ext/intl/tests/rbbiter_getRules_basic2.phpt
+@@ -0,0 +1,40 @@
++--TEST--
++IntlRuleBasedBreakIterator::getRules(): basic test
++--SKIPIF--
++<?php if (!extension_loaded('intl')) die('skip intl extension not enabled'); ?>
++<?php if (version_compare(INTL_ICU_VERSION, '61.1') < 0) die('skip for ICU >= 61.1'); ?>
++--FILE--
++<?php
++ini_set("intl.error_level", E_WARNING);
++ini_set("intl.default_locale", "pt_PT");
++
++$rules = <<<RULES
++\$LN = [[:letter:] [:number:]];
++\$S = [.;,:];
++
++!!forward;
++\$LN+ {1};
++\$S+ {42};
++!!reverse;
++\$LN+ {1};
++\$S+ {42};
++!!safe_forward;
++!!safe_reverse;
++RULES;
++$rbbi = new IntlRuleBasedBreakIterator($rules);
++var_dump($rbbi->getRules());
++
++?>
++==DONE==
++--EXPECT--
++string(137) "$LN = [[:letter:] [:number:]];
++$S = [.;,:];
++!!forward;
++$LN+ {1};
++$S+ {42};
++!!reverse;
++$LN+ {1};
++$S+ {42};
++!!safe_forward;
++!!safe_reverse;"
++==DONE==
+From 8b104d789317d96f6d3e23e635f0ca288c0a23ee Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Fri, 30 Mar 2018 14:14:35 +0200
+Subject: [PATCH] Fix clang build, ref buf #76153
+
+Clang only allows -std=c++11 for C++ source.
+---
+ ext/intl/config.m4 | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
+
+diff --git a/ext/intl/config.m4 b/ext/intl/config.m4
+index a496d8d70c3f..aea57102f6b8 100644
+--- a/ext/intl/config.m4
++++ b/ext/intl/config.m4
+@@ -20,7 +20,6 @@ if test "$PHP_INTL" != "no"; then
+   PHP_NEW_EXTENSION(intl, php_intl.c \
+     intl_error.c \
+     intl_convert.c \
+-	intl_convertcpp.cpp \
+     collator/collator.c \
+     collator/collator_class.c \
+     collator/collator_sort.c \
+@@ -32,8 +31,6 @@ if test "$PHP_INTL" != "no"; then
+     collator/collator_is_numeric.c \
+     collator/collator_error.c \
+     common/common_error.c \
+-	common/common_enum.cpp \
+-	common/common_date.cpp \
+     converter/converter.c \
+     formatter/formatter.c \
+     formatter/formatter_main.c \
+@@ -53,17 +50,12 @@ if test "$PHP_INTL" != "no"; then
+     dateformat/dateformat_attr.c \
+     dateformat/dateformat_data.c \
+     dateformat/dateformat_format.c \
+-    dateformat/dateformat_format_object.cpp \
+     dateformat/dateformat_parse.c \
+-    dateformat/dateformat_create.cpp \
+-    dateformat/dateformat_attrcpp.cpp \
+-    dateformat/dateformat_helpers.cpp \
+     msgformat/msgformat.c \
+     msgformat/msgformat_attr.c \
+     msgformat/msgformat_class.c \
+     msgformat/msgformat_data.c  \
+     msgformat/msgformat_format.c \
+-    msgformat/msgformat_helpers.cpp \
+     msgformat/msgformat_parse.c \
+     grapheme/grapheme_string.c \
+     grapheme/grapheme_util.c \
+@@ -73,6 +65,17 @@ if test "$PHP_INTL" != "no"; then
+     transliterator/transliterator.c \
+     transliterator/transliterator_class.c \
+     transliterator/transliterator_methods.c \
++    idn/idn.c \
++    $icu_spoof_src, $ext_shared,,$ICU_INCS -Wno-write-strings,cxx)
++
++  PHP_ADD_SOURCES(PHP_EXT_DIR(intl), intl_convertcpp.cpp \
++    common/common_enum.cpp \
++    common/common_date.cpp \
++    dateformat/dateformat_format_object.cpp \
++    dateformat/dateformat_create.cpp \
++    dateformat/dateformat_attrcpp.cpp \
++    dateformat/dateformat_helpers.cpp \
++    msgformat/msgformat_helpers.cpp \
+     timezone/timezone_class.cpp \
+     timezone/timezone_methods.cpp \
+     calendar/calendar_class.cpp \
+@@ -83,9 +87,9 @@ if test "$PHP_INTL" != "no"; then
+     breakiterator/breakiterator_methods.cpp \
+     breakiterator/rulebasedbreakiterator_methods.cpp \
+     breakiterator/codepointiterator_internal.cpp \
+-    breakiterator/codepointiterator_methods.cpp \
+-    idn/idn.c \
+-    $icu_spoof_src, $ext_shared,,$ICU_INCS -Wno-write-strings $ICU_EXTRA_FLAGS,cxx)
++    breakiterator/codepointiterator_methods.cpp, \
++    $ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS $ICU_EXTRA_FLAGS)
++
+   PHP_ADD_BUILD_DIR($ext_builddir/collator)
+   PHP_ADD_BUILD_DIR($ext_builddir/converter)
+   PHP_ADD_BUILD_DIR($ext_builddir/common)
+From 2bd299f7318492fd7e5cafffa562d76ba60e69d4 Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Tue, 3 Apr 2018 10:42:14 +0200
+Subject: [PATCH] Fix shared ext/intl compilation
+
+---
+ ext/intl/config.m4 | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/ext/intl/config.m4 b/ext/intl/config.m4
+index aea57102f6b8..959ecd2b26a9 100644
+--- a/ext/intl/config.m4
++++ b/ext/intl/config.m4
+@@ -68,7 +68,7 @@ if test "$PHP_INTL" != "no"; then
+     idn/idn.c \
+     $icu_spoof_src, $ext_shared,,$ICU_INCS -Wno-write-strings,cxx)
+ 
+-  PHP_ADD_SOURCES(PHP_EXT_DIR(intl), intl_convertcpp.cpp \
++  PHP_INTL_CPP_SOURCES="intl_convertcpp.cpp \
+     common/common_enum.cpp \
+     common/common_date.cpp \
+     dateformat/dateformat_format_object.cpp \
+@@ -86,8 +86,13 @@ if test "$PHP_INTL" != "no"; then
+     breakiterator/breakiterator_methods.cpp \
+     breakiterator/rulebasedbreakiterator_methods.cpp \
+     breakiterator/codepointiterator_internal.cpp \
+-    breakiterator/codepointiterator_methods.cpp, \
+-    $ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS $ICU_EXTRA_FLAGS)
++    breakiterator/codepointiterator_methods.cpp"
++  PHP_INTL_CPP_FLAGS="$ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS $ICU_EXTRA_FLAGS"
++  if test "$ext_shared" = "no"; then
++    PHP_ADD_SOURCES(PHP_EXT_DIR(intl), $PHP_INTL_CPP_SOURCES, $PHP_INTL_CPP_FLAGS)
++  else
++    PHP_ADD_SOURCES_X(PHP_EXT_DIR(intl), $PHP_INTL_CPP_SOURCES, $PHP_INTL_CPP_FLAGS, shared_objects_intl, yes)
++  fi
+ 
+   PHP_ADD_BUILD_DIR($ext_builddir/collator)
+   PHP_ADD_BUILD_DIR($ext_builddir/converter)
+From ed5aabe8b78d8487ffc6091e0670753d59bb7f5a Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Thu, 5 Apr 2018 14:52:40 +0200
+Subject: [PATCH] Rename var
+
+---
+ acinclude.m4       | 4 ++--
+ ext/intl/config.m4 | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/acinclude.m4 b/acinclude.m4
+index 3881b2da93d6..c63edd309e9f 100644
+--- a/acinclude.m4
++++ b/acinclude.m4
+@@ -2245,8 +2245,8 @@ AC_DEFUN([PHP_SETUP_ICU],[
+     PHP_EVAL_INCLINE($ICU_INCS)
+     PHP_EVAL_LIBLINE($ICU_LIBS, $1)
+ 
+-    ICU_EXTRA_FLAGS=`$ICU_CONFIG --cxxflags`
+-    ICU_EXTRA_FLAGS="$ICU_EXTRA_FLAGS -DU_USING_ICU_NAMESPACE=1"
++    ICU_CXXFLAGS=`$ICU_CONFIG --cxxflags`
++    ICU_CXXFLAGS="$ICU_CXXFLAGS -DU_USING_ICU_NAMESPACE=1"
+   fi
+ ])
+ 
+diff --git a/ext/intl/config.m4 b/ext/intl/config.m4
+index 959ecd2b26a9..e8428e1cbbe8 100644
+--- a/ext/intl/config.m4
++++ b/ext/intl/config.m4
+@@ -87,7 +87,7 @@ if test "$PHP_INTL" != "no"; then
+     breakiterator/rulebasedbreakiterator_methods.cpp \
+     breakiterator/codepointiterator_internal.cpp \
+     breakiterator/codepointiterator_methods.cpp"
+-  PHP_INTL_CPP_FLAGS="$ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS $ICU_EXTRA_FLAGS"
++  PHP_INTL_CPP_FLAGS="$ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS $ICU_CXXFLAGS"
+   if test "$ext_shared" = "no"; then
+     PHP_ADD_SOURCES(PHP_EXT_DIR(intl), $PHP_INTL_CPP_SOURCES, $PHP_INTL_CPP_FLAGS)
+   else
+From 09d7ffabcd99fe9b99c4206f321fecc506635072 Mon Sep 17 00:00:00 2001
+From: Anatol Belski <ab@php.net>
+Date: Thu, 5 Apr 2018 16:44:12 +0200
+Subject: [PATCH] Group common flags
+
+---
+ ext/intl/config.m4 | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/ext/intl/config.m4 b/ext/intl/config.m4
+index e8428e1cbbe8..52408f8e9183 100644
+--- a/ext/intl/config.m4
++++ b/ext/intl/config.m4
+@@ -9,6 +9,7 @@ if test "$PHP_INTL" != "no"; then
+   PHP_SETUP_ICU(INTL_SHARED_LIBADD)
+   PHP_SUBST(INTL_SHARED_LIBADD)
+   PHP_REQUIRE_CXX()
++  INTL_COMMON_FLAGS="$ICU_INCS -Wno-write-strings -DU_DEFINE_FALSE_AND_TRUE=1 -D__STDC_LIMIT_MACROS"
+   if test "$icu_version" -ge "4002"; then
+     icu_spoof_src=" spoofchecker/spoofchecker_class.c \
+     spoofchecker/spoofchecker.c\
+@@ -66,9 +67,9 @@ if test "$PHP_INTL" != "no"; then
+     transliterator/transliterator_class.c \
+     transliterator/transliterator_methods.c \
+     idn/idn.c \
+-    $icu_spoof_src, $ext_shared,,$ICU_INCS -Wno-write-strings,cxx)
++    $icu_spoof_src, $ext_shared,,$INTL_COMMON_FLAGS,cxx)
+ 
+-  PHP_INTL_CPP_SOURCES="intl_convertcpp.cpp \
++  PHP_INTL_CXX_SOURCES="intl_convertcpp.cpp \
+     common/common_enum.cpp \
+     common/common_date.cpp \
+     dateformat/dateformat_format_object.cpp \
+@@ -87,11 +88,11 @@ if test "$PHP_INTL" != "no"; then
+     breakiterator/rulebasedbreakiterator_methods.cpp \
+     breakiterator/codepointiterator_internal.cpp \
+     breakiterator/codepointiterator_methods.cpp"
+-  PHP_INTL_CPP_FLAGS="$ICU_INCS -Wno-write-strings -D__STDC_LIMIT_MACROS $ICU_CXXFLAGS"
++  PHP_INTL_CXX_FLAGS="$INTL_COMMON_FLAGS $ICU_CXXFLAGS"
+   if test "$ext_shared" = "no"; then
+-    PHP_ADD_SOURCES(PHP_EXT_DIR(intl), $PHP_INTL_CPP_SOURCES, $PHP_INTL_CPP_FLAGS)
++    PHP_ADD_SOURCES(PHP_EXT_DIR(intl), $PHP_INTL_CXX_SOURCES, $PHP_INTL_CXX_FLAGS)
+   else
+-    PHP_ADD_SOURCES_X(PHP_EXT_DIR(intl), $PHP_INTL_CPP_SOURCES, $PHP_INTL_CPP_FLAGS, shared_objects_intl, yes)
++    PHP_ADD_SOURCES_X(PHP_EXT_DIR(intl), $PHP_INTL_CXX_SOURCES, $PHP_INTL_CXX_FLAGS, shared_objects_intl, yes)
+   fi
+ 
+   PHP_ADD_BUILD_DIR($ext_builddir/collator)

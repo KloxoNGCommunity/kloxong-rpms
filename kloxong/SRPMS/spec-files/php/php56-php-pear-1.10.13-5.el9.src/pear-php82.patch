@@ -1,0 +1,22 @@
+From 4217e3ea503ba6c0651ea2d182fb9cb88f21ce0b Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@remirepo.net>
+Date: Mon, 20 Feb 2023 16:02:34 +0100
+Subject: [PATCH] Fix: Creation of dynamic property PEAR_Error::$callback is
+ deprecated
+
+---
+ PEAR.php | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/PEAR.php b/PEAR.php
+index fee6638f4..6dba3b010 100644
+--- a/PEAR.php
++++ b/PEAR.php
+@@ -859,6 +859,7 @@ class PEAR_Error
+     var $message              = '';
+     var $userinfo             = '';
+     var $backtrace            = null;
++    var $callback             = null;
+ 
+     /**
+      * PEAR_Error constructor

@@ -1,0 +1,30 @@
+diff -up ./Zend/zend_dtrace.c.old ./Zend/zend_dtrace.c
+--- ./Zend/zend_dtrace.c.old	2020-02-19 14:06:05.624224596 +0100
++++ ./Zend/zend_dtrace.c	2020-02-19 14:07:50.842731017 +0100
+@@ -23,6 +23,10 @@
+ #include "zend_dtrace.h"
+ 
+ #ifdef HAVE_DTRACE
++ZEND_API zend_op_array *(*zend_dtrace_compile_file)(zend_file_handle *file_handle, int type TSRMLS_DC);
++ZEND_API void (*zend_dtrace_execute)(zend_op_array *op_array TSRMLS_DC);
++ZEND_API void (*zend_dtrace_execute_internal)(zend_execute_data *execute_data_ptr, zend_fcall_info *fci, int return_value_used TSRMLS_DC);
++
+ /* PHP DTrace probes {{{ */
+ static inline const char *dtrace_get_executed_filename(TSRMLS_D)
+ {
+diff -up ./Zend/zend_dtrace.h.old ./Zend/zend_dtrace.h
+--- ./Zend/zend_dtrace.h.old	2020-02-19 14:06:10.641201059 +0100
++++ ./Zend/zend_dtrace.h	2020-02-19 14:08:17.710604949 +0100
+@@ -30,9 +30,9 @@ extern "C" {
+ #endif
+ 
+ #ifdef HAVE_DTRACE
+-ZEND_API zend_op_array *(*zend_dtrace_compile_file)(zend_file_handle *file_handle, int type TSRMLS_DC);
+-ZEND_API void (*zend_dtrace_execute)(zend_op_array *op_array TSRMLS_DC);
+-ZEND_API void (*zend_dtrace_execute_internal)(zend_execute_data *execute_data_ptr, zend_fcall_info *fci, int return_value_used TSRMLS_DC);
++ZEND_API extern zend_op_array *(*zend_dtrace_compile_file)(zend_file_handle *file_handle, int type TSRMLS_DC);
++ZEND_API extern void (*zend_dtrace_execute)(zend_op_array *op_array TSRMLS_DC);
++ZEND_API extern void (*zend_dtrace_execute_internal)(zend_execute_data *execute_data_ptr, zend_fcall_info *fci, int return_value_used TSRMLS_DC);
+ 
+ ZEND_API zend_op_array *dtrace_compile_file(zend_file_handle *file_handle, int type TSRMLS_DC);
+ ZEND_API void dtrace_execute_ex(zend_execute_data *execute_data TSRMLS_DC);
