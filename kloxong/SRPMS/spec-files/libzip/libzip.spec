@@ -1,8 +1,46 @@
-%bcond_without tests
+# remirepo spec file for libzip and remi-libzip
+# renamed for parallel installation, from:
+#
+# Fedora spec file for libzip
+#
+# License: MIT
+# http://opensource.org/licenses/MIT
+#
+# Please preserve changelog entries
+#
 
-Name:    libzip
-Version: 1.7.3
-Release: 8%{?dist}
+## FOR EL-7
+##     build as libzip5
+## FOR EL-8
+##     1st build --with    move_to_opt for SCL
+##     2nd build --without move_to_opt for module
+## FOR EL-9
+##     build as remi-libzip
+
+%global libname libzip
+%global soname  5
+%bcond_without  tests
+
+%if 0%{?vendeur:1} && 0%{?rhel} >= 8
+%bcond_without move_to_opt
+%else
+%bcond_with    move_to_opt
+%endif
+
+%if %{with move_to_opt}
+%global _prefix /opt/%{?vendeur:%{vendeur}/}%{libname}
+%global __arch_install_post /bin/true
+Name:    %{?vendeur:%{vendeur}-}%{libname}
+%else
+%if 0%{?rhel} == 7
+Name:    %{libname}%{soname}
+%else
+Name:    %{libname}
+%endif
+%endif
+
+Version: 1.9.2
+Release: 3%{?dist}
 Summary: C library for reading, creating, and modifying zip archives
 
 License: BSD
@@ -10,15 +48,22 @@ URL:     https://libzip.org/
 Source0: https://libzip.org/download/libzip-%{version}.tar.xz
 
 BuildRequires:  gcc
-BuildRequires:  zlib-devel
+BuildRequires:  zlib-devel >= 1.1.2
 BuildRequires:  bzip2-devel
 BuildRequires:  openssl-devel
-BuildRequires:  xz-devel
+BuildRequires:  xz-devel >= 5.2
+# for ZSTD_minCLevel
+BuildRequires:  libzstd-devel   >= 1.3.6
+Requires:       libzstd%{?_isa} >= 1.3.6
+%if 0%{?rhel} == 7
+BuildRequires:  cmake3 >= 3.0.2
+%else
 BuildRequires:  cmake >= 3.0.2
+%endif
 # Needed to run the test suite
 # find regress/ -type f | /usr/lib/rpm/perl.req
 # find regress/ -type f | /usr/lib/rpm/perl.prov
-BuildRequires:  perl-interpreter
+BuildRequires:  perl
 BuildRequires:  perl(Cwd)
 BuildRequires:  perl(File::Copy)
 BuildRequires:  perl(File::Path)
@@ -30,17 +75,63 @@ BuildRequires:  perl(UNIVERSAL)
 BuildRequires:  perl(strict)
 BuildRequires:  perl(warnings)
 
+%if 0%{?rhel} == 7
+# RHEL have commands in main package
+Provides:  %{libname} =  %{version}-%{release}
+%endif
+%if %{with move_to_opt}
+%if 0%{?rhel} == 8
+Obsoletes: php56-libzip < %{version}
+Obsoletes: php70-libzip < %{version}
+Obsoletes: php71-libzip < %{version}
+Obsoletes: php72-libzip < %{version}
+Obsoletes: php73-libzip < %{version}
+Obsoletes: php74-libzip < %{version}
+Obsoletes: php80-libzip < %{version}
+Obsoletes: php81-libzip < %{version}
+Obsoletes: php82-libzip < %{version}
+%endif
+
+# Filter in the /opt installation
+%{?filter_from_provides: %filter_from_provides /libzip/d}
+%{?filter_from_requires: %filter_from_requires /libzip/d}
+%{?filter_setup}
+
+%global __provides_exclude ^(libzip\\.so|cmake|pkgconfig).*$
+%global __requires_exclude ^libzip\\.so.*$
+%endif
+
 
 %description
 libzip is a C library for reading, creating, and modifying zip archives. Files
 can be added from data buffers, files, or compressed data copied directly from 
 other zip archives. Changes made without closing the archive can be reverted. 
 The API is documented by man pages.
+%if "%{name}" != "%{libname}"
+%{name} is designed to be installed beside %{libname}.
+%endif
 
 
 %package devel
 Summary:  Development files for %{name}
 Requires: %{name}%{?_isa} = %{version}-%{release}
+
+%if 0%{?rhel} == 7
+Conflicts: %{libname}-last-devel     <  %{version}
+Conflicts: %{libname}-devel          <  %{version}
+Provides:  %{libname}-devel          =  %{version}-%{release}
+%endif
+%if %{with move_to_opt} && 0%{?rhel} == 8
+Obsoletes: php56-libzip-devel < %{version}
+Obsoletes: php70-libzip-devel < %{version}
+Obsoletes: php71-libzip-devel < %{version}
+Obsoletes: php72-libzip-devel < %{version}
+Obsoletes: php73-libzip-devel < %{version}
+Obsoletes: php74-libzip-devel < %{version}
+Obsoletes: php80-libzip-devel < %{version}
+Obsoletes: php81-libzip-devel < %{version}
+Obsoletes: php82-libzip-devel < %{version}
+%endif
 
 %description devel
 The %{name}-devel package contains libraries and header files for
@@ -51,6 +142,24 @@ developing applications that use %{name}.
 Summary:  Command line tools from %{name}
 Requires: %{name}%{?_isa} = %{version}-%{release}
 
+%if 0%{?rhel} == 7
+Conflicts: %{libname}-last-tools     <  %{version}
+Conflicts: %{libname}-tools          <  %{version}
+# RHEL have commands in main package
+Conflicts: %{libname}                <  1.1
+%endif
+%if %{with move_to_opt} && 0%{?rhel} == 8
+Obsoletes: php56-libzip-tools < %{version}
+Obsoletes: php70-libzip-tools < %{version}
+Obsoletes: php71-libzip-tools < %{version}
+Obsoletes: php72-libzip-tools < %{version}
+Obsoletes: php73-libzip-tools < %{version}
+Obsoletes: php74-libzip-tools < %{version}
+Obsoletes: php80-libzip-tools < %{version}
+Obsoletes: php81-libzip-tools < %{version}
+Obsoletes: php82-libzip-tools < %{version}
+%endif
+
 %description tools
 The %{name}-tools package provides command line tools split off %{name}:
 - zipcmp
@@ -59,18 +168,27 @@ The %{name}-tools package provides command line tools split off %{name}:
 
 
 %prep
-%autosetup -p1
+%setup -q -n %{libname}-%{version}
+: ========== BUILD in %{_prefix} ==========
 
 # unwanted in package documentation
 rm INSTALL.md
 
 # drop skipped test which make test suite fails (cmake issue ?)
 sed -e '/clone-fs-/d' \
+%if 0%{?rhel} == 7
+    -e '/add_from_stdin/d' \
+%endif
     -i regress/CMakeLists.txt
 
 
 %build
-%cmake \
+%if 0%{?rhel} == 7
+sed -e 's/COMMAND cmake /COMMAND cmake3 /' -i CMakeLists.txt regress/CMakeLists.txt
+%cmake3 \
+%else
+%cmake . \
+%endif
   -DENABLE_COMMONCRYPTO:BOOL=OFF \
   -DENABLE_GNUTLS:BOOL=OFF \
   -DENABLE_MBEDTLS:BOOL=OFF \
@@ -78,38 +196,73 @@ sed -e '/clone-fs-/d' \
   -DENABLE_WINDOWS_CRYPTO:BOOL=OFF \
   -DENABLE_BZIP2:BOOL=ON \
   -DENABLE_LZMA:BOOL=ON \
+  -DENABLE_ZSTD:BOOL=ON \
   -DBUILD_TOOLS:BOOL=ON \
   -DBUILD_REGRESS:BOOL=ON \
   -DBUILD_EXAMPLES:BOOL=OFF \
-  -DBUILD_DOC:BOOL=ON
+  -DBUILD_DOC:BOOL=ON \
+  .
 
+%if 0%{?cmake_build:1}
 %cmake_build
+%else
+make %{?_smp_mflags}
+%endif
 
 
 %install
-%cmake_install
+mkdir -p %{buildroot}%{_licensedir}
 
+%if 0%{?cmake_install:1}
+%cmake_install
+%else
+make install DESTDIR=%{buildroot} INSTALL='install -p'
+%endif
+
+%if %{with move_to_opt}
+mkdir -p %{buildroot}%{_datadir}/licenses
+mkdir -p %{buildroot}%{_datadir}/doc
+%endif
 
 %check
 %if %{with tests}
+%if 0%{?ctest:1}
 %ctest
+%else
+make check
+%endif
 %else
 : Test suite disabled
 %endif
 
 
-%ldconfig_scriptlets
+%if 0%{?fedora} < 28 && 0%{?rhel} < 8
+%post   -p /sbin/ldconfig
+%postun -p /sbin/ldconfig
+%endif
 
 
 %files
 %license LICENSE
-%{_libdir}/libzip.so.5*
+%{_libdir}/libzip.so.%{soname}*
+%if %{with move_to_opt}
+%dir %{_prefix}
+%dir %{_mandir}
+%dir %{_libdir}
+%dir %{_libdir}
+%dir %{_datadir}
+%dir %{_datadir}/licenses
+%endif
 
 %files tools
 %{_bindir}/zipcmp
 %{_bindir}/zipmerge
 %{_bindir}/ziptool
 %{_mandir}/man1/zip*
+%if %{with move_to_opt}
+%dir %{_bindir}
+%dir %{_mandir}/man1
+%endif
 
 %files devel
 %doc AUTHORS THANKS *.md
@@ -121,71 +274,83 @@ sed -e '/clone-fs-/d' \
 %{_mandir}/man3/libzip*
 %{_mandir}/man3/zip*
 %{_mandir}/man3/ZIP*
+%if %{with move_to_opt}
+%dir %{_includedir}
+%dir %{_mandir}/man3
+%dir %{_libdir}/pkgconfig
+%dir %{_libdir}/cmake
+%dir %{_datadir}/doc
+%endif
 
 
 %changelog
-* Wed Jan 17 2024 Lukas Javorsky <ljavorsk@redhat.com> - 1.7.3-8
-- Rebuilt for adding libzip-tools subpackage to pungi Appstream repo
+* Wed Jun 29 2022 Remi Collet <remi@remirepo.net> - 1.9.2-3
+- switch to libzip5 on EL-7
 
-* Mon Aug 09 2021 Mohan Boddu <mboddu@redhat.com> - 1.7.3-7
-- Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
-  Related: rhbz#1991688
+* Tue Jun 28 2022 Remi Collet <remi@remirepo.net> - 1.9.2-2
+- don't obsolete libzip5 and php*-libzip for now
 
-* Wed Jun 16 2021 Mohan Boddu <mboddu@redhat.com> - 1.7.3-6
-- Rebuilt for RHEL 9 BETA for openssl 3.0
-  Related: rhbz#1971065
+* Tue Jun 28 2022 Remi Collet <remi@remirepo.net> - 1.9.2-1
+- update to 1.9.2
+- also build as remi-libzip for EL-7 and EL-8
 
-* Fri Apr 16 2021 Mohan Boddu <mboddu@redhat.com> - 1.7.3-5
-- Rebuilt for RHEL 9 BETA on Apr 15th 2021. Related: rhbz#1947937
+* Tue Jun 28 2022 Remi Collet <remi@remirepo.net> - 1.9.1-1
+- update to 1.9.1
 
-* Tue Jan 26 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.7.3-4
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+* Tue Jun 28 2022 Remi Collet <remi@remirepo.net> - 1.9.0-2
+- add upstream patch for zip_file_is_seekable reported as
+  https://github.com/nih-at/libzip/issues/297
+  https://github.com/nih-at/libzip/issues/301
 
-* Tue Jul 28 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.7.3-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+* Tue Jun 14 2022 Remi Collet <remi@remirepo.net> - 1.9.0-1
+- update to 1.9.0
 
-* Tue Jul 21 2020 Rex Dieter <rdieter@fedoraproject.org> - 1.7.3-2
-- use %%cmake_build, %%cmake_install, %ctest
+* Mon Nov  8 2021 Remi Collet <remi@remirepo.net> - 1.8.0-3
+- build as remi-libzip for EL-9
+
+* Mon Jun 21 2021 Remi Collet <remi@remirepo.net> - 1.8.0-2
+- ensure libzstd >= 1.3.6 is used
+
+* Sat Jun 19 2021 Remi Collet <remi@remirepo.net> - 1.8.0-1
+- update to 1.8.0
+- enable zstd compression support
+
+* Thu Nov  5 2020 Remi Collet <remi@remirepo.net> - 1.7.3-2
+- adapt for SCL build
 
 * Wed Jul 15 2020 Remi Collet <remi@remirepo.net> - 1.7.3-1
 - update to 1.7.3
 - drop patch merged upstream
 
+* Mon Jul 13 2020 Remi Collet <remi@remirepo.net> - 1.7.2-2
+- test build for upstream fix
+
 * Mon Jul 13 2020 Remi Collet <remi@remirepo.net> - 1.7.2-1
 - update to 1.7.2
-- fix installation layout using merged patch from
+- fix installation layout using patch from
   https://github.com/nih-at/libzip/pull/190
+- fix pkgconfig usability using patch from
+  https://github.com/nih-at/libzip/pull/191
 
-* Mon Jun 15 2020 Remi Collet <remi@remirepo.net> - 1.7.1-1
+* Sun Jun 14 2020 Remi Collet <remi@remirepo.net> - 1.7.1-1
 - update to 1.7.1
 
 * Fri Jun  5 2020 Remi Collet <remi@remirepo.net> - 1.7.0-1
 - update to 1.7.0
+- really enable lzma support (excepted on EL-6)
 - patch zipconf.h to re-add missing LIBZIP_VERSION_* macros
 
 * Mon Feb  3 2020 Remi Collet <remi@remirepo.net> - 1.6.1-1
 - update to 1.6.1
 
-* Wed Jan 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.6.0-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
-
 * Fri Jan 24 2020 Remi Collet <remi@remirepo.net> - 1.6.0-1
 - update to 1.6.0
-- enable lzma support
-
-* Thu Jul 25 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.2-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
+- enable lzma support (excepted on EL-6)
 
 * Tue Mar 12 2019 Remi Collet <remi@remirepo.net> - 1.5.2-1
 - update to 1.5.2
 - add all explicit cmake options to ensure openssl is used
   even in local build with other lilbraries available
-
-* Fri Feb 01 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.1-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
-
-* Fri Jul 13 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.1-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
 * Wed Apr 11 2018 Remi Collet <remi@remirepo.net> - 1.5.1-1
 - update to 1.5.1
@@ -202,10 +367,7 @@ sed -e '/clone-fs-/d' \
 
 * Tue Feb 20 2018 Remi Collet <remi@remirepo.net> - 1.4.0-5
 - missing BR on C compiler
-- use ldconfig_scriptlets
-
-* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.0-4
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+- drop ldconfig scriptlets (F28+)
 
 * Fri Jan  5 2018 Remi Collet <remi@remirepo.net> - 1.4.0-3
 - add upstream patch and drop multilib hack
@@ -220,65 +382,50 @@ sed -e '/clone-fs-/d' \
 
 * Mon Nov 20 2017 Remi Collet <remi@remirepo.net> - 1.3.2-1
 - update to 1.3.2
+
+* Mon Nov 20 2017 Remi Collet <remi@remirepo.net> - 1.3.1-2
+- add upstream patch for regression in 1.3.1
+
+* Mon Nov 20 2017 Remi Collet <remi@remirepo.net> - 1.3.1-1
+- update to 1.3.1
 - drop multilib header hack
 - change URL to https://libzip.org/
-- test suite now ok on all arch
 
-* Wed Sep 06 2017 Pavel Raiskup <praiskup@redhat.com> - 1.3.0-2
-- use multilib-rpm-config for multilib hacks
+* Fri Oct  6 2017 Remi Collet <remi@fedoraproject.org> - 1.3.0-2
+- test build
 
 * Mon Sep  4 2017 Remi Collet <remi@fedoraproject.org> - 1.3.0-1
 - update to 1.3.0
 - add dependency on bzip2 library
 - ignore 3 tests failing on 32-bit
 
-* Thu Aug 03 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.2.0-3
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Binutils_Mass_Rebuild
-
-* Wed Jul 26 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.2.0-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_27_Mass_Rebuild
-
-* Tue Feb 28 2017 Remi Collet <remi@fedoraproject.org> - 1.2.0-1
+* Sun Feb 19 2017 Remi Collet <remi@fedoraproject.org> - 1.2.0-1
 - update to 1.2.0
-- soname bump to 5
-
-* Tue Feb 28 2017 Remi Collet <remi@fedoraproject.org> - 1.2.0-0
-- update to 1.2.0
-- soname bump to 5
-- temporarily keep libzip.so.4
-
-* Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.1.3-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
+- rename to libzip5 for new soname
 
 * Sat May 28 2016 Remi Collet <remi@fedoraproject.org> - 1.1.3-1
 - update to 1.1.3
 
 * Sat Feb 20 2016 Remi Collet <remi@fedoraproject.org> - 1.1.2-1
 - update to 1.1.2
-- add BR on perl(Getopt::Long)
 
 * Sat Feb 13 2016 Remi Collet <remi@fedoraproject.org> - 1.1.1-1
 - update to 1.1.1
-
-* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 1.1-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
 
 * Thu Jan 28 2016 Remi Collet <remi@fedoraproject.org> - 1.1-1
 - update to 1.1
 - new ziptool command
 - add fix for undefined optopt in ziptool.c (upstream)
 
-* Fri Dec  4 2015 Remi Collet <remi@fedoraproject.org> - 1.0.1-3
-- fix libzip-tools summary #1288424
-
-* Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.0.1-2
-- Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
+* Thu Jan 14 2016 Remi Collet <remi@fedoraproject.org> - 1.0.1-3
+- libzip obsoletes libzip-last
 
 * Tue May  5 2015 Remi Collet <remi@fedoraproject.org> - 1.0.1-1
 - update to 1.0.1
 - soname bump from .2 to .4
 - drop ziptorrent
 - create "tools" sub package
+- rename to libzip-last to allow parallel installation
 
 * Mon Mar 23 2015 Rex Dieter <rdieter@fedoraproject.org> 0.11.2-5
 - actually apply patch (using %%autosetup)
@@ -302,7 +449,7 @@ sed -e '/clone-fs-/d' \
 * Fri Aug 23 2013 Remi Collet <remi@fedoraproject.org> - 0.11.1-2
 - include API-CHANGES and LICENSE in package doc
 
-* Wed Aug 21 2013 Remi Collet <remi@fedoraproject.org> - 0.11.1-1
+* Thu Aug 08 2013 Remi Collet <remi@fedoraproject.org> - 0.11.1-1
 - update to 0.11.1
 
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.10.1-7
