@@ -22,7 +22,7 @@
 Summary: Utilities from the general purpose cryptography library with TLS implementation
 Name: compat-openssl11
 Version: 1.1.1k
-Release: 4%{?dist}
+Release: 6%{?dist}
 Epoch: 1
 # We have to remove certain patented algorithms from the openssl source
 # tarball with the hobble-openssl script which is included below.
@@ -98,6 +98,13 @@ The OpenSSL toolkit provides support for secure communications between
 machines. This version of OpenSSL package contains only the libraries
 from the 1.1.1 version and is provided for compatibility with previous
 releases.
+
+%package devel
+Summary: Development package for %{name}
+Requires: %{name} = %{epoch}:%{version}-%{release}
+
+%description devel
+Development package for %{name}.
 
 %prep
 %setup -q -n openssl-%{version}
@@ -289,10 +296,18 @@ rm -rf $RPM_BUILD_ROOT/%{_bindir}
 rm -f $RPM_BUILD_ROOT/%{_libdir}/engines-1.1/capi.so
 
 # Delete devel files
-rm -rf $RPM_BUILD_ROOT%{_includedir}/openssl
+#rm -rf $RPM_BUILD_ROOT%{_includedir}/openssl
 rm -rf $RPM_BUILD_ROOT%{_mandir}/man3*
 rm -rf $RPM_BUILD_ROOT%{_libdir}/*.so
 rm -rf $RPM_BUILD_ROOT%{_libdir}/pkgconfig
+
+mkdir -p $RPM_BUILD_ROOT{%{_includedir},%{_libdir}}/openssl11
+mv $RPM_BUILD_ROOT%{_includedir}/openssl $RPM_BUILD_ROOT%{_includedir}/openssl11/
+for lib in crypto ssl
+do
+    ln -sf ../lib${lib}.so.%{version} $RPM_BUILD_ROOT%{_libdir}/openssl11/lib${lib}.so
+done
+
 
 # Install compat config file
 install -m 644 apps/openssl11.cnf $RPM_BUILD_ROOT%{_sysconfdir}/pki/tls/openssl11.cnf
@@ -310,9 +325,17 @@ install -m 644 apps/openssl11.cnf $RPM_BUILD_ROOT%{_sysconfdir}/pki/tls/openssl1
 %dir %{_sysconfdir}/pki/tls
 %attr(0644,root,root) %{_sysconfdir}/pki/tls/openssl11.cnf
 
+%files devel
+%{_libdir}/openssl11
+%{_includedir}/openssl11
+
 %ldconfig_scriptlets
 
 %changelog
+* Thu Jul 11 2024 John Pierce <John@luckytanuki.com>  - 1:1.1.1k-6
+- Enable building of devel library
+- Remove hubble-openssl source as cause build error in Copr
+
 * Mon May 30 2022 Clemens Lang <cllang@redhat.com> - 1:1.1.1k-4
 - Fixes CVE-2022-0778 openssl: Infinite loop in BN_mod_sqrt() reachable when parsing certificates
   Resolves: rhbz#2063148
