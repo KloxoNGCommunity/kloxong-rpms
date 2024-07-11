@@ -28,7 +28,7 @@ Epoch: 1
 # tarball with the hobble-openssl script which is included below.
 # The original openssl upstream tarball cannot be shipped in the .src.rpm.
 Source: openssl-%{version}-hobbled.tar.xz
-Source1: hobble-openssl
+
 Source2: Makefile.certificate
 Source6: make-dummy-cert
 Source7: renew-dummy-cert
@@ -104,7 +104,7 @@ releases.
 
 # The hobble_openssl is called here redundantly, just to be sure.
 # The tarball has already the sources removed.
-%{SOURCE1} > /dev/null
+
 
 cp %{SOURCE12} crypto/ec/
 cp %{SOURCE13} test/
