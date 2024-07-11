@@ -76,6 +76,7 @@ Patch53: openssl-1.1.1-fips-crng-test.patch
 Patch55: openssl-1.1.1-arm-update.patch
 Patch56: openssl-1.1.1-s390x-ecc.patch
 Patch73: openssl-1.1.1-cve-2022-0778.patch
+Patch74:              999_replace_expired_certs.patch
 
 License: OpenSSL and ASL 2.0
 URL: http://www.openssl.org/
@@ -154,6 +155,7 @@ cp %{SOURCE13} test/
 %patch73 -p1 -b .cve-2022-0778
 
 cp apps/openssl.cnf apps/openssl11.cnf
+%patch74 -p1
 
 %build
 # Figure out which flags we want to use.
