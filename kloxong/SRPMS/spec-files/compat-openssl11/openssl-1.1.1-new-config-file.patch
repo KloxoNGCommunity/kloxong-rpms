@@ -1,0 +1,119 @@
+diff -up openssl-1.1.1k/include/internal/cryptlib.h.conf-new openssl-1.1.1k/include/internal/cryptlib.h
+--- openssl-1.1.1k/include/internal/cryptlib.h.conf-new	2021-08-30 14:19:25.209494828 +0200
++++ openssl-1.1.1k/include/internal/cryptlib.h	2021-08-30 14:19:34.047615270 +0200
+@@ -51,7 +51,7 @@ typedef struct app_mem_info_st APP_INFO;
+ typedef struct mem_st MEM;
+ DEFINE_LHASH_OF(MEM);
+ 
+-# define OPENSSL_CONF             "openssl.cnf"
++# define OPENSSL_CONF             "openssl11.cnf"
+ 
+ # ifndef OPENSSL_SYS_VMS
+ #  define X509_CERT_AREA          OPENSSLDIR
+diff -up openssl-1.1.1k/Configurations/unix-Makefile.tmpl.new-conf openssl-1.1.1k/Configurations/unix-Makefile.tmpl
+--- openssl-1.1.1k/Configurations/unix-Makefile.tmpl.new-conf	2021-10-05 11:33:47.651773153 +0200
++++ openssl-1.1.1k/Configurations/unix-Makefile.tmpl	2021-10-05 11:34:08.273946559 +0200
+@@ -580,14 +580,14 @@ install_ssldirs:
+ 			: {- output_on() if windowsdll(); "" -}; \
+ 		fi; \
+ 	done
+-	@$(ECHO) "install $(SRCDIR)/apps/openssl.cnf -> $(DESTDIR)$(OPENSSLDIR)/openssl.cnf.dist"
+-	@cp $(SRCDIR)/apps/openssl.cnf "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf.new"
+-	@chmod 644 "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf.new"
+-	@mv -f "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf.new" "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf.dist"
+-	@if [ ! -f "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf" ]; then \
+-		$(ECHO) "install $(SRCDIR)/apps/openssl.cnf -> $(DESTDIR)$(OPENSSLDIR)/openssl.cnf"; \
+-		cp $(SRCDIR)/apps/openssl.cnf "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf"; \
+-		chmod 644 "$(DESTDIR)$(OPENSSLDIR)/openssl.cnf"; \
++	@$(ECHO) "install $(SRCDIR)/apps/openssl11.cnf -> $(DESTDIR)$(OPENSSLDIR)/openssl11.cnf.dist"
++	@cp $(SRCDIR)/apps/openssl11.cnf "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf.new"
++	@chmod 644 "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf.new"
++	@mv -f "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf.new" "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf.dist"
++	@if [ ! -f "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf" ]; then \
++		$(ECHO) "install $(SRCDIR)/apps/openssl11.cnf -> $(DESTDIR)$(OPENSSLDIR)/openssl11.cnf"; \
++		cp $(SRCDIR)/apps/openssl11.cnf "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf"; \
++		chmod 644 "$(DESTDIR)$(OPENSSLDIR)/openssl11.cnf"; \
+ 	fi
+ 	@$(ECHO) "install $(SRCDIR)/apps/ct_log_list.cnf -> $(DESTDIR)$(OPENSSLDIR)/ct_log_list.cnf.dist"
+ 	@cp $(SRCDIR)/apps/ct_log_list.cnf "$(DESTDIR)$(OPENSSLDIR)/ct_log_list.cnf.new"
+@@ -871,7 +871,7 @@ lint:
+ 
+ generate_apps:
+ 	( cd $(SRCDIR); $(PERL) VMS/VMSify-conf.pl \
+-				< apps/openssl.cnf > apps/openssl-vms.cnf )
++				< apps/openssl11.cnf > apps/openssl-vms.cnf )
+ 
+ generate_crypto_bn:
+ 	( cd $(SRCDIR); $(PERL) crypto/bn/bn_prime.pl > crypto/bn/bn_prime.h )
+diff -up openssl-1.1.1k/Configure.new-conf openssl-1.1.1k/Configure
+--- openssl-1.1.1k/Configure.new-conf	2021-10-05 13:07:38.128588902 +0200
++++ openssl-1.1.1k/Configure	2021-10-05 13:08:00.190795712 +0200
+@@ -35,7 +35,7 @@ my $usage="Usage: Configure [no-<cipher>
+ #               directories bin, lib, include, share/man, share/doc/openssl
+ #               This becomes the value of INSTALLTOP in Makefile
+ #               (Default: /usr/local)
+-# --openssldir  OpenSSL data area, such as openssl.cnf, certificates and keys.
++# --openssldir  OpenSSL data area, such as openssl11.cnf, certificates and keys.
+ #               If it's a relative directory, it will be added on the directory
+ #               given with --prefix.
+ #               This becomes the value of OPENSSLDIR in Makefile and in C.
+diff -up openssl-1.1.1k/doc/HOWTO/certificates.txt.new-conf openssl-1.1.1k/doc/HOWTO/certificates.txt
+--- openssl-1.1.1k/doc/HOWTO/certificates.txt.new-conf	2021-10-05 13:09:44.705775386 +0200
++++ openssl-1.1.1k/doc/HOWTO/certificates.txt	2021-10-05 13:09:58.621905835 +0200
+@@ -16,7 +16,7 @@ Certificate authorities should read http
+ In all the cases shown below, the standard configuration file, as
+ compiled into openssl, will be used.  You may find it in /etc/,
+ /usr/local/ssl/ or somewhere else.  By default the file is named
+-openssl.cnf and is described at https://www.openssl.org/docs/apps/config.html.
++openssl11.cnf and is described at https://www.openssl.org/docs/apps/config.html.
+ You can specify a different configuration file using the
+ '-config {file}' argument with the commands shown below.
+ 
+diff -up openssl-1.1.1k/doc/man3/OPENSSL_config.pod.new-conf openssl-1.1.1k/doc/man3/OPENSSL_config.pod
+--- openssl-1.1.1k/doc/man3/OPENSSL_config.pod.new-conf	2021-10-05 13:08:51.108273006 +0200
++++ openssl-1.1.1k/doc/man3/OPENSSL_config.pod	2021-10-05 13:09:07.614427700 +0200
+@@ -15,7 +15,7 @@ OPENSSL_config, OPENSSL_no_config - simp
+ 
+ =head1 DESCRIPTION
+ 
+-OPENSSL_config() configures OpenSSL using the standard B<openssl.cnf> and
++OPENSSL_config() configures OpenSSL using the standard B<openssl11.cnf> and
+ reads from the application section B<appname>. If B<appname> is NULL then
+ the default section, B<openssl_conf>, will be used.
+ Errors are silently ignored.
+diff -up openssl-1.1.1k/doc/man5/config.pod.new-conf openssl-1.1.1k/doc/man5/config.pod
+--- openssl-1.1.1k/doc/man5/config.pod.new-conf	2021-10-05 13:10:21.497120265 +0200
++++ openssl-1.1.1k/doc/man5/config.pod	2021-10-05 13:10:35.727253658 +0200
+@@ -7,7 +7,7 @@ config - OpenSSL CONF library configurat
+ =head1 DESCRIPTION
+ 
+ The OpenSSL CONF library can be used to read configuration files.
+-It is used for the OpenSSL master configuration file B<openssl.cnf>
++It is used for the OpenSSL master configuration file B<openssl11.cnf>
+ and in a few other places like B<SPKAC> files and certificate extension
+ files for the B<x509> utility. OpenSSL applications can also use the
+ CONF library for their own purposes.
+diff -up openssl-1.1.1k/INSTALL.new-conf openssl-1.1.1k/INSTALL
+--- openssl-1.1.1k/INSTALL.new-conf	2021-10-05 13:10:56.473448084 +0200
++++ openssl-1.1.1k/INSTALL	2021-10-05 13:11:11.388587895 +0200
+@@ -296,7 +296,7 @@
+                    be undesirable if small executable size is an objective.
+ 
+   no-autoload-config
+-                   Don't automatically load the default openssl.cnf file.
++                   Don't automatically load the default openssl11.cnf file.
+                    Typically OpenSSL will automatically load a system config
+                    file which configures default ssl options.
+ 
+diff -up openssl-1.1.1k/NEWS.new-conf openssl-1.1.1k/NEWS
+--- openssl-1.1.1k/NEWS.new-conf	2021-10-05 13:11:31.092772601 +0200
++++ openssl-1.1.1k/NEWS	2021-10-05 13:12:48.923502139 +0200
+@@ -12,6 +12,8 @@
+       o Fixed an issue where an OpenSSL TLS server may crash if sent a
+         maliciously crafted renegotiation ClientHello message from a client
+         (CVE-2021-3449)
++      o This compat package provides a config file with the name openssl11.cnf
++        instead of openssl.cnf.
+ 
+   Major changes between OpenSSL 1.1.1i and OpenSSL 1.1.1j [16 Feb 2021]
+ 
