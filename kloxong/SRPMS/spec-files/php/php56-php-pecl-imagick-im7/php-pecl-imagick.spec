@@ -16,7 +16,7 @@
 
 # we don't want -z defs linker flag
 %undefine _strict_symbol_defs_build
-
+%global scl php56
 %if 0%{?scl:1}
 %global sub_prefix  %{scl_prefix}
 %scl_package        php-pecl-imagick

@@ -8,6 +8,7 @@
 #
 # Please preserve changelog entries
 #
+%global scl php56
 %if 0%{?scl:1}
 %scl_package             php-pear
 %else

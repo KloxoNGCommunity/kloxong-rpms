@@ -9,6 +9,7 @@
 #
 # Please, preserve the changelog entries
 #
+%global scl php56
 %{?scl:     %scl_package       php-pecl-jsonc}
 %{!?__pecl: %global __pecl     %{_bindir}/pecl}
 

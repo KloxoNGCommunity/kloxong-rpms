@@ -12,7 +12,7 @@
 
 # we don't want -z defs linker flag
 %undefine _strict_symbol_defs_build
-
+%global scl php56
 %{?scl:     %scl_package       php-pecl-zip}
 
 %if ( 0%{?scl:1} && 0%{?rhel} == 8 ) || 0%{?rhel} >= 9
