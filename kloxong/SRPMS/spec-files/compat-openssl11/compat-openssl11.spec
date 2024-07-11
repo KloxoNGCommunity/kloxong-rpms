@@ -234,7 +234,7 @@ export HASHBANGPERL=/usr/bin/perl
 	--system-ciphers-file=%{_sysconfdir}/crypto-policies/back-ends/openssl.config \
 	zlib enable-camellia enable-seed enable-rfc3779 enable-sctp \
 	enable-cms enable-md2 enable-rc5 enable-ssl3 enable-ssl3-method \
-	enable-weak-ssl-ciphers \
+	enable-weak-ssl-ciphers no-tests \
 	no-mdc2 no-ec2m no-sm2 no-sm4 \
 	shared  ${sslarch} $RPM_OPT_FLAGS '-DDEVRANDOM="\"/dev/urandom\""'
 
