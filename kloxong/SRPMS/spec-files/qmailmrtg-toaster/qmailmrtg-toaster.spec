@@ -33,6 +33,7 @@ Source1:	index.php.bz2
 Patch0:		qmailmrtg7-modernize-code.diff
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 BuildRequires:	qmail-toaster >= 1.03
+BuildRequires:	perl, gcc, gcc-c++, make
 Requires:	qmail-toaster >= 1.03, control-panel-toaster >= 0.2
 Packager:       Jake Vickers <jake@qmailtoaster.com>
 
