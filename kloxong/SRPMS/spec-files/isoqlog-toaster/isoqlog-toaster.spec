@@ -45,6 +45,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 #BuildPreReq:	qmail-toaster >= 1.03, control-panel-toaster >= 0.2
 BuildRequires: qmail-toaster >= 1.03
 BuildRequires: automake, gzip
+BuildRequires:	perl, gcc, gcc-c++, make
 #Requires:	qmail-toaster >= 1.03, control-panel-toaster >= 0.5
 Requires:	qmail-toaster >= 1.03
 Obsoletes:	isoqlog-toaster-doc
