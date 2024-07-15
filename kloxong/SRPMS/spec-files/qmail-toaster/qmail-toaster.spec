@@ -31,8 +31,8 @@ Requires: libsrs2-toaster >= 1.0.18
 
 
 BuildRequires: libvpopmail-devel >= 5.4.17
-BuildRequires: MariaDB-shared 
-BuildRequires: MariaDB-devel
+#BuildRequires: MariaDB-shared 
+BuildRequires: mariadb-devel
 BuildRequires: libsrs2-toaster >= 1.0.18
 #BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: vpopmail-toaster >= 5.4.17
