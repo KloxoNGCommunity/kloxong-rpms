@@ -1,5 +1,5 @@
 %define	name isoqlog
-%define	pversion 2.1.1
+%define	pversion 2.2.1
 %define 	bversion 1.3
 %define	rpmrelease 8.kng%{?dist}
 
@@ -38,8 +38,9 @@ Source9:    generaldomain.html
 Source10:   generaldaily.html
 Source11:   generalmonthly.html
 Source12:   generalyearly.html
-Patch0:		isoqlog-2.1-fixes.patch.bz2
-Patch1:		isoqlog-2.1-errno.patch.bz2
+#Patch0:		isoqlog-2.1-fixes.patch.bz2
+#Patch1:		isoqlog-2.1-errno.patch.bz2
+Patch0:	   isoqlog-gcc11.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
 #BuildPreReq:	qmail-toaster >= 1.03, control-panel-toaster >= 0.2
 BuildRequires: qmail-toaster >= 1.03
@@ -97,10 +98,10 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-%{__aclocal}
-%{__autoconf}
-autoreconf --install
-%{__automake} --add-missing
+#%{__aclocal}
+#%{__autoconf}
+#autoreconf --install
+#%{__automake} --add-missing
 ./configure \
     --prefix=%{_prefix} \
     --exec-prefix=%{_exec_prefix} \
