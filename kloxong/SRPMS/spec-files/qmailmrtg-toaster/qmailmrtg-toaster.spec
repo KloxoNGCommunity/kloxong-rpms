@@ -451,7 +451,7 @@ fi
 #-------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------
-* Wed Jan 30 2020 Dionysis Kladis <Dkstiler@gmail.cm.com> 3.4-1.3.8.kng
+* Thu Jan 30 2020 Dionysis Kladis <Dkstiler@gmail.cm.com> 3.4-1.3.8.kng
 - Added a patch from build.opensuse.org/package/show/home%3Aweberho%3Aqmailtoaster/qmailmrtg for modernizing code
 - Fixed compile error on centos 8
 
