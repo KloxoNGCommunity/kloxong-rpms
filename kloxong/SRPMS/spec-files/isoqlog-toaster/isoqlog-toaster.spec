@@ -71,7 +71,7 @@ day, per month, and years.
 
 %setup -q -n %{name}-%{pversion}
 
-#%patch0 -p0
+%patch0 -p0
 #%patch1 -p1
 
 #Update configure.in to configure.ac
@@ -87,13 +87,13 @@ done
 
 # Cleanup for gcc
 #----------------------------------------------------------------------------
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
-
-echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
-
+#[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+#
+#echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
+#
 # Export compiler flags
 #----------------------------------------------------------------------------
-export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
+#export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 
 
 #----------------------------------------------------------------------------
@@ -103,7 +103,7 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #%{__autoconf}
 #autoreconf --install
 #%{__automake} --add-missing
-autoreconf -f -i
+#autoreconf -f -i
 ./configure \
     --prefix=%{_prefix} \
     --exec-prefix=%{_exec_prefix} \
