@@ -103,6 +103,7 @@ export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
 #%{__autoconf}
 #autoreconf --install
 #%{__automake} --add-missing
+autoreconf -f -i
 ./configure \
     --prefix=%{_prefix} \
     --exec-prefix=%{_exec_prefix} \
