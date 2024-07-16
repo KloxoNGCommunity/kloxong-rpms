@@ -1,7 +1,7 @@
 %define	name isoqlog
 %define	pversion 2.2.1
 %define 	bversion 1.3
-%define	rpmrelease 8.kng%{?dist}
+%define	rpmrelease 1.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		ccflags %{optflags} 
@@ -16,7 +16,7 @@
 %define	vtoaster %{pversion}
 %define 	basedir %{_datadir}/toaster
 %define 	isoqdir %{basedir}/isoqlog
-%define	builddate Fri Jun 12 2009
+
 
 Name:		%{name}-toaster
 Summary:	Isoqlog is an MTA log analysis program written in C.
@@ -25,10 +25,10 @@ Release:	%{release}
 License:	BSD
 Group:		Monitoring
 URL:		http://www.enderunix.org/isoqlog/
-#Source0:	isoqlog-%{pversion}.tar.bz2
 Source0:	isoqlog-%{pversion}.tar.gz
 Source1:	isoqlog.conf	
 Source2:	cron.sh
+Source3:   isoqlog.module
 Source4:    index.html
 Source5:    days.html
 Source6:    domain.html
@@ -38,17 +38,14 @@ Source9:    generaldomain.html
 Source10:   generaldaily.html
 Source11:   generalmonthly.html
 Source12:   generalyearly.html
-#Patch0:		isoqlog-2.1-fixes.patch.bz2
-#Patch1:		isoqlog-2.1-errno.patch.bz2
+
 Patch0:	   isoqlog-gcc11.patch
 BuildRoot:	%{_tmppath}/%{name}-%{version}-buildroot
-#BuildPreReq:	qmail-toaster >= 1.03, control-panel-toaster >= 0.2
 BuildRequires: qmail-toaster >= 1.03
 BuildRequires: automake, gzip
 BuildRequires:	perl, gcc, gcc-c++, make
-#Requires:	qmail-toaster >= 1.03, control-panel-toaster >= 0.5
 Requires:	qmail-toaster >= 1.03
-Obsoletes:	isoqlog-toaster-doc
+Obsoletes:	isoqlog-toaster-doc < 2.2.1
 Packager:       Jake Vickers <jake@qmailtoaster.com>
 
 
@@ -67,17 +64,12 @@ day, per month, and years.
 #----------------------------------------------------------------------------
 %prep
 #----------------------------------------------------------------------------
-%define name isoqlog
 
+%define name isoqlog
 %setup -q -n %{name}-%{pversion}
 
-%patch0 -p0
-#%patch1 -p1
 
-#Update configure.in to configure.ac
-mv configure.in configure.ac
-#%{__perl} -pi -e "s|AC_INIT\(Data\.c\)|AC_INIT([isoqlog], [2.1])\rAC_CONFIG_SRCDIR\([Data.c])|g" configure.ac
-#%{__perl} -pi -e "s|AM_INIT_AUTOMAKE\(isoqlog\, 2\.1\)|AM_INIT_AUTOMAKE|g" configure.ac
+
 
 # CVS cleanup
 #----------------------------------------------------------------------------
@@ -85,25 +77,12 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
     if [ -e "$i" ]; then rm -r $i; fi >&/dev/null
 done
 
-# Cleanup for gcc
-#----------------------------------------------------------------------------
-#[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
-#
-#echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
-#
-# Export compiler flags
-#----------------------------------------------------------------------------
-#export CC="`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"
-
+%patch0 -p0
 
 #----------------------------------------------------------------------------
 %build
 #----------------------------------------------------------------------------
-#%{__aclocal}
-#%{__autoconf}
-#autoreconf --install
-#%{__automake} --add-missing
-#autoreconf -f -i
+
 ./configure \
     --prefix=%{_prefix} \
     --exec-prefix=%{_exec_prefix} \
@@ -118,8 +97,6 @@ done
     --sharedstatedir=%{_sharedstatedir} \
     --mandir=%{_mandir} \
     --infodir=%{_infodir}									
-
-
 make
 
 #----------------------------------------------------------------------------
@@ -129,35 +106,23 @@ make
 mkdir -p %{buildroot}
 make DESTDIR="%{buildroot}" install
 
-# Write the module into the control panel
-cat <<EOF >>$RPM_BUILD_DIR/%{name}-%{pversion}/isoqlog.module
 
-
-<!-- isoqlog.module -->
-<tr>
-        <td align="right" width="47%">Usage Statistics per Domain</td>
-        <td width="6%">&nbsp;</td>
-        <td align="left" width=47%"><input type="button" value="%{name}-%{pversion}" class="inputs" onClick="location.href='/qlogs-toaster/';"></td>
-</tr>
-<!-- isoqlog.module -->
-
-
-EOF
-
-THISDIR=`pwd`
-install -d %{buildroot}/%{_docdir}/%{name}
-install -d %{buildroot}/%{isoqdir}/bin
-install -d %{buildroot}/%{basedir}/include
-install -m644 isoqlog.module %{buildroot}%{basedir}/include/
-#bzcat %{SOURCE1} > %{buildroot}/%{_sysconfdir}/%{name}/isoqlog.conf
-#bzcat %{SOURCE2} > %{buildroot}/%{isoqdir}/bin/cron.sh
+#THISDIR=`pwd`
+install -d %{buildroot}%{_docdir}/%{name}
+install -d %{buildroot}%{isoqdir}/bin
+install -d %{buildroot}%{basedir}/include
 install -Dp %{SOURCE1}  %{buildroot}%{_sysconfdir}/%{name}/isoqlog.conf
 install -Dp %{SOURCE2}  %{buildroot}%{isoqdir}/bin/cron.sh
+install -m644 %{SOURCE3}  %{buildroot}%{basedir}/include
 
-mv %{buildroot}/%{basedir}/doc/isoqlog/* %{buildroot}/%{_docdir}/%{name}/
-#cd %{buildroot}/%{isoqdir}/htmltemp
-#tar fvxj %{SOURCE3}
-#cd $THISDIR
+#mv %{buildroot}%{basedir}/doc/isoqlog/* %{buildroot}%{_docdir}/%{name}/
+mkdir -p %{buildroot}%{isoqdir}/lang/
+mv %{buildroot}%{_prefix}/share/isoqlog/lang/* %{buildroot}%{isoqdir}/lang/
+mkdir -p %{buildroot}%{isoqdir}/htmltemp/
+mv %{buildroot}%{_prefix}/share/isoqlog/htmltemp/* %{buildroot}%{isoqdir}/htmltemp/
+mv %{buildroot}/usr/etc/isoqlog.conf-dist    %{buildroot}/%{_sysconfdir}/%{name}
+mv %{buildroot}/usr/etc/isoqlog.domains-dist %{buildroot}/%{_sysconfdir}/%{name}
+
 
 install -Dp %{SOURCE4} %{buildroot}%{isoqdir}/htmltemp/index.html
 install -p  %{SOURCE5} %{buildroot}%{isoqdir}/htmltemp/days.html
@@ -173,9 +138,26 @@ install -p  %{SOURCE11} \
 install -p  %{SOURCE12} \
       %{buildroot}%{isoqdir}/htmltemp/generalyearly.html
 
+touch %{buildroot}%{_sysconfdir}/ld.so.conf
 
 %{__perl} -pi -e "s|USR:GRP|%{apacheuser}:%{apachegroup}|g" %{buildroot}/%{isoqdir}/bin/cron.sh
+%define  __brp_mangle_shebangs_exclude_from \
+        %{SOURCE1}  \
+        %{SOURCE2}  \
+        %{SOURCE4}  \
+        %{SOURCE5}  \
+        %{SOURCE6}  \
+        %{SOURCE7} \
+        %{SOURCE8} \
+        %{SOURCE9} \
+        %{SOURCE10} \
+        %{SOURCE11} \
+        %{SOURCE12}
 
+#----------------------------------------------------------------------------
+%clean
+#----------------------------------------------------------------------------
+rm -rf %{buildroot}
 
 #----------------------------------------------------------------------------
 %postun
@@ -186,7 +168,6 @@ if [ "$1" = "0" ]; then
   mv -f %{crontab}.new %{crontab}
 fi
 
-
 #----------------------------------------------------------------------------
 %post
 #----------------------------------------------------------------------------
@@ -196,15 +177,6 @@ if ! grep '* * * * root %{isoqdir}/bin/cron.sh' %{crontab} > /dev/null; then
   echo "58 * * * * root %{isoqdir}/bin/cron.sh 2>&1 > /dev/null" >> %{crontab}
 fi
 
-
-#----------------------------------------------------------------------------
-%clean
-#----------------------------------------------------------------------------
-[ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
-[ -d $RPM_BUILD_DIR/%{name}-%{pversion} ] && rm -rf $RPM_BUILD_DIR/%{name}-%{pversion}
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
-
-
 #----------------------------------------------------------------------------
 %files
 #----------------------------------------------------------------------------
@@ -212,19 +184,19 @@ fi
 
 # Docs
 %attr(0644,root,root) %doc %{_docdir}/%{name}/*
-
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/%{name}/*
 %attr(0755,root,root) %{_bindir}/%{name}
 %attr(0755,%{apacheuser},%{apachegroup}) %dir %{isoqdir}
 %attr(0755,%{apacheuser},%{apachegroup}) %dir %{isoqdir}/htmltemp
-%attr(0644,%{apacheuser},%{apachegroup}) %{isoqdir}/lang/*
+
 %attr(0755,%{apacheuser},%{apachegroup}) %dir %{isoqdir}/lang
+%attr(0644,%{apacheuser},%{apachegroup}) %{isoqdir}/lang/*
 %attr(0755,%{apacheuser},%{apachegroup}) %dir %{isoqdir}/bin
 %attr(0644,%{apacheuser},%{apachegroup}) %{isoqdir}/htmltemp/*
-%attr(0755,%{apacheuser},%{apachegroup}) %dir %{isoqdir}/htmltemp/images
-%attr(0755,%{apacheuser},%{apachegroup}) %dir %{isoqdir}/htmltemp/library
+%exclude %{_docdir}/%{name}/tr
 %attr(0755,root,root) %dir %{_docdir}/%{name}/tr
 %attr(0755,root,root) %{isoqdir}/bin/cron.sh
+%ghost %{_sysconfdir}/ld.so.conf
 %attr(0644,root,root) %{basedir}/include/*
 
 #----------------------------------------------------------------------------"
