@@ -4,34 +4,25 @@
 %define packagename2 phpmyadmin
 
 Name: %{productname}-%{packagename2}
-Version: 4.0.10.20
-Release: 2.kng%{?dist}
+Version: 5.2.1
+Release: 1.kng%{?dist}
 Summary: Web based MySQL browser written in php
 
 Group: Applications/Internet
 License: GPLv2+
 URL: http://www.phpmyadmin.net/
-Source0: http://downloads.sourceforge.net/sourceforge/phpmyadmin/%{packagename}-%{version}-all-languages.tar.gz
+Source0:https://files.phpmyadmin.net/phpMyAdmin/%{version}/%{packagename}-%{version}-all-languages.tar.gz
 
-#Source10: http://downloads.sourceforge.net/sourceforge/phpmyadmin/arctic_ocean-3.3.zip
-#Source11: http://downloads.sourceforge.net/sourceforge/phpmyadmin/smooth_yellow-3.3.zip
-#Source12: http://downloads.sourceforge.net/sourceforge/phpmyadmin/graphite-1.0.zip
-#Source13: http://downloads.sourceforge.net/sourceforge/phpmyadmin/toba-0.2.zip
-#Source14: http://downloads.sourceforge.net/sourceforge/phpmyadmin/paradice-3.4.zip
-#Source15: http://downloads.sourceforge.net/sourceforge/phpmyadmin/darkblue_orange-2.11.zip
-#Source16: http://downloads.sourceforge.net/sourceforge/phpmyadmin/blueorange-1.0b.zip
-#Source17: http://downloads.sourceforge.net/sourceforge/phpmyadmin/cleanstrap-1.0.zip
-#Source18: http://downloads.sourceforge.net/sourceforge/phpmyadmin/metro-2.0.zip
+
+# Redirect to system certificates
+Patch0:  phpMyAdmin-certs.patch
 
 BuildRoot: %{_tmppath}/%{packagename}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
 BuildRequires: unzip
+BuildRequires: gnupg2
 
-#Requires: webserver 
-#Requires: php-mysql >= 5.2.0
-#Requires: php-mbstring >= 5.2.0
-#Requires: php-gd >= 5.2.0
-#Requires: php-mcrypt >= 5.2.0
+
 Provides: phpmyadmin = %{version}-%{release}
 
 Obsoletes: kloxomr-thirdparty-phpmyadmin
@@ -46,6 +37,8 @@ is available in 50 languages
 
 %prep
 %setup -qn phpMyAdmin-%{version}-all-languages
+%patch0 -p1
+rm -r vendor/composer/ca-bundle/res/
 
 # Minimal configuration file
 sed -e "/'extension'/s@'mysql'@'mysqli'@"  \
@@ -54,12 +47,6 @@ sed -e "/'extension'/s@'mysql'@'mysqli'@"  \
 
 # to avoid rpmlint warnings
 find . -name \*.php -exec chmod -x {} \;
-
-#for archive in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} \
-#        %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18}
-#do
-#    %{__unzip} -q $archive -d themes
-#done
 
 
 %build
