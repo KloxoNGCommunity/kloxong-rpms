@@ -1,7 +1,7 @@
 %define	name qmailmrtg
 %define	pversion 4.2
 %define 	bversion 1.3
-%define	rpmrelease 8.kng%{?dist}
+%define	rpmrelease 9.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		apacheuser apache
@@ -9,7 +9,7 @@
 %define		crontab /etc/crontab
 %define		outputdir %{basedir}/htdocs/mrtg
 #Requires:	vixie-cron, crontabs >= 1.10, httpd >= 2.2.2, php >= 5.1.6, mrtg
-Requires:	vixie-cron, crontabs >= 1.10, mrtg
+Requires:	cronie, crontabs >= 1.10, mrtg
 %define		ccflags %{optflags}
 %define		ldflags %{optflags}
 
