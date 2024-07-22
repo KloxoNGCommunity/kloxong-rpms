@@ -1,0 +1,32 @@
+diff -Naur qmail-kng/Makefile qmail-kng-mod/Makefile
+--- qmail-kng/Makefile	2024-03-06 13:17:35.000000000 +1100
++++ qmail-kng-mod/Makefile	2024-03-07 13:00:20.724135006 +1100
+@@ -1,6 +1,6 @@
+ # Don't edit Makefile! Use conf-* for configuration.
+ 
+-VPOPMAIL_LIBS=`head -1 $(shell /bin/sh vpopmail-dir.sh)/etc/lib_deps` `cat dns.lib`
++VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps` `cat dns.lib`
+ 
+ SMTPD_CHKUSER_OBJ=chkuser.o dns.o
+ 
+@@ -728,7 +728,7 @@
+ 
+ hasshsgr.h: \
+ chkshsgr warn-shsgr tryshsgr.c compile load
+-	./chkshsgr || ( cat warn-shsgr; exit 1 )
++	./chkshsgr || ( cat warn-shsgr; exit 0 )
+ 	( ( ./compile tryshsgr.c \
+ 	&& ./load tryshsgr && ./tryshsgr ) >/dev/null 2>&1 \
+ 	&& echo \#define HASSHORTSETGROUPS 1 || exit 0 ) > \
+diff -Naur qmail-kng/srs.c qmail-kng-mod/srs.c
+--- qmail-kng/srs.c	2024-03-06 13:18:03.000000000 +1100
++++ qmail-kng-mod/srs.c	2024-03-07 14:46:40.482145109 +1100
+@@ -1,7 +1,7 @@
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+-#include </usr/local/include/srs2.h>
++#include </usr/include/srs2.h>
+ #include "auto_qmail.h"
+ #include "stralloc.h"
+ #include "srs.h"

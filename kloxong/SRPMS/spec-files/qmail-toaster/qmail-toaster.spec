@@ -1,7 +1,7 @@
 %define 	name qmail
-%define 	pversion 2024.03.01
+%define 	pversion 2024.06.08
 %define 	bversion 1.3
-%define 	rpmrelease 59.kng%{?dist}
+%define 	rpmrelease 60.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -26,19 +26,11 @@ Obsoletes:	qmail-toaster-doc
 Requires: ucspi-tcp-toaster >= 0.88
 Requires: vpopmail-toaster >= 5.4.17
 Requires: libsrs2-toaster >= 1.0.18
-#Requires: libdomainkeys-toaster >= 0.68
-
-
 
 BuildRequires: libvpopmail-devel >= 5.4.17
-#BuildRequires: MariaDB-shared 
 BuildRequires: mariadb-devel
 BuildRequires: libsrs2-toaster >= 1.0.18
-#BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: vpopmail-toaster >= 5.4.17
-
-
-
 
 # we may not find the old library path in the new one if
 
@@ -48,11 +40,7 @@ BuildRequires: vpopmail-toaster >= 5.4.17
 %define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include -I/usr/include/openssl11 -l:libssl.so.1.1 -l:libcrypto.so.1.1
 %endif
 
-
-#%%define	ccflags %%{optflags} -DTLS=20060104 -I/home/vpopmail/include
-#%%define	ccflags %%{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
 %define	ldflags %{optflags}
-
 
 ############### RPM ################################
 
@@ -82,8 +70,6 @@ Source10:	qmail_supervise-smtp-log.run
 Source19:	qmail_supervise-submission.run
 Source20:	qmail_supervise-submission-log.run
 Source11:	qmail_gentestcrt.sh
-Source12:	qmail_badmimetypes
-Source13:	qmail_badloadertypes
 Source14:	qmail_badmailfrom
 Source15:	qmail_badmailto
 Source16:	qmail_dh_key
@@ -98,10 +84,13 @@ Source201:	qmail_qmail-remote.new
 
 Source300:	qmail_sendmail-wrapper
 
-Patch0:	outgoingip_to_outgoingips.patch
-Patch1:	fix-build-errors.patch
-Patch2:	qmail-uids.patch
-Patch3:	el7openssl11.patch
+Patch0:	qmail_outgoingip_to_outgoingips.patch
+Patch1:	qmail_fix-build-errors.patch
+Patch2:	qmail_uids.patch
+Patch3:	qmail_el7openssl11.patch
+
+
+
 
 Buildroot:	%{_tmppath}/%{name}-%{version}
 
@@ -160,6 +149,8 @@ this package.
 #%%patch3 -p1
 %endif
 
+
+
 %define name qmail
 
 # Remove CRAM-MD5 because qmail-remote-auth doesn't like it
@@ -183,44 +174,6 @@ echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
 #-------------------------------------------------------------------------------
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
 mkdir -p %{buildroot}
-
-
- 
-# Commenting group and users creation at build and trying to find a work around 
-# Add users and groups as per Life With Qmail
-#-------------------------------------------------------------------------------
-#if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
-#	groupadd -g 2107 -r nofiles 2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
-#	groupadd -g 2108 -r qmail 2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
-#	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
-#	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
-#	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
-#	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
-#	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
-#	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
-#	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
-#fi
-
-# We may need this to build and in order for qmail-toaster to have access to /home/vpopmail/include/ 
-#if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
-#	adduser qmail vchkpw 2>&1   || :
-#fi
 
 
 # We have gcc written in a temp file
@@ -311,7 +264,7 @@ for i in qmail-queue; do
   install -m4711 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-badmimetypes qmail-badloadertypes qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter; do
+for i in qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter; do
  if [ -e "$RPM_BUILD_DIR/%{name}-%{pversion}/$i" ]; then
 	install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
  fi	
@@ -341,14 +294,12 @@ for i in qmail-limits forgeries qmail; do
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat7
 done
 
-for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
+for i in qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
  if [ -e "$RPM_BUILD_DIR/%{name}-%{pversion}/$i.8" ]; then
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.8 %{buildroot}%{qdir}/man/man8
   install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
  fi 
 done
-
-#install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
 
 # install boot
 #-------------------------------------------------------------------------------
@@ -463,8 +414,6 @@ install -m700 %{SOURCE20} %{buildroot}%{qdir}/supervise/submission/log/run
 install -m700 %{SOURCE100} %{buildroot}%{qdir}/supervise/smtp-ssl/run
 install -m700 %{SOURCE101} %{buildroot}%{qdir}/supervise/smtp-ssl/log/run
 
-install -m644 %{SOURCE12} %{buildroot}%{qdir}/control/badmimetypes
-install -m644 %{SOURCE13} %{buildroot}%{qdir}/control/badloadertypes
 install -m644 %{SOURCE14} %{buildroot}%{qdir}/control/badmailfrom
 install -m644 %{SOURCE15} %{buildroot}%{qdir}/control/badmailto
 install -m755 %{SOURCE16} %{buildroot}%{qdir}/bin/dh_key
@@ -478,7 +427,7 @@ mkdir -p %{buildroot}%{_sysconfdir}/tcprules.d
 #-------------------------------------------------------------------------------
 cat <<EOFqmail-smtp >%{buildroot}%{_sysconfdir}/tcprules.d/tcp.smtp
 127.:allow,RELAYCLIENT="",DKSIGN="/var/qmail/control/domainkeys/%/private"
-:allow,BADMIMETYPE="",BADLOADERTYPE="M",CHKUSER_RCPTLIMIT="50",CHKUSER_WRONGRCPTLIMIT="10",DKSIGN="/var/qmail/control/domainkeys/%/private"
+:allow,CHKUSER_RCPTLIMIT="50",CHKUSER_WRONGRCPTLIMIT="10",DKSIGN="/var/qmail/control/domainkeys/%/private"
 EOFqmail-smtp
 
 # Make skel dirs
@@ -586,9 +535,6 @@ fi
 %post
 #-------------------------------------------------------------------------------
 
-#mv -f %{qdir}/bin/qmail-queue %{qdir}/bin/qmail-queue.orig
-#ln -s %{qdir}/bin/qmail-dk %{qdir}/bin/qmail-queue
-#chmod 4711 %{qdir}/bin/qmail-queue.orig
 
 if [ -f %{_bindir}/dkimsign.pl ] ; then
 	rm -f %{_bindir}/dkimsign.pl
@@ -673,10 +619,6 @@ else
   echo " NOT Creating queue/lock/trigger named pipe."
 fi
 
-./%{qdir}/bin/qmail-badmimetypes
-echo " Compiling badmimetypes."
-./%{qdir}/bin/qmail-badloadertypes
-echo " Compiling badloadertypes."
 
 touch %{qdir}/control/tlsserverciphers
 rm -fr %{qdir}/control/tlsclientciphers 2>&1 > /dev/null
@@ -803,8 +745,6 @@ fi
 
 # config (qmail)
 #-------------------------------------------------------------------------------
-%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/badloadertypes
-%attr(0644,root,qmail) %config(noreplace) %{qdir}/control/badmimetypes
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/badmailfrom
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/badmailto
 %attr(0644,root,qmail) %config(noreplace) %{qdir}/control/blacklists
@@ -910,10 +850,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/preline
 %attr(0755,root,qmail) %{qdir}/bin/qail
 %attr(0755,root,qmail) %{qdir}/bin/qbiff
-#%attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
-#%attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
-#%%attr(04711,qmailq,qmail) %%{qdir}/bin/qmail-dk
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
 %attr(0755,root,qmail) %{qdir}/bin/qmail-inject
 %attr(0711,root,qmail) %{qdir}/bin/qmail-local
@@ -976,9 +913,6 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail-limits.7*
 %attr(0644,root,qmail) %{qdir}/man/man7/forgeries.7*
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
-#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
-#%attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
-#%%attr(0644,root,qmail) %%{qdir}/man/man8/qmail-dk.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*

@@ -1,0 +1,228 @@
+diff -Naur qmail-kng-mod/auto-gid.c qmail-kng-mod2/auto-gid.c
+--- qmail-kng-mod/auto-gid.c	2024-03-06 13:17:37.000000000 +1100
++++ qmail-kng-mod2/auto-gid.c	2024-03-07 15:43:25.092674016 +1100
+@@ -22,6 +22,7 @@
+ {
+   char *name;
+   char *value;
++  char *id;
+   struct group *gr;
+   char strnum[FMT_ULONG];
+ 
+@@ -29,9 +30,11 @@
+   if (!name) _exit(100);
+   value = argv[2];
+   if (!value) _exit(100);
++  id = argv[3];
++  if (!id) _exit(100);
+ 
+-  gr = getgrnam(value);
+-  if (!gr) {
++  /*gr = getgrnam(value);*/
++  if (!id) {
+     substdio_puts(subfderr,"fatal: unable to find group ");
+     substdio_puts(subfderr,value);
+     substdio_puts(subfderr,"\n");
+@@ -39,12 +42,12 @@
+     _exit(111);
+   }
+ 
+-  strnum[fmt_ulong(strnum,(unsigned long) gr->gr_gid)] = 0;
++  /*strnum[fmt_ulong(strnum,(unsigned long) gr->gr_gid)] = 0;*/
+ 
+   outs("int ");
+   outs(name);
+   outs(" = ");
+-  outs(strnum);
++  outs(id);
+   outs(";\n");
+   if (substdio_flush(&ss1) == -1) _exit(111);
+   _exit(0);
+diff -Naur qmail-kng-mod/auto-gid.c.orig qmail-kng-mod2/auto-gid.c.orig
+--- qmail-kng-mod/auto-gid.c.orig	1970-01-01 10:00:00.000000000 +1000
++++ qmail-kng-mod2/auto-gid.c.orig	2024-03-06 13:17:37.000000000 +1100
+@@ -0,0 +1,51 @@
++#include <sys/types.h>
++#include <grp.h>
++#include "subfd.h"
++#include "substdio.h"
++#include "readwrite.h"
++#include "exit.h"
++#include "scan.h"
++#include "fmt.h"
++
++char buf1[256];
++substdio ss1 = SUBSTDIO_FDBUF(write,1,buf1,sizeof(buf1));
++
++void outs(s)
++char *s;
++{
++  if (substdio_puts(&ss1,s) == -1) _exit(111);
++}
++
++void main(argc,argv)
++int argc;
++char **argv;
++{
++  char *name;
++  char *value;
++  struct group *gr;
++  char strnum[FMT_ULONG];
++
++  name = argv[1];
++  if (!name) _exit(100);
++  value = argv[2];
++  if (!value) _exit(100);
++
++  gr = getgrnam(value);
++  if (!gr) {
++    substdio_puts(subfderr,"fatal: unable to find group ");
++    substdio_puts(subfderr,value);
++    substdio_puts(subfderr,"\n");
++    substdio_flush(subfderr);
++    _exit(111);
++  }
++
++  strnum[fmt_ulong(strnum,(unsigned long) gr->gr_gid)] = 0;
++
++  outs("int ");
++  outs(name);
++  outs(" = ");
++  outs(strnum);
++  outs(";\n");
++  if (substdio_flush(&ss1) == -1) _exit(111);
++  _exit(0);
++}
+diff -Naur qmail-kng-mod/auto-uid.c qmail-kng-mod2/auto-uid.c
+--- qmail-kng-mod/auto-uid.c	2024-03-06 13:17:37.000000000 +1100
++++ qmail-kng-mod2/auto-uid.c	2024-03-07 15:43:25.093673998 +1100
+@@ -22,6 +22,7 @@
+ {
+   char *name;
+   char *value;
++  char *id;
+   struct passwd *pw;
+   char strnum[FMT_ULONG];
+ 
+@@ -29,9 +30,11 @@
+   if (!name) _exit(100);
+   value = argv[2];
+   if (!value) _exit(100);
++  id = argv[3];
++  if (!id) _exit(100);
+ 
+-  pw = getpwnam(value);
+-  if (!pw) {
++  /*pw = getpwnam(value);*/
++  if (!id) {
+     substdio_puts(subfderr,"fatal: unable to find user ");
+     substdio_puts(subfderr,value);
+     substdio_puts(subfderr,"\n");
+@@ -39,12 +42,12 @@
+     _exit(111);
+   }
+ 
+-  strnum[fmt_ulong(strnum,(unsigned long) pw->pw_uid)] = 0;
++  /*strnum[fmt_ulong(strnum,(unsigned long) pw->pw_uid)] = 0;*/
+ 
+   outs("int ");
+   outs(name);
+   outs(" = ");
+-  outs(strnum);
++  outs(id);
+   outs(";\n");
+   if (substdio_flush(&ss1) == -1) _exit(111);
+   _exit(0);
+diff -Naur qmail-kng-mod/auto-uid.c.orig qmail-kng-mod2/auto-uid.c.orig
+--- qmail-kng-mod/auto-uid.c.orig	1970-01-01 10:00:00.000000000 +1000
++++ qmail-kng-mod2/auto-uid.c.orig	2024-03-06 13:17:37.000000000 +1100
+@@ -0,0 +1,51 @@
++#include <sys/types.h>
++#include <pwd.h>
++#include "subfd.h"
++#include "substdio.h"
++#include "readwrite.h"
++#include "exit.h"
++#include "scan.h"
++#include "fmt.h"
++
++char buf1[256];
++substdio ss1 = SUBSTDIO_FDBUF(write,1,buf1,sizeof(buf1));
++
++void outs(s) /* was named puts, but Solaris pwd.h includes stdio.h. dorks. */
++char *s;
++{
++  if (substdio_puts(&ss1,s) == -1) _exit(111);
++}
++
++void main(argc,argv)
++int argc;
++char **argv;
++{
++  char *name;
++  char *value;
++  struct passwd *pw;
++  char strnum[FMT_ULONG];
++
++  name = argv[1];
++  if (!name) _exit(100);
++  value = argv[2];
++  if (!value) _exit(100);
++
++  pw = getpwnam(value);
++  if (!pw) {
++    substdio_puts(subfderr,"fatal: unable to find user ");
++    substdio_puts(subfderr,value);
++    substdio_puts(subfderr,"\n");
++    substdio_flush(subfderr);
++    _exit(111);
++  }
++
++  strnum[fmt_ulong(strnum,(unsigned long) pw->pw_uid)] = 0;
++
++  outs("int ");
++  outs(name);
++  outs(" = ");
++  outs(strnum);
++  outs(";\n");
++  if (substdio_flush(&ss1) == -1) _exit(111);
++  _exit(0);
++}
+diff -Naur qmail-kng-mod/conf-groups qmail-kng-mod2/conf-groups
+--- qmail-kng-mod/conf-groups	2024-03-06 13:17:40.000000000 +1100
++++ qmail-kng-mod2/conf-groups	2024-03-07 15:53:07.832216579 +1100
+@@ -1,6 +1,6 @@
+-qmail
+-nofiles
+-vchkpw
++qmail 2108
++nofiles 2107
++vchkpw 89
+ 
+ These are the qmail groups. The second group should not have access to
+ any files, but it must be usable for processes; this requirement
+diff -Naur qmail-kng-mod/conf-users qmail-kng-mod2/conf-users
+--- qmail-kng-mod/conf-users	2024-03-06 13:17:40.000000000 +1100
++++ qmail-kng-mod2/conf-users	2024-03-07 15:51:09.225359989 +1100
+@@ -1,12 +1,12 @@
+-alias
+-qmaild
+-qmaill
+-root
+-qmailp
+-qmailq
+-qmailr
+-qmails
+-vpopmail
++alias 7790
++qmaild 7791
++qmaill 7792
++root 0
++qmailp 7793
++qmailq 7794
++qmailr 7795
++qmails 7796
++vpopmail 89
+ 
+ The qmail system is heavily partitioned for security; it does almost
+ nothing as root.
