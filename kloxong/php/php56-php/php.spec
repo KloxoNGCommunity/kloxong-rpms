@@ -272,6 +272,7 @@ BuildRequires: httpd-filesystem
 BuildRequires: libstdc++-devel, openssl-devel
 %if 0%{?rhel} >= 9
 BuildRequires: compat-openssl11-devel
+Requires: compat-openssl11
 %endif
 %if %{with_sqlite3}
 # For SQLite3 extension
