@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	pversion 2024.06.08
 %define 	bversion 1.3
-%define 	rpmrelease 61.kng%{?dist}
+%define 	rpmrelease 62.kng%{?dist}
 
 
 %define	release %{bversion}.%{rpmrelease}
@@ -252,7 +252,7 @@ for i in surblqueue; do
   install -m555 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff update_tmprsadh sendlimitertestqmail-dks; do
+for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff update_tmprsadh sendlimiter testqmail-dks; do
   install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
