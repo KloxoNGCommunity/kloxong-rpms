@@ -883,6 +883,16 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/srsfilter
 %attr(0711,root,qmail) %{qdir}/bin/splogger
 %attr(0755,root,qmail) %{qdir}/bin/tcp-env
+%attr(0711,root,root) %{qdir}/bin/dkim
+%attr(0711,root,root) %{qdir}/bin/dknewkey
+%attr(0711,root,root) %{qdir}/bin/qmail-dkim
+%attr(0700,root,root) %{qdir}/bin/qmail-newmvrt
+%attr(0711,root,root) %{qdir}/bin/qmail-todo
+%attr(0711,root,root) %{qdir}/bin/spawn-filter
+%attr(0711,root,root) %{qdir}/bin/surblfilter
+%attr(0555,root,root) %{qdir}/bin/surblqueue
+%attr(0755,root,root) %{qdir}/bin/testqmail-dks
+%attr(0755,root,root) %{qdir}/bin/update_tmprsadh
 
 %attr(0755,root,root) %{qdir}/bin/dkimsign.pl
 %attr(0755,root,qmail) %{qdir}/bin/qmail-remote.new
