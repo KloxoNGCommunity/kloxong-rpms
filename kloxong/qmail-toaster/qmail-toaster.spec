@@ -248,15 +248,19 @@ install -d -m755 %{buildroot}/var/log/qmail/smtp-ssl
 
 # install binaries
 #-------------------------------------------------------------------------------
-for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff; do
+for i in surblqueue; do
+  install -m555 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
+done
+
+for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff update_tmprsadh sendlimitertestqmail-dks; do
   install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-clean qmail-getpw qmail-local qmail-popup qmail-pw2u qmail-remote qmail-rspawn qmail-send splogger; do
+for i in qmail-clean qmail-getpw qmail-local qmail-popup qmail-pw2u qmail-remote qmail-rspawn qmail-send splogger qmail-todo dkim qmail-dkim dknewkey spawn-filter surblfilter; do
   install -m711 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-lspawn qmail-newmrh qmail-newu qmail-start; do
+for i in qmail-lspawn qmail-newmrh qmail-newu qmail-start qmail-newmvrt; do
   install -m700 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
 done
 
