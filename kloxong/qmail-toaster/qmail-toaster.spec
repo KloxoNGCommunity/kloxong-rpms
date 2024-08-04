@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 2.kng%{?dist}
+%define 	rpmrelease 3.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
