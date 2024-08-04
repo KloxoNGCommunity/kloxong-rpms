@@ -56,7 +56,7 @@ export SMTPAUTH="-"
 IP=0
 PORT="smtp"
 
-exec "$SOFTLIMIT" \
+exec $SOFTLIMIT \
 	/usr/bin/tcpserver -v -R -H -l $HOSTNAME -x $TCP_CDB -c "$MAXSMTPD" \
 	-u "$QMAILDUID" -g "$NOFILESGID" $IP $PORT $RECORDIO \
 	$SPAMDYKE $RBLSMTPD $SMTPD $VCHKPW /bin/true 2>&1
