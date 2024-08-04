@@ -12,7 +12,7 @@ diff -Naur qmail-1.03_ori/qmail-control.9 qmail-1.03_mod/qmail-control.9
 diff -Naur qmail-1.03_ori/qmail-remote.8 qmail-1.03_mod/qmail-remote.8
 --- qmail-1.03_ori/qmail-remote.8	1998-06-15 12:53:16.000000000 +0200
 +++ qmail-1.03_mod/qmail-remote.8	2015-05-02 16:23:58.000000000 +0200
-@@ -124,6 +124,13 @@
+@@ -421,6 +421,13 @@
  .B qmail-remote
  refuses to run.
  .TP 5
@@ -37,7 +37,7 @@ diff -Naur qmail-1.03_ori/qmail-remote.c qmail-1.03_mod/qmail-remote.c
  stralloc routes = {0};
  struct constmap maproutes;
  stralloc host = {0};
-@@ -47,6 +48,7 @@
+@@ -48,6 +49,7 @@
  saa reciplist = {0};
  
  struct ip_address partner;

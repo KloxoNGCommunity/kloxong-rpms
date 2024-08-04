@@ -1,0 +1,34 @@
+--- ../qmail-1.03-3.3.1/commands.c      1998-06-15 04:53:16.000000000 -0600
++++ ../qmail-1.03-3.3.4/commands.c      2021-06-14 16:01:35.337699051 -0600
+@@ -6,12 +6,17 @@
+
+ static stralloc cmd = {0};
+
+-int commands(ss,c)
++int commands(ss,c,sslog)
+ substdio *ss;
+ struct commands *c;
++substdio *sslog;
+ {
+   int i;
+   char *arg;
++  char ldbg[100];
++  int lflag = 0;
++
++  if ( getenv("SMTP_DEBUG") ) lflag = 1;
+
+   for (;;) {
+     if (!stralloc_copys(&cmd,"")) return -1;
+@@ -34,6 +39,12 @@
+     cmd.s[i] = 0;
+
+     for (i = 0;c[i].text;++i) if (case_equals(c[i].text,cmd.s)) break;
++    if ( lflag ) {
++      sprintf(ldbg,"client:[%d]:",getpid());
++      substdio_puts(sslog,ldbg);
++      substdio_put(sslog,cmd.s,cmd.len);
++      substdio_puts(sslog,"\r\n");
++    }
+     c[i].fun(arg);
+     if (c[i].flush) c[i].flush();
+   }

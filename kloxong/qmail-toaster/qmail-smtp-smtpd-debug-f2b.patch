@@ -1,0 +1,101 @@
+--- qmail-smtpd.c	2021-07-12 08:53:36.727208594 -0600
++++ ../qmail-1.03-3.3.5/qmail-smtpd.c	2021-07-12 08:59:26.948418576 -0600
+@@ -100,8 +100,60 @@
+ substdio ssout = SUBSTDIO_FDBUF(safewrite,1,ssoutbuf,sizeof ssoutbuf);
+ substdio sslog = SUBSTDIO_FDBUF(safewrite,2,sslogbuf,sizeof sslogbuf);
+ 
++/*
++**
++**    Function: void lout(s,len) char *s; int len; {}
++**
++**      Author: Eric Broch, ebroch@whitehorsetc.com 
++**
++**      Return: void
++** 
++** Description: Logs each SMTP transaction (on same line) until end-of-cmd (<cr><lf>)
++**              prepending each command/response with source, 'server:' or 'client:'
++** 
++*/
++int lflag; 
++char ldbg[500];
++char * lhost = "server";
++char * lremote;
++void lout(s,len) char *s; int len; {
++   lhost = "server";
++   // If lout is called by blast, <lf> in 's', it means we're going to log for 
++   // the client the end-of-data transmission (<cr><lf>.<cr><lf>) it sent.
++   if ( strstr(s,"<lf>") ) lhost = "client";
++   // There is no end-of-cmd, log code and text on same line.
++   if ( !strstr(s,"\r\n") ) {
++       // Log SMTP code.
++       if ( isdigit(*(s)) && isdigit(*(s+1)) && isdigit(*(s+2)) && !isdigit(*(s+3)) ) sprintf(ldbg,"%s:[%d]:%*.*s",lhost,getpid(),len,len,s);
++       // Append the rest of the SMTP response text to log
++       else sprintf(ldbg,"%*.*s",len,len,s);
++   }
++   // There is an end-of-cmd at beginning of SMTP response 
++   else if ( strstr(s,"\r\n") == s ) {
++      // Go to newline and log SMTP response w/end-of-cmd if it exists
++      if ( len > 2 ) sprintf(ldbg,"%2.2s%s:[%d]:%*.*s",s,lhost,getpid(),len-2,len-2,s+2);
++      // Go to newline.
++      else sprintf(ldbg,"%*.*s",len,len,s);
++   }
++   // There is an end-of-cmd at end of SMTP response
++   else {
++     // Append the rest of the SMTP response to the current line if it doesn't 
++     // contain an SMTP code, has end-of-cmd, and is not the client end-of-data.
++     if ( ( !isdigit(*(s)) && !isdigit(*(s+1)) && !isdigit(*(s+2))  ) && strstr(s+strlen(s)-2,"\r\n") && !strstr(lhost,"client") ) sprintf(ldbg,"%*.*s",len,len,s);
++     // Log complete SMTP command string
++     else { 
++        if ( strstr(s,"503 auth not available") ) { // This is someone trying to authorize without tls, log for f2b so that IP can be blocked 
++           if ( !(lremote = env_get("TCPREMOTEIP")) ) lremote = "unknown"; 
++           sprintf(ldbg,"%s:[%d]:%*.*s - %s\r\n",lhost,getpid(),len-2,len-2,s,lremote);
++        }
++        else sprintf(ldbg,"%s:[%d]:%*.*s",lhost,getpid(),len,len,s);
++     }
++   }
++   substdio_putsflush(&sslog,ldbg);
++}
++
+ void flush() { substdio_flush(&ssout); }
+-void out(s) char *s; { substdio_puts(&ssout,s); }
++void out(s) char *s; { substdio_puts(&ssout,s); if ( lflag ) { lout(s,strlen(s)); }  }
+ 
+ int saferead(fd,buf,len) int fd; char *buf; int len;
+ {
+@@ -173,8 +225,8 @@
+ 
+ void smtp_greet(code) char *code;
+ {
+-  substdio_puts(&ssout,code);
+-  substdio_put(&ssout,greeting.s,greeting.len);
++  substdio_puts(&ssout,code); if ( lflag ) { lout(code,strlen(code)); }
++  substdio_put(&ssout,greeting.s,greeting.len); if ( lflag ) { lout(greeting.s,greeting.len); }
+ }
+ void smtp_help(arg) char *arg;
+ {
+@@ -909,12 +961,12 @@
+         state = 0;
+         break;
+       case 3: /* \n or \r\n   . */
+-        if (ch == '\n') return;
++        if (ch == '\n') {  if ( lflag ) { lout("<lf>.<lf>\r\n",11); } return; }
+         if (ch == '\r') { state = 4; continue; }
+         state = 0;
+         break;
+       case 4: /* \n or \r\n  . \r */
+-        if (ch == '\n') return;
++        if (ch == '\n') { if ( lflag ) { lout("<cr><lf>.<cr><lf>\r\n",19); } return; }
+         put (".");
+         put ("\r");
+         if (ch == '\r') { state = 1; continue; }
+@@ -1537,8 +1589,9 @@
+   if (chdir(auto_qmail) == -1) die_control();
+   setup();
+   if (ipme_init() != 1) die_ipme();
++  if (env_get("SMTP_DEBUG")) { lflag = 1; }
+   smtp_greet("220 ");
+   out(" ESMTP\r\n");
+-  if (commands(&ssin,&smtpcommands) == 0) die_read();
++  if (commands(&ssin,&smtpcommands,&sslog) == 0) die_read();
+   die_nomem();
+ }

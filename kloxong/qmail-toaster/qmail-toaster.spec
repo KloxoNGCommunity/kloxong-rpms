@@ -1,31 +1,16 @@
 %define 	name qmail
-%define 	pversion 1.03
-%define 	bversion 1.3
-%define 	rpmrelease 63.kng%{?dist}
-
+%define 	version 1.03
+%define 	bversion 1.6
+%define 	rpmrelease 1.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
 %define	rcpath /etc
-%define	_initpath /etc/rc.d/init.d
-BuildRequires:	openssl-devel >= 0.9.8, krb5-devel >= 1.5, openssl >= 0.9.8
-Requires:		openssl >= 0.9.8, sh-utils
-BuildRequires:	shadow-utils, bzip2, net-tools
-BuildRequires:	perl
-Provides:	smtpdaemon, MTA
-Obsoletes:	qmail-toaster-doc
-# we may not find the old library path in the new one if
-%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
-#%%define	ccflags %{optflags} -DTLS=20060104 -I/usr/include/libvpopmail
-%define	ldflags %{optflags}
-
 
 ############### RPM ################################
 
 %define		debug_package %{nil}
-%define		vtoaster %{pversion}
-%define		qdir /var/qmail
-%define		builddate Thu Feb 24 2011
+%define		vtoaster %{version}
 
 Name:		%{name}-toaster
 Summary:	qmail Mail Transfer Agent
@@ -35,80 +20,84 @@ License:	GNU
 Group:		System/Servers
 URL:		http://www.qmail.org/
 
-Source:	qmail-%{pversion}.tar.bz2
+Source:	qmail-%{version}.tar.gz
 Source1:	qmail_qmail-aliases
-Source3:	qmail_qmail.rc
-Source4:	qmail_qmail.init
-Source5:	qmail_supervise-pop3.run
-Source6:	qmail_supervise-pop3-log.run
+Source2:	qmail_qmail.rc
+Source3:	qmail_qmail.init
 Source7:	qmail_supervise-send.run
 Source8:	qmail_supervise-send-log.run
 Source9:	qmail_supervise-smtp.run
 Source10:	qmail_supervise-smtp-log.run
-Source19:	qmail_supervise-submission.run
-Source20:	qmail_supervise-submission-log.run
 Source11:	qmail_gentestcrt.sh
 Source12:	qmail_badmimetypes
 Source13:	qmail_badloadertypes
 Source14:	qmail_badmailfrom
 Source15:	qmail_badmailto
-Source16:	qmail_dh_key
+
 Source17:	qmail_qmail-default
 Source18:	qmail_qmail.init.sus
-
-Source100:	qmail_supervise-smtp-ssl.run
-Source101:	qmail_supervise-smtp-ssl-log.run
+Source19:	qmail_supervise-submission.run
+Source20:	qmail_supervise-submission-log.run
+Source100:	qmail_supervise-smtps.run
+Source101:	qmail_supervise-smtps-log.run
 
 Source200:	qmail_dkimsign.pl
 Source201:	qmail_qmail-remote.new
 
 Source300:	qmail_sendmail-wrapper
 
-Patch0:	qmail_qmailtoaster-1.3.2.patch
-Patch1:	qmail_qmailtoaster-chkuser.patch
-Patch2:	qmail_qmail-require_auth.patch
-Patch3:	qmail_qmail-dk-0.6.beta.2.patch
-Patch4:	qmail_qmail-smtpd-spf-qq-reject-logging.patch
-Patch5:	qmail_qmail-srs-qt-0.5.patch
-Patch6:	qmail_qmailtoaster-big-dns.patch
-Patch7:	qmail_qmail-smtpd-linefeed.patch
-Patch8:	qmail_qmail-empf.patch
+Patch0: qmail-netqmail-1.06-1.0.1.patch
+Patch1: qmail-smtp-smtpd-debug-f2b.patch
+Patch2: qmail-smtp-command-debug.patch
+Patch3: qmail-qualys.patch
+Patch4: qmail-smtp-tls13-v2.patch
+Patch5: qmail-smtp-rm-rsa-dh-key.patch
 
-Patch9:	qmail_qmail-vpopmail-devel.patch
-Patch10: qmail_qmail-uids.patch
+Patch21: qmail_outgoingips.patch
 
-Patch11: qmail_qmail-nocram.patch
-Patch12: qmail_splogger-nostamp.patch
-
-Patch20: qmail_qmail-outgoingip_rediff.patch
-Patch21: qmail_qmail-outgoingips_rediff.patch
-
-Patch30: qmail_qmailtoaster-any-to-cname.patch
-
-Patch40: qmail-toaster-centos-7-chroot.patch
+#Patch30: qmail_qmailtoaster-any-to-cname.patch
+#Patch40: qmail-toaster-centos-7-chroot.patch
 
 
-Requires: ucspi-tcp-toaster >= 0.88
-Requires: vpopmail-toaster >= 5.4.17
-Requires: libsrs2-toaster >= 1.0.18
-Requires: libdomainkeys-toaster >= 0.68
-Requires: mysql
-Requires: mysql-libs
-
-
-BuildRequires: libvpopmail-devel >= 5.4.17
-BuildRequires: mysql-devel
+BuildRequires: krb5-devel >= 1.5
+#BuildRequires: libsrs2-static
+BuildRequires: libvpopmail-static
+BuildRequires: openssl-devel >= 1.1.1
+BuildRequires: mariadb-devel
+BuildRequires: groff-base
 BuildRequires: libsrs2-toaster >= 1.0.18
 BuildRequires: libdomainkeys-toaster >= 0.68
 BuildRequires: vpopmail-toaster >= 5.4.17
+BuildRequires:	shadow-utils, bzip2, net-tools
+BuildRequires:	perl
 
-Buildroot:	%{_tmppath}/%{name}-%{version}
-#Conflicts:	sendmail, exim, smail, postfix, qmail
-Obsoletes:	sendmail, sendmail-cf, sendmail-doc, sendmail-devel
-Obsoletes:	exim, smail, postfix, qmail, ssmtp
-Obsoletes:	set-toaster, checkpassword, vpopmail
+Requires:  daemontools
+Requires:  openssl >= 1.1.1
+Requires:  coreutils
+Requires:  spamdyke
+Requires: ucspi-tcp-toaster >= 0.88
+Requires: vpopmail-toaster >= 5.4.17
+Requires:  chkconfig
 
-Packager:	Jake Vickers <jake@qmailtoaster.com>
+Requires: libsrs2-toaster >= 1.0.18
+Requires: libdomainkeys-toaster >= 0.68
+Requires: sh-utils
+
+Provides:  MTA
+Provides:  smtpdaemon
+Provides:  sendmail
+Conflicts: exim
+Conflicts: postfix
+
+Buildroot: %{_topdir}/BUILDROOT/%{name}-%{version}
+
+
+%define	ccflags %{optflags} -DTLS=20200107 -I/home/vpopmail/include
+%define ccflags       %{optflags} -DTLS=20200107 -I/usr/include/libvpopmail
+%define crontab       %{_sysconfdir}/crontab
+%define _initpath     %{_sysconfdir}/rc.d/init.d
+%define debug_package %{nil}
+%define		qdir /var/qmail
 
 #-------------------------------------------------------------------------------
 %description
@@ -116,194 +105,75 @@ Packager:	Jake Vickers <jake@qmailtoaster.com>
 qmail is a small, fast, secure replacement for the sendmail package, which is
 the program that actually receives, routes, and delivers electronic mail.
 
-qmailtoaster-1.3.2.patch            Thu Feb 24, 2011
-
 ~~~~~~~~~~~~~ Patches Applied ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-qmail-1.03 patched to netqmail-1.05
------------------------------------
-QMAILQUEUE patch
-qmail-local patch
-local IP 0.0.0.0 patch
-sendmail -f patch
+qmail-1.03 patched to netqmail-1.06
 
-Andrew St. Jean - qregex-starttls-2way-auth-20060305
-http://www.arda.homeunix.net/store/qmail/
-
-Frederik Vermeulen - qmail-tls 20060104
-http://inoa.net/qmail-tls/
-
-Erwin Hoffman - SMTP-AUTH Version 0.57
-http://www.fehcom.de/qmail/
-
-Robert Sander - qmail-remote-auth
-http://www.ornl.gov/lists/mailing-lists/qmail/2002/03/msg00091.html
-
-Antonio Nati - chkuser-2.0.9
-http://www.interazioni.it/opensource/chkuser/
-
-Chris christophe@saout.de - qmail-spf.rc5 
-http://www.saout.de/misc/spf/
-
-Russ Nelson - qmail-1.03-dk-0.54 domainkeys patch
-http://www.qmail.org/qmail-1.03-dk-0.54.patch
-
-Jeremy Kister - qmail-dk-0.54-auth patch
-http://jeremy.kister.net/code/qmail-dk-0.54-auth.patch
-
-Erwin Hoffmann - warlord-1.3.11  
-http://www.fehcom.de/qmail/
-
-Bill Shupp - netqmail-maildir++.patch
-http://shupp.org/patches/netqmail-maildir++.patch
-
-Bill Shupp - custom-smtp-reject
-http://www.shupp.org/patches/custom.patch
-
-Johannes Erdfelt - big-concurrency patch
-http://qmail.org/big-concurrency.patch
-
-Inter7 - qmailtap-1.1 tap
-http://www.inter7.com/qmailtap/qmail-tap-1.1.diff
-
-Alexey Loukianov - Log Enhancement Patch
-
-Jean-Paul van de Plasse - REQUIRE_AUTH Patch
-
-Marcelo Coelho - qmail-srs-0.4.patch
-http://opensource.mco2.net/qmail/srs/
-
-SMTP Linefeed Patch
-
-Big DNS Patch
-
-Inter7 - eMPF 1.0
-http://www.inter7.com/?page=empf-install
-
-%package -n qmail-pop3d-toaster
-Summary:	POP3 daemon for qmail
-Group:		System/Servers
-Requires:	qmail-toaster >= %{pversion}-%{release}
-Requires:	vpopmail-toaster >= 5.4.17
-Conflicts:	uw-imap, courier-imap, dovecot-toaster, dovecot
-
-%description -n qmail-pop3d-toaster
-The qmail-pop3d packages provides POP3 support for qmail mail servers.  If
-you need to be able to use POP3 with your qmail server, you should install
-this package.
 
 
 #-------------------------------------------------------------------------------
 %prep
 #-------------------------------------------------------------------------------
 
-%setup -q -n qmail-%{pversion}
+%setup -q -n qmail-%{version}
 
 # Apply composit patch
 #-------------------------------------------------------------------------------
 %patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch1 -p2
+%patch2 -p2
 %patch3 -p1
-%patch4 -p0
+%patch4 -p1
 %patch5 -p1
-%patch6 -p0
-%patch7 -p0
-%patch8 -p1
-# I am really courious what happens if i enable that patch fails to compile with libdomainkeys error
-#%patch9 -p1
-%patch10 -p1
 
-%patch11 -p1
-%patch12 -p1
+#OUTGOINGIPS required for Kloxo
 
-#%patch20 -p1
 %patch21 -p1
 
-%patch30 -p1
+#%%patch30 -p1
 # fixing compile error in qmail and centos 7 needs a check that cant be done in a chroot enviroment
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-%patch40 -p1
+#%%patch40 -p1
 %endif
 echo
 
 %define name qmail
 
-# Remove CRAM-MD5 because qmail-remote-auth doesn't like it
-#-------------------------------------------------------------------------------
-%{__perl} -pi -e "s|\#define AUTHCRAM||g" qmail-smtpd.c
-%{__perl} -pi -e "s|LDK_PATH|%{_libdir}/libdomainkeys.a|g" Makefile
 
 # Adding proper path of library depedencies
 #-------------------------------------------------------------------------------
-sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
+#sed -i '8 i\VPOPMAIL_LIBS=`head -1 /etc/libvpopmail/lib_deps`' Makefile
 
 # Cleanup for the gcc
 #-------------------------------------------------------------------------------
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+[ -f %{_tmppath}/%{name}-%{version}-gcc ] && rm -f %{_tmppath}/%{name}-%{version}-gcc
 
-echo "gcc" > %{_tmppath}/%{name}-%{pversion}-gcc
-
-# fix C error ‘NULL undeclared’ in qmail-dk.c
-#-------------------------------------------------------------------------------
-%{__perl} -pi -e "s|\#include <sys/types\.h>|\#include <sys/types\.h>\n\#include <stddef\.h>\n\#include <stdio\.h>|g" qmail-dk.c
+echo "gcc" > %{_tmppath}/%{name}-%{version}-gcc
 
 
 #-------------------------------------------------------------------------------
 %build
 #-------------------------------------------------------------------------------
+echo "gcc %{ccflags}"     >conf-cc
+echo "gcc -s %{optflags}" >conf-ld
+
 [ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
 mkdir -p %{buildroot}
 
 
  
-# Commenting group and users creation at build and trying to find a work around 
-# Add users and groups as per Life With Qmail
-#-------------------------------------------------------------------------------
-#if [ -z "`/usr/bin/id -g nofiles 2>/dev/null`" ]; then
-#	groupadd -g 2107 -r nofiles 2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -g qmail 2>/dev/null`" ]; then	
-#	groupadd -g 2108 -r qmail 2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u alias 2>/dev/null`" ]; then
-#	useradd -u 7790 -r -M -d %{qdir}/alias -s /sbin/nologin -c "qmail alias" -g qmail alias  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmaild 2>/dev/null`" ]; then
-#	useradd -u 7791 -r -M -d %{qdir} -s /sbin/nologin -c "qmail daemon" -g qmail qmaild  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmaill 2>/dev/null`" ]; then
-#	useradd -u 7792 -r -M -d %{qdir} -s /sbin/nologin -c "qmail logger" -g qmail qmaill  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailp 2>/dev/null`" ]; then
-#	useradd -u 7793 -r -M -d %{qdir} -s /sbin/nologin -c "qmail passwd" -g qmail qmailp  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailq 2>/dev/null`" ]; then
-#	useradd -u 7794 -r -M -d %{qdir} -s /sbin/nologin -c "qmail queue" -g qmail qmailq  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmailr 2>/dev/null`" ]; then
-#	useradd -u 7795 -r -M -d %{qdir} -s /sbin/nologin -c "qmail remote" -g qmail qmailr  2>&1 || :
-#fi
-#if [ -z "`/usr/bin/id -u qmails 2>/dev/null`" ]; then
-#	useradd -u 7796 -r -M -d %{qdir} -s /sbin/nologin -c "qmail send" -g qmail qmails  2>&1 || :
-#fi
-
-# We may need this to build and in order for qmail-toaster to have access to /home/vpopmail/include/ 
-#if [ ! -z "`/usr/bin/id -g vchkpw 2>/dev/null`" ]; then
-#	adduser qmail vchkpw 2>&1   || :
-#fi
 
 
 # We have gcc written in a temp file
 #-------------------------------------------------------------------------------
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` %{ccflags}"    >conf-cc
-echo "`cat %{_tmppath}/%{name}-%{pversion}-gcc` -s %{ldflags}" >conf-ld
+#echo "`cat %{_tmppath}/%{name}-%{version}-gcc` %{ccflags}"    >conf-cc
+#echo "`cat %{_tmppath}/%{name}-%{version}-gcc` -s %{ldflags}" >conf-ld
 
 
 
 # Delete gcc temp file
 #-------------------------------------------------------------------------------
-[ -f %{_tmppath}/%{name}-%{pversion}-gcc ] && rm -f %{_tmppath}/%{name}-%{pversion}-gcc
+#[ -f %{_tmppath}/%{name}-%{version}-gcc ] && rm -f %{_tmppath}/%{name}-%{version}-gcc
 
 make clean
 make compile makelib
@@ -317,22 +187,24 @@ export PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
 # install directories
 #-------------------------------------------------------------------------------
-install -d %{buildroot}%{qdir}
+rm -rf %{buildroot}
+install -d -m755 %{buildroot}%{qdir}
 install -d %{buildroot}%{qdir}/alias
+
 install -d %{buildroot}%{qdir}/control
 install -d %{buildroot}%{qdir}/owners
 install -d %{buildroot}%{qdir}/users
-install -d -m755 %{buildroot}%{qdir}/control/domainkeys
-#install -d %{buildroot}%{qdir}/control/tlshosts
-#install -d %{buildroot}%{qdir}/control/tlshosts/exhaustivelist
+install -d %{buildroot}%{qdir}/control/domainkeys
+
 install -d %{buildroot}%{qdir}/bin
 install -d %{buildroot}%{_libdir}
 install -d %{buildroot}%{qdir}/man
 install -d %{buildroot}%{_sbindir}
 install -d %{buildroot}%{_bindir}
+install -d %{buildroot}%{qdir}/spam
 
 #-------------------------------------------------------------------------------
-install -d -m755 %{buildroot}%{qdir}
+
 for i in bin boot control doc man users; do
   install -d -m755 %{buildroot}%{qdir}/$i
 done
@@ -347,7 +219,8 @@ done
 
 #-------------------------------------------------------------------------------
 install -d -m700 %{buildroot}%{qdir}/supervise
-for i in send smtp submission pop3 smtp-ssl; do
+
+for i in send smtp submission smtps; do
   install -d -m1751 %{buildroot}%{qdir}/supervise/$i
   install -d -m751 %{buildroot}%{qdir}/supervise/$i/log
   install -d -m751 %{buildroot}%{qdir}/supervise/$i/supervise
@@ -361,73 +234,106 @@ install -d -m755 %{buildroot}/var/log/qmail
 install -d -m755 %{buildroot}/var/log/qmail/send
 install -d -m755 %{buildroot}/var/log/qmail/smtp
 install -d -m755 %{buildroot}/var/log/qmail/submission
-install -d -m755 %{buildroot}/var/log/qmail/pop3
-install -d -m755 %{buildroot}/var/log/qmail/smtp-ssl
+install -d -m755  %{buildroot}/var/log/qmail/smtps
 
 # install binaries
 #-------------------------------------------------------------------------------
-for i in bouncesaying condredirect datemail elq except forward instcheck maildir2mbox maildirmake maildirwatch mailsubj pinq predate preline qail qbiff; do
-  install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
+for i in bouncesaying condredirect datemail elq except forward instcheck \
+maildir2mbox maildirmake maildirwatch mailsubj \
+pinq predate preline qail qbiff
+ do
+  install -m755 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-clean qmail-getpw qmail-local qmail-popup qmail-pw2u qmail-remote qmail-rspawn qmail-send splogger; do
-  install -m711 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
+for i in qmail-clean qmail-getpw qmail-local qmail-pw2u \
+ qmail-remote qmail-rspawn qmail-send splogger qmail-todo
+do
+  install -m711 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-lspawn qmail-newmrh qmail-newu qmail-start; do
-  install -m700 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
+for i in qmail-lspawn qmail-newmrh qmail-newu qmail-start
+do
+  install -m700 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-dk qmail-queue; do
-  install -m4711 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
+for i in qmail-queue
+ do
+  install -m4711 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/bin
 done
 
-for i in qmail-badmimetypes qmail-badloadertypes qmail-inject qmail-pop3d qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt qsmhook sendmail spfquery tcp-env srsfilter; do
-  install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/bin
+for i in qmail-badmimetypes qmail-badloadertypes qmail-inject \
+qmail-qmqpc qmail-qmqpd qmail-qmtpd qmail-qread qmail-qstat \
+qmail-showctl qmail-smtpd qmail-tcpok qmail-tcpto qreceipt \
+qsmhook sendmail spfquery tcp-env srsfilter qmail-newst
+do
+  install -m755 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/bin
 done
 
 
 # install docs
 #-------------------------------------------------------------------------------
-for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running chkuser_settings.h FAQ FILES FILES.warlord HISTORY.warlord INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir INSTALL.mbox INSTALL.vsm INSTALL.warlord INTERNALS PIC.local2alias PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local README README.srs README.auth README.domainkeys README.qregex README.remote-auth README.starttls README.tap README.warlord REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS TODO UPGRADE VERSION ChangeLog.empf README.empf; do
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/doc
+for i in BIN.README BLURB BLURB2 BLURB3 BLURB4 CHANGES CHKUSER.changelog \
+CHKUSER.copyright CHKUSER.log_format CHKUSER.readme CHKUSER.running \
+chkuser_settings.h FAQ FILES FILES.warlord HISTORY.warlord \
+INSTALL INSTALL.alias INSTALL.ctl INSTALL.ids INSTALL.maildir \
+INSTALL.mbox INSTALL.vsm INSTALL.warlord INTERNALS PIC.local2alias \
+PIC.local2ext PIC.local2local PIC.local2rem PIC.local2virt \
+PIC.nullclient PIC.relaybad PIC.relaygood PIC.rem2local \
+         README README.auth README.qregex README.tap README.warlord \
+REMOVE.binmail REMOVE.sendmail SECURITY SYSDEPS THANKS THOUGHTS \
+         TODO UPGRADE VERSION ChangeLog.empf README.empf *.spamthrottle
+ do
+  install -m644 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/doc
 done
 
-for i in qreceipt condredirect mailsubj except maildirmake preline tcp-env bouncesaying maildir2mbox qbiff forward maildirwatch; do
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.1 %{buildroot}%{qdir}/man/man1
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat1
+for i in qreceipt condredirect mailsubj except maildirmake preline tcp-env \
+bouncesaying maildir2mbox qbiff forward maildirwatch
+ do
+  install -m644 %{_builddir}/%{name}-%{version}/$i.1 %{buildroot}%{qdir}/man/man1
+  install -m644 %{_builddir}/%{name}-%{version}/$i.0 %{buildroot}%{qdir}/man/cat1
 done
 
-for i in qmail-users maildir qmail-header envelopes mbox tcp-environ qmail-control qmail-log addresses dot-qmail; do
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.5 %{buildroot}%{qdir}/man/man5
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat5
+for i in qmail-users maildir qmail-header envelopes mbox tcp-environ \
+         qmail-control qmail-log addresses dot-qmail qmail-spamt qmail-spamthrottle
+ do
+  install -m644 %{_builddir}/%{name}-%{version}/$i.5 %{buildroot}%{qdir}/man/man5
+  install -m644 %{_builddir}/%{name}-%{version}/$i.0 %{buildroot}%{qdir}/man/cat5
 done
 
-for i in qmail-limits forgeries qmail; do
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.7 %{buildroot}%{qdir}/man/man7
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat7
+for i in qmail-limits forgeries qmail
+ do
+  install -m644 %{_builddir}/%{name}-%{version}/$i.7 %{buildroot}%{qdir}/man/man7
+  install -m644 %{_builddir}/%{name}-%{version}/$i.0 %{buildroot}%{qdir}/man/cat7
 done
 
-for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok qmail-pop3d qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u qmail-qmtpd qmail-queue qmail-popup qmail-lspawn qmail-newmrh qmail-local qmail-send qmail-remote; do
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.8 %{buildroot}%{qdir}/man/man8
-  install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/$i.0 %{buildroot}%{qdir}/man/cat8
+for i in qmail-badmimetypes qmail-badloadertypes qmail-tcpto qmail-qread \
+splogger qmail-start qmail-qmqpc qmail-newu qmail-tcpok \
+qmail-inject qmail-clean qmail-getpw qmail-command qmail-showctl \
+qmail-rspawn qmail-smtpd qmail-qmqpd qmail-qstat qmail-pw2u \
+qmail-qmtpd qmail-queue qmail-lspawn qmail-newmrh \
+         qmail-local qmail-send qmail-remote qmail-newst
+do
+  install -m644 %{_builddir}/%{name}-%{version}/$i.8 %{buildroot}%{qdir}/man/man8
+  install -m644 %{_builddir}/%{name}-%{version}/$i.0 %{buildroot}%{qdir}/man/cat8
 done
-
-install -m644 $RPM_BUILD_DIR/%{name}-%{pversion}/qmail-dk.8 %{buildroot}%{qdir}/man/man8
 
 # install boot
 #-------------------------------------------------------------------------------
-for i in home home+df binm1 binm2+df proc+df binm2 binm3 proc binm3+df binm1+df; do
-  install -m755 $RPM_BUILD_DIR/%{name}-%{pversion}/$i %{buildroot}%{qdir}/boot
+for i in home home+df binm1 binm2+df proc+df \
+binm2 binm3 proc binm3+df binm1+df
+ do
+  install -m755 %{_builddir}/%{name}-%{version}/$i %{buildroot}%{qdir}/boot
 done
 
 # build the queue
 #-------------------------------------------------------------------------------
-for i in bounce info intd local lock mess pid remote todo; do
+for i in bounce info intd local lock mess pid remote todo
+do
   install -d %{buildroot}%{qdir}/queue/$i
 done
 
-for d in info local mess remote; do
+for d in info local mess remote
+do
   for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22; do
     install -d %{buildroot}%{qdir}/queue/$d/$i
   done
@@ -446,12 +352,12 @@ touch %{buildroot}%{qdir}/queue/lock/trigger
 install -m755 instcheck %{buildroot}%{qdir}/bin
 install -m755 config-fast %{buildroot}%{qdir}/bin
 
-install -m755 %{SOURCE3} %{buildroot}%{qdir}/rc
+install -m755 %{SOURCE2} %{buildroot}%{qdir}/rc
 
 mkdir -p %{buildroot}/var/log/qmail/{smtp,smtp-ssl,submission,pop3,send}
 
 mkdir -p %{buildroot}%{_initpath}
-install -m755 %{SOURCE4} %{buildroot}%{_initpath}/qmail
+install -m755 %{SOURCE3} %{buildroot}%{_initpath}/qmail
 
 ### MR -- for dkimsign.pl and qmail-remote.new
 install -m755 %{SOURCE200} %{buildroot}%{qdir}/bin/dkimsign.pl
@@ -468,7 +374,13 @@ touch %{buildroot}%{qdir}/control/smtproutes
 touch %{buildroot}%{qdir}/control/policy
 
 pushd %{buildroot}%{qdir}/control
-  touch defaultdomain me plusdomain rcpthosts defaulthost
+  touch defaultdomain \
+        defaulthost \
+        me \
+        plusdomain \
+        policy \
+        rcpthosts \
+        smtproutes  
   echo "localhost" > locals
   echo "60" > concurrencyremote
   echo "100" > concurrencyincoming
@@ -487,15 +399,15 @@ popd
 #-------------------------------------------------------------------------------
 pushd %{buildroot}%{qdir}/users
   touch assign cdb
-  chmod 644 *
   echo "." > assign
+  chmod 644 *
+
 popd
 
 # sendmail compatability and qmailctl links
 #-------------------------------------------------------------------------------
 mkdir -p %{buildroot}%{_sbindir}
 mkdir -p %{buildroot}%{_libdir}
-
 pushd %{buildroot}%{_sbindir}
   ln -s ../..%{qdir}/bin/sendmail sendmail
 popd
@@ -515,25 +427,22 @@ popd
 mkdir -p %{buildroot}%{qdir}/supervise/send/log
 mkdir -p %{buildroot}%{qdir}/supervise/smtp/log
 mkdir -p %{buildroot}%{qdir}/supervise/submission/log
-mkdir -p %{buildroot}%{qdir}/supervise/pop3/log
-mkdir -p %{buildroot}%{qdir}/supervise/smtp-ssl/log
+mkdir -p %{buildroot}%{qdir}/supervise/smtps/log
 
-install -m700 %{SOURCE5} %{buildroot}%{qdir}/supervise/pop3/run
-install -m700 %{SOURCE6} %{buildroot}%{qdir}/supervise/pop3/log/run
 install -m700 %{SOURCE7} %{buildroot}%{qdir}/supervise/send/run
 install -m700 %{SOURCE8} %{buildroot}%{qdir}/supervise/send/log/run
 install -m700 %{SOURCE9} %{buildroot}%{qdir}/supervise/smtp/run
 install -m700 %{SOURCE10} %{buildroot}%{qdir}/supervise/smtp/log/run
 install -m700 %{SOURCE19} %{buildroot}%{qdir}/supervise/submission/run
 install -m700 %{SOURCE20} %{buildroot}%{qdir}/supervise/submission/log/run
-install -m700 %{SOURCE100} %{buildroot}%{qdir}/supervise/smtp-ssl/run
-install -m700 %{SOURCE101} %{buildroot}%{qdir}/supervise/smtp-ssl/log/run
+install -m700 %{SOURCE100} %{buildroot}%{qdir}/supervise/smtps/run
+install -m700 %{SOURCE101} %{buildroot}%{qdir}/supervise/smtps/log/run
 
 install -m644 %{SOURCE12} %{buildroot}%{qdir}/control/badmimetypes
 install -m644 %{SOURCE13} %{buildroot}%{qdir}/control/badloadertypes
 install -m644 %{SOURCE14} %{buildroot}%{qdir}/control/badmailfrom
 install -m644 %{SOURCE15} %{buildroot}%{qdir}/control/badmailto
-install -m755 %{SOURCE16} %{buildroot}%{qdir}/bin/dh_key
+
 install -m644 %{SOURCE17} %{buildroot}%{qdir}/control/defaultdelivery
 
 # Make /etc/tcprules.d/qmail-smtp
@@ -566,6 +475,19 @@ pushd %{buildroot}%{qdir}/control
   ln -s servercert.pem clientcert.pem
 popd
 
+touch %{buildroot}%{_sysconfdir}/ld.so.conf
+
+%define  __brp_mangle_shebangs_exclude_from \
+        %{SOURCE12}  \
+        %{SOURCE13}  \
+        %{SOURCE14}  \
+        %{SOURCE15}  \
+        %{SOURCE17} \
+        %{_sysconfdir}/tcprules.d/tcp.smtp
+
+%clean
+#-------------------------------------------------------------------------------
+rm -rf %{buildroot}
 
 #-------------------------------------------------------------------------------
 %pre
@@ -680,11 +602,6 @@ defaultHostname=`hostname -f`
 defaultDomain=`hostname -f | perl -ne "s/.*\.([a-z0-9-]+\.[a-z]+)$/\1/i;" -e "print lc"`
 
 echo $defaultHostname > %{qdir}/control/me
-
-#echo $defaultDomain > %{qdir}/control/defaultdomain
-#echo $defaultDomain > %{qdir}/control/defaulthost
-#echo $defaultDomain > %{qdir}/control/plusdomain
-
 echo $defaultHostname > %{qdir}/control/defaultdomain
 echo $defaultHostname > %{qdir}/control/defaulthost
 echo $defaultHostname > %{qdir}/control/plusdomain
@@ -719,14 +636,6 @@ if [ -f /etc/man.config ]; then
    fi
 fi
 
-# Install cron-job to keep temp keys current
-#-------------------------------------------------------------------------------
-if ! grep ' * * * root %{qdir}/bin/dh_key' %{crontab} > /dev/null; then
-  echo " Adding cron job for TLS keys."
-  echo "" >> %{crontab}
-  echo "01 01 * * * root %{qdir}/bin/dh_key 2>&1 > /dev/null" >> %{crontab}
-fi
-
 # Create queue/lock/trigger, but only if not installing in a sandbox
 # This is necessary because fuse-unionfs does not (yet) support fifo files.
 #-------------------------------------------------------------------------------
@@ -747,15 +656,13 @@ echo " Compiling badloadertypes."
 touch %{qdir}/control/tlsserverciphers
 rm -fr %{qdir}/control/tlsclientciphers 2>&1 > /dev/null
 echo " Making tlsserverciphers."
-./%{_bindir}/openssl ciphers > %{qdir}/control/tlsserverciphers
+./%{_bindir}/openssl ciphers 'MEDIUM:HIGH:!SSLv2:!MD5:!RC4:!3DES' \
+               > %{qdir}/control/tlsserverciphers
 chown root:qmail %{qdir}/control/tlsserverciphers
 chmod 644 %{qdir}/control/tlsserverciphers
 
 echo " Linking tlsserverciphers to tlsclientciphers."
 ln -s %{qdir}/control/tlsserverciphers %{qdir}/control/tlsclientciphers
-
-echo " Making dh_keys."
-./%{qdir}/bin/dh_key
 
 # Make start
 chkconfig --add qmail
@@ -786,40 +693,31 @@ if [ "$1" = 0 ]; then
  rm -f  /var/qmail/control/*.cdb
  rm -fR %{qdir}/supervise/send/
  rm -fR %{qdir}/supervise/smtp/
- rm -fR %{qdir}/supervise/pop3/
- rm -fR %{qdir}/supervise/smtp-ssl/
+ rm -fR %{qdir}/supervise/submission/
  rm -fR /var/log/qmail/send/
  rm -fR /var/log/qmail/smtp/
- rm -fR /var/log/qmail/pop3/
- rm -fR /var/log/qmail/smtp-ssl/
+ rm -fR /var/log/qmail/submission/
+ rm -fR %{qdir}/supervise/smtps/
+ rm -fR /var/log/qmail/smtps/
 fi
-
-#-------------------------------------------------------------------------------
-%clean
-#-------------------------------------------------------------------------------
-#[ -n "%{buildroot}" -a "%{buildroot}" != / ] && rm -rf %{buildroot}
-#[ -d $RPM_BUILD_DIR/%{name}-%{pversion} ] && rm -rf $RPM_BUILD_DIR/%{name}-%{pversion}
-
 
 #-------------------------------------------------------------------------------
 %files
 #-------------------------------------------------------------------------------
-
 %defattr(-,-,qmail)
-
-# /usr/bin
-# /var/qmail/bin
 
 # config (system)
 #-------------------------------------------------------------------------------
 %attr(0755,root,root) %config(noreplace) %{_initpath}/qmail
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/tcprules.d/tcp.smtp
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/skel/.qmail
+%ghost %{_sysconfdir}/ld.so.conf
 
 # directories
 #-------------------------------------------------------------------------------
 %attr(0755,root,qmail) %dir %{qdir}
 %attr(2755,alias,qmail) %dir %{qdir}/alias
+%attr(0755,root,qmail) %dir  %{qdir}/spam
 %attr(0755,root,qmail) %dir %{qdir}/bin
 %attr(0755,root,qmail) %dir %{qdir}/boot
 %attr(0755,root,qmail) %dir %{qdir}/control
@@ -837,8 +735,7 @@ fi
 %attr(0755,root,qmail) %dir %{qdir}/man/man7
 %attr(0755,root,qmail) %dir %{qdir}/man/man8
 %attr(0755,root,qmail) %{qdir}/owners
-
-
+%attr(0750,qmailq,qmail) %dir %{qdir}/queue
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise
 %attr(1700,qmaill,qmail) %dir %{qdir}/supervise/send
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise/send/log
@@ -846,26 +743,22 @@ fi
 %attr(1700,qmaill,qmail) %dir %{qdir}/supervise/smtp
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise/smtp/log
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise/smtp/supervise
+%attr(1700,qmaill,qmail) %dir %{qdir}/supervise/smtps
+%attr(0700,qmaill,qmail) %dir %{qdir}/supervise/smtps/log
+%attr(0700,qmaill,qmail) %dir %{qdir}/supervise/smtps/supervise
 %attr(1700,qmaill,qmail) %dir %{qdir}/supervise/submission
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise/submission/log
 %attr(0700,qmaill,qmail) %dir %{qdir}/supervise/submission/supervise
-%attr(1700,qmaill,qmail) %dir %{qdir}/supervise/smtp-ssl
-%attr(0700,qmaill,qmail) %dir %{qdir}/supervise/smtp-ssl/log
-%attr(0700,qmaill,qmail) %dir %{qdir}/supervise/smtp-ssl/supervise
-
 %attr(0755,root,qmail) %dir %{qdir}/users
 %attr(0750,qmaill,qmail) %dir /var/log/qmail
-%attr(0750,qmaill,qmail) %dir /var/log/qmail/smtp
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/send
-%attr(0750,qmaill,qmail) %dir /var/log/qmail/smtp-ssl
+%attr(0750,qmaill,qmail) %dir /var/log/qmail/smtp
+%attr(0750,qmaill,qmail) %dir /var/log/qmail/smtps
 %attr(0750,qmaill,qmail) %dir /var/log/qmail/submission
-
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/cur
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/new
 %attr(0755,root,root) %dir %{_sysconfdir}/skel/Maildir/tmp
-
-
 
 # config (qmail)
 #-------------------------------------------------------------------------------
@@ -902,8 +795,6 @@ fi
 %attr(-,root,qmail) %{_sbindir}/sendmail
 %attr(-,root,qmail) %{_bindir}/qmailctl
 %attr(-,root,qmail) %{qdir}/control/clientcert.pem
-#%%attr(-,root,qmail) %%{qdir}/bin/qmail-queue
-
 
 # supervise
 #-------------------------------------------------------------------------------
@@ -911,10 +802,10 @@ fi
 %attr(0751,qmaill,qmail) %{qdir}/supervise/send/log/run
 %attr(0751,qmaill,qmail) %{qdir}/supervise/smtp/run
 %attr(0751,qmaill,qmail) %{qdir}/supervise/smtp/log/run
+%attr(0751,qmaill,qmail) %{qdir}/supervise/smtps/run
+%attr(0751,qmaill,qmail) %{qdir}/supervise/smtps/log/run
 %attr(0751,qmaill,qmail) %{qdir}/supervise/submission/run
 %attr(0751,qmaill,qmail) %{qdir}/supervise/submission/log/run
-%attr(0751,qmaill,qmail) %{qdir}/supervise/smtp-ssl/run
-%attr(0751,qmaill,qmail) %{qdir}/supervise/smtp-ssl/log/run
 
 # cat pages
 #-------------------------------------------------------------------------------
@@ -925,7 +816,7 @@ fi
 
 # qmail queue
 #-------------------------------------------------------------------------------
-%dir %attr(0750,qmailq,qmail) %{qdir}/queue
+
 %attr(0700,qmails,qmail) %dir %{qdir}/queue/bounce
 %dir %attr(0700,qmails,qmail) %{qdir}/queue/info
 %attr(0700,qmails,qmail) %{qdir}/queue/info/*
@@ -962,7 +853,6 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/condredirect
 %attr(0755,root,qmail) %{qdir}/bin/config-fast
 %attr(0755,root,qmail) %{qdir}/bin/datemail
-%attr(0755,root,qmail) %{qdir}/bin/dh_key
 %attr(0755,root,qmail) %{qdir}/bin/elq
 %attr(0755,root,qmail) %{qdir}/bin/except
 %attr(0755,root,qmail) %{qdir}/bin/forward
@@ -979,7 +869,6 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badloadertypes
 %attr(0755,root,qmail) %{qdir}/bin/qmail-badmimetypes
 %attr(0711,root,qmail) %{qdir}/bin/qmail-clean
-%attr(04711,qmailq,qmail) %{qdir}/bin/qmail-dk
 %attr(0711,root,qmail) %{qdir}/bin/qmail-getpw
 %attr(0755,root,qmail) %{qdir}/bin/qmail-inject
 %attr(0711,root,qmail) %{qdir}/bin/qmail-local
@@ -993,6 +882,7 @@ fi
 %attr(0711,root,qmail) %{qdir}/bin/qmail-remote
 %attr(0711,root,qmail) %{qdir}/bin/qmail-rspawn
 %attr(0711,root,qmail) %{qdir}/bin/qmail-send
+%attr(0711,root,qmail) %{qdir}/bin/qmail-todo
 %attr(0755,root,qmail) %{qdir}/bin/qmail-showctl
 %attr(0755,root,qmail) %{qdir}/bin/qmail-smtpd
 %attr(0755,root,qmail) %{qdir}/bin/qmail-qmqpc
@@ -1008,7 +898,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/srsfilter
 %attr(0711,root,qmail) %{qdir}/bin/splogger
 %attr(0755,root,qmail) %{qdir}/bin/tcp-env
-
+%attr(0755,root,qmail) %{qdir}/bin/qmail-newst
 %attr(0755,root,root) %{qdir}/bin/dkimsign.pl
 %attr(0755,root,qmail) %{qdir}/bin/qmail-remote.new
 
@@ -1039,12 +929,13 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man5/qmail-log.5*
 %attr(0644,root,qmail) %{qdir}/man/man5/addresses.5*
 %attr(0644,root,qmail) %{qdir}/man/man5/dot-qmail.5*
+%attr(0644,root,qmail) %{qdir}/man/man5/qmail-spamt.5*
+%attr(0644,root,qmail) %{qdir}/man/man5/qmail-spamthrottle.5*
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail-limits.7*
 %attr(0644,root,qmail) %{qdir}/man/man7/forgeries.7*
 %attr(0644,root,qmail) %{qdir}/man/man7/qmail.7*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badloadertypes.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-badmimetypes.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-dk.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-tcpto.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qread.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/splogger.8*
@@ -1064,35 +955,23 @@ fi
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-qstat.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-pw2u.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-queue.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-popup.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-lspawn.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-newmrh.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-local.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-send.8*
 %attr(0644,root,qmail) %{qdir}/man/man8/qmail-remote.8*
-%attr(0644,root,qmail) %{qdir}/man/man8/qmail-pop3d.8*
+%attr(0644,root,qmail) %{qdir}/man/man8/qmail-newst.8*
 
 # qmail docs
 #-------------------------------------------------------------------------------
 %attr(0644,root,qmail) %{qdir}/doc/*
 
-# qmail-pop3d
-#-------------------------------------------------------------------------------
-%files -n qmail-pop3d-toaster
-%defattr(-,-,qmail)
-%attr(1700,qmaill,qmail) %dir %{qdir}/supervise/pop3
-%attr(0700,qmaill,qmail) %dir %{qdir}/supervise/pop3/log
-%attr(0700,qmaill,qmail) %dir %{qdir}/supervise/pop3/supervise
-%attr(0751,qmaill,qmail) %{qdir}/supervise/pop3/run
-%attr(0751,qmaill,qmail) %{qdir}/supervise/pop3/log/run
-%attr(0750,qmaill,qmail) %dir /var/log/qmail/pop3
-%attr(0755,root,qmail) %{qdir}/bin/qmail-pop3d
-%attr(0711,root,qmail) %{qdir}/bin/qmail-popup
-
-
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Sun Aug 4 2024 John Pierce <john@luckytanuki.com>
+- Merge in updates from http://repo.qmailtoaster.com/9/testing/SRPMS/qmail-1.03-3.3.11.qt.el9.src.rpm 
+
 * Thu Dec 15 2022 John Pierce <john@luckytanuki.com> 1.03-1.3.63.kng
 - fix C error ‘stderr undeclared’ in qmail-dk.c
 
