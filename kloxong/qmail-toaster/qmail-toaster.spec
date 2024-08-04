@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 1.kng%{?dist}
+%define 	rpmrelease 2.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
@@ -71,7 +71,7 @@ BuildRequires: vpopmail-toaster >= 5.4.17
 BuildRequires:	shadow-utils, bzip2, net-tools
 BuildRequires:	perl
 
-Requires:  daemontools
+Requires:  daemontools-toaster
 Requires:  openssl >= 1.1.1
 Requires:  coreutils
 Requires:  spamdyke
@@ -81,7 +81,6 @@ Requires:  chkconfig
 
 Requires: libsrs2-toaster >= 1.0.18
 Requires: libdomainkeys-toaster >= 0.68
-Requires: sh-utils
 
 Provides:  MTA
 Provides:  smtpdaemon
