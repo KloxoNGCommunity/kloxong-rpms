@@ -56,7 +56,7 @@ Patch5: qmail-smtp-rm-rsa-dh-key.patch
 Patch21: qmail_outgoingips.patch
 
 #Patch30: qmail_qmailtoaster-any-to-cname.patch
-#Patch40: qmail-toaster-centos-7-chroot.patch
+Patch40: qmail-toaster-fix-chroot-build-error.patch
 
 
 BuildRequires: krb5-devel >= 1.5
@@ -129,11 +129,11 @@ qmail-1.03 patched to netqmail-1.06
 #OUTGOINGIPS required for Kloxo
 
 %patch21 -p1
-
 #%%patch30 -p1
-# fixing compile error in qmail and centos 7 needs a check that cant be done in a chroot enviroment
+
+# fixing compile error in qmail build on EL > 6. Does a test that can't be done in a chroot enviroment
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-#%%patch40 -p1
+%patch40 -p1
 %endif
 echo
 
