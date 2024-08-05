@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 4.kng%{?dist}
+%define 	rpmrelease 5.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
@@ -33,6 +33,7 @@ Source12:	qmail_badmimetypes
 Source13:	qmail_badloadertypes
 Source14:	qmail_badmailfrom
 Source15:	qmail_badmailto
+Source16:	qmail_dh_key
 
 Source17:	qmail_qmail-default
 Source18:	qmail_qmail.init.sus
@@ -51,7 +52,6 @@ Patch1: qmail-smtp-smtpd-debug-f2b.patch
 Patch2: qmail-smtp-command-debug.patch
 Patch3: qmail-qualys.patch
 Patch4: qmail-smtp-tls13-v2.patch
-Patch5: qmail-smtp-rm-rsa-dh-key.patch
 
 Patch21: qmail_outgoingips.patch
 
@@ -123,7 +123,7 @@ qmail-1.03 patched to netqmail-1.06
 %patch2 -p2
 %patch3 -p1
 %patch4 -p1
-%patch5 -p1
+
 
 #OUTGOINGIPS required for Kloxo
 
@@ -441,7 +441,7 @@ install -m644 %{SOURCE12} %{buildroot}%{qdir}/control/badmimetypes
 install -m644 %{SOURCE13} %{buildroot}%{qdir}/control/badloadertypes
 install -m644 %{SOURCE14} %{buildroot}%{qdir}/control/badmailfrom
 install -m644 %{SOURCE15} %{buildroot}%{qdir}/control/badmailto
-
+install -m755 %{SOURCE16} %{buildroot}%{qdir}/bin/dh_key
 install -m644 %{SOURCE17} %{buildroot}%{qdir}/control/defaultdelivery
 
 # Make /etc/tcprules.d/qmail-smtp
@@ -481,6 +481,7 @@ touch %{buildroot}%{_sysconfdir}/ld.so.conf
         %{SOURCE13}  \
         %{SOURCE14}  \
         %{SOURCE15}  \
+		%{SOURCE15}  \
         %{SOURCE17} \
         %{_sysconfdir}/tcprules.d/tcp.smtp
 
@@ -635,6 +636,14 @@ if [ -f /etc/man.config ]; then
    fi
 fi
 
+# Install cron-job to keep temp keys current
+#-------------------------------------------------------------------------------
+if ! grep ' * * * root %{qdir}/bin/dh_key' %{crontab} > /dev/null; then
+  echo " Adding cron job for TLS keys."
+  echo "" >> %{crontab}
+  echo "01 01 * * * root %{qdir}/bin/dh_key 2>&1 > /dev/null" >> %{crontab}
+fi
+
 # Create queue/lock/trigger, but only if not installing in a sandbox
 # This is necessary because fuse-unionfs does not (yet) support fifo files.
 #-------------------------------------------------------------------------------
@@ -655,13 +664,15 @@ echo " Compiling badloadertypes."
 touch %{qdir}/control/tlsserverciphers
 rm -fr %{qdir}/control/tlsclientciphers 2>&1 > /dev/null
 echo " Making tlsserverciphers."
-./%{_bindir}/openssl ciphers 'MEDIUM:HIGH:!SSLv2:!MD5:!RC4:!3DES' \
-               > %{qdir}/control/tlsserverciphers
+./%{_bindir}/openssl ciphers > %{qdir}/control/tlsserverciphers
 chown root:qmail %{qdir}/control/tlsserverciphers
 chmod 644 %{qdir}/control/tlsserverciphers
 
 echo " Linking tlsserverciphers to tlsclientciphers."
 ln -s %{qdir}/control/tlsserverciphers %{qdir}/control/tlsclientciphers
+
+echo " Making dh_keys."
+./%{qdir}/bin/dh_key
 
 # Make start
 chkconfig --add qmail
@@ -852,6 +863,7 @@ fi
 %attr(0755,root,qmail) %{qdir}/bin/condredirect
 %attr(0755,root,qmail) %{qdir}/bin/config-fast
 %attr(0755,root,qmail) %{qdir}/bin/datemail
+%attr(0755,root,qmail) %{qdir}/bin/dh_key
 %attr(0755,root,qmail) %{qdir}/bin/elq
 %attr(0755,root,qmail) %{qdir}/bin/except
 %attr(0755,root,qmail) %{qdir}/bin/forward
@@ -968,6 +980,9 @@ fi
 #-------------------------------------------------------------------------------
 %changelog
 #-------------------------------------------------------------------------------
+* Mon Aug 5 2024 John Pierce <john@luckytanuki.com>
+- Restore TLS DH key stuff as removing breaks things 
+
 * Sun Aug 4 2024 John Pierce <john@luckytanuki.com>
 - Merge in updates from http://repo.qmailtoaster.com/9/testing/SRPMS/qmail-1.03-3.3.11.qt.el9.src.rpm 
 
