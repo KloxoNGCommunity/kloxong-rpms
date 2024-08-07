@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 6.kng%{?dist}
+%define 	rpmrelease 7.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
@@ -353,7 +353,7 @@ install -m755 config-fast %{buildroot}%{qdir}/bin
 
 install -m755 %{SOURCE2} %{buildroot}%{qdir}/rc
 
-mkdir -p %{buildroot}/var/log/qmail/{smtp,smtps,submission,pop3,send}
+mkdir -p %{buildroot}/var/log/qmail/{smtp,smtps,submission,send}
 
 mkdir -p %{buildroot}%{_initpath}
 install -m755 %{SOURCE3} %{buildroot}%{_initpath}/qmail
