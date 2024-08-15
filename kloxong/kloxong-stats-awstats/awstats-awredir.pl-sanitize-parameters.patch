@@ -1,0 +1,32 @@
+diff -up awstats-7.1/wwwroot/cgi-bin/awredir.pl.sanitize awstats-7.1/wwwroot/cgi-bin/awredir.pl
+--- awstats-7.1/wwwroot/cgi-bin/awredir.pl.sanitize	2012-02-15 15:19:22.000000000 +0100
++++ awstats-7.1/wwwroot/cgi-bin/awredir.pl	2013-01-04 10:31:33.303448288 +0100
+@@ -21,6 +21,8 @@
+ 
+ #use DBD::mysql;
+ use Digest::MD5 qw(md5 md5_hex md5_base64);
++use HTML::Entities;
++use URI::Escape;
+ 
+ 
+ #-------------------------------------------------------
+@@ -193,14 +195,17 @@ if ($TRACEBASE == 1) {
+ 	if ($ENV{REMOTE_ADDR} !~ /$EXCLUDEIP/) {
+ 		if ($DEBUG == 1) { print LOGFILE "Execution requete Update sur BASE=$BASE, USER=$USER, PASS=$PASS\n"; }
+ 		my $dbh = DBI->connect("DBI:mysql:$BASE", $USER, $PASS) || die "Can't connect to DBI:mysql:$BASE: $dbh->errstr\n";
+-		my $sth = $dbh->prepare("UPDATE T_LINKS set HITS_LINKS = HIT_LINKS+1 where URL_LINKS = '$Url'");
+-		$sth->execute || error("Error: Unable execute query:$dbh->err, $dbh->errstr");
++		my $sth = $dbh->prepare("UPDATE T_LINKS set HITS_LINKS = HIT_LINKS+1 where URL_LINKS = ?");
++		$sth->execute($Url) || error("Error: Unable execute query:$dbh->err, $dbh->errstr");
+ 		$sth->finish;
+ 		$dbh->disconnect;
+ 		if ($DEBUG == 1) { print LOGFILE "Execution requete Update - OK\n"; }
+ 	}
+ }
+ 
++$Url=uri_escape($Url, "^A-Za-z0-9\-\._~/:");
++$Tag=uri_escape($Tag);
++
+ if ($TRACEFILE == 1) {
+ 	if ($ENV{REMOTE_ADDR} !~ /$EXCLUDEIP/) {
+ 		open(FICHIER,">>$TXTDIR/$TXTFILE") || error("Error: Enable to open trace file $TXTDIR/$TXTFILE: $!");

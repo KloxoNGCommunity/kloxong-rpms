@@ -4,12 +4,13 @@
 
 Name: %{productname}-%{packagename}
 Summary: AWStats logfile analyzer
-Version: 7.7
+Version: 7.9
 Release: 1.kng%{?dist}
 License: GPL
 URL: http://awstats.sourceforge.net/
 Group: Applications/Internet
 Source0: http://prdownloads.sourceforge.net/awstats/%{packagename}-%{version}.tar.gz
+Patch0:     awstats-awredir.pl-sanitize-parameters.patch
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch: noarch
@@ -37,6 +38,7 @@ with all web hosting providers which allow Perl, CGI and log access.
 
 %prep
 %setup -q -n %{packagename}-%{version}
+%patch0 -p 1
 
 %build
 
@@ -54,6 +56,9 @@ with all web hosting providers which allow Perl, CGI and log access.
 %{kloxo}/%{packagename}
 
 %changelog
+* Thu Aug 15 2024 John Parnell Pierce <john@luckytanuki.com>
+- update to 7.9
+
 * Wed Jun 19 2024 John Parnell Pierce <john@luckytanuki.com>
 - Change product name back to Kloxo
 
