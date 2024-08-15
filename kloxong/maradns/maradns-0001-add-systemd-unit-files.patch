@@ -1,0 +1,74 @@
+From 2ea5f0753eeb928e7fce815c8bc20430807b5fb6 Mon Sep 17 00:00:00 2001
+From: Tomasz Torcz <tomek@pipebreaker.pl>
+Date: Sun, 13 Oct 2013 22:19:43 +0200
+Subject: [PATCH] add systemd unit files
+
+---
+ build/maradns-deadwood.service   | 13 +++++++++++++
+ build/maradns-zoneserver.service | 13 +++++++++++++
+ build/maradns.service            | 13 +++++++++++++
+ 4 files changed, 49 insertions(+)
+ create mode 100644 build/maradns-deadwood.service
+ create mode 100644 build/maradns-zoneserver.service
+ create mode 100644 build/maradns.service
+
+diff --git a/build/maradns-deadwood.service b/build/maradns-deadwood.service
+new file mode 100644
+index 0000000..9f2a522
+--- /dev/null
++++ b/build/maradns-deadwood.service
+@@ -0,0 +1,13 @@
++[Unit]
++Description=MaraDNS secure Domain Name Server (DNS) recursive resolver
++Documentation=man:Deadwood(1)
++Requires=network-online.target
++After=network-online.target
++After=network.service
++
++[Service]
++ExecStart=/usr/sbin/Deadwood
++Restart=always
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/build/maradns-zoneserver.service b/build/maradns-zoneserver.service
+new file mode 100644
+index 0000000..6516a02
+--- /dev/null
++++ b/build/maradns-zoneserver.service
+@@ -0,0 +1,13 @@
++[Unit]
++Description=MaraDNS Zoneserver handles DNS zone transfers and any TCP DNS queries
++Documentation=man:zoneserver(8)
++Requires=network-online.target
++After=network-online.target
++After=network.service
++
++[Service]
++ExecStart=/usr/sbin/zoneserver -f /etc/mararc
++Restart=always
++
++[Install]
++WantedBy=multi-user.target
+diff --git a/build/maradns.service b/build/maradns.service
+new file mode 100644
+index 0000000..a838a2e
+--- /dev/null
++++ b/build/maradns.service
+@@ -0,0 +1,13 @@
++[Unit]
++Description=MaraDNS secure Domain Name Server (DNS) 
++Documentation=man:maradns(8)
++Requires=network-online.target
++After=network-online.target
++After=network.service
++
++[Service]
++ExecStart=/usr/sbin/maradns -f /etc/mararc
++Restart=always
++
++[Install]
++WantedBy=multi-user.target
+-- 
+1.8.3.1
+
