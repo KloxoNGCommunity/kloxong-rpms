@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 7.kng%{?dist}
+%define 	rpmrelease 8.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
@@ -62,8 +62,8 @@ Patch40: qmail-toaster-fix-chroot-build-error.patch
 BuildRequires: krb5-devel >= 1.5
 #BuildRequires: libsrs2-static
 BuildRequires: libvpopmail-static
-BuildRequires: openssl-devel >= 1.1.1
-BuildRequires: mariadb-devel
+#BuildRequires: openssl-devel >= 1.1.1
+#BuildRequires: mariadb-devel
 BuildRequires: groff-base
 BuildRequires: libsrs2-toaster >= 1.0.18
 BuildRequires: libdomainkeys-toaster >= 0.68
@@ -71,8 +71,17 @@ BuildRequires: vpopmail-toaster >= 5.4.17
 BuildRequires:	shadow-utils, bzip2, net-tools
 BuildRequires:	perl
 
-Requires:  daemontools-toaster
+%if %{?rhel}0 < 80
+%define		mylibdir /usr/lib64/mysql
+BuildRequires:  openssl11-devel >= 1.1.1 , mysql-devel
+Requires:  openssl11
+%else
+%define		mylibdir /usr/lib64
+BuildRequires:  openssl-devel , mariadb-devel
 Requires:  openssl >= 1.1.1
+%endif
+
+Requires:  daemontools-toaster
 Requires:  coreutils
 Requires:  spamdyke
 Requires: ucspi-tcp-toaster >= 0.88
