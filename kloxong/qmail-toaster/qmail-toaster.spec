@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 8.kng%{?dist}
+%define 	rpmrelease 9.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
@@ -52,7 +52,7 @@ Patch2: qmail-smtp-command-debug.patch
 Patch3: qmail-qualys.patch
 Patch4: qmail-smtp-tls13-v2.patch
 Patch5: qmail-smtp-rm-rsa-dh-key.patch
-
+Patch6:	qmail_el7openssl11.patch
 Patch21: qmail_outgoingips.patch
 
 #Patch30: qmail_qmailtoaster-any-to-cname.patch
@@ -99,8 +99,12 @@ Conflicts: postfix
 
 Buildroot: %{_topdir}/BUILDROOT/%{name}-%{version}
 
+%if 0%{?rhel} >= 8
+%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include
+%else
+%define	ccflags %{optflags} -DTLS=20060104 -I/home/vpopmail/include -I/usr/include/openssl11 -l:libssl.so.1.1 -l:libcrypto.so.1.1
+%endif
 
-%define	ccflags %{optflags} -DTLS=20200107 -I/home/vpopmail/include
 %define ccflags       %{optflags} -DTLS=20200107 -I/usr/include/libvpopmail
 %define crontab       %{_sysconfdir}/crontab
 %define _initpath     %{_sysconfdir}/rc.d/init.d
@@ -133,6 +137,10 @@ qmail-1.03 patched to netqmail-1.06
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+
+%if 0%{?rhel} < 8
+%patch6 -p1
+%endif
 
 #OUTGOINGIPS required for Kloxo
 
