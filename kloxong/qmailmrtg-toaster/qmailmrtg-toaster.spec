@@ -1,7 +1,7 @@
 %define	name qmailmrtg
 %define	pversion 4.2
 %define 	bversion 1.3
-%define	rpmrelease 9.kng%{?dist}
+%define	rpmrelease 10.kng%{?dist}
 
 %define		release %{bversion}.%{rpmrelease}
 %define		apacheuser apache
@@ -54,7 +54,7 @@ Qmail MRTG Stat collector
 #-------------------------------------------------------------------
 
 # We need to patch for modern compilers
-%patch0 -p1
+%patch 0 -p1
 
 # Try detecting newest gcc (some distributions have got more then one compiler)
 # and write it on a temp file 
