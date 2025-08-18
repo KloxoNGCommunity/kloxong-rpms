@@ -4,7 +4,7 @@
 Name:		libvpopmail
 Summary:	Vpopmail libraries for QMail Toaster
 Version:	5.4.33
-Release:	1.kng%{?dist}
+Release:	2.kng%{?dist}
 License:	GPL
 Group:		Networking/Other
 URL:		http://www.inter7.com/%{name}
@@ -82,12 +82,12 @@ one domain per SQL table = --disable-many-domains
 #-------------------------------------------------------------------------------
 %setup -q -n vpopmail-%{version}
 
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
+%patch 0 -p1
+%patch 1 -p1
+%patch 2 -p1
 # We are using the devel patch here and configure properly
 # Beware if This is enabled we need to do the same on libvpopmail and set proper paths on qmail-toaster
-%patch3 -p1
+%patch 3 -p1
 
 #-------------------------------------------------------------------------------
 %build
