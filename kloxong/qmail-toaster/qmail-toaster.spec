@@ -1,7 +1,7 @@
 %define 	name qmail
 %define 	version 1.03
 %define 	bversion 1.6
-%define 	rpmrelease 9.kng%{?dist}
+%define 	rpmrelease 10.kng%{?dist}
 
 %define	release %{bversion}.%{rpmrelease}
 %define	crontab /etc/crontab
@@ -131,25 +131,25 @@ qmail-1.03 patched to netqmail-1.06
 
 # Apply composit patch
 #-------------------------------------------------------------------------------
-%patch0 -p1
-%patch1 -p2
-%patch2 -p2
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+%patch 0 -p1
+%patch 1 -p2
+%patch 2 -p2
+%patch 3 -p1
+%patch 4 -p1
+%patch 5 -p1
 
 %if 0%{?rhel} < 8
-%patch6 -p1
+%patch 6 -p1
 %endif
 
 #OUTGOINGIPS required for Kloxo
 
-%patch21 -p1
-#%%patch30 -p1
+%patch 21 -p1
+#%%patch 30 -p1
 
 # fixing compile error in qmail build on EL > 6. Does a test that can't be done in a chroot enviroment
 %if %{?fedora}0 > 140 || %{?rhel}0 > 60
-%patch40 -p1
+%patch 40 -p1
 %endif
 echo
 
